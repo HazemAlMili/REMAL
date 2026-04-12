@@ -1,0 +1,86 @@
+-- ============================================================================
+-- Migration:   0001_init_postgres_conventions
+-- Ticket:      DB-MD-01
+-- Title:       Initialize PostgreSQL base conventions and shared migration prerequisites
+-- Database:    PostgreSQL 16
+-- Created:     2026-04-12
+-- ============================================================================
+--
+-- PURPOSE:
+--   Foundational migration that establishes shared DB conventions for all
+--   subsequent master data and business table migrations. This migration
+--   does NOT create any business tables, entities, triggers, or enums.
+--
+-- ============================================================================
+-- FROZEN CONVENTIONS (enforced across all future migrations):
+-- ============================================================================
+--
+-- 1. PRIMARY KEYS
+--    - All tables use UUID primary keys
+--    - Default value: gen_random_uuid() (provided by pgcrypto)
+--    - Column name: id
+--    - Example: id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+--    - DO NOT use uuid-ossp or uuid_generate_v4()
+--
+-- 2. NAMING CONVENTION (snake_case everywhere)
+--    - Table names:      snake_case (e.g., booking_status_history)
+--    - Column names:     snake_case (e.g., check_in_date)
+--    - Index names:      idx_{table}_{column(s)} (e.g., idx_bookings_status)
+--    - Constraint names: chk_{table}_{rule} / uq_{table}_{column} / fk_{table}_{ref}
+--
+-- 3. TIMESTAMPS
+--    - Every table MUST have:
+--        created_at  TIMESTAMP NOT NULL
+--        updated_at  TIMESTAMP NOT NULL
+--    - Some tables also have: deleted_at TIMESTAMP NULL (soft delete)
+--    - Timestamp columns are schema-only in the DB tier
+--
+-- 4. TIMESTAMP OWNERSHIP (CRITICAL DECISION)
+--    - created_at: set by application layer (EF Core) on INSERT
+--    - updated_at: set by application layer (EF Core) on INSERT and UPDATE
+--    - updated_at updates are handled by EF Core SaveChanges interceptor
+--      or DbContext.SaveChanges override — NOT by DB triggers
+--    - DO NOT create any DB trigger for updated_at
+--    - DO NOT create any DB function for updated_at
+--
+-- 5. ENUMS
+--    - All enums are stored as VARCHAR in the database
+--    - DO NOT create PostgreSQL enum types (CREATE TYPE ... AS ENUM)
+--    - Enum validation happens in the application layer
+--    - This keeps the DB schema flexible and avoids ALTER TYPE migrations
+--
+-- 6. MONEY FIELDS
+--    - All monetary values use DECIMAL(12,2)
+--    - DO NOT use FLOAT or REAL for money
+--
+-- 7. SOFT DELETES
+--    - Entities with soft delete have: deleted_at TIMESTAMP NULL
+--    - Filtering is done by EF Core global query filters, not DB views
+--
+-- 8. UUID EXTENSION
+--    - Use pgcrypto extension (provides gen_random_uuid())
+--    - DO NOT use uuid-ossp extension
+--
+-- ============================================================================
+
+
+-- =====================
+-- UP MIGRATION
+-- =====================
+
+-- Enable pgcrypto extension for gen_random_uuid() support.
+-- This is the ONLY approved method for UUID generation in this project.
+-- pgcrypto is available by default in PostgreSQL 16 and needs only activation.
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- Verify: After running this migration, the following should work:
+--   SELECT gen_random_uuid();
+-- Expected: Returns a valid UUID v4 value.
+
+-- ============================================================================
+-- NO BUSINESS TABLES ARE CREATED IN THIS MIGRATION.
+-- This migration exists solely to:
+--   1. Enable the pgcrypto extension
+--   2. Document shared conventions as authoritative comments
+--   3. Serve as migration #0001 in the dependency chain
+-- ============================================================================
