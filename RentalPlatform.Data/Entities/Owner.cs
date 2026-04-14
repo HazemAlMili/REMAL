@@ -11,6 +11,7 @@ public class Owner
     public decimal CommissionRate { get; set; }
     public string? Notes { get; set; }
     public string Status { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }

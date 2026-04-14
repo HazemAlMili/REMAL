@@ -19,6 +19,7 @@ public class OwnerConfiguration : IEntityTypeConfiguration<Owner>
         builder.Property(x => x.CommissionRate).HasColumnName("commission_rate").HasColumnType("decimal(5,2)").IsRequired();
         builder.Property(x => x.Notes).HasColumnName("notes").IsRequired(false);
         builder.Property(x => x.Status).HasColumnName("status").HasMaxLength(50).IsRequired();
+        builder.Property(x => x.PasswordHash).HasColumnName("password_hash").HasMaxLength(255).IsRequired();
         builder.Property(x => x.CreatedAt).HasColumnName("created_at").IsRequired();
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at").IsRequired();
         builder.Property(x => x.DeletedAt).HasColumnName("deleted_at").IsRequired(false);

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="RentalPlatform.API/RentalPlatform.API.csproj" />
+  <Project Path="RentalPlatform.Business/RentalPlatform.Business.csproj" />
+  <Project Path="RentalPlatform.Data/RentalPlatform.Data.csproj" />
+  <Project Path="RentalPlatform.Shared/RentalPlatform.Shared.csproj" />
+</Solution>
