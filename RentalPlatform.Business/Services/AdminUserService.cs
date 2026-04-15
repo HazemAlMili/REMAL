@@ -15,9 +15,9 @@ namespace RentalPlatform.Business.Services;
 
 public class AdminUserService : IAdminUserService
 {
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AdminUserService(UnitOfWork unitOfWork)
+    public AdminUserService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

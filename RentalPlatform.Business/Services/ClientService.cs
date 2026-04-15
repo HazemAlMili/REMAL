@@ -14,9 +14,9 @@ namespace RentalPlatform.Business.Services;
 
 public class ClientService : IClientService
 {
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public ClientService(UnitOfWork unitOfWork)
+    public ClientService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

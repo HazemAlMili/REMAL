@@ -9,9 +9,9 @@ namespace RentalPlatform.Business.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AuthService(UnitOfWork unitOfWork)
+    public AuthService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

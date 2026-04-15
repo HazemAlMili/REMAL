@@ -5,7 +5,7 @@ using RentalPlatform.Data.Repositories;
 
 namespace RentalPlatform.Data;
 
-public class UnitOfWork
+public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
 

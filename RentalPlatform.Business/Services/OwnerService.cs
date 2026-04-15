@@ -14,9 +14,9 @@ namespace RentalPlatform.Business.Services;
 
 public class OwnerService : IOwnerService
 {
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public OwnerService(UnitOfWork unitOfWork)
+    public OwnerService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

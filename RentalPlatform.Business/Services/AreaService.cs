@@ -13,9 +13,9 @@ namespace RentalPlatform.Business.Services;
 
 public class AreaService : IAreaService
 {
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AreaService(UnitOfWork unitOfWork)
+    public AreaService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

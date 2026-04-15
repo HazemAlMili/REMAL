@@ -11,9 +11,9 @@ namespace RentalPlatform.Business.Services;
 
 public class AmenityService : IAmenityService
 {
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AmenityService(UnitOfWork unitOfWork)
+    public AmenityService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
