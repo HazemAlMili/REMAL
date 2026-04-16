@@ -1,0 +1,43 @@
+services:
+  # ── PostgreSQL 16 ──
+  db:
+    image: postgres:16-alpine
+    container_name: remal-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: RentalPlatform
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - remal_pgdata:/var/lib/postgresql/data
+      - ./db/migrations:/docker-entrypoint-initdb.d/migrations:ro
+      - ./db/init.sql:/docker-entrypoint-initdb.d/00_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d RentalPlatform"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── .NET API ──
+  api:
+    build:
+      context: .
+      dockerfile: RentalPlatform.API/Dockerfile
+    container_name: remal-api
+    restart: unless-stopped
+    ports:
+      - "5000:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=RentalPlatform;Username=postgres;Password=postgres"
+      Jwt__Secret: "A_Very_Long_And_Secure_Secret_Key_For_Jwt_Signing_At_Least_32_Chars"
+      Jwt__Issuer: "RentalPlatform"
+      Jwt__Audience: "RentalPlatform"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  remal_pgdata:

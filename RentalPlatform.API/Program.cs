@@ -19,6 +19,16 @@ var builder = WebApplication.CreateBuilder(args);
 // - Controllers must not return entities directly
 
 // Add services to the container.
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "REMAL Platform API - Tier 4 (Master Data + Auth)",
+        Version = "v1",
+        Description = "Amenities, Areas, Clients, Owners, AdminUsers, Authentication"
+    });
+});
+
 builder.Services.AddControllers(options =>
     {
         options.Filters.Add<RentalPlatform.API.Filters.ValidationActionFilter>();
@@ -133,12 +143,12 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    // Enable swagger if installed in future
-    // app.UseSwagger();
-    // app.UseSwaggerUI();
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "REMAL API v1");
+    options.RoutePrefix = "swagger";
+});
 
 app.UseHttpsRedirection();
 
