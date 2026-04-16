@@ -30,4 +30,22 @@
 \echo '=== Running migration 0009: add owner password hash ==='
 \i /docker-entrypoint-initdb.d/migrations/0009_add_owner_password_hash_to_owners.sql
 
+\echo '=== Running migration 0010: create units ==='
+\i /docker-entrypoint-initdb.d/migrations/0010_create_units.sql
+
+\echo '=== Running migration 0011: create unit_images ==='
+\i /docker-entrypoint-initdb.d/migrations/0011_create_unit_images.sql
+
+\echo '=== Running migration 0012: create unit_amenities ==='
+\i /docker-entrypoint-initdb.d/migrations/0012_create_unit_amenities.sql
+
+\echo '=== Running migration 0013: create seasonal_pricing ==='
+\i /docker-entrypoint-initdb.d/migrations/0013_create_seasonal_pricing.sql
+
+\echo '=== Running migration 0014: create date_blocks ==='
+\i /docker-entrypoint-initdb.d/migrations/0014_create_date_blocks.sql
+
+\echo '=== Running migration 0015: units availability integrity cleanup ==='
+\i /docker-entrypoint-initdb.d/migrations/0015_units_availability_integrity_cleanup.sql
+
 \echo '=== All migrations completed successfully ==='
