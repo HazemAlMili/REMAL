@@ -1,0 +1,144 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using RentalPlatform.API.DTOs.Requests.Owners;
+using RentalPlatform.API.DTOs.Responses.Owners;
+using RentalPlatform.API.Models;
+using RentalPlatform.Business.Interfaces;
+using RentalPlatform.Data.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace RentalPlatform.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class OwnersController : ControllerBase
+{
+    private readonly IOwnerService _ownerService;
+
+    public OwnersController(IOwnerService ownerService)
+    {
+        _ownerService = ownerService;
+    }
+
+    [HttpGet]
+    [Authorize(Policy = "InternalAdminReadOwners")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<OwnerListItemResponse>>>> GetAll(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        [FromQuery] bool includeInactive = true)
+    {
+        var owners = await _ownerService.GetAllAsync(includeInactive);
+        
+        var totalCount = owners.Count;
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+        
+        var pagedOwners = owners
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(MapToListItemResponse)
+            .ToList();
+
+        var pagination = new PaginationMeta(totalCount, page, pageSize, totalPages);
+        
+        return Ok(ApiResponse<IReadOnlyList<OwnerListItemResponse>>.CreateSuccess(pagedOwners, pagination: pagination));
+    }
+
+    [HttpGet("{id}")]
+    [Authorize(Policy = "InternalAdminReadOwners")]
+    public async Task<ActionResult<ApiResponse<OwnerDetailsResponse>>> GetById(Guid id)
+    {
+        var owner = await _ownerService.GetByIdAsync(id);
+        
+        if (owner == null)
+            return NotFound(ApiResponse.CreateFailure("Owner not found."));
+
+        return Ok(ApiResponse<OwnerDetailsResponse>.CreateSuccess(MapToDetailsResponse(owner)));
+    }
+
+    [HttpPost]
+    [Authorize(Policy = "SuperAdminOnly")]
+    public async Task<ActionResult<ApiResponse<OwnerDetailsResponse>>> Create(CreateOwnerRequest request)
+    {
+        var owner = await _ownerService.CreateAsync(
+            request.Name,
+            request.Phone,
+            request.Email,
+            request.CommissionRate,
+            request.Notes,
+            request.Status,
+            request.Password
+        );
+
+        return Ok(ApiResponse<OwnerDetailsResponse>.CreateSuccess(MapToDetailsResponse(owner), "Owner created successfully."));
+    }
+
+    [HttpPut("{id}")]
+    [Authorize(Policy = "SuperAdminOnly")]
+    public async Task<ActionResult<ApiResponse<OwnerDetailsResponse>>> Update(Guid id, UpdateOwnerRequest request)
+    {
+        var owner = await _ownerService.UpdateAsync(
+            id,
+            request.Name,
+            request.Phone,
+            request.Email,
+            request.CommissionRate,
+            request.Notes,
+            request.Status
+        );
+
+        return Ok(ApiResponse<OwnerDetailsResponse>.CreateSuccess(MapToDetailsResponse(owner), "Owner updated successfully."));
+    }
+
+    [HttpPatch("{id}/status")]
+    [Authorize(Policy = "SuperAdminOnly")]
+    public async Task<ActionResult<ApiResponse<OwnerDetailsResponse>>> UpdateStatus(Guid id, UpdateOwnerStatusRequest request)
+    {
+        var owner = await _ownerService.GetByIdAsync(id);
+        if (owner == null)
+            return NotFound(ApiResponse.CreateFailure("Owner not found."));
+
+        // Use UpdateAsync to change only the status
+        var updatedOwner = await _ownerService.UpdateAsync(
+            id,
+            owner.Name,
+            owner.Phone,
+            owner.Email,
+            owner.CommissionRate,
+            owner.Notes,
+            request.Status
+        );
+
+        return Ok(ApiResponse<OwnerDetailsResponse>.CreateSuccess(MapToDetailsResponse(updatedOwner), $"Owner status updated to {request.Status}."));
+    }
+
+    private static OwnerListItemResponse MapToListItemResponse(Owner owner)
+    {
+        return new OwnerListItemResponse(
+            owner.Id,
+            owner.Name,
+            owner.Phone,
+            owner.Email,
+            owner.CommissionRate,
+            owner.Status,
+            owner.CreatedAt
+        );
+    }
+
+    private static OwnerDetailsResponse MapToDetailsResponse(Owner owner)
+    {
+        return new OwnerDetailsResponse(
+            owner.Id,
+            owner.Name,
+            owner.Phone,
+            owner.Email,
+            owner.CommissionRate,
+            owner.Notes,
+            owner.Status,
+            owner.CreatedAt,
+            owner.UpdatedAt
+        );
+    }
+}
