@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using RentalPlatform.API.DTOs.Requests.Auth;
 using RentalPlatform.API.DTOs.Responses.Auth;
 using RentalPlatform.API.DTOs.Responses.Clients;
@@ -19,15 +20,18 @@ public class AuthController : ControllerBase
     private readonly IAuthService _authService;
     private readonly IClientService _clientService;
     private readonly ITokenService _tokenService;
+    private readonly IWebHostEnvironment _environment;
 
     public AuthController(
         IAuthService authService,
         IClientService clientService,
-        ITokenService tokenService)
+        ITokenService tokenService,
+        IWebHostEnvironment environment)
     {
         _authService = authService;
         _clientService = clientService;
         _tokenService = tokenService;
+        _environment = environment;
     }
 
     [HttpPost("client/register")]
@@ -89,6 +93,10 @@ public class AuthController : ControllerBase
         if (principal == null)
             return Unauthorized(ApiResponse.CreateFailure("Invalid refresh token."));
 
+        var tokenTypeClaim = principal.FindFirst("tokenType")?.Value;
+        if (tokenTypeClaim != "refresh_token")
+            return Unauthorized(ApiResponse.CreateFailure("Invalid token type. Only refresh tokens are allowed."));
+
         var subClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var subjectTypeClaim = principal.FindFirst("subjectType")?.Value;
         var roleClaim = principal.FindFirst(ClaimTypes.Role)?.Value;
@@ -142,7 +150,7 @@ public class AuthController : ControllerBase
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = false, // Set to true in production (HTTPS)
+            Secure = !_environment.IsDevelopment(),
             SameSite = SameSiteMode.Strict,
             Expires = DateTime.UtcNow.AddDays(7)
         };
