@@ -165,6 +165,12 @@ builder.Services.AddScoped<IOwnerService, OwnerService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IAdminUserService, AdminUserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUnitService, UnitService>();
+builder.Services.AddScoped<IUnitImageService, UnitImageService>();
+builder.Services.AddScoped<IUnitAmenityService, UnitAmenityService>();
+builder.Services.AddScoped<ISeasonalPricingService, SeasonalPricingService>();
+builder.Services.AddScoped<IDateBlockService, DateBlockService>();
+builder.Services.AddScoped<IUnitAvailabilityService, UnitAvailabilityService>();
 
 var app = builder.Build();
 

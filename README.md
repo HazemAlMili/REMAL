@@ -17,6 +17,7 @@ This README serves as the master compilation of all architectural phases, databa
 6. [Tier 1: Database Migrations](#domain-2-tier-1-database-migrations)
 7. [Tier 2: Data Access (EF Core)](#domain-2-tier-2-data-access-ef-core)
 8. [Tier 3: Business Logic](#domain-2-tier-3-business-logic)
+9. [Tier 4: API Layer](#domain-2-tier-4-api-layer)
 
 ---
 
@@ -134,3 +135,25 @@ Blocking identically checking explicit combinations natively generating bounds s
 
 ### Agnostic Availability Queries (`UnitAvailabilityService`)
 Calculated operational representations filtering `DateBlock`s computing structural constraints resolving nightly sequences seamlessly bypassing booking metrics extracting arrays formatted accurately into Base vs Seasonal structures calculating exact total representations dynamically natively securely!
+
+---
+
+## Domain 2, Tier 4: API Layer (Units & Availability)
+
+### API-UA-01: DTO Contracts & Validators
+Constructed explicitly mapped Request and Response shapes (e.g., `UnitListItemResponse`, `UnitPricingResponse`) to maintain an absolute barrier against EF Core entities bleeding into HTTP outputs. Implemented rigorous `FluentValidation` patterns enforcing string safety, positive numbers, and correct data combinations across the domain.
+
+### API-UA-02: UnitsController
+Formed distinct operational read paths partitioning unauthenticated Public queries (filtering down exclusively to active units) apart from authentic `Sales` analytics and `SuperAdmin` structural mapping functions (`POST`, `PATCH /status`), natively preventing unauthorized mutations.
+
+### API-UA-03: UnitImagesController
+Safely isolated ordinal display tracking and metadata tagging (like `isCover`) avoiding complex raw binary upload logic bleeding into the metadata pipeline loops. Provided safe 404 blockades preventing offline-unit access visually.
+
+### API-UA-04: UnitAmenitiesController
+Simplified relation assignments (`AssignAsync`, `ReplaceAllAsync`) mapping directly between explicit ID vectors ensuring clean assignment without convoluting the pipeline natively using broader index or categorical searches prematurely. 
+
+### API-UA-05: Scheduling (SeasonalPricingController & DateBlocksController)
+Executed strict `SuperAdminOnly` structural modifiers projecting accurate chronologies without allowing scheduling payloads to falsely trigger real Booking logic evaluations prematurely. Heavily relies natively upon Tier 3 business validation intercepts to resolve overlapping issues intuitively.
+
+### API-UA-06: UnitAvailabilityController
+Explicitly configured public-facing operational endpoints `operational-check` and `pricing/calculate` retrieving dynamic arrays mapping operational limits accurately securely avoiding semantic "booking confirmation" promises perfectly closing the layer!
