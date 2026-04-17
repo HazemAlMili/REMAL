@@ -99,7 +99,7 @@ Constructed endpoint clusters enforcing `[Authorize]` mappings securely shieldin
 
 ---
 
-## Domain 2, Tier 1: Database Migrations (Units & Availability)
+## Domain 2, Tier 1: Database Migrations
 
 ### DB-UA-01 & DB-UA-02: Units & Unit Images
 Created the inventory anchor `units` applying foreign constraints scaling properly mapping relationships to owners and areas structurally. Ensured relational media blocks dynamically matching cascades across `unit_images`.
@@ -138,7 +138,7 @@ Calculated operational representations filtering `DateBlock`s computing structur
 
 ---
 
-## Domain 2, Tier 4: API Layer (Units & Availability)
+## Domain 2, Tier 4: API Layer
 
 ### API-UA-01: DTO Contracts & Validators
 Constructed explicitly mapped Request and Response shapes (e.g., `UnitListItemResponse`, `UnitPricingResponse`) to maintain an absolute barrier against EF Core entities bleeding into HTTP outputs. Implemented rigorous `FluentValidation` patterns enforcing string safety, positive numbers, and correct data combinations across the domain.
