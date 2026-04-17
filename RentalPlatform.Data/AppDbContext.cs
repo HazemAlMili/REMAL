@@ -17,6 +17,11 @@ public class AppDbContext : DbContext
     public DbSet<AdminUser> AdminUsers { get; set; } = null!;
     public DbSet<Client> Clients { get; set; } = null!;
     public DbSet<Owner> Owners { get; set; } = null!;
+    public DbSet<Unit> Units { get; set; } = null!;
+    public DbSet<UnitImage> UnitImages { get; set; } = null!;
+    public DbSet<UnitAmenity> UnitAmenities { get; set; } = null!;
+    public DbSet<SeasonalPricing> SeasonalPricings { get; set; } = null!;
+    public DbSet<DateBlock> DateBlocks { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -66,7 +71,7 @@ public class AppDbContext : DbContext
             }
             else if (entry.State == EntityState.Deleted)
             {
-                if (entry.Entity is Client || entry.Entity is Owner)
+                if (entry.Entity is Client || entry.Entity is Owner || entry.Entity is Unit)
                 {
                     entry.State = EntityState.Modified;
                     

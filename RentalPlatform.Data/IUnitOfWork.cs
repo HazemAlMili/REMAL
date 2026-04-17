@@ -12,6 +12,11 @@ public interface IUnitOfWork
     IRepository<AdminUser> AdminUsers { get; }
     IRepository<Client> Clients { get; }
     IRepository<Owner> Owners { get; }
+    IRepository<Unit> Units { get; }
+    IRepository<UnitImage> UnitImages { get; }
+    IRepository<UnitAmenity> UnitAmenities { get; }
+    IRepository<SeasonalPricing> SeasonalPricings { get; }
+    IRepository<DateBlock> DateBlocks { get; }
 
     int SaveChanges();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

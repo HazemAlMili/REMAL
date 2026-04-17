@@ -14,6 +14,11 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<AdminUser> AdminUsers { get; }
     public IRepository<Client> Clients { get; }
     public IRepository<Owner> Owners { get; }
+    public IRepository<Unit> Units { get; }
+    public IRepository<UnitImage> UnitImages { get; }
+    public IRepository<UnitAmenity> UnitAmenities { get; }
+    public IRepository<SeasonalPricing> SeasonalPricings { get; }
+    public IRepository<DateBlock> DateBlocks { get; }
 
     public UnitOfWork(AppDbContext context)
     {
@@ -23,6 +28,11 @@ public class UnitOfWork : IUnitOfWork
         AdminUsers = new Repository<AdminUser>(_context);
         Clients = new Repository<Client>(_context);
         Owners = new Repository<Owner>(_context);
+        Units = new Repository<Unit>(_context);
+        UnitImages = new Repository<UnitImage>(_context);
+        UnitAmenities = new Repository<UnitAmenity>(_context);
+        SeasonalPricings = new Repository<SeasonalPricing>(_context);
+        DateBlocks = new Repository<DateBlock>(_context);
     }
 
     public int SaveChanges()
