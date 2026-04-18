@@ -49,24 +49,21 @@ public class AppDbContext : DbContext
         {
             if (entry.State == EntityState.Added)
             {
-                var createdAtProp = entry.Property("CreatedAt");
-                if (createdAtProp != null)
+                if (entry.Metadata.FindProperty("CreatedAt") != null)
                 {
-                    createdAtProp.CurrentValue = DateTime.UtcNow;
+                    entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
                 }
                 
-                var updatedAtProp = entry.Property("UpdatedAt");
-                if (updatedAtProp != null)
+                if (entry.Metadata.FindProperty("UpdatedAt") != null)
                 {
-                    updatedAtProp.CurrentValue = DateTime.UtcNow;
+                    entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
                 }
             }
             else if (entry.State == EntityState.Modified)
             {
-                var updatedAtProp = entry.Property("UpdatedAt");
-                if (updatedAtProp != null && entry.Property("UpdatedAt").IsModified == false)
+                if (entry.Metadata.FindProperty("UpdatedAt") != null)
                 {
-                    updatedAtProp.CurrentValue = DateTime.UtcNow;
+                    entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
                 }
             }
             else if (entry.State == EntityState.Deleted)
@@ -75,16 +72,14 @@ public class AppDbContext : DbContext
                 {
                     entry.State = EntityState.Modified;
                     
-                    var deletedAtProp = entry.Property("DeletedAt");
-                    if (deletedAtProp != null)
+                    if (entry.Metadata.FindProperty("DeletedAt") != null)
                     {
-                        deletedAtProp.CurrentValue = DateTime.UtcNow;
+                        entry.Property("DeletedAt").CurrentValue = DateTime.UtcNow;
                     }
 
-                    var updatedAtProp = entry.Property("UpdatedAt");
-                    if (updatedAtProp != null)
+                    if (entry.Metadata.FindProperty("UpdatedAt") != null)
                     {
-                        updatedAtProp.CurrentValue = DateTime.UtcNow;
+                        entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
                     }
                 }
             }

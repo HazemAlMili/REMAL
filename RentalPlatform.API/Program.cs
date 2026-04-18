@@ -25,9 +25,9 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "REMAL Platform API - Tier 4 (Master Data + Auth)",
+        Title = "REMAL Platform API - Domain 1 & 2",
         Version = "v1",
-        Description = "Amenities, Areas, Clients, Owners, AdminUsers, Authentication"
+        Description = "Master Data (Amenities, Areas, Clients, Owners, AdminUsers) + Inventory (Units, Images, Seasonal Pricing, Date Blocks, Availability)"
     });
 
     // Add JWT Bearer authentication to Swagger
@@ -54,6 +54,13 @@ builder.Services.AddSwaggerGen(options =>
             },
             new string[] {}
         }
+    });
+
+    options.MapType<DateOnly>(() => new Microsoft.OpenApi.Models.OpenApiSchema 
+    { 
+        Type = "string", 
+        Format = "date",
+        Example = new Microsoft.OpenApi.Any.OpenApiString(DateTime.Today.ToString("yyyy-MM-dd"))
     });
 });
 
