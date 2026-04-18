@@ -19,6 +19,11 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<UnitAmenity> UnitAmenities { get; }
     public IRepository<SeasonalPricing> SeasonalPricings { get; }
     public IRepository<DateBlock> DateBlocks { get; }
+    public IRepository<Booking> Bookings { get; }
+    public IRepository<BookingStatusHistory> BookingStatusHistories { get; }
+    public IRepository<CrmLead> CrmLeads { get; }
+    public IRepository<CrmNote> CrmNotes { get; }
+    public IRepository<CrmAssignment> CrmAssignments { get; }
 
     public UnitOfWork(AppDbContext context)
     {
@@ -33,6 +38,11 @@ public class UnitOfWork : IUnitOfWork
         UnitAmenities = new Repository<UnitAmenity>(_context);
         SeasonalPricings = new Repository<SeasonalPricing>(_context);
         DateBlocks = new Repository<DateBlock>(_context);
+        Bookings = new Repository<Booking>(_context);
+        BookingStatusHistories = new Repository<BookingStatusHistory>(_context);
+        CrmLeads = new Repository<CrmLead>(_context);
+        CrmNotes = new Repository<CrmNote>(_context);
+        CrmAssignments = new Repository<CrmAssignment>(_context);
     }
 
     public int SaveChanges()

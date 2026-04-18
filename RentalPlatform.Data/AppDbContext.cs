@@ -22,6 +22,11 @@ public class AppDbContext : DbContext
     public DbSet<UnitAmenity> UnitAmenities { get; set; } = null!;
     public DbSet<SeasonalPricing> SeasonalPricings { get; set; } = null!;
     public DbSet<DateBlock> DateBlocks { get; set; } = null!;
+    public DbSet<Booking> Bookings { get; set; } = null!;
+    public DbSet<BookingStatusHistory> BookingStatusHistories { get; set; } = null!;
+    public DbSet<CrmLead> CrmLeads { get; set; } = null!;
+    public DbSet<CrmNote> CrmNotes { get; set; } = null!;
+    public DbSet<CrmAssignment> CrmAssignments { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

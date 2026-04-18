@@ -17,7 +17,11 @@ public interface IUnitOfWork
     IRepository<UnitAmenity> UnitAmenities { get; }
     IRepository<SeasonalPricing> SeasonalPricings { get; }
     IRepository<DateBlock> DateBlocks { get; }
-
+    IRepository<Booking> Bookings { get; }
+    IRepository<BookingStatusHistory> BookingStatusHistories { get; }
+    IRepository<CrmLead> CrmLeads { get; }
+    IRepository<CrmNote> CrmNotes { get; }
+    IRepository<CrmAssignment> CrmAssignments { get; }
     int SaveChanges();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

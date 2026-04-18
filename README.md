@@ -22,6 +22,7 @@ This README serves as the master compilation of all architectural phases, databa
 ### Domain 3: Booking & CRM
 10. [Pre-Tier: Architecture Decisions](#domain-3-pre-tier-architecture-decisions)
 11. [Tier 1: Database Migrations](#domain-3-tier-1-database-migrations)
+12. [Tier 2: Data Access (EF Core)](#domain-3-tier-2-data-access-ef-core)
 
 ---
 
@@ -190,3 +191,18 @@ Isolated workload tracking to active tracking via `crm_assignments`, rejecting w
 
 ### DB-BC-06: Integrity Checkgate
 Swept constraints globally locking the Data Access definitions securely into exact `0021_booking_crm_integrity_cleanup_verify` specifications proving explicitly that no fields breached the isolated boundaries natively.
+
+---
+
+## Domain 3, Tier 2: Data Access (EF Core)
+
+### DA-BC-01: AppDbContext Extension
+Successfully extended `AppDbContext` to include the Booking & CRM domain entities. Integrated `Bookings`, `BookingStatusHistories`, `CrmLeads`, `CrmNotes`, and `CrmAssignments` while ensuring that the global soft-delete filter does not leak into this domain, preserving the physical deletion contract.
+
+### DA-BC-02 to DA-BC-05: Domain Entity Configurations
+- **Booking & Audit:** Implemented `Booking` and `BookingStatusHistory` with strict `decimal(12,2)` precision for money and `DateOnly` for stay period semantics.
+- **CRM Pipeline:** Created `CrmLead` as a standalone inquiry record, independent of booking state to maintain funnel integrity.
+- **Exactly-One-Parent Logic:** Configured `CrmNote` and `CrmAssignment` to support exclusive parent relationships (either a Booking or a Lead) through nullable EF Core mappings and DB check constraints, avoiding polymorphic engine bloat.
+
+### DA-BC-06: UnitOfWork Expansion
+Exposed the new domain through the project's official `IUnitOfWork` repository facade. This ensures that the upcoming Business tier can interact with the Booking & CRM data safely and consistently without direct `DbContext` dependencies.
