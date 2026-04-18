@@ -19,6 +19,10 @@ This README serves as the master compilation of all architectural phases, databa
 8. [Tier 3: Business Logic](#domain-2-tier-3-business-logic)
 9. [Tier 4: API Layer](#domain-2-tier-4-api-layer)
 
+### Domain 3: Booking & CRM
+10. [Pre-Tier: Architecture Decisions](#domain-3-pre-tier-architecture-decisions)
+11. [Tier 1: Database Migrations](#domain-3-tier-1-database-migrations)
+
 ---
 
 ## Domain 1, Tier 1: Database Migrations
@@ -157,3 +161,32 @@ Executed strict `SuperAdminOnly` structural modifiers projecting accurate chrono
 
 ### API-UA-06: UnitAvailabilityController
 Explicitly configured public-facing operational endpoints `operational-check` and `pricing/calculate` retrieving dynamic arrays mapping operational limits accurately securely avoiding semantic "booking confirmation" promises perfectly closing the layer!
+
+---
+
+## Domain 3, Pre-Tier: Architecture Decisions
+
+### PRE-BOOK-01: Booking Date Semantics
+Explicitly segregated the semantic difference between operational "pricing blocks" and standard hotel check-in/check-outs, establishing the absolute boundary rules converting check-in/checkout periods safely preventing trailing day bugs.
+
+---
+
+## Domain 3, Tier 1: Database Migrations
+
+### DB-BC-01: Core Bookings Table
+Constructed the `bookings` baseline with rigorous checking protecting the state array (`inquiry`, `pending`, `confirmed`, `cancelled`, `completed`). Frozen strict stay arrays avoiding `deleted_at` soft deletions over the core record natively.
+
+### DB-BC-02: Booking Status History
+Implemented specific targeted audit transitions (`booking_status_history`) isolating historical event streams explicitly avoiding polymorphic attachment bloat schemas perfectly.
+
+### DB-BC-03: CRM Leads
+Mapped standalone pre-booking funnels securely inside `crm_leads`. Enforced strict temporal stay ranges permitting partially null boundaries perfectly fitting the pre-conversion funnel realities.
+
+### DB-BC-04: CRM Notes
+Generated exact one-to-one constraint structures safely anchoring text followups exactly to a single Lead or a Booking using `ck_crm_notes_exactly_one_parent`. 
+
+### DB-BC-05: CRM Assignments
+Isolated workload tracking to active tracking via `crm_assignments`, rejecting workflow-bloat fields safely.
+
+### DB-BC-06: Integrity Checkgate
+Swept constraints globally locking the Data Access definitions securely into exact `0021_booking_crm_integrity_cleanup_verify` specifications proving explicitly that no fields breached the isolated boundaries natively.

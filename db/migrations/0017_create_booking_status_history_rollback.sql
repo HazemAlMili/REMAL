@@ -1,0 +1,10 @@
+DROP INDEX IF EXISTS ix_booking_status_history_new_status;
+DROP INDEX IF EXISTS ix_booking_status_history_changed_at;
+DROP INDEX IF EXISTS ix_booking_status_history_booking_id;
+
+ALTER TABLE booking_status_history DROP CONSTRAINT IF EXISTS ck_booking_status_history_new_status;
+ALTER TABLE booking_status_history DROP CONSTRAINT IF EXISTS ck_booking_status_history_old_status;
+ALTER TABLE booking_status_history DROP CONSTRAINT IF EXISTS fk_booking_status_history_changed_by_admin_user_id;
+ALTER TABLE booking_status_history DROP CONSTRAINT IF EXISTS fk_booking_status_history_booking_id;
+
+DROP TABLE IF EXISTS booking_status_history;
