@@ -152,6 +152,12 @@ builder.Services.AddAuthorization(options =>
               .RequireRole(RentalPlatform.Shared.Enums.AdminRole.SuperAdmin.ToString(), 
                            RentalPlatform.Shared.Enums.AdminRole.Sales.ToString(), 
                            RentalPlatform.Shared.Enums.AdminRole.Finance.ToString()));
+
+    options.AddPolicy("InternalAdminRead", policy => 
+        policy.RequireClaim("subjectType", "admin")
+              .RequireRole(RentalPlatform.Shared.Enums.AdminRole.SuperAdmin.ToString(), 
+                           RentalPlatform.Shared.Enums.AdminRole.Sales.ToString(), 
+                           RentalPlatform.Shared.Enums.AdminRole.Finance.ToString()));
 });
 
 // Configure Routing
@@ -178,6 +184,11 @@ builder.Services.AddScoped<IUnitAmenityService, UnitAmenityService>();
 builder.Services.AddScoped<ISeasonalPricingService, SeasonalPricingService>();
 builder.Services.AddScoped<IDateBlockService, DateBlockService>();
 builder.Services.AddScoped<IUnitAvailabilityService, UnitAvailabilityService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IBookingLifecycleService, BookingLifecycleService>();
+builder.Services.AddScoped<ICrmLeadService, CrmLeadService>();
+builder.Services.AddScoped<ICrmNoteService, CrmNoteService>();
+builder.Services.AddScoped<ICrmAssignmentService, CrmAssignmentService>();
 
 var app = builder.Build();
 

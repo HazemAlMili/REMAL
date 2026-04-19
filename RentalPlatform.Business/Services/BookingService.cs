@@ -228,6 +228,14 @@ public class BookingService : IBookingService
         return booking;
     }
 
+    public async Task<IReadOnlyList<BookingStatusHistory>> GetStatusHistoryAsync(Guid bookingId, CancellationToken cancellationToken = default)
+    {
+        return await _unitOfWork.BookingStatusHistories.Query()
+            .Where(h => h.BookingId == bookingId)
+            .OrderByDescending(h => h.ChangedAt)
+            .ToListAsync(cancellationToken);
+    }
+
     // ---------------------------------------------------------------
     //  Private helpers
     // ---------------------------------------------------------------
