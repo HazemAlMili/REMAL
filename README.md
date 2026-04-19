@@ -23,6 +23,7 @@ This README serves as the master compilation of all architectural phases, databa
 10. [Pre-Tier: Architecture Decisions](#domain-3-pre-tier-architecture-decisions)
 11. [Tier 1: Database Migrations](#domain-3-tier-1-database-migrations)
 12. [Tier 2: Data Access (EF Core)](#domain-3-tier-2-data-access-ef-core)
+13. [Tier 3: Business Logic](#domain-3-tier-3-business-logic)
 
 ---
 
@@ -206,3 +207,25 @@ Successfully extended `AppDbContext` to include the Booking & CRM domain entitie
 
 ### DA-BC-06: UnitOfWork Expansion
 Exposed the new domain through the project's official `IUnitOfWork` repository facade. This ensures that the upcoming Business tier can interact with the Booking & CRM data safely and consistently without direct `DbContext` dependencies.
+
+---
+
+## Domain 3, Tier 3: Business Logic
+
+### BZ-BC-01: Contracts & Domain Decision Note
+Defined five service interfaces (`IBookingService`, `IBookingLifecycleService`, `ICrmLeadService`, `ICrmNoteService`, `ICrmAssignmentService`) and froze all domain rules in decision note `0007_booking_crm_business_scope.md`. Key frozen decisions: check-in/check-out semantics with `checkOutDate - 1 day` pricing translation, confirmed-only blocking (pending/inquiry do not hard-block), default `pending` status, lead conversion atomicity, and explicit exclusion of payments/reviews/notifications.
+
+### BZ-BC-02: BookingService
+Implemented core booking creation and pending-update flows. Validates client/unit/admin existence, guest count against unit capacity, and source whitelist (`direct`, `admin`, `phone`, `whatsapp`, `website`). Computes pricing snapshot at creation time using `IUnitAvailabilityService.CalculatePricingAsync` with the frozen date translation rule. Enforces confirmed-only overlap blocking and creates an initial `BookingStatusHistory` row on every new booking. Owner ID is snapshotted from `unit.OwnerId`, never from caller input.
+
+### BZ-BC-03: BookingLifecycleService
+Manages controlled status transitions with an explicit transition matrix: `pending/inquiry → confirmed`, `inquiry/pending/confirmed → cancelled`, `confirmed → completed`. Every valid transition appends one `BookingStatusHistory` row. `ConfirmAsync` re-checks that the unit is still active, operational availability is clear, and no confirmed overlap exists (excluding self). No money mutation, no payment/refund/notification side effects.
+
+### BZ-BC-04: CrmLeadService
+Manages CRM leads with contact validation (name, phone required), desired-stay validation (date range, guest count), source/status whitelists, and optional reference checks. `ConvertToBookingAsync` delegates booking creation entirely to `IBookingService.CreateAsync` — lead becomes `converted` only on successful booking creation. Enforces client/unit mismatch detection against pre-linked lead data and blocks conversion of already-converted or lost leads. Lead remains a distinct entity with no `booking_id` field.
+
+### BZ-BC-05: CrmNoteService
+Provides exactly-one-parent note management (booking XOR lead). Each `Add` method explicitly sets the other parent to `null`. Parent existence validated on all get/add operations. Note text required after trimming. Physical delete in current MVP. No attachments, version history, or generic parent abstraction.
+
+### BZ-BC-06: CrmAssignmentService
+Enforces one-active-assignment semantics per parent entity. Reassignment deactivates all previous active rows before creating a new one. Idempotent guard returns existing assignment when assigning the same admin. Parent snapshot fields (`booking.AssignedAdminUserId` / `lead.AssignedAdminUserId`) are always synchronized in lockstep with assignment rows. Clear operations deactivate rows and set snapshot to `null`. No queue, SLA, escalation, or notification logic.
