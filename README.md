@@ -24,6 +24,7 @@ This README serves as the master compilation of all architectural phases, databa
 11. [Tier 1: Database Migrations](#domain-3-tier-1-database-migrations)
 12. [Tier 2: Data Access (EF Core)](#domain-3-tier-2-data-access-ef-core)
 13. [Tier 3: Business Logic](#domain-3-tier-3-business-logic)
+14. [Tier 4: API Layer](#domain-3-tier-4-api-layer)
 
 ---
 
@@ -229,3 +230,23 @@ Provides exactly-one-parent note management (booking XOR lead). Each `Add` metho
 
 ### BZ-BC-06: CrmAssignmentService
 Enforces one-active-assignment semantics per parent entity. Reassignment deactivates all previous active rows before creating a new one. Idempotent guard returns existing assignment when assigning the same admin. Parent snapshot fields (`booking.AssignedAdminUserId` / `lead.AssignedAdminUserId`) are always synchronized in lockstep with assignment rows. Clear operations deactivate rows and set snapshot to `null`. No queue, SLA, escalation, or notification logic.
+
+---
+
+## Domain 3, Tier 4: API Layer
+
+### API-BC-01: DTO Contracts & Validators
+Implemented 21+ explicit DTOs (e.g., BookingDetailsResponse, PublicCreateCrmLeadRequest) and rigorous FluentValidation rules, ensuring no entities leak into the network.
+
+### API-BC-02: BookingsController (Internal Management)
+Established internal operational surface for booking management, providing paginated lists, detailed reads, status history auditing, and limited updates for pending records.
+
+### API-BC-03: BookingLifecycleController (Atomic Transitions)
+Isolated high-impact status changes (confirm, cancel, complete) from CRUD. Automatically extracts Admin identity from JWT claims for secure auditing.
+
+### API-BC-04: CrmLeadsController (Public & Internal)
+Bridged website lead capture with the internal sales pipeline. Supports anonymous public capture and authorized lead-to-booking conversion flows.
+
+### API-BC-05 & API-BC-06: CRM Support (Notes & Assignments)
+Centralized operational follow-ups and workload ownership management. Strictly enforces exactly-one-parent and one-active-assignment semantics across the domain.
+
