@@ -26,6 +26,9 @@ This README serves as the master compilation of all architectural phases, databa
 13. [Tier 3: Business Logic](#domain-3-tier-3-business-logic)
 14. [Tier 4: API Layer](#domain-3-tier-4-api-layer)
 
+### Domain 4: Finance & Payments
+15. [Tier 1: Database Migrations](#domain-4-tier-1-database-migrations)
+
 ---
 
 ## Domain 1, Tier 1: Database Migrations
@@ -249,4 +252,20 @@ Bridged website lead capture with the internal sales pipeline. Supports anonymou
 
 ### API-BC-05 & API-BC-06: CRM Support (Notes & Assignments)
 Centralized operational follow-ups and workload ownership management. Strictly enforces exactly-one-parent and one-active-assignment semantics across the domain.
+
+---
+
+## Domain 4, Tier 1: Database Migrations
+
+### DB-PF-01: Payments Core
+Established the core `payments` table linked to bookings, enforcing strict status and method whitelists alongside positive amount verification.
+
+### DB-PF-02 & DB-PF-03: Invoices & Breakdown
+Implemented `invoices` and `invoice_items` as the standalone billing authority. Enforced atomic line-item math (`line_total = quantity * unit_amount`) and total/subtotal equality for the MVP baseline. Established cascade deletion paths to prevent orphaned items.
+
+### DB-PF-04: Owner Payout Basis
+Constructed the mechanism to track owner earnings and platform commissions per booking. Implemented mathematical formula checks (`payout = gross - commission`) and range boundaries for commission snapshots.
+
+### DB-PF-05: Finance Integrity Checkgate
+Successfully executed a final domain sweep, verifying universal `DECIMAL(12,2)` usage, correct constraint naming, and the absolute removal of out-of-scope fields (tax engines, external gateway payloads, refunds) to protect the MVP scope.
 

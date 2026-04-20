@@ -67,5 +67,20 @@
 \echo '=== Running migration 0021: booking crm integrity cleanup ==='
 \i /docker-entrypoint-initdb.d/migrations/0021_booking_crm_integrity_cleanup.sql
 
+\echo '=== Running migration 0022: create payments ==='
+\i /docker-entrypoint-initdb.d/migrations/0022_create_payments.sql
+
+\echo '=== Running migration 0023: create invoices ==='
+\i /docker-entrypoint-initdb.d/migrations/0023_create_invoices.sql
+
+\echo '=== Running migration 0024: create invoice items ==='
+\i /docker-entrypoint-initdb.d/migrations/0024_create_invoice_items.sql
+
+\echo '=== Running migration 0025: create owner payouts ==='
+\i /docker-entrypoint-initdb.d/migrations/0025_create_owner_payouts.sql
+
+\echo '=== Running migration 0026: payments finance integrity cleanup ==='
+\i /docker-entrypoint-initdb.d/migrations/0026_payments_finance_integrity_cleanup.sql
+
 \echo '=== All migrations completed successfully ==='
 
