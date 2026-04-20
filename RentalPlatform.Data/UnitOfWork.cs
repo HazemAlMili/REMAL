@@ -24,6 +24,10 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<CrmLead> CrmLeads { get; }
     public IRepository<CrmNote> CrmNotes { get; }
     public IRepository<CrmAssignment> CrmAssignments { get; }
+    public IRepository<Payment> Payments { get; }
+    public IRepository<Invoice> Invoices { get; }
+    public IRepository<InvoiceItem> InvoiceItems { get; }
+    public IRepository<OwnerPayout> OwnerPayouts { get; }
 
     public UnitOfWork(AppDbContext context)
     {
@@ -43,6 +47,10 @@ public class UnitOfWork : IUnitOfWork
         CrmLeads = new Repository<CrmLead>(_context);
         CrmNotes = new Repository<CrmNote>(_context);
         CrmAssignments = new Repository<CrmAssignment>(_context);
+        Payments = new Repository<Payment>(_context);
+        Invoices = new Repository<Invoice>(_context);
+        InvoiceItems = new Repository<InvoiceItem>(_context);
+        OwnerPayouts = new Repository<OwnerPayout>(_context);
     }
 
     public int SaveChanges()

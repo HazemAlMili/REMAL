@@ -22,6 +22,10 @@ public interface IUnitOfWork
     IRepository<CrmLead> CrmLeads { get; }
     IRepository<CrmNote> CrmNotes { get; }
     IRepository<CrmAssignment> CrmAssignments { get; }
+    IRepository<Payment> Payments { get; }
+    IRepository<Invoice> Invoices { get; }
+    IRepository<InvoiceItem> InvoiceItems { get; }
+    IRepository<OwnerPayout> OwnerPayouts { get; }
     int SaveChanges();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

@@ -27,6 +27,11 @@ public class AppDbContext : DbContext
     public DbSet<CrmLead> CrmLeads { get; set; } = null!;
     public DbSet<CrmNote> CrmNotes { get; set; } = null!;
     public DbSet<CrmAssignment> CrmAssignments { get; set; } = null!;
+    public DbSet<Payment> Payments { get; set; } = null!;
+    public DbSet<Invoice> Invoices { get; set; } = null!;
+    public DbSet<InvoiceItem> InvoiceItems { get; set; } = null!;
+    public DbSet<OwnerPayout> OwnerPayouts { get; set; } = null!;
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
