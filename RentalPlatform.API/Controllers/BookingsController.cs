@@ -165,7 +165,7 @@ public class BookingsController : ControllerBase
         {
             Id = history.Id,
             BookingId = history.BookingId,
-            OldStatus = history.OldStatus ?? "Initial",
+            OldStatus = history.OldStatus,
             NewStatus = history.NewStatus,
             ChangedByAdminUserId = history.ChangedByAdminUserId ?? Guid.Empty,
             Notes = history.Notes,

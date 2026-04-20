@@ -48,4 +48,24 @@
 \echo '=== Running migration 0015: units availability integrity cleanup ==='
 \i /docker-entrypoint-initdb.d/migrations/0015_units_availability_integrity_cleanup.sql
 
+
+\echo '=== Running migration 0016: create bookings ==='
+\i /docker-entrypoint-initdb.d/migrations/0016_create_bookings.sql
+
+\echo '=== Running migration 0017: create booking status history ==='
+\i /docker-entrypoint-initdb.d/migrations/0017_create_booking_status_history.sql
+
+\echo '=== Running migration 0018: create crm leads ==='
+\i /docker-entrypoint-initdb.d/migrations/0018_create_crm_leads.sql
+
+\echo '=== Running migration 0019: create crm notes ==='
+\i /docker-entrypoint-initdb.d/migrations/0019_create_crm_notes.sql
+
+\echo '=== Running migration 0020: create crm assignments ==='
+\i /docker-entrypoint-initdb.d/migrations/0020_create_crm_assignments.sql
+
+\echo '=== Running migration 0021: booking crm integrity cleanup ==='
+\i /docker-entrypoint-initdb.d/migrations/0021_booking_crm_integrity_cleanup.sql
+
 \echo '=== All migrations completed successfully ==='
+

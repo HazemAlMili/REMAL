@@ -93,7 +93,7 @@ public class CrmNotesController : ControllerBase
             Id = note.Id,
             BookingId = note.BookingId,
             CrmLeadId = note.CrmLeadId,
-            CreatedByAdminUserId = note.CreatedByAdminUserId ?? Guid.Empty,
+            CreatedByAdminUserId = note.CreatedByAdminUserId,
             NoteText = note.NoteText,
             CreatedAt = note.CreatedAt,
             UpdatedAt = note.UpdatedAt
