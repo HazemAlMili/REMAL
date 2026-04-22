@@ -158,6 +158,19 @@ builder.Services.AddAuthorization(options =>
               .RequireRole(RentalPlatform.Shared.Enums.AdminRole.SuperAdmin.ToString(), 
                            RentalPlatform.Shared.Enums.AdminRole.Sales.ToString(), 
                            RentalPlatform.Shared.Enums.AdminRole.Finance.ToString()));
+
+    options.AddPolicy("InternalAnalyticsRead", policy =>
+        policy.RequireClaim("subjectType", "admin")
+              .RequireRole(RentalPlatform.Shared.Enums.AdminRole.SuperAdmin.ToString(),
+                           RentalPlatform.Shared.Enums.AdminRole.Sales.ToString(),
+                           RentalPlatform.Shared.Enums.AdminRole.Finance.ToString(),
+                           RentalPlatform.Shared.Enums.AdminRole.Tech.ToString()));
+
+    options.AddPolicy("OwnerOnly", policy =>
+        policy.RequireClaim("subjectType", "owner"));
+
+    options.AddPolicy("ClientOnly", policy =>
+        policy.RequireClaim("subjectType", "client"));
 });
 
 // Configure Routing
@@ -189,6 +202,28 @@ builder.Services.AddScoped<IBookingLifecycleService, BookingLifecycleService>();
 builder.Services.AddScoped<ICrmLeadService, CrmLeadService>();
 builder.Services.AddScoped<ICrmNoteService, CrmNoteService>();
 builder.Services.AddScoped<ICrmAssignmentService, CrmAssignmentService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IOwnerPayoutService, OwnerPayoutService>();
+builder.Services.AddScoped<IFinanceSummaryService, FinanceSummaryService>();
+builder.Services.AddScoped<IOwnerPortalUnitService, OwnerPortalUnitService>();
+builder.Services.AddScoped<IOwnerPortalBookingService, OwnerPortalBookingService>();
+builder.Services.AddScoped<IOwnerPortalFinanceService, OwnerPortalFinanceService>();
+builder.Services.AddScoped<IOwnerPortalDashboardService, OwnerPortalDashboardService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IReviewModerationService, ReviewModerationService>();
+builder.Services.AddScoped<IReviewReplyService, ReviewReplyService>();
+builder.Services.AddScoped<IReviewSummaryService, ReviewSummaryService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationDispatchService, NotificationDispatchService>();
+builder.Services.AddScoped<INotificationPreferenceService, NotificationPreferenceService>();
+builder.Services.AddScoped<INotificationInboxService, NotificationInboxService>();
+
+// Reports & Analytics services
+builder.Services.AddScoped<IReportingBookingAnalyticsService, ReportingBookingAnalyticsService>();
+builder.Services.AddScoped<IReportingFinanceAnalyticsService, ReportingFinanceAnalyticsService>();
+builder.Services.AddScoped<IReportingReviewsAnalyticsService, ReportingReviewsAnalyticsService>();
+builder.Services.AddScoped<IReportingNotificationsAnalyticsService, ReportingNotificationsAnalyticsService>();
 
 var app = builder.Build();
 

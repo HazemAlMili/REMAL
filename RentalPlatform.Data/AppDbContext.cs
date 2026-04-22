@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RentalPlatform.Data.Entities;
+using RentalPlatform.Data.ReadModels;
 
 namespace RentalPlatform.Data;
 
@@ -31,6 +32,29 @@ public class AppDbContext : DbContext
     public DbSet<Invoice> Invoices { get; set; } = null!;
     public DbSet<InvoiceItem> InvoiceItems { get; set; } = null!;
     public DbSet<OwnerPayout> OwnerPayouts { get; set; } = null!;
+
+    // Reviews & Ratings
+    public DbSet<Review> Reviews { get; set; } = null!;
+    public DbSet<ReviewStatusHistory> ReviewStatusHistories { get; set; } = null!;
+    public DbSet<UnitReviewSummary> UnitReviewSummaries { get; set; } = null!;
+    public DbSet<ReviewReply> ReviewReplies { get; set; } = null!;
+
+    // Notifications & Alerts
+    public DbSet<NotificationTemplate> NotificationTemplates { get; set; } = null!;
+    public DbSet<Notification> Notifications { get; set; } = null!;
+    public DbSet<NotificationDeliveryLog> NotificationDeliveryLogs { get; set; } = null!;
+    public DbSet<NotificationPreference> NotificationPreferences { get; set; } = null!;
+
+    // Owner Portal read-model views (keyless, read-only)
+    public DbSet<OwnerPortalUnitOverview> OwnerPortalUnitsOverview { get; set; } = null!;
+    public DbSet<OwnerPortalBookingOverview> OwnerPortalBookingsOverview { get; set; } = null!;
+    public DbSet<OwnerPortalFinanceOverview> OwnerPortalFinanceOverview { get; set; } = null!;
+
+    // Reports & Analytics read-model views (keyless, read-only)
+    public DbSet<ReportingBookingDailySummary> ReportingBookingDailySummaries { get; set; } = null!;
+    public DbSet<ReportingFinanceDailySummary> ReportingFinanceDailySummaries { get; set; } = null!;
+    public DbSet<ReportingReviewsDailySummary> ReportingReviewsDailySummaries { get; set; } = null!;
+    public DbSet<ReportingNotificationsDailySummary> ReportingNotificationsDailySummaries { get; set; } = null!;
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

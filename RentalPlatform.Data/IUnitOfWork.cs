@@ -1,6 +1,8 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using RentalPlatform.Data.Entities;
+using RentalPlatform.Data.ReadModels;
 using RentalPlatform.Data.Repositories;
 
 namespace RentalPlatform.Data;
@@ -26,6 +28,30 @@ public interface IUnitOfWork
     IRepository<Invoice> Invoices { get; }
     IRepository<InvoiceItem> InvoiceItems { get; }
     IRepository<OwnerPayout> OwnerPayouts { get; }
+
+    // Reviews & Ratings
+    IRepository<Review> Reviews { get; }
+    IRepository<ReviewStatusHistory> ReviewStatusHistories { get; }
+    IRepository<UnitReviewSummary> UnitReviewSummaries { get; }
+    IRepository<ReviewReply> ReviewReplies { get; }
+
+    // Notifications & Alerts
+    IRepository<NotificationTemplate> NotificationTemplates { get; }
+    IRepository<Notification> Notifications { get; }
+    IRepository<NotificationDeliveryLog> NotificationDeliveryLogs { get; }
+    IRepository<NotificationPreference> NotificationPreferences { get; }
+
+    // Owner Portal read-model views — IQueryable only, no write path
+    IQueryable<OwnerPortalUnitOverview> OwnerPortalUnitsOverview { get; }
+    IQueryable<OwnerPortalBookingOverview> OwnerPortalBookingsOverview { get; }
+    IQueryable<OwnerPortalFinanceOverview> OwnerPortalFinanceOverview { get; }
+
+    // Reports & Analytics read-model views — IQueryable only, no write path
+    IQueryable<ReportingBookingDailySummary> ReportingBookingDailySummaries { get; }
+    IQueryable<ReportingFinanceDailySummary> ReportingFinanceDailySummaries { get; }
+    IQueryable<ReportingReviewsDailySummary> ReportingReviewsDailySummaries { get; }
+    IQueryable<ReportingNotificationsDailySummary> ReportingNotificationsDailySummaries { get; }
+
     int SaveChanges();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

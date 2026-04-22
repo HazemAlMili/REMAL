@@ -1,6 +1,9 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using RentalPlatform.Data.Entities;
+using RentalPlatform.Data.ReadModels;
 using RentalPlatform.Data.Repositories;
 
 namespace RentalPlatform.Data;
@@ -29,6 +32,36 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<InvoiceItem> InvoiceItems { get; }
     public IRepository<OwnerPayout> OwnerPayouts { get; }
 
+    // Reviews & Ratings
+    public IRepository<Review> Reviews { get; }
+    public IRepository<ReviewStatusHistory> ReviewStatusHistories { get; }
+    public IRepository<UnitReviewSummary> UnitReviewSummaries { get; }
+    public IRepository<ReviewReply> ReviewReplies { get; }
+
+    // Notifications & Alerts
+    public IRepository<NotificationTemplate> NotificationTemplates { get; }
+    public IRepository<Notification> Notifications { get; }
+    public IRepository<NotificationDeliveryLog> NotificationDeliveryLogs { get; }
+    public IRepository<NotificationPreference> NotificationPreferences { get; }
+
+    // Owner Portal read-model views — AsNoTracking, no write path
+    public IQueryable<OwnerPortalUnitOverview> OwnerPortalUnitsOverview
+        => _context.OwnerPortalUnitsOverview.AsNoTracking();
+    public IQueryable<OwnerPortalBookingOverview> OwnerPortalBookingsOverview
+        => _context.OwnerPortalBookingsOverview.AsNoTracking();
+    public IQueryable<OwnerPortalFinanceOverview> OwnerPortalFinanceOverview
+        => _context.OwnerPortalFinanceOverview.AsNoTracking();
+
+    // Reports & Analytics read-model views — AsNoTracking, no write path
+    public IQueryable<ReportingBookingDailySummary> ReportingBookingDailySummaries
+        => _context.ReportingBookingDailySummaries.AsNoTracking();
+    public IQueryable<ReportingFinanceDailySummary> ReportingFinanceDailySummaries
+        => _context.ReportingFinanceDailySummaries.AsNoTracking();
+    public IQueryable<ReportingReviewsDailySummary> ReportingReviewsDailySummaries
+        => _context.ReportingReviewsDailySummaries.AsNoTracking();
+    public IQueryable<ReportingNotificationsDailySummary> ReportingNotificationsDailySummaries
+        => _context.ReportingNotificationsDailySummaries.AsNoTracking();
+
     public UnitOfWork(AppDbContext context)
     {
         _context = context;
@@ -51,6 +84,14 @@ public class UnitOfWork : IUnitOfWork
         Invoices = new Repository<Invoice>(_context);
         InvoiceItems = new Repository<InvoiceItem>(_context);
         OwnerPayouts = new Repository<OwnerPayout>(_context);
+        Reviews = new Repository<Review>(_context);
+        ReviewStatusHistories = new Repository<ReviewStatusHistory>(_context);
+        UnitReviewSummaries = new Repository<UnitReviewSummary>(_context);
+        ReviewReplies = new Repository<ReviewReply>(_context);
+        NotificationTemplates = new Repository<NotificationTemplate>(_context);
+        Notifications = new Repository<Notification>(_context);
+        NotificationDeliveryLogs = new Repository<NotificationDeliveryLog>(_context);
+        NotificationPreferences = new Repository<NotificationPreference>(_context);
     }
 
     public int SaveChanges()
