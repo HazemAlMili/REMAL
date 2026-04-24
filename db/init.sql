@@ -82,5 +82,62 @@
 \echo '=== Running migration 0026: payments finance integrity cleanup ==='
 \i /docker-entrypoint-initdb.d/migrations/0026_payments_finance_integrity_cleanup.sql
 
+\echo '=== Running migration 0027: create owner portal units overview view ==='
+\i /docker-entrypoint-initdb.d/migrations/0027_create_owner_portal_units_overview_view.sql
+
+\echo '=== Running migration 0028: create owner portal bookings overview view ==='
+\i /docker-entrypoint-initdb.d/migrations/0028_create_owner_portal_bookings_overview_view.sql
+
+\echo '=== Running migration 0029: create owner portal finance overview view ==='
+\i /docker-entrypoint-initdb.d/migrations/0029_create_owner_portal_finance_overview_view.sql
+
+\echo '=== Running migration 0030: owner portal integrity cleanup ==='
+\i /docker-entrypoint-initdb.d/migrations/0030_owner_portal_integrity_cleanup.sql
+
+\echo '=== Running migration 0031: create reviews ==='
+\i /docker-entrypoint-initdb.d/migrations/0031_create_reviews.sql
+
+\echo '=== Running migration 0032: create review status history ==='
+\i /docker-entrypoint-initdb.d/migrations/0032_create_review_status_history.sql
+
+\echo '=== Running migration 0033: create unit review summaries ==='
+\i /docker-entrypoint-initdb.d/migrations/0033_create_unit_review_summaries.sql
+
+\echo '=== Running migration 0034: create review replies ==='
+\i /docker-entrypoint-initdb.d/migrations/0034_create_review_replies.sql
+
+\echo '=== Running migration 0035: reviews ratings integrity cleanup ==='
+\i /docker-entrypoint-initdb.d/migrations/0035_reviews_ratings_integrity_cleanup.sql
+
+\echo '=== Running migration 0036: create notification templates ==='
+\i /docker-entrypoint-initdb.d/migrations/0036_create_notification_templates.sql
+
+\echo '=== Running migration 0037: create notifications ==='
+\i /docker-entrypoint-initdb.d/migrations/0037_create_notifications.sql
+
+\echo '=== Running migration 0038: create notification delivery logs ==='
+\i /docker-entrypoint-initdb.d/migrations/0038_create_notification_delivery_logs.sql
+
+\echo '=== Running migration 0039: create notification preferences ==='
+\i /docker-entrypoint-initdb.d/migrations/0039_create_notification_preferences.sql
+
+\echo '=== Running migration 0040: notifications alerts integrity cleanup ==='
+\i /docker-entrypoint-initdb.d/migrations/0040_notifications_alerts_integrity_cleanup.sql
+
+\echo '=== Running migration 0041: create reporting booking daily summary view ==='
+\i /docker-entrypoint-initdb.d/migrations/0041_create_reporting_booking_daily_summary_view.sql
+
+\echo '=== Running migration 0042: create reporting finance daily summary view ==='
+\i /docker-entrypoint-initdb.d/migrations/0042_create_reporting_finance_daily_summary_view.sql
+
+\echo '=== Running migration 0043: create reporting reviews daily summary view ==='
+\i /docker-entrypoint-initdb.d/migrations/0043_create_reporting_reviews_daily_summary_view.sql
+
+\echo '=== Running migration 0044: create reporting notifications daily summary view ==='
+\i /docker-entrypoint-initdb.d/migrations/0044_create_reporting_notifications_daily_summary_view.sql
+
+\echo '=== Running migration 0045: reports analytics integrity cleanup ==='
+\i /docker-entrypoint-initdb.d/migrations/0045_reports_analytics_integrity_cleanup.sql
+
 \echo '=== All migrations completed successfully ==='
 
