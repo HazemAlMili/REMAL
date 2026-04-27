@@ -4,6 +4,7 @@ import { Playfair_Display, Inter, DM_Sans, Montserrat } from 'next/font/google';
 import QueryProvider from '@/lib/providers/query-provider';
 import SmoothScrollProvider from '@/lib/providers/smooth-scroll-provider';
 import { ViewTransitions } from 'next-view-transitions';
+import { Toaster } from 'sonner';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -48,8 +49,10 @@ export default function RootLayout({
               {children}
             </SmoothScrollProvider>
           </QueryProvider>
+          <Toaster position="top-right" richColors closeButton />
         </body>
       </html>
     </ViewTransitions>
   );
 }
+

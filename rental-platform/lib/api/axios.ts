@@ -1,7 +1,9 @@
 import axios, { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
 import { ApiError } from './api-error'
 import type { ApiResponse } from './types'
-import { endpoints } from './endpoints'
+import { useAuthStore } from '@/lib/stores/auth.store'
+import { ROUTES } from '@/lib/constants/routes'
+import { toast } from 'sonner'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 if (!API_URL) {
@@ -20,15 +22,25 @@ const api = axios.create({
 
 // ───── Request Interceptor ─────
 api.interceptors.request.use((config) => {
-  // TODO (FE-1-AUTH-05): import useAuthStore from '@/lib/stores/auth.store'
-  //                      const token = useAuthStore.getState().accessToken
-  //                      if (token) config.headers.Authorization = `Bearer ${token}`
+  const token = useAuthStore.getState().accessToken
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
   return config
 })
 
 // ───── Refresh state ─────
 let isRefreshing = false
 let refreshQueue: Array<(token: string | null) => void> = []
+
+/**
+ * Lazy-import authService to break the circular dependency
+ * (authService imports `api`, and `api` needs authService.refresh).
+ */
+async function callRefresh(): Promise<string | null> {
+  const { authService } = await import('@/lib/api/services/auth.service')
+  return authService.refresh()
+}
 
 // ───── Response Interceptor ─────
 api.interceptors.response.use(
@@ -45,7 +57,7 @@ api.interceptors.response.use(
 
     // ── No response (network error) ──
     if (!error.response) {
-      // TODO (FE-1-UI-09): toast.error('Cannot reach the server. Check your connection.')
+      toast.error('Cannot reach the server. Check your connection.')
       throw new ApiError(0, 'Cannot reach the server')
     }
 
@@ -73,14 +85,9 @@ api.interceptors.response.use(
 
       isRefreshing = true
       try {
-        const refreshResponse = await axios.post(
-          `${API_URL}${endpoints.auth.refresh}`,
-          {},
-          { withCredentials: true }
-        )
-        const newToken = (refreshResponse.data as ApiResponse<{ accessToken: string }>).data?.accessToken ?? null
+        const newToken = await callRefresh()
 
-        // TODO (FE-1-AUTH-05): useAuthStore.getState().setAccessToken(newToken)
+        useAuthStore.getState().setAccessToken(newToken)
 
         refreshQueue.forEach((cb) => cb(newToken))
         refreshQueue = []
@@ -96,8 +103,20 @@ api.interceptors.response.use(
         refreshQueue = []
         isRefreshing = false
 
-        // TODO (FE-1-AUTH-05): useAuthStore.getState().clearAuth()
-        //                      router.push('/auth/...login') — depends on which app
+        // Read subjectType BEFORE clearing (clearAuth nulls it)
+        const subjectType = useAuthStore.getState().subjectType
+        useAuthStore.getState().clearAuth()
+
+        // Hard redirect to the appropriate login page based on subjectType
+        if (typeof window !== 'undefined') {
+          const loginRoute =
+            subjectType === 'Owner'
+              ? ROUTES.auth.ownerLogin
+              : subjectType === 'Client'
+                ? ROUTES.auth.clientLogin
+                : ROUTES.auth.adminLogin
+          window.location.href = loginRoute
+        }
 
         throw new ApiError(401, 'Session expired')
       }
@@ -105,13 +124,13 @@ api.interceptors.response.use(
 
     // ── 403 ──
     if (status === 403) {
-      // TODO (FE-1-UI-09): toast.error('You don\'t have permission to perform this action')
+      toast.error('You don\'t have permission to perform this action')
       throw new ApiError(403, message, errors)
     }
 
     // ── 500+ ──
     if (status >= 500) {
-      // TODO (FE-1-UI-09): toast.error('Something went wrong. Please try again.')
+      toast.error('Something went wrong. Please try again.')
       throw new ApiError(status, message, errors)
     }
 
@@ -121,3 +140,4 @@ api.interceptors.response.use(
 )
 
 export default api
+

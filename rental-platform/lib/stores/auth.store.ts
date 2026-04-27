@@ -1,30 +1,35 @@
 import { create } from 'zustand'
+import { AuthUserPayload, SubjectType, AdminRole } from '@/lib/types/auth.types'
 
-export type AuthRole = 'SuperAdmin' | 'Sales' | 'Finance' | 'Tech' | 'Owner' | 'Client' | null
-
-export interface AuthenticatedUserResponse {
-  userId: string
-  identifier: string
-  subjectType: 'Admin' | 'Owner' | 'Client'
-  adminRole: 'SuperAdmin' | 'Sales' | 'Finance' | 'Tech' | null
-}
+export type AuthRole = AdminRole | 'Owner' | 'Client' | null
 
 interface AuthState {
   accessToken: string | null
-  user: AuthenticatedUserResponse | null
+  expiresInSeconds: number | null
+  subjectType: SubjectType | null
+  user: AuthUserPayload | null
   role: AuthRole
 
-  setAuth: (payload: { accessToken: string; user: AuthenticatedUserResponse; role: AuthRole }) => void
+  setAuth: (payload: {
+    accessToken: string
+    expiresInSeconds: number
+    subjectType: SubjectType
+    user: AuthUserPayload
+    role: AuthRole
+  }) => void
   setAccessToken: (token: string | null) => void
   clearAuth: () => void
 }
 
 export const useAuthStore = create<AuthState>()((set) => ({
   accessToken: null,
+  expiresInSeconds: null,
+  subjectType: null,
   user: null,
   role: null,
 
-  setAuth: ({ accessToken, user, role }) => set({ accessToken, user, role }),
+  setAuth: ({ accessToken, expiresInSeconds, subjectType, user, role }) =>
+    set({ accessToken, expiresInSeconds, subjectType, user, role }),
   setAccessToken: (token) => set({ accessToken: token }),
-  clearAuth: () => set({ accessToken: null, user: null, role: null }),
+  clearAuth: () => set({ accessToken: null, expiresInSeconds: null, subjectType: null, user: null, role: null }),
 }))
