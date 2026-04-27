@@ -1867,3 +1867,449 @@ export const authService = {
 - Validation Report v2 — Security Gap: logout must call the server endpoint
 - FE-1-AUTH-05 — `clearAuth()` (the action this calls)
 - Wave 2 (FE-2-ADMIN-01) — will import `<LogoutButton>` into the admin sidebar
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WAVE QA REVIEW PROMPT
+Wave: 1 — Auth Flows (Track A)
+Tickets: FE-1-AUTH-01, FE-1-AUTH-02, FE-1-AUTH-03, FE-1-AUTH-04,
+         FE-1-AUTH-05, FE-1-AUTH-06
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are a senior QA engineer reviewing completed frontend work for the Rental Platform project.
+
+## Context
+
+This is a Next.js 14 + TypeScript + TanStack Query + Zustand project.
+Wave 0 (Foundation & Infrastructure) is already merged and verified.
+Wave 1 Track A delivers authentication flows for all three user types (Admin, Owner, Client), middleware route protection, Axios auth wiring, and logout.
+
+## Your Role
+
+You will review the completed Wave 1 Track A tickets and produce a structured QA report.
+You do NOT fix code. You REPORT findings.
+
+## ⛔ CRITICAL GLOBAL RULE TO ENFORCE
+
+The project has a strict NO MOCK DATA policy. Verify:
+- No file contains hardcoded user objects (e.g., `const fakeUser = { userId: '...', ... }`)
+- No file imports `faker`, `msw`, `@faker-js/faker`, `json-server`, or any mock library
+- No login form pre-fills credentials (e.g., `defaultValues: { email: 'admin@test.com' }`)
+- No auth store is seeded with placeholder data in development mode
+- No service file returns hardcoded responses
+
+If you find ANY mock data, list it as a BLOCKER.
+
+Run:
+```bash
+grep -rn "faker\|msw\|mockUser\|fakeUser\|test@\|admin@test\|password123\|defaultValues.*email\|defaultValues.*phone" \
+  --include="*.ts" --include="*.tsx" app/(auth)/ lib/api/services/auth.service.ts lib/hooks/useAuth.ts lib/types/auth.types.ts
+```
+Must return zero results.
+
+---
+
+## What to Review
+
+### 1. Auth API Contract Verification (CRITICAL)
+
+Per `REMAL_API_Reference.md` Section 1:
+
+**AuthResponse shape (returned by ALL login + refresh endpoints):**
+```json
+{
+  "accessToken": "string",
+  "expiresInSeconds": 900,
+  "subjectType": "Admin | Owner | Client",
+  "adminRole": "SuperAdmin | Sales | Finance | Tech | null",
+  "user": {
+    "userId": "uuid",
+    "identifier": "string",
+    "subjectType": "Admin | Owner | Client",
+    "adminRole": "SuperAdmin | Sales | Finance | Tech | null"
+  }
+}
+```
+
+**ClientProfileResponse (returned by register ONLY — NOT an AuthResponse):**
+```json
+{
+  "id": "uuid",
+  "name": "string",
+  "phone": "string",
+  "email": "string",
+  "isActive": true,
+  "createdAt": "...",
+  "updatedAt": "..."
+}
+```
+
+Verify in `lib/types/auth.types.ts`:
+- [ ] `AuthResponse` matches the shape above exactly — field names, types, nesting
+- [ ] `AuthResponse.user.userId` is `userId` (NOT `id`)
+- [ ] `AuthResponse.user.identifier` exists
+- [ ] `AuthResponse.expiresInSeconds` exists (NOT `expiresIn` or `tokenExpiry`)
+- [ ] `AuthResponse.subjectType` is top-level AND inside `user` (both exist)
+- [ ] `AuthResponse.adminRole` is top-level AND inside `user` (both exist)
+- [ ] `ClientProfileResponse` has `id` (NOT `userId`) — different shape from AuthResponse.user
+- [ ] `ClientProfileResponse` has `name`, `phone`, `email`, `isActive`, `createdAt`, `updatedAt`
+- [ ] `AdminLoginRequest` = `{ email: string, password: string }` — email, NOT phone
+- [ ] `PhoneLoginRequest` = `{ phone: string, password: string }` — phone, NOT email
+- [ ] `ClientRegisterRequest` = `{ name: string, phone: string, email?: string, password: string }`
+- [ ] `SubjectType` = `'Admin' | 'Owner' | 'Client'`
+- [ ] `AdminRole` = `'SuperAdmin' | 'Sales' | 'Finance' | 'Tech'`
+
+### 2. Per-Ticket Verifications
+
+**FE-1-AUTH-01 (Admin Login):**
+- [ ] Page at `/auth/admin/login`
+- [ ] Form fields: `email` (NOT phone) + `password`
+- [ ] Calls `POST /api/auth/admin/login` with `{ email, password }`
+- [ ] Endpoint string from `endpoints.auth.adminLogin` (not inline)
+- [ ] On success: `setAuth()` called with full `AuthResponse` data
+- [ ] `setAuth()` stores: `accessToken`, `expiresInSeconds`, `subjectType`, `user`, `role` (= `adminRole`)
+- [ ] `user.userId` stored (NOT `user.id`)
+- [ ] Redirects to `ROUTES.admin.dashboard` on success
+- [ ] Route string from `ROUTES` constant (not inline `/admin/dashboard`)
+- [ ] Shows API error message on 401 (wrong credentials)
+- [ ] Already-logged-in user redirected away without seeing form
+- [ ] Zod schema validates email format + password min length
+- [ ] Loading state on submit button (disabled + spinner)
+- [ ] No `localStorage` usage
+
+**FE-1-AUTH-02 (Owner Login):**
+- [ ] Page at `/auth/owner/login`
+- [ ] Form fields: `phone` (NOT email) + `password`
+- [ ] Calls `POST /api/auth/owner/login` with `{ phone, password }`
+- [ ] Endpoint from `endpoints.auth.ownerLogin`
+- [ ] On success: `setAuth()` with `subjectType: 'Owner'`, `role: null` (adminRole is null for owners)
+- [ ] Redirects to `ROUTES.owner.dashboard`
+- [ ] Shows API error on 401
+- [ ] Already-logged-in owner redirected away
+- [ ] Zod schema validates phone format + password min length
+
+**FE-1-AUTH-03 (Client Login):**
+- [ ] Page at `/auth/client/login`
+- [ ] Form fields: `phone` (NOT email) + `password`
+- [ ] Calls `POST /api/auth/client/login` with `{ phone, password }`
+- [ ] Endpoint from `endpoints.auth.clientLogin`
+- [ ] On success: `setAuth()` with `subjectType: 'Client'`, `role: null`
+- [ ] Redirects to `ROUTES.home` or `ROUTES.client.account` (check ticket spec)
+- [ ] Link to register page (`ROUTES.auth.register`)
+
+**FE-1-AUTH-04 (Client Registration):**
+- [ ] Page at `/auth/client/register`
+- [ ] Form fields: `name`, `phone`, `email` (optional), `password`, `confirmPassword`
+- [ ] Calls `POST /api/auth/client/register` with `{ name, phone, email?, password }`
+- [ ] Response is `ClientProfileResponse` (NOT `AuthResponse` — no token!)
+- [ ] After register → automatically calls `POST /api/auth/client/login` with same `{ phone, password }`
+- [ ] The LOGIN response populates the auth store (not the register response)
+- [ ] `email` sent as `undefined` (not empty string `""`) when not filled
+- [ ] Register + auto-login = 2 sequential API calls, seamless to user
+- [ ] 422 errors shown as field-level messages (phone already taken, email already taken)
+- [ ] Link to login page
+
+**FE-1-AUTH-05 (Axios Wiring + Middleware):**
+- [ ] `lib/api/axios.ts` TODO markers resolved:
+  - Request interceptor: reads `useAuthStore.getState().accessToken` and attaches `Bearer` header
+  - 401 refresh success: calls `useAuthStore.getState().setAccessToken(newToken)`
+  - 401 refresh failure: calls `useAuthStore.getState().clearAuth()`
+  - Redirect on clearAuth uses `subjectType` to pick correct login page
+- [ ] `middleware.ts` at project ROOT (not inside `app/`)
+- [ ] Middleware protects: `/admin/*`, `/owner/*`, `/account/*`
+- [ ] Middleware checks: refresh token cookie presence (NOT access token — that's in Zustand memory)
+- [ ] Middleware redirects:
+  - `/admin/*` without cookie → `/auth/admin/login`
+  - `/owner/*` without cookie → `/auth/owner/login`
+  - `/account/*` without cookie → `/auth/client/login`
+- [ ] Middleware does NOT check Zustand (Edge runtime can't access client JS)
+- [ ] Middleware does NOT check roles (that's `usePermissions` at page level)
+- [ ] Logged-in user visiting `/auth/*` → redirected to `/admin/dashboard` (simplified MVP)
+- [ ] `matcher` config excludes `_next`, `api`, `favicon.ico`, static assets
+
+**FE-1-AUTH-06 (Logout):**
+- [ ] `useLogout` hook in `lib/hooks/useLogout.ts`
+- [ ] Calls `POST /api/auth/logout` FIRST (revokes server session)
+- [ ] Then calls `clearAuth()` to wipe Zustand
+- [ ] Endpoint from `endpoints.auth.logout`
+- [ ] `subjectType` read BEFORE `clearAuth()` (value is null after clearing)
+- [ ] Redirect based on stored `subjectType`:
+  - `'Admin'` → `ROUTES.auth.adminLogin`
+  - `'Owner'` → `ROUTES.auth.ownerLogin`
+  - `'Client'` → `ROUTES.auth.clientLogin`
+- [ ] `clearAuth()` in `finally` block — runs even if API call fails
+- [ ] After logout: middleware blocks re-access to protected routes
+
+### 3. Auth Service Layer
+
+Verify `lib/api/services/auth.service.ts`:
+- [ ] `adminLogin(data: AdminLoginRequest): Promise<AuthResponse>` → `endpoints.auth.adminLogin`
+- [ ] `ownerLogin(data: PhoneLoginRequest): Promise<AuthResponse>` → `endpoints.auth.ownerLogin`
+- [ ] `clientLogin(data: PhoneLoginRequest): Promise<AuthResponse>` → `endpoints.auth.clientLogin`
+- [ ] `clientRegister(data: ClientRegisterRequest): Promise<ClientProfileResponse>` → `endpoints.auth.clientRegister`
+- [ ] `logout(): Promise<string>` → `endpoints.auth.logout`
+- [ ] `refresh(): Promise<AuthResponse>` → `endpoints.auth.refresh` (if exposed)
+- [ ] NO direct `axios.post()` in any page/component — always through `authService.*`
+- [ ] NO inline endpoint strings
+
+### 4. Auth Types File
+
+Verify `lib/types/auth.types.ts`:
+- [ ] `SubjectType` union type exists
+- [ ] `AdminRole` union type exists
+- [ ] `AuthResponse` interface matches API exactly
+- [ ] `AdminLoginRequest` = `{ email, password }`
+- [ ] `PhoneLoginRequest` = `{ phone, password }`
+- [ ] `ClientRegisterRequest` = `{ name, phone, email?, password }`
+- [ ] `ClientProfileResponse` interface matches API register response exactly
+- [ ] Types exported via barrel (`lib/types/index.ts`)
+
+### 5. Security Checks
+
+- [ ] No access token in `localStorage` (grep: `localStorage.setItem.*token`)
+- [ ] No access token in cookies (only refresh token is in HttpOnly cookie, set by server)
+- [ ] No password stored anywhere after form submit
+- [ ] No credentials in URL query params
+- [ ] `withCredentials: true` on Axios instance (for refresh token cookie)
+- [ ] Refresh token cookie name confirmed with backend team (or documented as TODO)
+- [ ] `POST /api/auth/logout` called BEFORE clearing local state (prevent orphan sessions)
+
+Run:
+```bash
+grep -rn "localStorage\|sessionStorage" --include="*.ts" --include="*.tsx" app/(auth)/ lib/stores/auth.store.ts lib/api/axios.ts
+# Must return zero results (except the partialized UI store sidebar)
+```
+
+### 6. Architecture Compliance
+
+- [ ] All endpoint strings from `lib/api/endpoints.ts`
+- [ ] All route strings from `lib/constants/routes.ts`
+- [ ] No inline `/api/auth/...` strings in components
+- [ ] No inline `/auth/admin/login` strings in redirects
+- [ ] No `any` TypeScript type
+- [ ] No `useEffect` for data fetching
+- [ ] Login mutations use TanStack Query's `useMutation` (not raw `await api.post()` in component)
+
+### 7. UX State Completeness
+
+For EACH login page (Admin, Owner, Client):
+| State | Check |
+|---|---|
+| Loading | Submit button disabled + loading indicator while mutation is pending |
+| Error (401) | Inline error message below form: "Invalid credentials" or API message |
+| Error (422) | Field-level errors from API shown per-field |
+| Error (500/network) | Toast or inline error |
+| Success | Redirect happens, no flash of form |
+| Already logged in | Redirect away without seeing the form |
+
+For Registration:
+| State | Check |
+|---|---|
+| Loading | Button disabled during register + auto-login |
+| Error (422 phone taken) | Field-level error on phone input |
+| Error (422 email taken) | Field-level error on email input |
+| Success | Seamless → logged in → redirected |
+| Password mismatch | Client-side validation before submit |
+
+### 8. Cross-Ticket Integration
+
+- [ ] Auth store shape (from FE-0-INFRA-05) compatible with `setAuth()` calls in login pages
+- [ ] `setAuth()` payload matches what the corrected auth store expects:
+  `{ accessToken, expiresInSeconds, subjectType, user, role }`
+  (verify against the corrected FE-0-INFRA-05 ticket)
+- [ ] Axios interceptor properly reads `useAuthStore.getState().accessToken`
+- [ ] Toast wiring (FE-1-UI-09) TODO markers present if toasts aren't connected yet
+- [ ] `ROUTES.auth.*` and `ROUTES.admin.dashboard` / `ROUTES.owner.dashboard` used consistently
+
+---
+
+## Output Format
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wave 1 Track A (Auth) — QA Report
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Summary:
+- Tickets reviewed: 6
+- Overall status: PASS | FAIL | PARTIAL
+- Blockers: [N]
+- Warnings: [N]
+
+Per-Ticket Results:
+[for each ticket: status + criteria table + blockers + warnings]
+
+Auth Contract Audit:
+[AuthResponse shape match: YES/NO with diff if NO]
+[ClientProfileResponse shape match: YES/NO with diff if NO]
+
+Security Audit:
+[localStorage check: PASS/FAIL]
+[Token storage check: PASS/FAIL]
+[Logout flow check: PASS/FAIL]
+
+Mock Data Audit:
+[PASS/FAIL with violations if any]
+
+Architecture Violations:
+[table of violations if any]
+
+Sign-off Recommendation:
+[ ] APPROVED
+[ ] CONDITIONAL — conditions: ...
+[ ] BLOCKED — blockers: ...
+```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+END OF QA PROMPT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+====================================================================
+====================================================================
+====================================================================
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WAVE PM SIGN-OFF CHECKLIST
+Wave: 1 — Auth Flows (Track A)
+Tickets: FE-1-AUTH-01, FE-1-AUTH-02, FE-1-AUTH-03, FE-1-AUTH-04,
+         FE-1-AUTH-05, FE-1-AUTH-06
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are the Product Manager performing final sign-off for Wave 1 Track A of the Rental Platform frontend.
+Your job is to confirm all three user types can authenticate, routes are protected, and the auth flow is secure.
+
+## Non-Negotiable Rules
+
+- Do NOT sign off if any blocker remains
+- Do NOT accept "mostly done"
+- Do NOT ignore auth contract mismatches (wrong field names = broken auth for ALL users)
+- Do NOT approve if logout doesn't call the server endpoint first
+
+---
+
+## 1. Auth Contract Accuracy
+
+- [ ] `AuthResponse` in `lib/types/auth.types.ts` matches API Reference Section 1 EXACTLY:
+  - `accessToken: string`
+  - `expiresInSeconds: number`
+  - `subjectType: 'Admin' | 'Owner' | 'Client'`
+  - `adminRole: 'SuperAdmin' | 'Sales' | 'Finance' | 'Tech' | null`
+  - `user: { userId: string, identifier: string, subjectType: ..., adminRole: ... }`
+- [ ] `user.userId` is `userId` — NOT `id` (this is a known confusion point)
+- [ ] `ClientProfileResponse` has `id` (NOT `userId`) — different entity
+- [ ] Admin login sends `{ email, password }` — NOT phone
+- [ ] Owner login sends `{ phone, password }` — NOT email
+- [ ] Client login sends `{ phone, password }` — NOT email
+- [ ] Client register sends `{ name, phone, email?, password }` — email is optional
+
+## 2. Login Flows — Manual Test
+
+| Test | Action | Expected | Pass? |
+|---|---|---|---|
+| Admin login happy path | Enter valid email + password | Redirects to `/admin/dashboard`, store has `subjectType: 'Admin'` | |
+| Admin login wrong password | Enter valid email + wrong password | Shows error message, stays on form | |
+| Owner login happy path | Enter valid phone + password | Redirects to `/owner/dashboard`, store has `subjectType: 'Owner'`, `role: null` | |
+| Client login happy path | Enter valid phone + password | Redirects to home or account, store has `subjectType: 'Client'` | |
+| Client register happy path | Fill name + phone + password | Registers → auto-logs in → redirected (2 API calls, seamless) | |
+| Client register duplicate phone | Use already-registered phone | Shows field error on phone input | |
+| Already logged in admin visits `/auth/admin/login` | Navigate while logged in | Redirected away without seeing form | |
+
+## 3. Registration Flow — Critical Checks
+
+- [ ] Register returns `ClientProfileResponse` (NO token)
+- [ ] Auto-login with same phone + password fires immediately after register
+- [ ] User doesn't see any intermediate state (no "please log in now" screen)
+- [ ] `email` sent as `undefined` (not `""`) when not provided
+- [ ] Both API calls (register + login) happen in sequence, both errors handled
+
+## 4. Middleware Route Protection
+
+- [ ] `middleware.ts` at project ROOT (not `app/middleware.ts`)
+- [ ] Unauthenticated user visiting `/admin/dashboard` → redirected to `/auth/admin/login`
+- [ ] Unauthenticated user visiting `/owner/dashboard` → redirected to `/auth/owner/login`
+- [ ] Unauthenticated user visiting `/account/bookings` → redirected to `/auth/client/login`
+- [ ] Authenticated user visiting `/auth/admin/login` → redirected to dashboard
+- [ ] Middleware checks **cookie** (NOT Zustand — Edge runtime can't access JS state)
+- [ ] Middleware does NOT enforce roles (that's `usePermissions` at page level)
+
+## 5. Logout Flow — Security Critical
+
+- [ ] `POST /api/auth/logout` called FIRST (before clearing local state)
+- [ ] Server revokes the refresh token cookie
+- [ ] `clearAuth()` wipes Zustand store (accessToken, user, role all null)
+- [ ] `subjectType` read BEFORE `clearAuth()` (for correct redirect)
+- [ ] Redirect goes to correct login page per user type
+- [ ] `clearAuth()` runs even if API call fails (in `finally` block)
+- [ ] After logout: visiting protected routes redirects to login (cookie gone)
+
+## 6. Axios Wiring Verification
+
+- [ ] Request interceptor attaches `Bearer {accessToken}` from auth store
+- [ ] 401 response triggers ONE refresh attempt (`_retry` flag prevents loops)
+- [ ] Refresh success → `setAccessToken(newToken)` called
+- [ ] Refresh failure → `clearAuth()` called + redirect to login
+- [ ] All TODO markers from FE-0-INFRA-03 are resolved
+- [ ] `withCredentials: true` on both main instance AND refresh call
+
+## 7. Security Audit
+
+- [ ] No access token in `localStorage` or `sessionStorage`
+- [ ] No credentials stored after form submission
+- [ ] No credentials in URL params
+- [ ] No hardcoded test credentials in any file
+- [ ] No mock auth responses
+- [ ] Refresh token handled entirely by server (HttpOnly cookie)
+
+Run and verify zero results:
+```bash
+grep -rn "localStorage.*token\|sessionStorage.*token\|admin@test\|password123\|mock.*auth\|fake.*user" \
+  --include="*.ts" --include="*.tsx" .
+```
+
+## 8. Quality & TypeScript
+
+- [ ] `pnpm type-check` → zero errors
+- [ ] `pnpm lint` → zero errors
+- [ ] No `any` types in auth-related files
+- [ ] All types in `lib/types/auth.types.ts` exported via barrel
+- [ ] All service functions in `lib/api/services/auth.service.ts`
+- [ ] All mutations use `useMutation` from TanStack Query
+
+## 9. Architecture Compliance
+
+- [ ] No inline endpoint strings (all from `endpoints.auth.*`)
+- [ ] No inline route strings (all from `ROUTES.auth.*`, `ROUTES.admin.*`, etc.)
+- [ ] No direct `axios.post()` in components (all through `authService.*`)
+- [ ] No server data in Zustand (auth state only)
+- [ ] Login pages in `app/(auth)/` route group
+
+## 10. Cross-Wave Readiness
+
+After Wave 1 Track A:
+- [ ] Admin users can log in and reach the admin dashboard
+- [ ] Owner users can log in and reach the owner portal
+- [ ] Client users can register + log in
+- [ ] Protected routes are guarded
+- [ ] Axios automatically attaches tokens to all requests
+- [ ] Wave 2 (Admin Shell + Units) can start without auth blockers
+
+---
+
+## Sign-off Decision
+
+Choose ONE:
+
+- [ ] **APPROVED** — All auth flows work, contracts match API, security checks pass. Wave 1 Track B (UI) and Wave 2 may proceed.
+- [ ] **CONDITIONAL** — Minor issues exist but do not block downstream waves. Conditions: _______________
+- [ ] **BLOCKED** — Auth is broken or insecure. Must fix before any downstream wave.
+
+If blocked, list ONLY the blocking items:
+- [blocking issue] — [file path] — [why it blocks]
+
+---
+
+## PM Note
+
+Wave 1 Track A is the security foundation. Every API call in Waves 2-7 depends on the token being correctly attached. Every route protection depends on middleware working. Every logout must revoke the server session. There is zero tolerance for auth contract mismatches — a wrong field name here breaks authentication for ALL users across ALL three apps.
