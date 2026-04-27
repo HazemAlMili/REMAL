@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Reset improvements */
+html, body {
+  height: 100%;
+}
+
+body {
+  @apply antialiased;
+}
+
+/* Scrollbar (minimal) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5f5;
+  border-radius: 9999px;
+}
+
+/* Design System styles will be added in FE-0-INFRA-08 */

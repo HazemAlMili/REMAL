@@ -1,6 +1,6 @@
 ---
 
-# Product Requirements Document (PRD)
+# Product Requirements Document (PRD).
 
 ## Rental Property Management Platform
 
