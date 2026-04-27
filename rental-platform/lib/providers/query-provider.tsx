@@ -14,10 +14,11 @@ export default function QueryProvider({ children }: Props) {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 60 * 1000,
-            gcTime: 5 * 60 * 1000,
+            staleTime: 1000 * 60 * 2,    // 2 minutes
+            gcTime: 1000 * 60 * 10,      // 10 minutes
             retry: 1,
             refetchOnWindowFocus: false,
+            refetchOnReconnect: true,
           },
           mutations: {
             retry: 0,

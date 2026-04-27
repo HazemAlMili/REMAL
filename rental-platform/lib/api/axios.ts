@@ -1,6 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
 import { ApiError } from './api-error'
 import type { ApiResponse } from './types'
+import { endpoints } from './endpoints'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 if (!API_URL) {
@@ -73,7 +74,7 @@ api.interceptors.response.use(
       isRefreshing = true
       try {
         const refreshResponse = await axios.post(
-          `${API_URL}/api/auth/refresh`,
+          `${API_URL}${endpoints.auth.refresh}`,
           {},
           { withCredentials: true }
         )
