@@ -1,6 +1,6 @@
 # API Reference Guide
 
-This document provides a comprehensive list of the available API endpoints for the RentalPlatform project. 
+This document provides a comprehensive list of the available API endpoints for the RentalPlatform project.
 
 ## 🔐 Authentication (AuthController)
 Base Route: `/api/auth`
