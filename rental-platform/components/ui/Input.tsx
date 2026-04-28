@@ -1,0 +1,73 @@
+"use client";
+import { InputHTMLAttributes, ReactNode, forwardRef, useId } from "react";
+import { cn } from "@/lib/utils/cn";
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  helperText?: string;
+  leftAddon?: ReactNode;
+  rightAddon?: ReactNode;
+}
+
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  (
+    { label, error, helperText, leftAddon, rightAddon, className, ...props },
+    ref
+  ) => {
+    const id = useId();
+
+    return (
+      <div className="w-full">
+        {label && (
+          <label
+            htmlFor={id}
+            className="mb-1.5 block text-sm font-medium text-neutral-700"
+          >
+            {label}
+            {props.required && <span className="ml-1 text-error">*</span>}
+          </label>
+        )}
+
+        <div className="relative flex items-center">
+          {leftAddon && (
+            <div className="pointer-events-none absolute left-3 text-neutral-400">
+              {leftAddon}
+            </div>
+          )}
+
+          <input
+            ref={ref}
+            id={id}
+            className={cn(
+              "w-full rounded-lg border bg-white text-sm text-neutral-800",
+              "h-10 px-3.5",
+              "placeholder:text-neutral-400",
+              "transition-colors duration-150",
+              "focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500",
+              "disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:text-neutral-400",
+              error ? "border-error focus:ring-error" : "border-neutral-300",
+              leftAddon && "pl-10",
+              rightAddon && "pr-10",
+              className
+            )}
+            {...props}
+          />
+
+          {rightAddon && (
+            <div className="absolute right-3 text-neutral-400">
+              {rightAddon}
+            </div>
+          )}
+        </div>
+
+        {error && <p className="mt-1.5 text-xs text-error">{error}</p>}
+        {!error && helperText && (
+          <p className="mt-1.5 text-xs text-neutral-500">{helperText}</p>
+        )}
+      </div>
+    );
+  }
+);
+
+Input.displayName = "Input";

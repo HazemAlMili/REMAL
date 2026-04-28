@@ -4,7 +4,7 @@ import { Playfair_Display, Inter, DM_Sans, Montserrat } from 'next/font/google';
 import QueryProvider from '@/lib/providers/query-provider';
 import SmoothScrollProvider from '@/lib/providers/smooth-scroll-provider';
 import { ViewTransitions } from 'next-view-transitions';
-import { Toaster } from 'sonner';
+import { Toaster } from 'react-hot-toast';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -49,7 +49,12 @@ export default function RootLayout({
               {children}
             </SmoothScrollProvider>
           </QueryProvider>
-          <Toaster position="top-right" richColors closeButton />
+          <Toaster 
+            position="top-right" 
+            toastOptions={{
+              className: 'rounded-lg',
+            }}
+          />
         </body>
       </html>
     </ViewTransitions>
