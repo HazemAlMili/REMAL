@@ -22,6 +22,7 @@ export const ROUTES = {
       list: '/admin/units',
       detail: (id: string) => `/admin/units/${id}`,
       create: '/admin/units/new',
+      edit: (id: string) => `/admin/units/${id}/edit`,
     },
     crm: {
       index: '/admin/crm',
