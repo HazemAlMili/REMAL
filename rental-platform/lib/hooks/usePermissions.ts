@@ -6,6 +6,8 @@ export interface Permissions {
   isClient: boolean;
 
   canViewCRM: boolean;
+  canManageCRM: boolean;
+  canAssignLeads: boolean;
   canViewBookings: boolean;
   canViewFinance: boolean;
   canViewUnits: boolean;
@@ -38,6 +40,8 @@ export function usePermissions(): Permissions {
     isClient,
 
     canViewCRM: isSuperAdmin || isSales,
+    canManageCRM: isSuperAdmin || isSales,
+    canAssignLeads: isSuperAdmin,
     canViewBookings: isSuperAdmin || isSales || isFinance,
     canViewFinance: isSuperAdmin || isFinance,
     canViewUnits: isSuperAdmin || isSales || isFinance || isTech,

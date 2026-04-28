@@ -111,7 +111,7 @@ export const endpoints = {
 
   // ──────────── CRM LEADS ────────────
   crmLeads: {
-    create: "/api/crm/leads",
+    create: "/api/internal/crm/leads",
     list: "/api/internal/crm/leads",
     byId: (id: string) => `/api/internal/crm/leads/${id}`,
     update: (id: string) => `/api/internal/crm/leads/${id}`,
