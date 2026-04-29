@@ -1,12 +1,12 @@
-export const queryKeys = {
-  // ──────────── AREAS ────────────
+﻿export const queryKeys = {
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ AREAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   areas: {
     all: ['areas'] as const,
     list: () => [...queryKeys.areas.all, 'list'] as const,
     detail: (id: string) => [...queryKeys.areas.all, 'detail', id] as const,
   },
 
-  // ──────────── UNITS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ UNITS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   units: {
     all: ['units'] as const,
     publicList: (filters?: object) => [...queryKeys.units.all, 'public', 'list', filters ?? {}] as const,
@@ -21,13 +21,13 @@ export const queryKeys = {
     pricing: (unitId: string, range?: object) => [...queryKeys.units.all, unitId, 'pricing', range ?? {}] as const,
   },
 
-  // ──────────── AMENITIES ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ AMENITIES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   amenities: {
     all: ['amenities'] as const,
     list: () => [...queryKeys.amenities.all, 'list'] as const,
   },
 
-  // ──────────── BOOKINGS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ BOOKINGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   bookings: {
     all: ['bookings'] as const,
     list: (filters?: object) => [...queryKeys.bookings.all, 'list', filters ?? {}] as const,
@@ -36,9 +36,10 @@ export const queryKeys = {
     notes: (id: string) => [...queryKeys.bookings.all, id, 'notes'] as const,
     assignment: (id: string) => [...queryKeys.bookings.all, id, 'assignment'] as const,
     financeSnapshot: (id: string) => [...queryKeys.bookings.all, id, 'finance-snapshot'] as const,
+    payments: (id: string) => [...queryKeys.bookings.all, id, 'payments'] as const,
   },
 
-  // ──────────── CRM LEADS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CRM LEADS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   crm: {
     all: ['crm'] as const,
     leads: (filters?: object) => [...queryKeys.crm.all, 'leads', filters ?? {}] as const,
@@ -47,7 +48,7 @@ export const queryKeys = {
     leadAssignment: (leadId: string) => [...queryKeys.crm.all, leadId, 'assignment'] as const,
   },
 
-  // ──────────── OWNERS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ OWNERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   owners: {
     all: ['owners'] as const,
     list: (filters?: object) => [...queryKeys.owners.all, 'list', filters ?? {}] as const,
@@ -56,14 +57,14 @@ export const queryKeys = {
     payoutSummary: (id: string) => [...queryKeys.owners.all, id, 'payout-summary'] as const,
   },
 
-  // ──────────── CLIENTS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CLIENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   clients: {
     all: ['clients'] as const,
     list: (filters?: object) => [...queryKeys.clients.all, 'list', filters ?? {}] as const,
     detail: (id: string) => [...queryKeys.clients.all, 'detail', id] as const,
   },
 
-  // ──────────── PAYMENTS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PAYMENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   payments: {
     all: ['payments'] as const,
     list: (filters?: object) => [...queryKeys.payments.all, 'list', filters ?? {}] as const,
@@ -71,7 +72,7 @@ export const queryKeys = {
     byBooking: (bookingId: string) => [...queryKeys.payments.all, 'booking', bookingId] as const,
   },
 
-  // ──────────── INVOICES ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ INVOICES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   invoices: {
     all: ['invoices'] as const,
     list: (filters?: object) => [...queryKeys.invoices.all, 'list', filters ?? {}] as const,
@@ -79,14 +80,14 @@ export const queryKeys = {
     balance: (id: string) => [...queryKeys.invoices.all, id, 'balance'] as const,
   },
 
-  // ──────────── OWNER PAYOUTS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ OWNER PAYOUTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   ownerPayouts: {
     all: ['owner-payouts'] as const,
     byOwner: (ownerId: string) => [...queryKeys.ownerPayouts.all, 'owner', ownerId] as const,
     byBooking: (bookingId: string) => [...queryKeys.ownerPayouts.all, 'booking', bookingId] as const,
   },
 
-  // ──────────── REPORTS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REPORTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   reports: {
     all: ['reports'] as const,
     bookingsSummary: (filters?: object) => [...queryKeys.reports.all, 'bookings', 'summary', filters ?? {}] as const,
@@ -95,7 +96,7 @@ export const queryKeys = {
     financeDaily: (filters?: object) => [...queryKeys.reports.all, 'finance', 'daily', filters ?? {}] as const,
   },
 
-  // ──────────── REVIEWS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEWS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   reviews: {
     all: ['reviews'] as const,
     publicByUnit: (unitId: string, filters?: object) => [...queryKeys.reviews.all, 'public', unitId, filters ?? {}] as const,
@@ -106,7 +107,7 @@ export const queryKeys = {
     reply: (reviewId: string) => [...queryKeys.reviews.all, reviewId, 'reply'] as const,
   },
 
-  // ──────────── NOTIFICATIONS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ NOTIFICATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   notifications: {
     all: ['notifications'] as const,
     adminInbox: () => [...queryKeys.notifications.all, 'admin', 'inbox'] as const,
@@ -120,7 +121,7 @@ export const queryKeys = {
     ownerPreferences: () => [...queryKeys.notifications.all, 'owner', 'preferences'] as const,
   },
 
-  // ──────────── OWNER PORTAL ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ OWNER PORTAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   ownerPortal: {
     all: ['owner-portal'] as const,
     dashboard: () => [...queryKeys.ownerPortal.all, 'dashboard'] as const,
@@ -133,9 +134,10 @@ export const queryKeys = {
     financeBooking: (bookingId: string) => [...queryKeys.ownerPortal.all, 'finance', 'booking', bookingId] as const,
   },
 
-  // ──────────── ADMIN USERS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ADMIN USERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   adminUsers: {
     all: ['admin-users'] as const,
     list: () => [...queryKeys.adminUsers.all, 'list'] as const,
   },
 } as const
+

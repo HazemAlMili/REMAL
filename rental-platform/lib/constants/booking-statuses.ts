@@ -74,3 +74,13 @@ export const CRM_VALID_TRANSITIONS: Record<CrmLeadStatus, CrmLeadStatus[]> = {
   LeftEarly: [],
   NotRelevant: [],
 }
+
+export const BOOKING_VALID_TRANSITIONS: Record<BookingStatus, BookingStatus[]> = {
+  Pending: ["Confirmed", "Cancelled"],
+  Confirmed: ["CheckIn", "Cancelled"],
+  CheckIn: ["Completed", "LeftEarly"],
+  Completed: [],
+  Cancelled: [],
+  LeftEarly: [],
+};
+

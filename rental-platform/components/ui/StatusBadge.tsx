@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { Badge, BadgeVariant } from "./Badge";
@@ -14,6 +14,7 @@ const statusVariantMap: Record<string, BadgeVariant> = {
   Confirmed: "success",
   Completed: "success",
   Paid: "success",
+  Issued: "success",
   Published: "success",
   Scheduled: "info",
 
@@ -46,3 +47,4 @@ export function StatusBadge({ status, label }: StatusBadgeProps) {
 
   return <Badge variant={variant}>{text}</Badge>;
 }
+
