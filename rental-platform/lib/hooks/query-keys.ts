@@ -44,4 +44,32 @@ export const queryKeys = {
     payouts: (id: string) => ["owners", id, "payouts"] as const,
     payoutSummary: (id: string) => ["owners", id, "payout-summary"] as const,
   },
+  reviews: {
+    all: ["reviews"] as const,
+    publicByUnit: (unitId: string) =>
+      ["reviews", "public", "unit", unitId] as const,
+    publicSummary: (unitId: string) =>
+      ["reviews", "public", "summary", unitId] as const,
+    publicDetail: (unitId: string, reviewId: string) =>
+      ["reviews", "public", "detail", unitId, reviewId] as const,
+    statusHistory: (reviewId: string) =>
+      ["reviews", "statusHistory", reviewId] as const,
+    byBooking: (bookingId: string) =>
+      ["reviews", "byBooking", bookingId] as const,
+  },
+  notifications: {
+    adminInbox: () => ["notifications", "admin", "inbox"] as const,
+    adminInboxSummary: () =>
+      ["notifications", "admin", "inbox", "summary"] as const,
+    adminPreferences: () => ["notifications", "admin", "preferences"] as const,
+    ownerInbox: () => ["notifications", "owner", "inbox"] as const,
+    ownerInboxSummary: () =>
+      ["notifications", "owner", "inbox", "summary"] as const,
+    ownerPreferences: () => ["notifications", "owner", "preferences"] as const,
+    clientInbox: () => ["notifications", "client", "inbox"] as const,
+    clientInboxSummary: () =>
+      ["notifications", "client", "inbox", "summary"] as const,
+    clientPreferences: () =>
+      ["notifications", "client", "preferences"] as const,
+  },
 };

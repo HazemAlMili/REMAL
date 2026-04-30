@@ -1,4 +1,5 @@
 import { AdminUsersSection } from "@/components/admin/settings/AdminUsersSection";
+import { NotificationPreferencesSection } from "@/components/admin/settings/NotificationPreferencesSection";
 
 export default function SettingsPage() {
   return (
@@ -12,8 +13,12 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      <div className="border-t border-neutral-200 pt-6">
+      <div className="space-y-8 border-t border-neutral-200 pt-6">
         <AdminUsersSection />
+
+        <div className="border-t border-neutral-200 pt-8">
+          <NotificationPreferencesSection />
+        </div>
       </div>
     </div>
   );

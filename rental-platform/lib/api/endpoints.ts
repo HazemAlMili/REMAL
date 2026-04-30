@@ -280,6 +280,16 @@
     ownerUpdate: "/api/owner/me/notification-preferences",
   },
 
+  // ──────────── INTERNAL NOTIFICATIONS (dispatch) ────────────
+  internalNotifications: {
+    toAdmin: (adminUserId: string) =>
+      `/api/internal/notifications/admins/${adminUserId}`,
+    toClient: (clientId: string) =>
+      `/api/internal/notifications/clients/${clientId}`,
+    toOwner: (ownerId: string) =>
+      `/api/internal/notifications/owners/${ownerId}`,
+  },
+
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ OWNER PORTAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   ownerPortal: {
     dashboard: "/api/owner/dashboard",
@@ -293,4 +303,3 @@
     unitAvailability: (id: string) => `/api/owner/units/${id}/availability`,
   },
 } as const;
-

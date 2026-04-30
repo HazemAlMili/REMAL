@@ -17,6 +17,7 @@ export const ROUTES = {
   admin: {
     root: "/admin",
     dashboard: "/admin/dashboard",
+    analytics: "/admin/analytics",
     areas: "/admin/areas",
     units: {
       list: "/admin/units",
@@ -46,6 +47,7 @@ export const ROUTES = {
       detail: (id: string) => `/admin/clients/${id}`,
     },
     reviews: "/admin/reviews",
+    notifications: "/admin/notifications",
     settings: "/admin/settings",
   },
 

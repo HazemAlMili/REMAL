@@ -22,12 +22,14 @@ export const useReports = () => {
       useQuery({
         queryKey: queryKeys.reports.bookingsDaily(filters || {}),
         queryFn: () => reportsService.getBookingsDaily(filters),
+        staleTime: 1000 * 60 * 10, // 10 minutes
       }),
 
     useFinanceDaily: (filters?: ReportDailyFilters) =>
       useQuery({
         queryKey: queryKeys.reports.financeDaily(filters || {}),
         queryFn: () => reportsService.getFinanceDaily(filters),
+        staleTime: 1000 * 60 * 10, // 10 minutes
       }),
 
     useActiveUnitsCount: () =>
