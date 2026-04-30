@@ -12,6 +12,8 @@ import type {
   HideReviewRequest,
   CreateReviewRequest,
   UpdatePendingReviewRequest,
+  CreateOrUpdateReviewReplyRequest,
+  SetReviewReplyVisibilityRequest,
 } from "../types/review.types";
 
 // ── Public Reviews ──
@@ -161,5 +163,79 @@ export function useReviewByBooking(bookingId: string) {
     queryKey: queryKeys.reviews.byBooking(bookingId),
     queryFn: () => reviewsService.getByBooking(bookingId),
     enabled: !!bookingId,
+  });
+}
+
+// ── Owner Review Replies (Wave 6) ──
+
+export function useReviewReply(reviewId: string) {
+  return useQuery({
+    queryKey: queryKeys.reviews.reply(reviewId),
+    queryFn: () => reviewsService.getReviewReply(reviewId),
+    enabled: !!reviewId,
+  });
+}
+
+export function useUpsertReviewReply() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      reviewId,
+      data,
+    }: {
+      reviewId: string;
+      data: CreateOrUpdateReviewReplyRequest;
+    }) => reviewsService.upsertReviewReply(reviewId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.reviews.reply(variables.reviewId),
+      });
+      // Invalidate all public reviews queries to update "Replied" badge
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.reviews.all,
+      });
+    },
+  });
+}
+
+export function useDeleteReviewReply() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (reviewId: string) =>
+      reviewsService.deleteReviewReply(reviewId),
+    onSuccess: (_, reviewId) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.reviews.reply(reviewId),
+      });
+      // Invalidate all public reviews queries
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.reviews.all,
+      });
+    },
+  });
+}
+
+export function useSetReviewReplyVisibility() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      reviewId,
+      data,
+    }: {
+      reviewId: string;
+      data: SetReviewReplyVisibilityRequest;
+    }) => reviewsService.setReviewReplyVisibility(reviewId, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.reviews.reply(variables.reviewId),
+      });
+      // Invalidate all public reviews queries
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.reviews.all,
+      });
+    },
   });
 }

@@ -60,7 +60,9 @@ export const ROUTES = {
     bookings: "/owner/bookings",
     bookingDetail: (id: string) => `/owner/bookings/${id}`,
     finance: "/owner/finance",
+    reviews: "/owner/reviews",
     notifications: "/owner/notifications",
+    profile: "/owner/profile",
   },
 
   // Client / Account

@@ -56,6 +56,8 @@ export const queryKeys = {
       ["reviews", "statusHistory", reviewId] as const,
     byBooking: (bookingId: string) =>
       ["reviews", "byBooking", bookingId] as const,
+
+    reply: (reviewId: string) => ["reviews", "reply", reviewId] as const,
   },
   notifications: {
     adminInbox: () => ["notifications", "admin", "inbox"] as const,
@@ -71,5 +73,35 @@ export const queryKeys = {
       ["notifications", "client", "inbox", "summary"] as const,
     clientPreferences: () =>
       ["notifications", "client", "preferences"] as const,
+  },
+  ownerPortal: {
+    all: ["ownerPortal"] as const,
+    dashboardSummary: () => ["ownerPortal", "dashboard"] as const,
+    profile: () => ["ownerPortal", "profile"] as const,
+    units: {
+      all: ["ownerPortal", "units"] as const,
+      list: (filters?: object) =>
+        ["ownerPortal", "units", "list", filters] as const,
+      detail: (unitId: string) =>
+        ["ownerPortal", "units", "detail", unitId] as const,
+    },
+    unitAvailability: (unitId: string, startDate: string, endDate: string) =>
+      ["ownerPortal", "unitAvailability", unitId, startDate, endDate] as const,
+    bookings: {
+      all: ["ownerPortal", "bookings"] as const,
+      list: (filters?: object) =>
+        ["ownerPortal", "bookings", "list", filters] as const,
+      detail: (bookingId: string) =>
+        ["ownerPortal", "bookings", "detail", bookingId] as const,
+    },
+    finance: {
+      all: ["ownerPortal", "finance"] as const,
+      list: (filters?: object) =>
+        ["ownerPortal", "finance", "list", filters] as const,
+      summary: () => ["ownerPortal", "finance", "summary"] as const,
+    },
+    reviews: {
+      all: ["ownerPortal", "reviews"] as const,
+    },
   },
 };

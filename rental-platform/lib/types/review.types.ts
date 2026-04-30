@@ -104,3 +104,14 @@ export interface ReviewDetailData {
   publishedAt: string;
   // Additional fields will be available when internal review detail endpoint is documented
 }
+
+// ── Review Reply Requests (Owner Portal) ──
+// From API Reference Section 25
+export interface CreateOrUpdateReviewReplyRequest {
+  replyText: string;
+  isVisible?: boolean; // Optional; defaults to true if not provided per API Ref Section 25
+}
+
+export interface SetReviewReplyVisibilityRequest {
+  isVisible: boolean;
+}

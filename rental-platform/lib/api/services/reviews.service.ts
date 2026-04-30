@@ -15,7 +15,10 @@ import type {
   HideReviewRequest,
   CreateReviewRequest,
   UpdatePendingReviewRequest,
+  CreateOrUpdateReviewReplyRequest,
+  SetReviewReplyVisibilityRequest,
 } from "@/lib/types/review.types";
+import type { ReviewReplyResponse } from "@/lib/types/owner-portal.types";
 
 export const reviewsService = {
   // ── Public ──
@@ -68,4 +71,23 @@ export const reviewsService = {
 
   getByBooking: (bookingId: string): Promise<ReviewResponse> =>
     api.get(endpoints.clientReviews.byBooking(bookingId)),
+
+  // ── Owner review replies (Wave 6) ──
+  getReviewReply: (reviewId: string): Promise<ReviewReplyResponse> =>
+    api.get(endpoints.reviewReplies.get(reviewId)),
+
+  upsertReviewReply: (
+    reviewId: string,
+    data: CreateOrUpdateReviewReplyRequest
+  ): Promise<ReviewReplyResponse> =>
+    api.put(endpoints.reviewReplies.upsert(reviewId), data),
+
+  deleteReviewReply: (reviewId: string): Promise<void> =>
+    api.delete(endpoints.reviewReplies.delete(reviewId)),
+
+  setReviewReplyVisibility: (
+    reviewId: string,
+    data: SetReviewReplyVisibilityRequest
+  ): Promise<ReviewReplyResponse> =>
+    api.patch(endpoints.reviewReplies.visibility(reviewId), data),
 };

@@ -257,16 +257,19 @@
       inbox: "/api/internal/me/notifications/inbox",
       summary: "/api/internal/me/notifications/inbox/summary",
       read: (id: string) => `/api/internal/me/notifications/inbox/${id}/read`,
+      readAll: "/api/internal/me/notifications/inbox/read-all",
     },
     client: {
       inbox: "/api/client/me/notifications/inbox",
       summary: "/api/client/me/notifications/inbox/summary",
       read: (id: string) => `/api/client/me/notifications/inbox/${id}/read`,
+      readAll: "/api/client/me/notifications/inbox/read-all",
     },
     owner: {
       inbox: "/api/owner/me/notifications/inbox",
       summary: "/api/owner/me/notifications/inbox/summary",
       read: (id: string) => `/api/owner/me/notifications/inbox/${id}/read`,
+      readAll: "/api/owner/me/notifications/inbox/read-all",
     },
   },
 
@@ -293,13 +296,23 @@
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ OWNER PORTAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   ownerPortal: {
     dashboard: "/api/owner/dashboard",
-    bookings: "/api/owner/bookings",
-    bookingById: (id: string) => `/api/owner/bookings/${id}`,
-    earnings: "/api/owner/earnings",
-    payouts: "/api/owner/payouts",
-    notifications: "/api/owner/notifications",
-    units: "/api/owner/units",
-    unitById: (id: string) => `/api/owner/units/${id}`,
-    unitAvailability: (id: string) => `/api/owner/units/${id}/availability`,
+    profile: "/api/owner/profile", // Backend gap: Not documented in API Reference
+    units: {
+      list: "/api/owner/units",
+      detail: (unitId: string) => `/api/owner/units/${unitId}`,
+    },
+    bookings: {
+      list: "/api/owner/bookings",
+      detail: (bookingId: string) => `/api/owner/bookings/${bookingId}`,
+    },
+    finance: {
+      list: "/api/owner/finance",
+      summary: "/api/owner/finance/summary",
+    },
+    reviews: {
+      createReply: (reviewId: string) => `/api/owner/reviews/${reviewId}/reply`,
+      updateReply: (reviewId: string) => `/api/owner/reviews/${reviewId}/reply`,
+      deleteReply: (reviewId: string) => `/api/owner/reviews/${reviewId}/reply`,
+    },
   },
 } as const;

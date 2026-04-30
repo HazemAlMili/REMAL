@@ -27,6 +27,9 @@ export const notificationsService = {
   markAdminRead: (notificationId: string): Promise<void> =>
     api.post(endpoints.notifications.admin.read(notificationId)),
 
+  markAllAdminRead: (): Promise<void> =>
+    api.post(endpoints.notifications.admin.readAll),
+
   // ── Admin preferences ──
   getAdminPreferences: (): Promise<NotificationPreferenceResponse[]> =>
     api.get(endpoints.notificationPreferences.adminGet),
@@ -66,6 +69,9 @@ export const notificationsService = {
   markOwnerRead: (notificationId: string): Promise<void> =>
     api.post(endpoints.notifications.owner.read(notificationId)),
 
+  markAllOwnerRead: (): Promise<void> =>
+    api.post(endpoints.notifications.owner.readAll),
+
   // ── Client inbox (for Wave 7 Guest App) ──
   getClientInbox: (): Promise<NotificationListItemResponse[]> =>
     api.get(endpoints.notifications.client.inbox),
@@ -75,6 +81,9 @@ export const notificationsService = {
 
   markClientRead: (notificationId: string): Promise<void> =>
     api.post(endpoints.notifications.client.read(notificationId)),
+
+  markAllClientRead: (): Promise<void> =>
+    api.post(endpoints.notifications.client.readAll),
 
   // ── Owner preferences (for Wave 6 Owner Portal) ──
   getOwnerPreferences: (): Promise<NotificationPreferenceResponse[]> =>

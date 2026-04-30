@@ -49,6 +49,21 @@ export function useMarkAdminNotificationRead() {
   });
 }
 
+export function useMarkAllAdminNotificationsRead() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => notificationsService.markAllAdminRead(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notifications.adminInbox(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notifications.adminInboxSummary(),
+      });
+    },
+  });
+}
+
 // ── Admin Preferences ──
 
 export function useAdminNotificationPreferences() {
@@ -96,6 +111,21 @@ export function useMarkOwnerNotificationRead() {
   return useMutation({
     mutationFn: (notificationId: string) =>
       notificationsService.markOwnerRead(notificationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notifications.ownerInbox(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notifications.ownerInboxSummary(),
+      });
+    },
+  });
+}
+
+export function useMarkAllOwnerNotificationsRead() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => notificationsService.markAllOwnerRead(),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.notifications.ownerInbox(),
