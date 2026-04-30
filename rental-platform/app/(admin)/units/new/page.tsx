@@ -7,7 +7,7 @@ import { toastSuccess, toastError } from "@/lib/utils/toast";
 import { Button } from "@/components/ui/Button";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { useAreasList } from "@/lib/hooks/useAreas";
-import { useOwnersList } from "@/lib/hooks/useOwners";
+import { useOwners } from "@/lib/hooks/useOwners";
 import { useCreateUnit } from "@/lib/hooks/useUnits";
 import { AreaResponse, OwnerListItemResponse } from "@/lib/types";
 
@@ -19,7 +19,7 @@ export default function CreateUnitPage() {
   const { canManageUnits } = usePermissions();
 
   const { data: areasData, isLoading: isAreasLoading } = useAreasList(false); // only active areas
-  const { data: ownersData, isLoading: isOwnersLoading } = useOwnersList({
+  const { data: ownersData, isLoading: isOwnersLoading } = useOwners({
     page: 1,
     pageSize: 100, // Just sufficient to populate a usable dropdown based on business logic constraints
   });

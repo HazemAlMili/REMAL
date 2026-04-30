@@ -18,7 +18,7 @@ export function BookingStatusHistory({ bookingId }: BookingStatusHistoryProps) {
 
   const getAdminName = (userId: string) => {
     if (userId === "SYSTEM" || !userId) return "System";
-    const user = adminUsers?.find((u) => u.id === userId);
+    const user = adminUsers?.items?.find((u) => u.id === userId);
     return user?.name ?? "Unknown Admin";
   };
 

@@ -62,6 +62,7 @@ export interface BookingDetailsResponse {
 export interface BookingListFilters {
   bookingStatus?: FormalBookingStatus;
   assignedAdminUserId?: string;
+  clientId?: string;
   checkInFrom?: string;
   checkInTo?: string;
   search?: string;

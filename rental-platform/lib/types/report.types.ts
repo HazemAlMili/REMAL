@@ -1,21 +1,23 @@
-export interface ReportFilters {
-  startDate?: string;
-  endDate?: string;
+import type {
+  BookingAnalyticsSummaryResponse,
+  BookingAnalyticsDailySummaryResponse,
+  FinanceAnalyticsSummaryResponse,
+  FinanceAnalyticsDailySummaryResponse,
+} from "./finance.types";
+
+export interface ReportDateFilters {
+  dateFrom?: string;
+  dateTo?: string;
 }
 
-export interface BookingsSummaryResponse {
-  totalBookings: number;
-  confirmedBookings: number;
-  totalRevenue: number;
-  statusBreakdown: {
-    status: string;
-    count: number;
-  }[];
+export interface ReportDailyFilters {
+  dateFrom?: string;
+  dateTo?: string;
 }
 
-export interface FinanceSummaryResponse {
-  totalRevenue: number;
-  totalCommissionEarned: number;
-  totalPaidToOwners: number;
-  totalOutstanding: number;
-}
+export type {
+  BookingAnalyticsSummaryResponse,
+  BookingAnalyticsDailySummaryResponse,
+  FinanceAnalyticsSummaryResponse,
+  FinanceAnalyticsDailySummaryResponse,
+};

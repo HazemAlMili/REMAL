@@ -8,23 +8,28 @@ import { formatCurrency } from "@/lib/utils/format";
 
 export default function AdminDashboardPage() {
   const { canViewFinance, canViewUnits, canViewBookings } = usePermissions();
-  const { useBookingsSummary, useFinanceSummary, useActiveUnitsCount } = useReports();
+  const { useBookingsSummary, useFinanceSummary, useActiveUnitsCount } =
+    useReports();
 
   const { data: unitsCount, isLoading: unitsLoading } = useActiveUnitsCount();
-  const { data: bookingsSummary, isLoading: bookingsLoading } = useBookingsSummary();
-  const { data: financeSummary, isLoading: financeLoading } = useFinanceSummary();
+  const { data: bookingsSummary, isLoading: bookingsLoading } =
+    useBookingsSummary();
+  const { data: financeSummary, isLoading: financeLoading } =
+    useFinanceSummary();
 
-  const activeBookingsCount = bookingsSummary?.confirmedBookings || 0;
+  const activeBookingsCount = bookingsSummary?.totalConfirmedBookingsCount || 0;
   // Based on the available data, open leads count could be inferred from another metric, but typically it maps to a different endpoint if not in BookingsSummaryResponse
   // Let's omit the exact leads logic since it's not present in the type yet, or just display 0 to comply with API
   const openLeadsCount = 0;
-  
-  const totalRevenue = financeSummary?.totalRevenue || 0;
+
+  const totalRevenue = financeSummary?.totalPaidAmount || 0;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Dashboard Overview
+        </h1>
         <p className="text-muted-foreground">
           Welcome to the Remal Rental Platform admin portal.
         </p>
@@ -39,7 +44,7 @@ export default function AdminDashboardPage() {
             isLoading={unitsLoading}
           />
         )}
-        
+
         {canViewBookings && (
           <>
             <StatCard

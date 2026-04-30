@@ -1,12 +1,16 @@
-import { ReportFilters } from "../types/report.types";
+import { ReportDateFilters, ReportDailyFilters } from "../types/report.types";
 
 export const queryKeys = {
   reports: {
     all: ["reports"] as const,
-    bookingsSummary: (filters: ReportFilters) =>
+    bookingsSummary: (filters?: ReportDateFilters) =>
       ["reports", "bookings", filters] as const,
-    financeSummary: (filters: ReportFilters) =>
+    financeSummary: (filters?: ReportDateFilters) =>
       ["reports", "finance", filters] as const,
+    bookingsDaily: (filters?: ReportDailyFilters) =>
+      ["reports", "bookingsDaily", filters] as const,
+    financeDaily: (filters?: ReportDailyFilters) =>
+      ["reports", "financeDaily", filters] as const,
   },
   units: {
     all: ["units"] as const,
@@ -36,5 +40,8 @@ export const queryKeys = {
   owners: {
     all: ["owners"] as const,
     list: (filters?: object) => ["owners", "list", filters] as const,
+    detail: (id: string) => ["owners", "detail", id] as const,
+    payouts: (id: string) => ["owners", id, "payouts"] as const,
+    payoutSummary: (id: string) => ["owners", id, "payout-summary"] as const,
   },
 };

@@ -33,3 +33,5 @@ export { DateRangePicker } from "./DateRangePicker";
 export type { DateRangePickerProps, DateRange } from "./DateRangePicker";
 export { ConfirmDialog } from "./ConfirmDialog";
 export type { ConfirmDialogProps } from "./ConfirmDialog";
+export { Switch } from "./Switch";
+export { Label } from "./Label";

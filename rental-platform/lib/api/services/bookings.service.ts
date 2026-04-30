@@ -24,6 +24,11 @@ import type {
   AddInvoiceManualAdjustmentRequest,
 } from "@/lib/types/booking.types";
 
+import type {
+  PaymentListFilters,
+  PaginatedPayments,
+} from "@/lib/types/finance.types";
+
 export const bookingsService = {
   // -- Bookings CRUD --
   getList: (filters?: BookingListFilters): Promise<PaginatedBookings> =>
@@ -100,7 +105,7 @@ export const bookingsService = {
     api.delete(endpoints.crmAssignments.bookingDelete(bookingId)),
 
   // -- Payments --
-  getPayments: (filters?: { bookingId?: string }): Promise<PaymentResponse[]> =>
+  getPayments: (filters?: PaymentListFilters): Promise<PaginatedPayments> =>
     api.get(endpoints.payments.list, { params: filters }),
 
   createPayment: (data: CreatePaymentRequest): Promise<PaymentResponse> =>

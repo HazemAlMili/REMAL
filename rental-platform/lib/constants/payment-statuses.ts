@@ -13,3 +13,10 @@ export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   Failed: 'Failed',
   Cancelled: 'Cancelled',
 }
+
+export const PAYMENT_STATUS_COLORS: Record<PaymentStatus, 'warning' | 'success' | 'danger' | 'neutral'> = {
+  Pending: 'warning',
+  Paid: 'success',
+  Failed: 'danger',
+  Cancelled: 'neutral',
+}

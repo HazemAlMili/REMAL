@@ -6,3 +6,7 @@ export * from "./owners.service";
 export * from "./reports.service";
 export * from "./units.service";
 export * from "./admin-users.service";
+export * from "./bookings.service";
+export * from "./payouts.service";
+export * from "./payments.service";
+export * from "./clients.service";

@@ -1,4 +1,4 @@
-﻿import { useAuthStore } from "@/lib/stores/auth.store";
+import { useAuthStore } from "@/lib/stores/auth.store";
 
 export interface Permissions {
   isAdmin: boolean;
@@ -14,12 +14,14 @@ export interface Permissions {
   canManageBookings: boolean;
   canViewUnits: boolean;
   canViewOwners: boolean;
+  canManageOwners: boolean;
   canViewClients: boolean;
   canModerateReviews: boolean;
   canManageAdminUsers: boolean;
   canManageAreas: boolean;
   canManageAmenities: boolean;
   canManageUnits: boolean;
+  canViewReports: boolean;
 }
 
 export function usePermissions(): Permissions {
@@ -50,13 +52,13 @@ export function usePermissions(): Permissions {
     canManageBookings: isSuperAdmin || isSales,
     canViewUnits: isSuperAdmin || isSales || isFinance || isTech,
     canViewOwners: isSuperAdmin || isFinance || isSales,
+    canManageOwners: isSuperAdmin,
     canViewClients: isSuperAdmin || isSales,
     canModerateReviews: isSuperAdmin || isSales,
     canManageAdminUsers: isSuperAdmin || isTech,
     canManageAreas: isSuperAdmin,
     canManageAmenities: isSuperAdmin,
     canManageUnits: isSuperAdmin || isTech,
+    canViewReports: isSuperAdmin || isFinance,
   };
 }
-
-
