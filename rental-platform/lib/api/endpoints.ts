@@ -1,5 +1,5 @@
-export const endpoints = {
-  // ──────────── AUTH ────────────
+﻿export const endpoints = {
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ AUTH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   auth: {
     clientRegister: "/api/auth/client/register",
     clientLogin: "/api/auth/client/login",
@@ -9,7 +9,7 @@ export const endpoints = {
     logout: "/api/auth/logout",
   },
 
-  // ──────────── ADMIN USERS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ADMIN USERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   adminUsers: {
     list: "/api/admin-users",
     create: "/api/admin-users",
@@ -17,7 +17,7 @@ export const endpoints = {
     status: (id: string) => `/api/admin-users/${id}/status`,
   },
 
-  // ──────────── AMENITIES ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ AMENITIES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   amenities: {
     list: "/api/amenities",
     create: "/api/amenities",
@@ -26,7 +26,7 @@ export const endpoints = {
     status: (id: string) => `/api/amenities/${id}/status`,
   },
 
-  // ──────────── AREAS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ AREAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   areas: {
     list: "/api/areas",
     create: "/api/areas",
@@ -35,7 +35,7 @@ export const endpoints = {
     status: (id: string) => `/api/areas/${id}/status`,
   },
 
-  // ──────────── UNITS (PUBLIC) ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ UNITS (PUBLIC) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   units: {
     publicList: "/api/units",
     publicById: (id: string) => `/api/units/${id}`,
@@ -47,7 +47,7 @@ export const endpoints = {
       `/api/units/${unitId}/pricing/calculate`,
   },
 
-  // ──────────── UNITS (INTERNAL) ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ UNITS (INTERNAL) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   internalUnits: {
     list: "/api/internal/units",
     create: "/api/internal/units",
@@ -57,7 +57,7 @@ export const endpoints = {
     status: (id: string) => `/api/internal/units/${id}/status`,
   },
 
-  // ──────────── UNIT IMAGES ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ UNIT IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   internalUnitImages: {
     create: (unitId: string) => `/api/internal/units/${unitId}/images`,
     reorder: (unitId: string) => `/api/internal/units/${unitId}/images/reorder`,
@@ -67,7 +67,7 @@ export const endpoints = {
       `/api/internal/units/${unitId}/images/${imageId}`,
   },
 
-  // ──────────── UNIT AMENITIES ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ UNIT AMENITIES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   internalUnitAmenities: {
     add: (unitId: string) => `/api/internal/units/${unitId}/amenities`,
     replace: (unitId: string) => `/api/internal/units/${unitId}/amenities`,
@@ -75,7 +75,7 @@ export const endpoints = {
       `/api/internal/units/${unitId}/amenities/${amenityId}`,
   },
 
-  // ──────────── SEASONAL PRICING ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ SEASONAL PRICING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   seasonalPricing: {
     list: (unitId: string) => `/api/internal/units/${unitId}/seasonal-pricing`,
     create: (unitId: string) =>
@@ -84,7 +84,7 @@ export const endpoints = {
     delete: (id: string) => `/api/internal/seasonal-pricing/${id}`,
   },
 
-  // ──────────── DATE BLOCKS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ DATE BLOCKS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   dateBlocks: {
     list: (unitId: string) => `/api/internal/units/${unitId}/date-blocks`,
     create: (unitId: string) => `/api/internal/units/${unitId}/date-blocks`,
@@ -92,7 +92,7 @@ export const endpoints = {
     delete: (id: string) => `/api/internal/date-blocks/${id}`,
   },
 
-  // ──────────── BOOKINGS (INTERNAL) ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ BOOKINGS (INTERNAL) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   internalBookings: {
     list: "/api/internal/bookings",
     create: "/api/internal/bookings",
@@ -102,16 +102,18 @@ export const endpoints = {
       `/api/internal/bookings/${id}/status-history`,
   },
 
-  // ──────────── BOOKING LIFECYCLE ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ BOOKING LIFECYCLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   bookingLifecycle: {
     confirm: (id: string) => `/api/internal/bookings/${id}/confirm`,
     cancel: (id: string) => `/api/internal/bookings/${id}/cancel`,
     complete: (id: string) => `/api/internal/bookings/${id}/complete`,
+    checkIn: (id: string) => `/api/internal/bookings/${id}/check-in`,
+    leftEarly: (id: string) => `/api/internal/bookings/${id}/left-early`,
   },
 
-  // ──────────── CRM LEADS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CRM LEADS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   crmLeads: {
-    create: "/api/internal/crm/leads",
+    create: "/api/crm/leads", // PUBLIC endpoint for guest booking form
     list: "/api/internal/crm/leads",
     byId: (id: string) => `/api/internal/crm/leads/${id}`,
     update: (id: string) => `/api/internal/crm/leads/${id}`,
@@ -120,7 +122,7 @@ export const endpoints = {
       `/api/internal/crm/leads/${id}/convert-to-booking`,
   },
 
-  // ──────────── CRM NOTES ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CRM NOTES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   crmNotes: {
     bookingNotesList: (bookingId: string) =>
       `/api/internal/bookings/${bookingId}/notes`,
@@ -134,7 +136,7 @@ export const endpoints = {
     delete: (id: string) => `/api/internal/crm/notes/${id}`,
   },
 
-  // ──────────── CRM ASSIGNMENTS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CRM ASSIGNMENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   crmAssignments: {
     bookingGet: (bookingId: string) =>
       `/api/internal/bookings/${bookingId}/assignment`,
@@ -148,7 +150,7 @@ export const endpoints = {
       `/api/internal/crm/leads/${leadId}/assignment`,
   },
 
-  // ──────────── PAYMENTS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ PAYMENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   payments: {
     list: "/api/internal/payments",
     create: "/api/internal/payments",
@@ -158,7 +160,7 @@ export const endpoints = {
     cancel: (id: string) => `/api/internal/payments/${id}/cancel`,
   },
 
-  // ──────────── INVOICES ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ INVOICES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   invoices: {
     list: "/api/internal/invoices",
     byId: (id: string) => `/api/internal/invoices/${id}`,
@@ -170,7 +172,7 @@ export const endpoints = {
     balance: (id: string) => `/api/internal/invoices/${id}/balance`,
   },
 
-  // ──────────── FINANCE SUMMARY ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FINANCE SUMMARY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   financeSummary: {
     bookingFinanceSnapshot: (bookingId: string) =>
       `/api/internal/bookings/${bookingId}/finance-snapshot`,
@@ -178,7 +180,7 @@ export const endpoints = {
       `/api/internal/owners/${ownerId}/payout-summary`,
   },
 
-  // ──────────── OWNER PAYOUTS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ OWNER PAYOUTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   ownerPayouts: {
     byBooking: (bookingId: string) =>
       `/api/internal/owner-payouts/by-booking/${bookingId}`,
@@ -189,19 +191,19 @@ export const endpoints = {
     cancel: (id: string) => `/api/internal/owner-payouts/${id}/cancel`,
   },
 
-  // ──────────── REPORTS — BOOKINGS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REPORTS â€” BOOKINGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   reportsBookings: {
     daily: "/api/internal/reports/bookings/daily",
     summary: "/api/internal/reports/bookings/summary",
   },
 
-  // ──────────── REPORTS — FINANCE ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REPORTS â€” FINANCE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   reportsFinance: {
     daily: "/api/internal/reports/finance/daily",
     summary: "/api/internal/reports/finance/summary",
   },
 
-  // ──────────── OWNERS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ OWNERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   owners: {
     list: "/api/owners",
     create: "/api/owners",
@@ -210,13 +212,13 @@ export const endpoints = {
     status: (id: string) => `/api/owners/${id}/status`,
   },
 
-  // ──────────── CLIENTS ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CLIENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   clients: {
     list: "/api/clients",
     byId: (id: string) => `/api/clients/${id}`,
   },
 
-  // ──────────── REVIEWS — PUBLIC ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEWS â€” PUBLIC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   publicReviews: {
     byUnitSummary: (unitId: string) => `/api/units/${unitId}/reviews/summary`,
     byUnitList: (unitId: string) => `/api/units/${unitId}/reviews`,
@@ -224,14 +226,14 @@ export const endpoints = {
       `/api/units/${unitId}/reviews/${reviewId}`,
   },
 
-  // ──────────── REVIEWS — CLIENT ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEWS â€” CLIENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   clientReviews: {
     create: "/api/reviews",
     update: (reviewId: string) => `/api/reviews/${reviewId}`,
     byBooking: (bookingId: string) => `/api/reviews/by-booking/${bookingId}`,
   },
 
-  // ──────────── REVIEW MODERATION ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEW MODERATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   reviewModeration: {
     publish: (reviewId: string) => `/api/reviews/${reviewId}/publish`,
     reject: (reviewId: string) => `/api/reviews/${reviewId}/reject`,
@@ -240,7 +242,7 @@ export const endpoints = {
       `/api/reviews/${reviewId}/status-history`,
   },
 
-  // ──────────── REVIEW REPLIES (Owner) ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEW REPLIES (Owner) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   reviewReplies: {
     get: (reviewId: string) => `/api/owner/reviews/${reviewId}/reply`,
     upsert: (reviewId: string) => `/api/owner/reviews/${reviewId}/reply`,
@@ -249,26 +251,29 @@ export const endpoints = {
       `/api/owner/reviews/${reviewId}/reply/visibility`,
   },
 
-  // ──────────── NOTIFICATION INBOX (3 personas) ────────────
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ NOTIFICATION INBOX (3 personas) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   notifications: {
     admin: {
       inbox: "/api/internal/me/notifications/inbox",
       summary: "/api/internal/me/notifications/inbox/summary",
       read: (id: string) => `/api/internal/me/notifications/inbox/${id}/read`,
+      readAll: "/api/internal/me/notifications/inbox/read-all",
     },
     client: {
       inbox: "/api/client/me/notifications/inbox",
       summary: "/api/client/me/notifications/inbox/summary",
       read: (id: string) => `/api/client/me/notifications/inbox/${id}/read`,
+      readAll: "/api/client/me/notifications/inbox/read-all",
     },
     owner: {
       inbox: "/api/owner/me/notifications/inbox",
       summary: "/api/owner/me/notifications/inbox/summary",
       read: (id: string) => `/api/owner/me/notifications/inbox/${id}/read`,
+      readAll: "/api/owner/me/notifications/inbox/read-all",
     },
   },
 
-  // ──────────── NOTIFICATION PREFERENCES (3 personas) ────────────
+  //  NOTIFICATION PREFERENCES (3 personas)
   notificationPreferences: {
     adminGet: "/api/internal/me/notification-preferences",
     adminUpdate: "/api/internal/me/notification-preferences",
@@ -278,16 +283,36 @@ export const endpoints = {
     ownerUpdate: "/api/owner/me/notification-preferences",
   },
 
-  // ──────────── OWNER PORTAL ────────────
+  // ──────────── INTERNAL NOTIFICATIONS (dispatch) ────────────
+  internalNotifications: {
+    toAdmin: (adminUserId: string) =>
+      `/api/internal/notifications/admins/${adminUserId}`,
+    toClient: (clientId: string) =>
+      `/api/internal/notifications/clients/${clientId}`,
+    toOwner: (ownerId: string) =>
+      `/api/internal/notifications/owners/${ownerId}`,
+  },
+
+  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ OWNER PORTAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   ownerPortal: {
     dashboard: "/api/owner/dashboard",
-    bookings: "/api/owner/bookings",
-    bookingById: (id: string) => `/api/owner/bookings/${id}`,
-    earnings: "/api/owner/earnings",
-    payouts: "/api/owner/payouts",
-    notifications: "/api/owner/notifications",
-    units: "/api/owner/units",
-    unitById: (id: string) => `/api/owner/units/${id}`,
-    unitAvailability: (id: string) => `/api/owner/units/${id}/availability`,
+    profile: "/api/owner/profile", // Backend gap: Not documented in API Reference
+    units: {
+      list: "/api/owner/units",
+      detail: (unitId: string) => `/api/owner/units/${unitId}`,
+    },
+    bookings: {
+      list: "/api/owner/bookings",
+      detail: (bookingId: string) => `/api/owner/bookings/${bookingId}`,
+    },
+    finance: {
+      list: "/api/owner/finance",
+      summary: "/api/owner/finance/summary",
+    },
+    reviews: {
+      createReply: (reviewId: string) => `/api/owner/reviews/${reviewId}/reply`,
+      updateReply: (reviewId: string) => `/api/owner/reviews/${reviewId}/reply`,
+      deleteReply: (reviewId: string) => `/api/owner/reviews/${reviewId}/reply`,
+    },
   },
 } as const;

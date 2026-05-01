@@ -12,6 +12,7 @@ export interface Permissions {
 
   // Finance
   canViewFinance: boolean;
+  canManageFinance: boolean;
 
   // Owner / unit management
   canManageOwners: boolean;
@@ -50,6 +51,9 @@ export function usePermissions(): Permissions {
 
       // SuperAdmin & Finance can see finance
       canViewFinance: isSuperAdmin || isFinance,
+
+      // SuperAdmin & Finance can manage finance (create/edit payouts)
+      canManageFinance: isSuperAdmin || isFinance,
 
       // Only SuperAdmin can manage owners
       canManageOwners: isSuperAdmin,

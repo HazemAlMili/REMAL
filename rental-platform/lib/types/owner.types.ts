@@ -1,31 +1,75 @@
-export interface OwnerListItemResponse {
-  id: string;
+import { PaginationMeta } from "@/lib/api/types";
+
+// ── Owner status (lowercase per API design) ──
+export type OwnerStatus = "active" | "inactive";
+
+// ── Owner form values (for React Hook Form) ──
+export interface OwnerFormValues {
+  id?: string;
   name: string;
   phone: string;
   email?: string;
   commissionRate: number;
-  status: string; // "active" | "inactive" 
+  status: OwnerStatus;
+  notes?: string;
+}
+
+// ── Owner list item ──
+export interface OwnerListItemResponse {
+  id: string;
+  name: string;
+  phone: string;
+  email: string | null;
+  commissionRate: number; // percentage: 20.00 = 20%
+  status: OwnerStatus;
   createdAt: string;
 }
 
-export interface OwnerDetailsResponse extends OwnerListItemResponse {
-  notes?: string;
+// ── Owner full detail ──
+export interface OwnerDetailsResponse {
+  id: string;
+  name: string;
+  phone: string;
+  email: string | null;
+  commissionRate: number;
+  status: OwnerStatus;
+  notes: string | null;
+  createdAt: string;
   updatedAt: string;
 }
 
-export interface PaginatedOwners {
-  items: OwnerListItemResponse[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    totalCount: number;
-    totalPages: number;
-  };
-}
-
+// ── Owner Filters ──
 export interface OwnerListFilters {
+  includeInactive?: boolean;
   page?: number;
   pageSize?: number;
-  search?: string;
-  status?: string;
+}
+
+// ── Create/Update ──
+export interface CreateOwnerRequest {
+  name: string;
+  phone: string;
+  email?: string;
+  commissionRate: number; // percentage: send 20.00 for 20%
+  status: OwnerStatus;
+  notes?: string;
+}
+
+export interface UpdateOwnerRequest {
+  name: string;
+  phone: string;
+  email?: string;
+  commissionRate: number;
+  status: OwnerStatus;
+  notes?: string;
+}
+
+export interface UpdateOwnerStatusRequest {
+  status: OwnerStatus; // 'active' | 'inactive' (lowercase)
+}
+
+// ── Paginated Owners ──
+export interface PaginatedOwners {
+  items: OwnerListItemResponse[];
+  pagination: PaginationMeta;
 }

@@ -5,6 +5,7 @@ import { useAuthStore } from "@/lib/stores/auth.store";
 import { useUIStore } from "@/lib/stores/ui.store";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { ADMIN_ROLE_LABELS } from "@/lib/constants/roles";
+import { NotificationBell } from "./NotificationBell";
 
 export function AdminHeader() {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
@@ -33,6 +34,10 @@ export function AdminHeader() {
       </div>
 
       <div className="flex items-center gap-6">
+        <NotificationBell />
+
+        <div className="h-6 w-px bg-neutral-200" />
+
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-100 text-neutral-500">
             <UserCircle size={20} />

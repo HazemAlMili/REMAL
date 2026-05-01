@@ -29,12 +29,12 @@ export function LeadAssignment({ leadId }: LeadAssignmentProps) {
   const assignMutation = useAssignLead(leadId);
   const unassignMutation = useUnassignLead(leadId);
 
-  const salesUsers = (adminUsers ?? []).filter(
+  const salesUsers = (adminUsers?.items ?? []).filter(
     (u) => u.isActive && (u.role === "Sales" || u.role === "SuperAdmin")
   );
 
   const getAdminName = (userId: string) => {
-    const user = adminUsers?.find((u) => u.id === userId);
+    const user = adminUsers?.items?.find((u) => u.id === userId);
     return user?.name ?? "Unknown Admin";
   };
 

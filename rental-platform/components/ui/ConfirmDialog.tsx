@@ -8,7 +8,12 @@ export interface ConfirmDialogProps {
   title: string;
   description?: string;
   onConfirm: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
+  onClose?: () => void;
+  isLoading?: boolean;
+  confirmLabel?: string;
+  variant?: "primary" | "danger" | "secondary";
+  children?: React.ReactNode;
 }
 
 export function ConfirmDialog({
@@ -17,19 +22,27 @@ export function ConfirmDialog({
   description,
   onConfirm,
   onCancel,
+  onClose,
+  isLoading,
+  confirmLabel = "Confirm",
+  variant = "primary",
+  children,
 }: ConfirmDialogProps) {
+  const handleCancel = onCancel || onClose;
+  
   return (
-    <Modal isOpen={isOpen} onClose={onCancel} title={title}>
-      {description && <p className="text-sm text-neutral-600">{description}</p>}
+    <Modal isOpen={isOpen} onClose={handleCancel!} title={title}>
+      {description && <p className="text-sm text-neutral-600 mb-4">{description}</p>}
+      {children}
 
-      <Modal.Footer>
-        <Button variant="ghost" onClick={onCancel}>
+      <div className="flex justify-end gap-2 mt-6">
+        <Button variant="ghost" onClick={handleCancel}>
           Cancel
         </Button>
-        <Button variant="danger" onClick={onConfirm}>
-          Confirm
+        <Button variant={variant} onClick={onConfirm} isLoading={isLoading}>
+          {confirmLabel}
         </Button>
-      </Modal.Footer>
+      </div>
     </Modal>
   );
 }

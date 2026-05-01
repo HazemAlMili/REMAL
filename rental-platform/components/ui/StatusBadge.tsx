@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import { Badge, BadgeVariant } from "./Badge";
@@ -8,12 +8,15 @@ import { CRM_STATUS_LABELS } from "@/lib/constants/booking-statuses";
 export interface StatusBadgeProps {
   status: string;
   label?: string;
+  colorMap?: Record<string, BadgeVariant>;
+  labelMap?: Record<string, string>;
 }
 
-const statusVariantMap: Record<string, BadgeVariant> = {
+const defaultStatusVariantMap: Record<string, BadgeVariant> = {
   Confirmed: "success",
   Completed: "success",
   Paid: "success",
+  Issued: "success",
   Published: "success",
   Scheduled: "info",
 
@@ -34,15 +37,22 @@ const statusVariantMap: Record<string, BadgeVariant> = {
 };
 
 // Merged label map: booking statuses take priority over CRM labels
-const statusLabelMap: Record<string, string> = {
+const defaultStatusLabelMap: Record<string, string> = {
   ...CRM_STATUS_LABELS,
   ...BOOKING_STATUS_LABELS,
 };
 
-export function StatusBadge({ status, label }: StatusBadgeProps) {
+export function StatusBadge({
+  status,
+  label,
+  colorMap,
+  labelMap,
+}: StatusBadgeProps) {
   const key = String(status);
-  const variant = statusVariantMap[key] ?? "neutral";
-  const text = label ?? statusLabelMap[key] ?? key;
+  const variant = (colorMap?.[key] ??
+    defaultStatusVariantMap[key] ??
+    "neutral") as BadgeVariant;
+  const text = label ?? labelMap?.[key] ?? defaultStatusLabelMap[key] ?? key;
 
   return <Badge variant={variant}>{text}</Badge>;
 }

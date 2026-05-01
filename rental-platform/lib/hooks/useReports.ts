@@ -2,20 +2,34 @@ import { useQuery } from "@tanstack/react-query";
 import { reportsService } from "../api/services/reports.service";
 import { unitsService } from "../api/services/units.service";
 import { queryKeys } from "./query-keys";
-import { ReportFilters } from "../types/report.types";
+import { ReportDateFilters, ReportDailyFilters } from "../types/report.types";
 
 export const useReports = () => {
   return {
-    useBookingsSummary: (filters?: ReportFilters) =>
+    useBookingsSummary: (filters?: ReportDateFilters) =>
       useQuery({
         queryKey: queryKeys.reports.bookingsSummary(filters || {}),
         queryFn: () => reportsService.getBookingsSummary(filters),
       }),
 
-    useFinanceSummary: (filters?: ReportFilters) =>
+    useFinanceSummary: (filters?: ReportDateFilters) =>
       useQuery({
         queryKey: queryKeys.reports.financeSummary(filters || {}),
         queryFn: () => reportsService.getFinanceSummary(filters),
+      }),
+
+    useBookingsDaily: (filters?: ReportDailyFilters) =>
+      useQuery({
+        queryKey: queryKeys.reports.bookingsDaily(filters || {}),
+        queryFn: () => reportsService.getBookingsDaily(filters),
+        staleTime: 1000 * 60 * 10, // 10 minutes
+      }),
+
+    useFinanceDaily: (filters?: ReportDailyFilters) =>
+      useQuery({
+        queryKey: queryKeys.reports.financeDaily(filters || {}),
+        queryFn: () => reportsService.getFinanceDaily(filters),
+        staleTime: 1000 * 60 * 10, // 10 minutes
       }),
 
     useActiveUnitsCount: () =>

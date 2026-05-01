@@ -10,14 +10,18 @@ export interface Permissions {
   canAssignLeads: boolean;
   canViewBookings: boolean;
   canViewFinance: boolean;
+  canManageFinance: boolean;
+  canManageBookings: boolean;
   canViewUnits: boolean;
   canViewOwners: boolean;
+  canManageOwners: boolean;
   canViewClients: boolean;
   canModerateReviews: boolean;
   canManageAdminUsers: boolean;
   canManageAreas: boolean;
   canManageAmenities: boolean;
   canManageUnits: boolean;
+  canViewReports: boolean;
 }
 
 export function usePermissions(): Permissions {
@@ -44,13 +48,17 @@ export function usePermissions(): Permissions {
     canAssignLeads: isSuperAdmin,
     canViewBookings: isSuperAdmin || isSales || isFinance,
     canViewFinance: isSuperAdmin || isFinance,
+    canManageFinance: isSuperAdmin || isFinance,
+    canManageBookings: isSuperAdmin || isSales,
     canViewUnits: isSuperAdmin || isSales || isFinance || isTech,
     canViewOwners: isSuperAdmin || isFinance || isSales,
+    canManageOwners: isSuperAdmin,
     canViewClients: isSuperAdmin || isSales,
     canModerateReviews: isSuperAdmin || isSales,
     canManageAdminUsers: isSuperAdmin || isTech,
     canManageAreas: isSuperAdmin,
     canManageAmenities: isSuperAdmin,
     canManageUnits: isSuperAdmin || isTech,
+    canViewReports: isSuperAdmin || isFinance,
   };
 }

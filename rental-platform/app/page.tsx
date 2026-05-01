@@ -1,10 +1,29 @@
-export default function Home() {
+// ═══════════════════════════════════════════════════════════
+// app/page.tsx — Landing page (root route)
+// ═══════════════════════════════════════════════════════════
+
+import { HeroSection } from "@/components/public/hero/HeroSection";
+import { MarqueeBanner } from "@/components/public/sections/MarqueeBanner";
+import { BrandStorySection } from "@/components/public/sections/BrandStorySection";
+import { AreasSection } from "@/components/public/sections/AreasSection";
+import { FeaturedUnitsSection } from "@/components/public/sections/FeaturedUnitsSection";
+import { MapSection } from "@/components/public/sections/MapSection";
+import { HowItWorksSection } from "@/components/public/sections/HowItWorksSection";
+import { TestimonialsSection } from "@/components/public/sections/TestimonialsSection";
+import { NewsletterCtaSection } from "@/components/public/sections/NewsletterCtaSection";
+
+export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold">Rental Platform</h1>
-      <p className="mt-4 text-lg text-gray-600">
-        Wave 0 — Infrastructure initialized successfully.
-      </p>
-    </main>
+    <>
+      <HeroSection />
+      <MarqueeBanner />
+      <BrandStorySection />
+      <AreasSection />
+      <FeaturedUnitsSection />
+      <MapSection />
+      <HowItWorksSection />
+      <TestimonialsSection />
+      <NewsletterCtaSection />
+    </>
   );
 }
