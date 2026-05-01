@@ -202,4 +202,19 @@
     summary: (unitId: string) =>
       [...queryKeys.publicReviews.all, unitId, "summary"] as const,
   },
+
+  // ──────────── CLIENT REVIEWS ────────────
+  clientReviews: {
+    all: ["client-reviews"] as const,
+    byBooking: (bookingId: string) =>
+      [...queryKeys.clientReviews.all, "booking", bookingId] as const,
+  },
+
+  // ──────────── CLIENT NOTIFICATIONS ────────────
+  clientNotifications: {
+    all: ["client-notifications"] as const,
+    list: (params?: object) =>
+      [...queryKeys.clientNotifications.all, "list", params ?? {}] as const,
+    summary: () => [...queryKeys.clientNotifications.all, "summary"] as const,
+  },
 } as const;

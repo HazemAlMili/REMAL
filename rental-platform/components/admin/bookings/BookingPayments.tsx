@@ -72,7 +72,7 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
                 </div>
                 <div className="flex items-center gap-3 text-xs text-neutral-500">
                   <span>
-                    {PAYMENT_METHOD_LABELS[payment.paymentMethod] ??
+                    {PAYMENT_METHOD_LABELS[payment.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS] ??
                       payment.paymentMethod}
                   </span>
                   <span>{formatDate(payment.paidAt ?? payment.createdAt)}</span>

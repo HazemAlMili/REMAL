@@ -52,7 +52,7 @@ export function PaymentsTable({
               <th className="p-4 font-medium">Status</th>
               <th className="p-4 font-medium">Paid At</th>
               <th className="p-4 font-medium">Created</th>
-              <th className="p-4 font-medium text-right">Actions</th>
+              <th className="p-4 text-right font-medium">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-200">
@@ -67,11 +67,17 @@ export function PaymentsTable({
                   </Link>
                 </td>
                 <td className="p-4 font-mono text-neutral-500">
-                  {payment.invoiceId ? payment.invoiceId.slice(0, 8) + "â€¦" : "â€”"}
+                  {payment.invoiceId
+                    ? payment.invoiceId.slice(0, 8) + "â€¦"
+                    : "â€”"}
                 </td>
-                <td className="p-4 font-medium">{formatCurrency(payment.amount)}</td>
+                <td className="p-4 font-medium">
+                  {formatCurrency(payment.amount)}
+                </td>
                 <td className="p-4">
-                  {PAYMENT_METHOD_LABELS[payment.paymentMethod] ?? payment.paymentMethod}
+                  {PAYMENT_METHOD_LABELS[
+                    payment.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS
+                  ] ?? payment.paymentMethod}
                 </td>
                 <td className="p-4 font-mono text-neutral-500">
                   {payment.referenceNumber ?? "â€”"}
@@ -126,7 +132,11 @@ function PaymentActions({
       <Button size="sm" onClick={() => onMarkPaid(payment.id)}>
         Mark Paid
       </Button>
-      <Button size="sm" variant="danger" onClick={() => onMarkFailed(payment.id)}>
+      <Button
+        size="sm"
+        variant="danger"
+        onClick={() => onMarkFailed(payment.id)}
+      >
         Mark Failed
       </Button>
       <Button size="sm" variant="ghost" onClick={() => onCancel(payment.id)}>

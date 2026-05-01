@@ -42,11 +42,19 @@ export interface PublicUnitDetail {
 
 // ── Public Unit Search Filters ──
 // Only page + pageSize are documented for GET /api/units (API Reference §5)
-// ⚠️ P34: areaId, type, minGuests, minPrice, maxPrice, sortBy, search
+// ⚠️ P34: areaId, unitType, minGuests, minPrice, maxPrice, sortBy, search
 //    are NOT documented — NEEDS BACKEND CONFIRMATION before adding
 export interface PublicUnitFilters {
   page?: number;
   pageSize?: number;
+  // ⚠️ P34 Backend gap — following params not confirmed by API Reference:
+  areaId?: string;
+  unitType?: string; // 'villa' | 'chalet' | 'studio'
+  minGuests?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  sortBy?: "cheapest" | "highest_rated" | "most_booked";
+  search?: string;
 }
 
 // ── Paginated Public Units ──
@@ -93,14 +101,14 @@ export interface PublicReviewFilters {
 //    'desiredCheckInDate'/'desiredCheckOutDate' (NOT 'checkInDate'/'checkOutDate')
 export interface PublicCreateCrmLeadRequest {
   clientId?: string; // optional — if client is logged in
-  targetUnitId?: string; // NOT 'unitId' per P06
+  targetUnitId: string; // NOT 'unitId' per P06 — required in our booking flow
   contactName: string; // required if no clientId
   contactPhone: string; // required if no clientId
   contactEmail?: string; // optional
-  desiredCheckInDate?: string; // NOT 'checkInDate' per P06
-  desiredCheckOutDate?: string; // NOT 'checkOutDate' per P06
-  guestCount?: number; // NOT 'numberOfGuests' per P06
-  source: string; // 'Website' | 'App' | 'WhatsApp' | 'PhoneCall' | 'Referral'
+  desiredCheckInDate: string; // NOT 'checkInDate' per P06 — ISO date
+  desiredCheckOutDate: string; // NOT 'checkOutDate' per P06 — ISO date
+  guestCount: number; // NOT 'numberOfGuests' per P06
+  source: "Website" | "App" | "WhatsApp" | "PhoneCall" | "Referral"; // PascalCase enum
   notes?: string; // optional — client message
 }
 
@@ -138,4 +146,55 @@ export interface AvailabilityCheckRequest {
 export interface PricingCalculateRequest {
   startDate: string;
   endDate: string;
+}
+
+// ── Pricing Calculate Response ──
+// (from POST /api/units/{unitId}/pricing/calculate — API Reference §8)
+// ⚠️ P05: uses 'totalPrice' (NOT 'totalAmount'), 'nights' (NOT 'nightlyBreakdown')
+export interface PricingCalculateResponse {
+  unitId: string;
+  startDate: string;
+  endDate: string;
+  totalPrice: number; // NOT 'totalAmount' per P05
+  nights: PricingNight[]; // NOT 'nightlyBreakdown' per P05
+}
+
+export interface PricingNight {
+  date: string; // "2026-06-01"
+  pricePerNight: number;
+  priceSource: "SeasonalPricing" | "BasePrice"; // NOT generic string
+}
+
+// ── Availability Check Response ──
+// (from POST /api/units/{unitId}/availability/operational-check — API Reference §8)
+// ⚠️ P04: 'blockedDates' is FLAT STRING ARRAY (NOT objects)
+export interface AvailabilityCheckResponse {
+  unitId: string;
+  startDate: string;
+  endDate: string;
+  isAvailable: boolean;
+  reason: string; // "DateBlocked" | "BookingConflict" | null
+  blockedDates: string[]; // FLAT STRING ARRAY per P04 — e.g., ["2026-06-03"]
+  // NO conflictingBookings per P04
+  // NO applicablePricing per P04
+}
+
+// ── Unit Image Response ──
+// (from GET /api/units/{unitId}/images — API Reference §6)
+// ⚠️ P02: uses 'fileKey' (NOT 'imageUrl'), 'isCover' (NOT 'isPrimary')
+export interface UnitImage {
+  id: string;
+  unitId: string;
+  fileKey: string; // NOT 'imageUrl' per P02 — build full URL on frontend
+  isCover: boolean; // NOT 'isPrimary' per P02
+  displayOrder: number;
+  createdAt: string;
+}
+
+// ── Unit Amenity Response ──
+// (from GET /api/units/{unitId}/amenities — API Reference §7)
+export interface UnitAmenity {
+  amenityId: string;
+  name: string;
+  icon: string | null;
 }

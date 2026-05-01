@@ -273,7 +273,7 @@
     },
   },
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ NOTIFICATION PREFERENCES (3 personas) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  //  NOTIFICATION PREFERENCES (3 personas)
   notificationPreferences: {
     adminGet: "/api/internal/me/notification-preferences",
     adminUpdate: "/api/internal/me/notification-preferences",

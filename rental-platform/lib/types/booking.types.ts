@@ -1,28 +1,65 @@
-﻿import type { PaginationMeta } from "@/lib/api/types";
+﻿// ═══════════════════════════════════════════════════════════
+// lib/types/booking.types.ts
+// Booking form types — shared across multi-step form
+// AND admin booking management types
+// ═══════════════════════════════════════════════════════════
 
-// All from REMAL_API_Reference.md
+// ──────────── PUBLIC BOOKING FORM TYPES ────────────
 
-// -- Booking Statuses (DIFFERENT from CRM Lead statuses) --
-// Booking has only 6 statuses (post-conversion formal status)
+export type BookingStep = 1 | 2 | 3;
+
+export interface BookingFormData {
+  // Step 1 — Booking Details
+  startDate: string | null; // ISO date: "2026-06-01" — NOT 'checkInDate' per P04/P05
+  endDate: string | null; // ISO date: "2026-06-05" — NOT 'checkOutDate' per P04/P05
+  guestCount: number;
+
+  // Step 2 — Contact (populated by FE-7-BOOK-02)
+  clientId?: string;
+  contactName?: string;
+  contactPhone?: string;
+  contactEmail?: string | null;
+
+  // Step 3 — Submission (handled by FE-7-BOOK-03/04)
+}
+
+// ──────────── ADMIN BOOKING MANAGEMENT TYPES ────────────
+// Placeholder types for admin booking management
+// These will be properly defined when admin booking features are implemented
+
 export type FormalBookingStatus =
   | "Pending"
   | "Confirmed"
-  | "CheckIn"
-  | "Completed"
   | "Cancelled"
-  | "LeftEarly";
+  | "Completed";
 
-export type PaymentStatus = "Pending" | "Paid" | "Failed" | "Cancelled";
-export type PaymentMethod =
-  | "InstaPay"
-  | "VodafoneCash"
-  | "Cash"
-  | "BankTransfer";
-
-// -- Invoice status (PascalCase) --
 export type InvoiceStatus = "Draft" | "Issued" | "Cancelled";
 
-// -- Booking list item (from GET /api/internal/bookings) --
+export type PaymentStatus = "Pending" | "Paid" | "Failed" | "Cancelled";
+
+export interface BookingListFilters {
+  page?: number;
+  pageSize?: number;
+  bookingStatus?: FormalBookingStatus;
+  unitId?: string;
+  clientId?: string;
+  ownerId?: string;
+  assignedAdminUserId?: string;
+  checkInFrom?: string;
+  checkInTo?: string;
+  search?: string;
+}
+
+export interface PaginatedBookings {
+  items: BookingListItemResponse[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+  };
+}
+
 export interface BookingListItemResponse {
   id: string;
   clientId: string;
@@ -39,7 +76,6 @@ export interface BookingListItemResponse {
   createdAt: string;
 }
 
-// -- Booking full details (from GET /api/internal/bookings/{id}) --
 export interface BookingDetailsResponse {
   id: string;
   clientId: string;
@@ -58,19 +94,6 @@ export interface BookingDetailsResponse {
   updatedAt: string;
 }
 
-// -- Booking Filters --
-export interface BookingListFilters {
-  bookingStatus?: FormalBookingStatus;
-  assignedAdminUserId?: string;
-  clientId?: string;
-  checkInFrom?: string;
-  checkInTo?: string;
-  search?: string;
-  page?: number;
-  pageSize?: number;
-}
-
-// -- Lifecycle Requests --
 export interface ConfirmBookingRequest {
   notes?: string;
 }
@@ -91,97 +114,19 @@ export interface LeftEarlyBookingRequest {
   notes?: string;
 }
 
-// -- Payment --
-export interface PaymentResponse {
+export interface BookingStatusHistoryResponse {
   id: string;
   bookingId: string;
-  invoiceId: string | null;
-  paymentStatus: PaymentStatus;
-  paymentMethod: PaymentMethod;
-  amount: number;
-  referenceNumber: string | null;
+  oldStatus: FormalBookingStatus | null;
+  newStatus: FormalBookingStatus;
+  changedByAdminUserId: string;
   notes: string | null;
-  paidAt: string | null;
-  createdAt: string;
-  updatedAt: string;
+  changedAt: string;
 }
 
-export interface CreatePaymentRequest {
-  bookingId: string;
-  invoiceId?: string;
-  paymentMethod: PaymentMethod;
-  amount: number;
-  referenceNumber?: string;
-  notes?: string;
-}
-
-export type MarkPaymentPaidRequest = Record<string, never>;
-
-export interface MarkPaymentFailedRequest {
-  notes?: string;
-}
-
-export interface CancelPaymentRequest {
-  notes?: string;
-}
-
-// -- Invoice --
-export interface InvoiceItemResponse {
-  id: string;
-  invoiceId: string;
-  lineType: "Accommodation" | "ManualAdjustment";
-  description: string;
-  quantity: number;
-  unitAmount: number;
-  lineTotal: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface InvoiceResponse {
-  id: string;
-  bookingId: string;
-  invoiceNumber: string;
-  subtotalAmount: number;
-  totalAmount: number;
-  invoiceStatus: InvoiceStatus;
-  issuedAt: string | null;
-  dueDate: string | null;
-  notes: string | null;
-  items: InvoiceItemResponse[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface InvoiceBalanceResponse {
-  invoiceId: string;
-  totalAmount: number;
-  paidAmount: number;
-  remainingAmount: number;
-  isFullyPaid: boolean;
-}
-
-export interface AddInvoiceManualAdjustmentRequest {
-  description: string;
-  quantity: number;
-  unitAmount: number; // negative = discount (e.g., -200.00)
-}
-
-// -- Finance Snapshot --
-export interface BookingFinanceSnapshotResponse {
-  bookingId: string;
-  invoiceId: string | null;
-  invoiceStatus: InvoiceStatus | null;
-  invoicedAmount: number;
-  paidAmount: number;
-  remainingAmount: number;
-  ownerPayoutStatus: "Pending" | "Scheduled" | "Paid" | "Cancelled" | null;
-}
-
-// -- Booking Notes --
 export interface BookingNoteResponse {
   id: string;
-  bookingId: string | null;
+  bookingId: string;
   crmLeadId: string | null;
   createdByAdminUserId: string;
   noteText: string;
@@ -197,24 +142,97 @@ export interface UpdateBookingNoteRequest {
   noteText: string;
 }
 
-// -- Status History --
-export interface BookingStatusHistoryResponse {
+export interface AssignBookingRequest {
+  adminUserId?: string;
+  assignedAdminUserId?: string;
+}
+
+export interface PaymentResponse {
   id: string;
   bookingId: string;
-  oldStatus: FormalBookingStatus | null;
-  newStatus: FormalBookingStatus;
-  changedByAdminUserId: string;
+  invoiceId: string | null;
+  paymentStatus: string;
+  paymentMethod: string;
+  amount: number;
+  referenceNumber: string | null;
   notes: string | null;
-  changedAt: string;
+  paidAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-// -- Assignment --
-export interface AssignBookingRequest {
-  assignedAdminUserId: string;
+export interface CreatePaymentRequest {
+  bookingId: string;
+  invoiceId?: string;
+  paymentMethod: string;
+  amount: number;
+  referenceNumber?: string;
+  notes?: string;
 }
 
-// -- Paginated Bookings --
-export interface PaginatedBookings {
-  items: BookingListItemResponse[];
-  pagination: PaginationMeta;
+export type MarkPaymentPaidRequest = Record<string, never>;
+
+export interface MarkPaymentFailedRequest {
+  notes?: string;
+}
+
+export interface CancelPaymentRequest {
+  notes?: string;
+}
+
+export interface BookingFinanceSnapshotResponse {
+  bookingId: string;
+  totalPrice: number;
+  totalPaid: number;
+  totalRefunded: number;
+  balance: number;
+  remainingAmount: number;
+  invoicedAmount: number;
+  paidAmount: number;
+  invoiceId?: string | null;
+  invoiceStatus?: string | null;
+  ownerPayoutStatus?: string | null;
+}
+
+export interface InvoiceItemResponse {
+  id: string;
+  invoiceId: string;
+  lineType: string;
+  description: string;
+  quantity: number;
+  unitAmount: number;
+  lineTotal: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InvoiceResponse {
+  id: string;
+  bookingId: string;
+  invoiceNumber: string;
+  subtotalAmount: number;
+  totalAmount: number;
+  invoiceStatus: string;
+  issuedAt: string | null;
+  dueDate: string | null;
+  notes: string | null;
+  items?: InvoiceItemResponse[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InvoiceBalanceResponse {
+  invoiceId: string;
+  totalAmount: number;
+  paidAmount: number;
+  remainingAmount: number;
+  isFullyPaid: boolean;
+}
+
+export interface AddInvoiceManualAdjustmentRequest {
+  amount: number;
+  reason: string;
+  description?: string;
+  quantity?: number;
+  unitAmount?: number;
 }

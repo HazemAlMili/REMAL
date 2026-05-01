@@ -1,122 +1,254 @@
+```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 WAVE QA REVIEW PROMPT
-Wave: 7 (Part 1) — Guest App: Infrastructure + Landing Page
-Tickets: FE-7-INFRA-01..03, FE-7-LP-01..10
+Wave: 7 — Guest App (FULL — Part 1 + Part 2)
+Tickets: FE-7-INFRA-01..03, FE-7-LP-01..10, FE-7-UNITS-01..03,
+         FE-7-BOOK-01..04, FE-7-ACC-01..04 (24 tickets)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-You are a senior QA engineer reviewing Wave 7 Part 1.
+You are a senior QA engineer reviewing Wave 7 — the Guest App.
+This wave delivers the public-facing revenue-generating part of the platform.
 
 ## MOCK DATA AUDIT — HARD GATE
 
 ```bash
-# Unit data on landing page:
-grep -rn "const units = \\[\\|const mockUnits\\|sampleUnits\\|fakeName\\|fakePrice" \\
+# ── Hardcoded unit/area/client names ──
+grep -rn "Palm Hills\|NEOM\|Ain Sokhna\|Villa Sunset\|Chalet Blue\|Ahmed Mohamed\|Sara Mohamed" \
+  --include="*.ts" --include="*.tsx" components/public/ app/\(public\)/
+# ↑ Zero matches expected — all names from API
+
+# ── Hardcoded reviews ──
+grep -rn "Great stay\|Amazing villa\|Loved it\|5 stars\|mockReview\|fakeReview\|sampleReview" \
   --include="*.ts" --include="*.tsx" components/public/
 
-# Area data:
-grep -rn "Palm Hills\\|Abraj Al Alamein\\|North Coast\\|mockArea\\|fakeArea" \\
-  --include="*.ts" --include="*.tsx" components/public/sections/ components/public/cards/
-# ↑ Area names must ONLY come from GET /api/areas — never hardcoded in components
+# ── Hardcoded prices ──
+grep -rn "1500 EGP\|2000 EGP\|basePricePerNight.*\d\d\d\d\|mockPricing\|fakePricing" \
+  --include="*.ts" --include="*.tsx" components/public/
 
-# Review data in testimonials:
-grep -rn "mockReview\\|fakeReview\\|sampleReview\\|Amazing stay\\|Beautiful villa" \\
-  --include="*.ts" --include="*.tsx" components/public/sections/TestimonialsSection.tsx \\
-  components/public/cards/TestimonialCard.tsx
+# ── External placeholder images ──
+grep -rn "unsplash.com\|picsum.photos\|placeholder.com\|cloudinary.com" \
+  --include="*.ts" --include="*.tsx" components/public/
 
-# Hero images from external URLs:
-grep -rn "unsplash.com\\|picsum.photos\\|placeholder.com\\|cloudinary.com" \\
-  --include="*.ts" --include="*.tsx" components/public/hero/
+# ── Hardcoded auth states ──
+grep -rn "mockUser\|fakeToken\|isLoggedIn.*true\|isLoggedIn.*false" \
+  --include="*.ts" --include="*.tsx" components/public/
 
-# Hardcoded user/auth states:
-grep -rn "mockUser\\|fakeToken\\|isLoggedIn.*true\\|isLoggedIn.*false" \\
-  --include="*.ts" --include="*.tsx" components/public/layout/
+# ── Source case violations (CRM lead) ──
+grep -rn "'website'\|source.*'website'\|source.*=\"website\"" \
+  --include="*.ts" --include="*.tsx" components/public/booking/ lib/api/services/public.service.ts
+# Must be 'Website' (PascalCase)
 
-# Enum case violations:
-grep -rn "'villa'\\|'chalet'\\|'studio'" \\
-  --include="*.ts" --include="*.tsx" lib/types/public.types.ts
-# ↑ unitType IS lowercase — this is CORRECT (only exception)
+# ── WRONG field names — P01 unit fields ──
+grep -rn "unitName\|\.type.*UnitType\|\.capacity\b\|status.*UnitStatus" \
+  --include="*.ts" --include="*.tsx" lib/types/public.types.ts lib/types/client.types.ts \
+  lib/hooks/usePublic.ts lib/api/services/public.service.ts components/public/
+# ↑ Zero matches expected. name/unitType/maxGuests/isActive only.
 
-grep -rn "'website'\\|'app'\\|'whatsapp'" \\
-  --include="*.ts" --include="*.tsx" lib/types/public.types.ts lib/api/services/public.service.ts
-# ↑ source must be PascalCase: 'Website', 'App', 'WhatsApp'
+# ── WRONG field names — P02 images ──
+grep -rn "imageUrl\|isPrimary" \
+  --include="*.ts" --include="*.tsx" lib/types/ components/public/
+# ↑ Zero matches expected — fileKey and isCover only
 
-# Wrong field names (P01–P06):
-grep -rn "unitName\\|unitId.*public\\|capacity\\|numberOfGuests\\|imageUrl\\|checkInDate.*lead\\|checkOutDate.*lead\\|totalAmount.*pricing\\|totalReviews\\|ratingBreakdown\\|clientName.*review" \\
-  --include="*.ts" --include="*.tsx" lib/types/public.types.ts lib/api/services/public.service.ts lib/hooks/usePublic.ts
-# ↑ All of these are WRONG for public endpoints. Zero matches expected.
+# ── WRONG field names — P04/P05 availability/pricing ──
+grep -rn "checkInDate\|checkOutDate" \
+  --include="*.ts" --include="*.tsx" lib/types/public.types.ts lib/hooks/usePublic.ts \
+  lib/api/services/public.service.ts components/public/unit/ components/public/booking/
+# ↑ Zero matches expected — startDate/endDate only
+
+grep -rn "totalAmount.*pricing\|nightlyBreakdown" \
+  --include="*.ts" --include="*.tsx" lib/types/ lib/hooks/ components/public/
+# ↑ Zero matches expected — totalPrice and nights[] per P05
+
+# ── WRONG field names — P06 CRM lead ──
+grep -rn "unitId.*lead\|checkInDate.*lead\|checkOutDate.*lead\|numberOfGuests\|leadId\b" \
+  --include="*.ts" --include="*.tsx" lib/types/ lib/api/services/ lib/hooks/usePublic.ts \
+  components/public/booking/
+# ↑ Zero matches expected. targetUnitId/desiredCheckInDate/desiredCheckOutDate/guestCount/id only.
+
+# ── WRONG field names — P10 booking ──
+grep -rn "bookingId\b.*type\|numberOfGuests\|totalAmount.*booking\|assignedToUserId\|assignedToName\|\.status.*booking" \
+  --include="*.ts" --include="*.tsx" lib/types/client.types.ts components/public/account/
+# ↑ Zero matches expected. id/guestCount/finalAmount/bookingStatus/assignedAdminUserId only.
+
+# ── WRONG field names — P22/P23 reviews ──
+grep -rn "totalReviews\|ratingBreakdown\|clientName.*review" \
+  --include="*.ts" --include="*.tsx" lib/types/public.types.ts components/public/
+# ↑ Zero matches expected
+
+# ── WRONG field names — P27 notifications ──
+grep -rn "\.title.*notification\|isRead.*boolean\|\.title.*notif" \
+  --include="*.ts" --include="*.tsx" lib/types/ components/public/
+# ↑ Zero matches expected. subject/readAt/notificationStatus/createdAt only.
+
+# ── Pagination field names ──
+grep -rn "pagination\.total[^C]\|\.pages\b" \
+  --include="*.ts" --include="*.tsx" lib/ components/public/
+# ↑ Zero matches for .total (must be .totalCount) or .pages (must be .totalPages)
+
+# ── Auth anti-patterns ──
+grep -rn "localStorage\|sessionStorage" \
+  --include="*.ts" --include="*.tsx" components/public/ lib/stores/
+# ↑ Zero matches expected — tokens in Zustand memory only
+
+# ── Internal API calls from public pages ──
+grep -rn "/api/internal/" \
+  --include="*.ts" --include="*.tsx" components/public/ app/\(public\)/
+# ↑ Zero matches expected — public + client endpoints only
+
+# ── Heavy libraries imported at module level ──
+grep -rn "^import.*mapbox-gl\|^import.*gsap\|^import.*Swiper\|^import.*Recharts" \
+  --include="*.tsx" components/public/ app/\(public\)/
+# Must be dynamic() imports, NOT module-level imports
+# Exception: gsap imported in hooks (not sections), GsapProvider handles registration.
+
+# ── Swiper CSS not global ──
+grep -rn "swiper/css" --include="*.tsx" --include="*.ts" app/ lib/
+# ↑ Should ONLY appear in FeaturedUnitsCarousel.tsx and TestimonialsCarousel.tsx
+
+# ── Mapbox CSS not global ──
+grep -rn "mapbox-gl/dist" --include="*.tsx" --include="*.ts" app/ lib/
+# ↑ Should ONLY appear in UnitsMap.tsx
+
+# ── No inline endpoint strings ──
+grep -rn "'/api/\|\"\/api\/" \
+  --include="*.ts" --include="*.tsx" components/public/ lib/hooks/usePublic.ts \
+  lib/hooks/useClient.ts lib/api/services/client.service.ts
+# ↑ Zero matches expected — all endpoints from endpoints.ts
+
+# ── motion-safe pattern ──
+grep -rn "className.*opacity-0" --include="*.tsx" components/public/
+# ↑ Every match should be "motion-safe:opacity-0", NOT bare "opacity-0"
+
+# ── prefers-reduced-motion checked ──
+grep -rn "prefers-reduced-motion" --include="*.ts" lib/hooks/animations/
+# ↑ Should appear in ALL 6 hook files
+
+# ── useGSAP used (not raw useEffect + gsap) ──
+grep -rn "useEffect.*gsap\.\|useEffect.*ScrollTrigger" \
+  --include="*.ts" --include="*.tsx" lib/hooks/animations/
+# ↑ Zero matches expected — all hooks use useGSAP()
+# Exception: GsapProvider uses useEffect for Lenis sync (this is correct)
 ```
 
 ## API CONTRACT VERIFICATION
 
 ### Public Unit Types (P01, P30):
 
-- [ ]  `PublicUnitListItem.id` used (NOT `unitId` — that's owner portal P30)
-- [ ]  `PublicUnitListItem.name` used (NOT `unitName` — that's owner portal P30)
-- [ ]  `PublicUnitListItem.maxGuests` used (NOT `capacity` or `numberOfGuests` — P01)
-- [ ]  `PublicUnitListItem.isActive` is `boolean` (NOT `status: UnitStatus` — P01)
-- [ ]  `PublicUnitListItem.bedrooms` and `bathrooms` present (P01)
-- [ ]  `PublicUnitDetail` extends list item with `description`, `address`, `updatedAt`
-- [ ]  `unitType` values are lowercase: `'villa'` | `'chalet'` | `'studio'`
+- [ ]  `PublicUnitListItem.id` used (NOT `unitId` — that’s owner portal P30)
+- [ ]  `PublicUnitListItem.name` used (NOT `unitName` — that’s owner portal P30)
+- [ ]  `PublicUnitListItem.maxGuests` used (NOT `capacity` or `numberOfGuests`)
+- [ ]  `PublicUnitListItem.isActive` is `boolean` (NOT `status: UnitStatus`)
+- [ ]  `PublicUnitListItem.bedrooms` and `bathrooms` present
+- [ ]  `PublicUnitDetail` extends list with `description`, `address`, `updatedAt`
+- [ ]  `unitType` values lowercase: `'villa'` | `'chalet'` | `'studio'`
 
 ### Unit Images (P02):
 
-- [ ]  `UnitImageResponse.fileKey` used (NOT `imageUrl`)
+- [ ]  `UnitImage.fileKey` used (NOT `imageUrl`)
 - [ ]  Image URL built from `${NEXT_PUBLIC_STORAGE_URL}/${fileKey}`
-- [ ]  `getCoverImageUrl()` finds `isCover: true`, falls back to first by `displayOrder`
+- [ ]  `isCover` used (NOT `isPrimary`)
+- [ ]  Images sorted by `isCover: true` first, then `displayOrder`
 - [ ]  Placeholder image when no images: `/images/placeholder-unit.jpg`
+- [ ]  `next/image` used for ALL images (no `<img>` tags)
+- [ ]  Storage domain in `next.config.ts` `images.remotePatterns`
 
-### Availability & Pricing (P04, P05):
+### Availability Check (P04):
 
-- [ ]  `checkAvailability()` sends `{ startDate, endDate }` (NOT `checkInDate`/`checkOutDate` — P04)
-- [ ]  `calculatePricing()` sends `{ startDate, endDate }` (NOT `checkInDate`/`checkOutDate` — P05)
-- [ ]  Availability response: `blockedDates` is flat `string[]` (NOT objects — P04)
-- [ ]  Pricing response: `totalPrice` used (NOT `totalAmount` — P05)
-- [ ]  Pricing response: `nights[{ date, pricePerNight, priceSource }]` (P05)
+- [ ]  Request body: `{ startDate, endDate }` (NOT `checkInDate`/`checkOutDate`)
+- [ ]  Response: `blockedDates: string[]` (FLAT ARRAY — NOT objects)
+- [ ]  NO `conflictingBookings` referenced anywhere
+- [ ]  NO `applicablePricing` referenced anywhere
+- [ ]  `staleTime: 0` on availability query
+- [ ]  POST method used (not GET)
 
-### CRM Lead / Booking Form (P06):
+### Pricing Calculate (P05):
 
-- [ ]  `PublicCreateCrmLeadRequest.targetUnitId` used (NOT `unitId` — P06)
-- [ ]  `PublicCreateCrmLeadRequest.guestCount` used (NOT `numberOfGuests` — P06)
-- [ ]  `PublicCreateCrmLeadRequest.desiredCheckInDate` used (NOT `checkInDate` — P06)
-- [ ]  `PublicCreateCrmLeadRequest.desiredCheckOutDate` used (NOT `checkOutDate` — P06)
-- [ ]  `PublicCreateCrmLeadRequest.source` is PascalCase: `'Website'` | `'App'`
-- [ ]  `PublicCreateCrmLeadResponse.id` used (NOT `leadId` — P06)
-- [ ]  `PublicCreateCrmLeadResponse.leadStatus` used (NOT `status` — P06)
-- [ ]  Endpoint: `POST /api/crm/leads` (public, no auth)
+- [ ]  Request body: `{ startDate, endDate }` (NOT `checkInDate`/`checkOutDate`)
+- [ ]  Response: `totalPrice` used (NOT `totalAmount`)
+- [ ]  Response: `nights[]` used (NOT `nightlyBreakdown`)
+- [ ]  Each night: `{ date, pricePerNight, priceSource }` (NOT `price`)
+- [ ]  `staleTime: 0` on pricing query
+- [ ]  `enabled: Boolean(startDate && endDate)` — not called without dates
+- [ ]  POST method used (not GET)
+
+### CRM Lead — Booking Submission (P06):
+
+- [ ]  Request: `targetUnitId` (NOT `unitId`)
+- [ ]  Request: `desiredCheckInDate`/`desiredCheckOutDate` (NOT `checkInDate`/`checkOutDate`)
+- [ ]  Request: `guestCount` (NOT `numberOfGuests`)
+- [ ]  Request: `contactName`, `contactPhone`, `contactEmail`
+- [ ]  Request: `clientId` included when logged in
+- [ ]  Request: `source: 'Website'` (PascalCase — NOT `'website'`)
+- [ ]  Response: `id` (NOT `leadId`)
+- [ ]  Response: `leadStatus` (NOT `status`)
+- [ ]  Endpoint: `POST /api/crm/leads` (public, NOT `/api/internal/bookings`)
+- [ ]  Button text: “Submit Booking Request” (NOT “Confirm Booking”)
+- [ ]  Success heading: “Request Submitted!” (NOT “Booking Confirmed!”)
 
 ### Public Reviews (P22, P23):
 
-- [ ]  `PublishedReviewListItem.reviewId` used (NOT `id` — §23)
-- [ ]  `PublishedReviewListItem` has NO `clientName` field (P23)
-- [ ]  `PublicReviewSummary.publishedReviewCount` used (NOT `totalReviews` — P22)
-- [ ]  `PublicReviewSummary.averageRating` present (P22)
-- [ ]  `PublicReviewSummary.lastReviewPublishedAt` present (P22)
-- [ ]  NO `ratingBreakdown` field in summary (P22)
-- [ ]  Testimonial cards use "Verified Guest" attribution (no client names)
+- [ ]  `PublishedReviewListItem.reviewId` used (NOT `id`)
+- [ ]  `PublishedReviewListItem` has NO `clientName` field
+- [ ]  `PublicReviewSummary.publishedReviewCount` used (NOT `totalReviews`)
+- [ ]  NO `ratingBreakdown` field in summary
+- [ ]  Testimonial cards use “Verified Guest” attribution
+
+### Client Reviews (API §22):
+
+- [ ]  Create: `{ bookingId, rating, title, comment? }` — `title` REQUIRED
+- [ ]  Update: `{ rating, title, comment }` — NO `bookingId` in update
+- [ ]  Response: `reviewStatus` field present
+- [ ]  Edit only allowed when `reviewStatus === 'Pending'`
+- [ ]  Check existing: `GET /api/client/reviews/by-booking/{bookingId}`
+
+### Client Auth (API §1):
+
+- [ ]  Client login: `{ phone, password }` (NOT `{ email, password }`)
+- [ ]  Register response: profile ONLY — NO `accessToken`
+- [ ]  Auto-login after register: `POST /api/auth/client/login` called immediately
+- [ ]  `POST /api/auth/logout` called BEFORE `clearAuth()` on logout
+- [ ]  Tokens in Zustand memory only (never localStorage)
+
+### Booking Fields (P10):
+
+- [ ]  `id` used (NOT `bookingId`)
+- [ ]  `guestCount` used (NOT `numberOfGuests`)
+- [ ]  `bookingStatus` used (NOT `status`)
+- [ ]  `finalAmount` used (NOT `totalAmount`)
+- [ ]  Flat `unitId`/`clientId` (NOT nested objects)
+
+### Notifications (P27):
+
+- [ ]  `subject` used (NOT `title`)
+- [ ]  `readAt: string | null` used (NOT `isRead: boolean`)
+- [ ]  `notificationStatus` and `createdAt` present
+- [ ]  Unread check: `readAt === null`
+- [ ]  Client inbox: `/api/client/me/notifications/inbox` (NOT `/api/internal/me/...`)
 
 ### Public Unit Filters (P34):
 
-- [ ]  `PublicUnitFilters` only has `page` + `pageSize` (no undocumented params)
+- [ ]  `PublicUnitFilters` only has `page` + `pageSize` (documented params)
 - [ ]  URL params `areaId`, `checkIn`, `checkOut`, `guests` are router-level only
-- [ ]  ⚠️ Backend confirmation needed if server-side filtering is desired
+- [ ]  ⚠️ Backend confirmation needed for server-side filtering
 
 ### Pagination:
 
-- [ ]  `PaginationMeta` uses `totalCount` and `totalPages` (NOT `total`, `count`, `pages`)
-- [ ]  `usePublicUnits` uses `placeholderData: keepPreviousData` (TanStack v5 syntax)
+- [ ]  `totalCount` and `totalPages` used (NOT `total`, `count`, `pages`)
+- [ ]  `keepPreviousData` (TanStack v5 `placeholderData: keepPreviousData` syntax)
 
-## PER-TICKET CHECKS
+## PER-TICKET CHECKS — PART 1 (VALIDATED ✅)
 
-### FE-7-INFRA-01 — Service Layer + Public Types
+### FE-7-INFRA-01 — Public Service Layer + Types
 
-- [ ]  `PublicUnitListItem` has all 11 fields matching API §5
-- [ ]  `PublicUnitDetail` has all 13 fields matching API §5
-- [ ]  `PublishedReviewListItem` has all 8 fields matching API §23
-- [ ]  `PublicReviewSummary` has all 4 fields matching API §23
-- [ ]  `PublicCreateCrmLeadRequest` has all 10 fields matching API §13
-- [ ]  `PublicCreateCrmLeadResponse` has all 16 fields matching API §13
+- [ ]  `PublicUnitListItem` has all 11 fields per API §5
+- [ ]  `PublicUnitDetail` has all 13 fields per API §5
+- [ ]  `PublishedReviewListItem` has all 8 fields per API §23 (including `reviewId`)
+- [ ]  `PublicReviewSummary` has 4 fields: `unitId`, `publishedReviewCount`, `averageRating`, `lastReviewPublishedAt`
+- [ ]  `PublicCreateCrmLeadRequest` has all 10 fields per API §13
+- [ ]  `PublicCreateCrmLeadResponse` has all 16 fields per API §13
 - [ ]  `publicService` has 11 methods covering all public endpoints
 - [ ]  `usePublic.ts` has 8 query hooks + 3 mutation hooks
+- [ ]  `getUnitReviews` supports pagination params (`page`, `pageSize`)
 - [ ]  All hooks use `enabled: !!id` where appropriate
 - [ ]  Barrel export in `lib/types/index.ts` updated
 - [ ]  Zero `any` types
@@ -126,7 +258,7 @@ grep -rn "unitName\\|unitId.*public\\|capacity\\|numberOfGuests\\|imageUrl\\|che
 - [ ]  `GsapProvider` registers `ScrollTrigger` + `useGSAP` plugins
 - [ ]  `GsapProvider` syncs with `window.__lenis` via `ScrollTrigger.scrollerProxy`
 - [ ]  Lenis scroll listener cleaned up on unmount
-- [ ]  6 hooks created: `useFadeUp`, `useImageReveal`, `useParallax`, `useTextReveal`, `useStaggerCards`, `useHeroTimeline`
+- [ ]  6 hooks: `useFadeUp`, `useImageReveal`, `useParallax`, `useTextReveal`, `useStaggerCards`, `useHeroTimeline`
 - [ ]  ALL 6 hooks use `useGSAP()` (NOT raw `useEffect` + `gsap`)
 - [ ]  ALL 6 hooks check `prefers-reduced-motion` and skip if true
 - [ ]  `useTextReveal` calls `split.revert()` in cleanup
@@ -136,261 +268,306 @@ grep -rn "unitName\\|unitId.*public\\|capacity\\|numberOfGuests\\|imageUrl\\|che
 - [ ]  `GsapProvider` in `app/(public)/layout.tsx` only (NOT root layout)
 - [ ]  Barrel export from `lib/hooks/animations/index.ts`
 
-### FE-7-INFRA-03 — Public Layout (Nav + Footer)
+### FE-7-INFRA-03 — Public Nav + Footer
 
-- [ ]  `PublicNav` fixed at top with `z-50`
-- [ ]  Nav transitions: transparent → solid at `scrollY > 80`
+- [ ]  Nav: `fixed top-0 z-50`, transparent → solid at `scrollY > 80`
 - [ ]  Transition: `duration-300` with `ease-out-quart`
 - [ ]  Scroll reads from `window.__lenis?.scroll` with native fallback
 - [ ]  Both scroll listeners cleaned up on unmount
-- [ ]  Auth state from `useAuthStore()` — not context, not props
-- [ ]  Not logged in: "Login" + "Register" visible
-- [ ]  Logged in: "My Account" visible
-- [ ]  Mobile hamburger toggles `MobileMenu`
-- [ ]  `MobileMenu` closes on route change
+- [ ]  Auth from `useAuthStore()` (not context/props)
+- [ ]  Not logged in: “Login” + “Register” | Logged in: “My Account”
+- [ ]  Mobile hamburger → `MobileMenu` → closes on route change
 - [ ]  `GsapProvider` wraps public layout
-- [ ]  No `<SmoothScrollProvider>` duplication
-- [ ]  No `<QueryClientProvider>` duplication
-- [ ]  Footer: `bg-neutral-900`, platform name, links, copyright with dynamic year
-- [ ]  Route strings from `ROUTES` constants (no hardcoded paths)
+- [ ]  No `<SmoothScrollProvider>` duplication (already in root)
+- [ ]  No `<QueryClientProvider>` duplication (already in root)
+- [ ]  Footer: `bg-neutral-900`, links, dynamic year copyright
+- [ ]  Route strings from `ROUTES` constants
 
 ### FE-7-LP-01 — Hero Section
 
 - [ ]  Full viewport `h-screen` with `overflow-hidden`
-- [ ]  `HeroCarousel`: 7s interval, 1200ms crossfade, CSS opacity transition
-- [ ]  First image: `priority` flag on `next/image` (LCP)
-- [ ]  Gradient overlay: `rgba(13,11,10,0.15)` top → `rgba(13,11,10,0.65)` bottom
-- [ ]  `useHeroTimeline` fires 6-element sequence on mount
-- [ ]  `useTextReveal` on heading (word-by-word)
+- [ ]  Carousel: 7s interval, 1200ms crossfade, CSS opacity
+- [ ]  First image: `priority` flag (LCP optimization)
+- [ ]  Gradient: `rgba(13,11,10,0.15)` top → `rgba(13,11,10,0.65)` bottom
+- [ ]  `useHeroTimeline` 6-element sequence on mount
+- [ ]  `useTextReveal` on heading
 - [ ]  `ScrollIndicator` with `animate-hero-bounce`
-- [ ]  `prefers-reduced-motion`: no carousel, no GSAP, all content visible
-- [ ]  `motion-safe:opacity-0` pattern used (NOT bare `opacity-0`)
-- [ ]  Static images from `/public/images/hero/` (NOT API)
+- [ ]  `motion-safe:opacity-0` pattern (NOT bare `opacity-0`)
+- [ ]  `prefers-reduced-motion`: no carousel, no GSAP, all visible
+- [ ]  Static images from `/public/images/hero/`
 
 ### FE-7-LP-02 — Hero Search Bar
 
 - [ ]  Glass morphism: `bg-white/10 backdrop-blur-md border-white/20 rounded-2xl`
-- [ ]  Areas from `usePublicAreas()` (real API, not hardcoded)
+- [ ]  Areas from `usePublicAreas()` (real API)
 - [ ]  Only active areas in dropdown
-- [ ]  "All Areas" default option
-- [ ]  Check-in min: today
-- [ ]  Check-out min: check-in + 1 day
+- [ ]  Check-in min: today | Check-out min: checkIn + 1 day
 - [ ]  Check-out disabled until check-in selected
-- [ ]  Check-out resets when check-in changes past it
+- [ ]  Check-out resets when check-in invalidates it
 - [ ]  `GuestSelector`: min 1, max 20, default 2
-- [ ]  Submit: `router.push('/units?areaId=...&checkIn=...&checkOut=...&guests=...')`
-- [ ]  Only non-empty, non-default params in URL
+- [ ]  Submit: `router.push('/units?...')` with non-empty params only
 - [ ]  `[color-scheme:dark]` on date inputs
 - [ ]  No API call on submit (navigation only)
 
 ### FE-7-LP-03 — Marquee Banner
 
-- [ ]  Pure CSS animation (`@keyframes marquee`, `translateX(-50%)`)
-- [ ]  Two copies of content for seamless loop
-- [ ]  Pauses on hover
-- [ ]  `motion-reduce:[animation-play-state:paused]`
-- [ ]  `overflow-hidden` on container
-- [ ]  `select-none` prevents text selection
-- [ ]  `sr-only` text for screen readers
-- [ ]  `aria-hidden="true"` on scrolling strips
+- [ ]  Pure CSS: `@keyframes marquee`, `translateX(-50%)`
+- [ ]  Two copies of content (seamless loop)
+- [ ]  Hover pauses | `motion-reduce` pauses
+- [ ]  `sr-only` text + `aria-hidden` on strips + `aria-label` on section
+- [ ]  `bg-neutral-900`, white uppercase text
 - [ ]  No JavaScript animation
-- [ ]  `bg-neutral-900`, white text, uppercase
 
 ### FE-7-LP-04 — Brand Story
 
-- [ ]  Two-column grid: text left, image right (desktop)
-- [ ]  Mobile: image first, text below (order swap)
-- [ ]  `useTextReveal()` on heading
-- [ ]  `useFadeUp({ delay: 0.3 })` on paragraph
-- [ ]  `useImageReveal()` on image container
-- [ ]  `useParallax(0.2)` on image inner wrapper
-- [ ]  Correct nesting: `imageRevealRef` → outer, `parallaxRef` → inner
+- [ ]  Two-column grid: text left / image right (desktop), stacked (mobile)
+- [ ]  `useTextReveal` on heading, `useFadeUp(0.3)` on paragraph
+- [ ]  `useImageReveal` on outer, `useParallax(0.2)` on inner (correct nesting)
 - [ ]  Static image from `/public/images/brand/`
-- [ ]  CTA: "Browse Properties" → `/units`
+- [ ]  CTA → `/units` via `ROUTES.public.unitsList`
 - [ ]  `motion-safe:opacity-0` on all animated elements
 
 ### FE-7-LP-05 — Areas Section
 
-- [ ]  Areas from `usePublicAreas()` (real API)
-- [ ]  Only active areas rendered
-- [ ]  Section hidden if 0 active areas or API error
-- [ ]  Skeleton loading: 6 skeleton cards
-- [ ]  `useStaggerCards({ stagger: 0.15 })` on grid
-- [ ]  `AreaCard`: background image, gradient overlay, name, description
-- [ ]  Image from `/public/images/areas/{area.id}.jpg` with fallback
-- [ ]  `onError` fallback to default area image
-- [ ]  Hover: image zoom, overlay darken, content shift up
-- [ ]  Click → `/units?areaId={area.id}`
-- [ ]  ⚠️ No `unitCount` field — backend gap documented
+- [ ]  Areas from `usePublicAreas()` | Only active areas
+- [ ]  Section hidden if 0 active or API error
+- [ ]  Skeleton: 6 cards | `useStaggerCards({ stagger: 0.15 })`
+- [ ]  Card: image + gradient + name + description (NOT `unitCount` — backend gap)
+- [ ]  Image from `/public/images/areas/{area.id}.jpg` with `onError` fallback
+- [ ]  Hover: zoom + darken + shift | Click → `/units?areaId={area.id}`
 - [ ]  Grid: `cols-1 sm:cols-2 lg:cols-3`
 
 ### FE-7-LP-06 — Featured Units Carousel
 
-- [ ]  Units from `GET /api/units?page=1&pageSize=8` via `usePublicUnits`
-- [ ]  Section hidden if 0 units or API error
-- [ ]  Swiper loaded via `dynamic({ ssr: false })`
-- [ ]  Swiper CSS imported only in carousel component
-- [ ]  `slidesPerView`: 1.2 → 1.8 (640) → 2.5 (768) → 3.5 (1024)
-- [ ]  `freeMode: true`, `loop: false`
-- [ ]  Navigation arrows: desktop only, show on carousel hover
+- [ ]  `GET /api/units?page=1&pageSize=8` via `usePublicUnits`
+- [ ]  Swiper: `dynamic({ ssr: false })`, CSS imported only in carousel component
+- [ ]  `slidesPerView`: 1.2 → 2.5 → 3.5 | `freeMode: true` | `loop: false`
+- [ ]  Nav arrows: desktop only, show on carousel hover
 - [ ]  No autoplay
-- [ ]  `UnitCard` uses `unit.id` (NOT `unitId`) and `unit.name` (NOT `unitName`)
-- [ ]  `UnitCard` fetches images via `useUnitImages(unit.id)`
-- [ ]  Image URL from `fileKey` (NOT `imageUrl` — P02)
-- [ ]  `UnitCard` hover: lift, image zoom, CTA appear
-- [ ]  Price: `formatCurrency(unit.basePricePerNight)` + "/ night"
-- [ ]  `maxGuests` displayed (NOT `capacity`)
-- [ ]  Unit type badge: lowercase → PascalCase label
+- [ ]  `UnitCard`: `unit.id`, `unit.name`, `unit.maxGuests`, `unit.unitType`
+- [ ]  Image from `fileKey` via `getCoverImageUrl()` | Placeholder fallback
+- [ ]  Price: `formatCurrency(basePricePerNight)` + “/ night”
+- [ ]  Hover: lift + zoom + CTA
 
 ### FE-7-LP-07 — Map Section
 
-- [ ]  Mapbox loaded via `dynamic({ ssr: false })`
+- [ ]  Mapbox: `dynamic({ ssr: false })`, CSS imported only in `UnitsMap.tsx`
 - [ ]  `NEXT_PUBLIC_MAPBOX_TOKEN` from env (never hardcoded)
-- [ ]  Map style: `light-v11` (not satellite, not dark)
-- [ ]  Centered on Egypt: `[30.8025, 26.8206]`, zoom ~5.5
-- [ ]  `scrollZoom: false` (no scroll hijack)
+- [ ]  Style: `light-v11` | Center: Egypt | `scrollZoom: false`
 - [ ]  Areas from `usePublicAreas()` (shared cache)
-- [ ]  Coordinate mapping from `lib/constants/area-coordinates.ts`
+- [ ]  Coordinates from `lib/constants/area-coordinates.ts`
 - [ ]  Areas without coordinates gracefully skipped
-- [ ]  Custom terracotta markers with `animate-ping` pulse
-- [ ]  `motion-reduce:animate-none` on pulse animation
-- [ ]  Popup: area name + description + "Browse {name}" link
-- [ ]  Popup link → `/units?areaId={area.id}`
-- [ ]  Map cleanup: `map.remove()` on unmount
-- [ ]  Markers cleanup on areas change
-- [ ]  Mapbox CSS imported only in `UnitsMap.tsx`
+- [ ]  Terracotta markers + `animate-ping` + `motion-reduce:animate-none`
+- [ ]  Popup: name + description + “Browse {name}” link → `/units?areaId=...`
+- [ ]  Cleanup: `map.remove()` + markers removed on unmount
 
 ### FE-7-LP-08 — How It Works
 
 - [ ]  4 steps: Browse, Inquire, Confirm, Check In
-- [ ]  Each step: numbered badge, lucide icon, heading, description
-- [ ]  `useStaggerCards({ stagger: 0.15 })` on grid
-- [ ]  `useFadeUp()` on section heading
+- [ ]  Each: numbered badge + lucide icon + heading + description
+- [ ]  `useStaggerCards` on grid | `useFadeUp` on heading
 - [ ]  Grid: `cols-1 sm:cols-2 lg:cols-4`
-- [ ]  Static content (no API)
-- [ ]  No click handlers on steps
-- [ ]  `motion-safe:opacity-0` on animated elements
+- [ ]  Static content, no API, no click handlers
 
 ### FE-7-LP-09 — Testimonials Carousel
 
 - [ ]  Reviews from `GET /api/public/units/{unitId}/reviews` per curated unit
-- [ ]  Curated unit IDs in `lib/constants/curated-units.ts`
-- [ ]  `MAX_REVIEWS_PER_UNIT` limits reviews per unit (2)
-- [ ]  `review.reviewId` used as key (NOT `id` — §23)
-- [ ]  NO `clientName` — "Verified Guest" attribution (P23)
-- [ ]  `review.title` shown (reviews have titles)
-- [ ]  Comment truncated ~120 chars
-- [ ]  `StarRating` component with `aria-label`
-- [ ]  Swiper: `autoplay: { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true }`
-- [ ]  `loop` only when `reviews.length >= 3`
-- [ ]  Pagination dots, NO navigation arrows
-- [ ]  Swiper loaded via `dynamic({ ssr: false })`
-- [ ]  Empty state: "Be the first to experience our properties"
-- [ ]  Section hidden if `TESTIMONIAL_UNIT_IDS` is empty
+- [ ]  Curated IDs in `lib/constants/curated-units.ts`
+- [ ]  `review.reviewId` as key (NOT `id`) | `review.title` shown
+- [ ]  NO `clientName` — “Verified Guest” (P23)
+- [ ]  Swiper: `autoplay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true`
+- [ ]  `loop` only when `reviews.length >= 3` | Dots, NO arrows
+- [ ]  Swiper: `dynamic({ ssr: false })` | Empty state message
+- [ ]  `StarRating` with `aria-label`
 
 ### FE-7-LP-10 — Newsletter CTA
 
-- [ ]  Full-width dark section with parallax background
-- [ ]  `useParallax(0.3)` on background wrapper
-- [ ]  Parallax wrapper extends `−inset-y-20` (edge prevention)
-- [ ]  Dark gradient overlay: `from-black/60 to-black/80`
-- [ ]  `useTextReveal()` on heading
-- [ ]  Email input: glass morphism, `[color-scheme:dark]`
-- [ ]  Validation: required + valid email (regex)
-- [ ]  Error display: red text, red border, clears on type
-- [ ]  Submit: NO API call (Phase 2), shows success message
-- [ ]  Success: green checkmark + "Thank you! We'll be in touch."
-- [ ]  "Browse Properties" ghost button → `/units`
+- [ ]  Parallax bg: `useParallax(0.3)` + `inset-y-20` buffer
+- [ ]  `useTextReveal` on heading | Gradient: `from-black/60 to-black/80`
+- [ ]  Email: glass morphism input + `[color-scheme:dark]`
+- [ ]  Validation: required + valid email regex
+- [ ]  Submit: NO API call (Phase 2) → success message
+- [ ]  “Browse Properties” ghost button → `/units`
+- [ ]  Accessibility: `aria-label`, `aria-invalid`, `aria-describedby`
 - [ ]  `motion-safe:opacity-0` on animated elements
-- [ ]  Background image `aria-hidden="true"`
-- [ ]  `aria-label`, `aria-invalid`, `aria-describedby` on email input
 
-## ARCHITECTURE CHECKS
+## PER-TICKET CHECKS — PART 2 (PENDING VALIDATION)
 
-```bash
-# Heavy libs must be dynamic():
-grep -rn "import.*Swiper\\|import.*mapboxgl\\|import.*Recharts\\|import.*gsap" \\
-  --include="*.tsx" components/public/sections/ components/public/map/
-# ↑ Direct imports in section components = FAIL. Only dynamic() wrappers allowed.
-# Exception: gsap imported in hooks (not sections), GsapProvider handles registration.
+> ⚠️ These checks are based on the original ticket specs BEFORE validation.
+Field names and API contracts will be confirmed during Part 2 ticket validation.
+Use these as a starting checklist — corrections may be applied.
+> 
 
-# Swiper CSS not global:
-grep -rn "swiper/css" --include="*.tsx" --include="*.ts" \\
-  app/ lib/
-# ↑ Should ONLY appear in FeaturedUnitsCarousel.tsx and TestimonialsCarousel.tsx
+### FE-7-UNITS-01 — Units Listing
 
-# Mapbox CSS not global:
-grep -rn "mapbox-gl/dist" --include="*.tsx" --include="*.ts" \\
-  app/ lib/
-# ↑ Should ONLY appear in UnitsMap.tsx
+- [ ]  `GET /api/units` with `page` + `pageSize` only (documented params)
+- [ ]  P34 filter params flagged as ⚠️ NEEDS BACKEND CONFIRMATION
+- [ ]  `unit.id` for key/navigation | `unit.name` displayed
+- [ ]  `keepPreviousData: true` for smooth pagination
+- [ ]  URL params sync on filter/page change
+- [ ]  Pre-populates from hero search URL params
+- [ ]  `usePublicAreas()` for filter dropdown
+- [ ]  Empty state + “Clear all filters”
 
-# No inline endpoint strings:
-grep -rn "'/api/\\|\\"\\/api\\/" \\
-  --include="*.ts" --include="*.tsx" components/public/ lib/hooks/usePublic.ts
-# ↑ Zero matches expected — all endpoints from endpoints.ts
+### FE-7-UNITS-02 — Unit Detail
 
-# No localStorage for auth:
-grep -rn "localStorage\\|sessionStorage" \\
-  --include="*.ts" --include="*.tsx" components/public/ lib/stores/
-# ↑ Zero matches expected — tokens in Zustand memory only
+- [ ]  5+ API calls on mount: unit, images, amenities, review summary, reviews
+- [ ]  2 conditional: pricing + availability (`enabled` only with dates)
+- [ ]  `staleTime: 0` on pricing and availability
+- [ ]  P01/P02/P04/P05/P22/P23 all correct
+- [ ]  Sticky booking panel on desktop
+- [ ]  “Book Now” disabled if no dates or unavailable
+- [ ]  404 empty state for not-found units
 
-# useGSAP used (not raw useEffect + gsap):
-grep -rn "useEffect.*gsap\\.\\|useEffect.*ScrollTrigger" \\
-  --include="*.ts" --include="*.tsx" lib/hooks/animations/
-# ↑ Zero matches expected — all hooks use useGSAP()
-# Exception: GsapProvider uses useEffect for Lenis sync (this is correct)
+### FE-7-UNITS-03 — Image Gallery + Lightbox
 
-# motion-safe pattern:
-grep -rn "className.*opacity-0" \\
-  --include="*.tsx" components/public/
-# ↑ Every match should be "motion-safe:opacity-0", NOT bare "opacity-0"
+- [ ]  Images sorted by `isCover` first, then `displayOrder`
+- [ ]  `getImageUrl(fileKey)` used (NOT `imageUrl`)
+- [ ]  Lightbox: `dynamic({ ssr: false })`
+- [ ]  Keyboard: ← → arrows, Escape closes
+- [ ]  Touch: swipe (min 50px) for next/prev
+- [ ]  Body scroll locked in lightbox | Backdrop click closes
+- [ ]  `useImageReveal()` on hero image
 
-# prefers-reduced-motion checked:
-grep -rn "prefers-reduced-motion" \\
-  --include="*.ts" lib/hooks/animations/
-# ↑ Should appear in ALL 6 hook files
-```
+### FE-7-BOOK-01 — Step 1: Dates + Pricing
 
-- [ ]  Swiper never imported at module level in sections — `dynamic()` only
-- [ ]  Mapbox never imported at module level — `dynamic()` only
-- [ ]  Swiper CSS imported only in carousel components (2 files)
-- [ ]  Mapbox CSS imported only in `UnitsMap.tsx` (1 file)
-- [ ]  No inline `/api/...` strings in components or hooks
-- [ ]  No `localStorage`/`sessionStorage` usage for auth
-- [ ]  All animation hooks use `useGSAP()` (not `useEffect` + `gsap`)
-- [ ]  All animated elements use `motion-safe:opacity-0` (not bare `opacity-0`)
-- [ ]  All 6 animation hooks check `prefers-reduced-motion`
-- [ ]  `pnpm type-check` → zero errors
-- [ ]  `pnpm build` → zero errors
-- [ ]  No mock data anywhere
+- [ ]  3-step progress indicator
+- [ ]  Pre-populated from URL params
+- [ ]  P04: availability `startDate`/`endDate`, `blockedDates` flat array
+- [ ]  P05: pricing `totalPrice`, `nights[]`
+- [ ]  “Continue” disabled until dates + guests + available
+- [ ]  “You won’t be charged yet” messaging
+
+### FE-7-BOOK-02 — Step 2: Inline Registration/Login
+
+- [ ]  Client → skip | Admin/Owner → error | Anonymous → form
+- [ ]  Login: `{ phone, password }` (NOT email)
+- [ ]  Register → auto-login (2 API calls, register then login)
+- [ ]  Register response has NO `accessToken`
+- [ ]  `email` sent as `undefined` when empty
+- [ ]  Logout: `POST /api/auth/logout` BEFORE `clearAuth()`
+- [ ]  Phone validation: Egyptian format
+
+### FE-7-BOOK-03 — Step 3: Confirmation
+
+- [ ]  P06: `targetUnitId`, `desiredCheckInDate`, `guestCount`, `contactName`
+- [ ]  `source: 'Website'` (PascalCase)
+- [ ]  Button: “Submit Booking Request” (NOT “Confirm Booking”)
+- [ ]  Response `id` (NOT `leadId`)
+- [ ]  “Request Submitted!” (NOT “Booking Confirmed!”)
+- [ ]  “This is not a confirmed booking yet” disclaimer
+- [ ]  Double-submit prevention
+
+### FE-7-BOOK-04 — CRM Lead Hook
+
+- [ ]  `POST /api/crm/leads` (public, NOT internal)
+- [ ]  All P06 field names correct
+- [ ]  Zod validates required fields + date order
+- [ ]  422 errors parsed
+- [ ]  `onSuccess` invalidates queries
+
+### FE-7-ACC-01 — Client Account Layout
+
+- [ ]  Auth guard: `subjectType === 'Client'`
+- [ ]  Non-client redirected
+- [ ]  Logout: `POST /api/auth/logout` BEFORE `clearAuth()`
+- [ ]  NO calls to `/api/internal/...`
+
+### FE-7-ACC-02 — Booking History
+
+- [ ]  P10: `id`, `bookingStatus`, `guestCount`, `finalAmount`
+- [ ]  Flat `unitId` (NOT nested object)
+- [ ]  “Write Review” only for `bookingStatus === 'Completed'`
+- [ ]  `GET /api/client/reviews/by-booking/{bookingId}` to check existing
+- [ ]  Backend gap: documented with placeholder/empty state
+
+### FE-7-ACC-03 — Review Submission
+
+- [ ]  `GET /api/client/reviews/by-booking/{bookingId}` on mount
+- [ ]  No review → create | Pending → edit | Published/Rejected/Hidden → read-only
+- [ ]  Create: `POST /api/client/reviews` with `{ bookingId, rating, title, comment? }`
+- [ ]  Edit: `PUT /api/client/reviews/{reviewId}` with `{ rating, title, comment }`
+- [ ]  `title` REQUIRED (Zod validates)
+- [ ]  Star rating: interactive 1–5 selector (NOT number input)
+- [ ]  Auth guard: redirect non-clients
+
+### FE-7-ACC-04 — Client Notifications
+
+- [ ]  P27: `subject` (NOT `title`), `readAt === null` for unread
+- [ ]  Client inbox: `/api/client/me/notifications/inbox` (NOT internal)
+- [ ]  Bell only for `subjectType === 'Client'`
+- [ ]  Backend gap: documented with placeholder/empty state
+
+## VISUAL QA (Manual — Must Test in Browser)
+
+| Test | Expected |
+| --- | --- |
+| Hero loads on desktop | Cinematic full-viewport, Playfair Display heading, GSAP reveal |
+| Scroll down hero | Nav transitions transparent → solid at 80px |
+| Hero search: select dates + area → submit | Lands on `/units` with URL params pre-filled |
+| Areas section: hover card | Overlay darkens, text shifts up |
+| Featured units: hover card | Lifts + image zooms + CTA appears |
+| Map section loads | Terracotta markers visible, click → popup with area link |
+| How It Works: scroll into view | Steps stagger in (if motion enabled) |
+| Testimonials carousel | Autoplay 4s, dots pagination, real review content |
+| Newsletter CTA: submit email | Success message, no network request |
+| Units listing: filter by area | URL updates, cards re-render |
+| Unit detail: select dates | Pricing calculates immediately |
+| Unit detail: unavailable dates | Error shown, “Book Now” disabled |
+| Booking form: anonymous user | Step 2 shows register + login tabs |
+| Booking form: register new client | Auto-logs in, proceeds to Step 3 |
+| Submit booking | Confirmation with lead ID, “Request Submitted!” |
+| Client reviews booking after completion | Star selector + title field required |
+| `prefers-reduced-motion` enabled | No GSAP, no carousel, no parallax, all content visible |
+| Mobile viewport | Nav hamburger, stacked layouts, touch swipe on carousels |
 
 ## PERFORMANCE CHECKS
 
-- [ ]  First hero image has `priority` flag (LCP optimization)
-- [ ]  Subsequent hero images lazy-loaded
+- [ ]  First hero image has `priority` flag (LCP)
 - [ ]  `next/image` with `fill` + `object-cover` + appropriate `sizes` everywhere
-- [ ]  `image.quality` set (80–85) — not default 75
-- [ ]  Marquee uses `transform: translateX` (GPU-composited, not layout-triggering)
+- [ ]  Marquee uses `transform: translateX` (GPU-composited)
 - [ ]  Parallax uses `transform: translateY` (GPU-composited)
-- [ ]  No `will-change` added unnecessarily
 - [ ]  `setInterval` in HeroCarousel cleaned up on unmount
 - [ ]  Mapbox `map.remove()` on unmount
 - [ ]  TanStack Query shared cache: areas fetched once (used by 3+ components)
-- [ ]  `usePublicUnits` uses `placeholderData: keepPreviousData` for smooth pagination
+- [ ]  `placeholderData: keepPreviousData` on paginated queries
+- [ ]  `staleTime: 0` on availability + pricing
+- [ ]  Lightbox: body scroll locked, restored on close
 
 ## ACCESSIBILITY CHECKS
 
 - [ ]  `prefers-reduced-motion` respected in ALL 6 animation hooks
 - [ ]  `prefers-reduced-motion` stops HeroCarousel cycling
 - [ ]  `prefers-reduced-motion` stops marquee scrolling
-- [ ]  `prefers-reduced-motion` stops marker pulse animation
-- [ ]  Marquee: `sr-only` text + `aria-hidden` on scrolling strips + `aria-label` on section
+- [ ]  `prefers-reduced-motion` stops marker pulse
+- [ ]  Marquee: `sr-only` text + `aria-hidden` + `aria-label`
 - [ ]  Map: `aria-label` on container
-- [ ]  Background/decorative images: `aria-hidden="true"`
+- [ ]  Decorative images: `aria-hidden="true"`
 - [ ]  Email input: `aria-label`, `aria-invalid`, `aria-describedby`
-- [ ]  `StarRating`: `aria-label` (e.g., "4 out of 5 stars")
-- [ ]  `GuestSelector` buttons: `aria-label` ("Decrease guests" / "Increase guests")
-- [ ]  Mobile menu toggle: `aria-label` ("Open menu" / "Close menu")
-- [ ]  All `<Link>` elements use Next.js `<Link>` (not `<a>`)
+- [ ]  `StarRating`: `aria-label` (e.g., “4 out of 5 stars”)
+- [ ]  `GuestSelector` buttons: `aria-label`
+- [ ]  Mobile menu toggle: `aria-label`
+- [ ]  All navigation: Next.js `<Link>` (not `<a>`)
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## ARCHITECTURE CHECKS
+
+- [ ]  Swiper: `dynamic({ ssr: false })` only — never module-level import
+- [ ]  Mapbox: `dynamic({ ssr: false })` only
+- [ ]  Lightbox: `dynamic({ ssr: false })` only
+- [ ]  Swiper CSS in carousel components only (2 files)
+- [ ]  Mapbox CSS in `UnitsMap.tsx` only
+- [ ]  No inline `/api/...` strings
+- [ ]  No `localStorage`/`sessionStorage` for auth
+- [ ]  All animation hooks use `useGSAP()` (not `useEffect + gsap`)
+- [ ]  All animated elements use `motion-safe:opacity-0`
+- [ ]  All 6 animation hooks check `prefers-reduced-motion`
+- [ ]  `pnpm type-check` → zero errors
+- [ ]  `pnpm build` → zero errors
+- [ ]  No mock data anywhere
+
+## Wave 7 Sign-off Recommendation
+
+- [ ]  **APPROVED** — Guest App launches! Full platform functional.
+- [ ]  **CONDITIONAL** — Conditions: ___
+- [ ]  **BLOCKED** — Blockers: ___
+```
