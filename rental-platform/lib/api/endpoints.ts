@@ -113,7 +113,7 @@
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CRM LEADS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   crmLeads: {
-    create: "/api/internal/crm/leads",
+    create: "/api/crm/leads", // PUBLIC endpoint for guest booking form
     list: "/api/internal/crm/leads",
     byId: (id: string) => `/api/internal/crm/leads/${id}`,
     update: (id: string) => `/api/internal/crm/leads/${id}`,

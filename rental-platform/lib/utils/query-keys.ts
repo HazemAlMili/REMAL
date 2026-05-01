@@ -12,6 +12,8 @@
     all: ["units"] as const,
     publicList: (filters?: object) =>
       [...queryKeys.units.all, "public", "list", filters ?? {}] as const,
+    publicById: (id: string) =>
+      [...queryKeys.units.all, "public", "detail", id] as const,
     publicDetail: (id: string) =>
       [...queryKeys.units.all, "public", "detail", id] as const,
     internalList: (filters?: object) =>
@@ -190,5 +192,14 @@
     all: ["admin-users"] as const,
     list: (filters?: object) =>
       [...queryKeys.adminUsers.all, "list", filters ?? {}] as const,
+  },
+
+  // ──────────── PUBLIC REVIEWS ────────────
+  publicReviews: {
+    all: ["public-reviews"] as const,
+    byUnit: (unitId: string, params?: object) =>
+      [...queryKeys.publicReviews.all, unitId, params ?? {}] as const,
+    summary: (unitId: string) =>
+      [...queryKeys.publicReviews.all, unitId, "summary"] as const,
   },
 } as const;
