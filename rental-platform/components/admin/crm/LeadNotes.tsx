@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useLeadNotes, useAddLeadNote } from "@/lib/hooks/useCrm";
+import { useAdminUsers } from "@/lib/hooks/useAdminUsers";
 import { NoteItem } from "@/components/admin/crm/NoteItem";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -21,9 +22,17 @@ export function LeadNotes({ leadId }: LeadNotesProps) {
 
   const { data: notes, isLoading } = useLeadNotes(leadId);
   const addNoteMutation = useAddLeadNote(leadId);
+  const { data: adminUsersData } = useAdminUsers({ includeInactive: true });
 
   const user = useAuthStore((s) => s.user);
   const { isAdmin } = usePermissions();
+
+  // Build a map from adminUserId → name for note author resolution
+  const adminNameMap = useMemo(() => {
+    const map = new Map<string, string>();
+    (adminUsersData?.items ?? []).forEach((u) => map.set(u.id, u.name));
+    return map;
+  }, [adminUsersData]);
 
   const handleAddNote = () => {
     if (!newNoteText.trim()) return;
@@ -70,6 +79,7 @@ export function LeadNotes({ leadId }: LeadNotesProps) {
             <NoteItem
               key={note.id}
               note={note}
+              authorName={adminNameMap.get(note.createdByAdminUserId)}
               leadId={leadId}
               canEdit={note.createdByAdminUserId === user?.userId || isAdmin}
               canDelete={note.createdByAdminUserId === user?.userId || isAdmin}

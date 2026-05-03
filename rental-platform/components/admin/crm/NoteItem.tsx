@@ -10,6 +10,7 @@ import type { CrmNoteResponse } from "@/lib/types/crm.types";
 
 interface NoteItemProps {
   note: CrmNoteResponse;
+  authorName?: string;
   canEdit: boolean;
   canDelete: boolean;
   isEditing: boolean;
@@ -20,6 +21,7 @@ interface NoteItemProps {
 
 export function NoteItem({
   note,
+  authorName,
   canEdit,
   canDelete,
   isEditing,
@@ -27,6 +29,8 @@ export function NoteItem({
   onEditClick,
   onCancelEdit,
 }: NoteItemProps) {
+  const displayName = authorName || "Admin";
+  const avatarInitial = displayName.charAt(0).toUpperCase();
   const [editText, setEditText] = useState(note.noteText);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -64,9 +68,9 @@ export function NoteItem({
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold uppercase text-neutral-600">
-            A
+            {avatarInitial}
           </div>
-          <span className="text-xs font-medium text-neutral-700">Admin</span>
+          <span className="text-xs font-medium text-neutral-700">{displayName}</span>
           <span className="text-[11px] text-neutral-400">
             â€¢ {formatRelativeTime(note.createdAt)}
           </span>

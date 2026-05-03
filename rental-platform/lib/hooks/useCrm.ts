@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { crmService } from "@/lib/api/services/crm.service";
+import { ApiError } from "@/lib/api/api-error";
 import { queryKeys } from "@/lib/utils/query-keys";
 import { ROUTES } from "@/lib/constants/routes";
 import { toastSuccess } from "@/lib/utils";
@@ -47,8 +48,7 @@ export function useLeadsPipeline() {
   };
 }
 
-// Stubs - implementations will be added per ticket
-export const useGetLeads = () => {};
+
 
 export function useLeadDetail(leadId: string) {
   return useQuery({
@@ -68,7 +68,7 @@ export function useCreateLead() {
     },
   });
 }
-export const useUpdateLead = () => {};
+
 
 export function useUpdateLeadStatus(leadId: string) {
   const queryClient = useQueryClient();
@@ -164,9 +164,9 @@ export function useLeadAssignment(leadId: string) {
       try {
         return await crmService.getLeadAssignment(leadId);
       } catch (err: unknown) {
-        const status = (err as { response?: { status?: number } })?.response
-          ?.status;
-        if (status === 404) return null; // No assignment yet — treat as Unassigned
+        if (err instanceof ApiError && err.status === 404) {
+          return null; // No assignment yet — treat as Unassigned
+        }
         throw err;
       }
     },

@@ -25,20 +25,17 @@ const PipelineBoard = dynamic(
 
 export default function CrmPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const permissions = usePermissions();
-  const canViewCRM = permissions.canViewCRM;
+  const { canViewCRM, canManageCRM } = usePermissions();
 
   if (!canViewCRM) {
     redirect(ROUTES.admin.dashboard);
   }
 
-  const canManage = canViewCRM; // since they are functionally identical for sales/superadmin
-
   return (
     <div className="flex h-full flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-neutral-800">CRM Pipeline</h1>
-        {canManage && (
+        {canManageCRM && (
           <Button onClick={() => setIsModalOpen(true)}>New Lead</Button>
         )}
       </div>
