@@ -14,46 +14,32 @@ import {
 } from "@/lib/types/finance.types";
 
 export const ownersService = {
-  getAll: async (filters?: OwnerListFilters): Promise<PaginatedOwners> => {
-    const { data } = await api.get(endpoints.owners.list, { params: filters });
-    return data;
-  },
+  getAll: (filters?: OwnerListFilters): Promise<PaginatedOwners> =>
+    api.get(endpoints.owners.list, { params: filters }),
 
-  getById: async (id: string): Promise<OwnerDetailsResponse> => {
-    const { data } = await api.get(endpoints.owners.byId(id));
-    return data;
-  },
+  getById: (id: string): Promise<OwnerDetailsResponse> =>
+    api.get(endpoints.owners.byId(id)),
 
-  create: async (data: CreateOwnerRequest): Promise<OwnerDetailsResponse> => {
-    const response = await api.post(endpoints.owners.create, data);
-    return response.data;
-  },
+  create: (data: CreateOwnerRequest): Promise<OwnerDetailsResponse> =>
+    api.post(endpoints.owners.create, data),
 
-  update: async (
+  update: (
     id: string,
     data: UpdateOwnerRequest
-  ): Promise<OwnerDetailsResponse> => {
-    const response = await api.put(endpoints.owners.update(id), data);
-    return response.data;
-  },
+  ): Promise<OwnerDetailsResponse> =>
+    api.put(endpoints.owners.update(id), data),
 
-  updateStatus: async (
+  updateStatus: (
     id: string,
     status: OwnerStatus
-  ): Promise<OwnerDetailsResponse> => {
-    const response = await api.patch(endpoints.owners.status(id), { status });
-    return response.data;
-  },
+  ): Promise<OwnerDetailsResponse> =>
+    api.patch(endpoints.owners.status(id), { status }),
 
-  getPayouts: async (id: string): Promise<OwnerPayoutResponse[]> => {
-    const { data } = await api.get(endpoints.ownerPayouts.byOwner(id));
-    return data;
-  },
+  getPayouts: (id: string): Promise<OwnerPayoutResponse[]> =>
+    api.get(endpoints.ownerPayouts.byOwner(id)),
 
-  getOwnerPayoutSummary: async (
+  getOwnerPayoutSummary: (
     id: string
-  ): Promise<OwnerPayoutSummaryResponse> => {
-    const { data } = await api.get(endpoints.financeSummary.ownerPayoutSummary(id));
-    return data;
-  },
+  ): Promise<OwnerPayoutSummaryResponse> =>
+    api.get(endpoints.financeSummary.ownerPayoutSummary(id)),
 };
