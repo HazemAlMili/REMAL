@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   useBookingNotes,
   useAddBookingNote,
@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { formatRelativeTime } from "@/lib/utils/format";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { usePermissions } from "@/lib/hooks/usePermissions";
+import { useAdminUsers } from "@/lib/hooks/useAdminUsers";
 import { MessageSquare } from "lucide-react";
 import type { BookingNoteResponse } from "@/lib/types/booking.types";
 
@@ -25,11 +26,14 @@ interface BookingNotesProps {
 interface NoteRowProps {
   note: BookingNoteResponse;
   bookingId: string;
+  authorName?: string;
   canEdit: boolean;
   canDelete: boolean;
 }
 
-function NoteRow({ note, bookingId, canEdit, canDelete }: NoteRowProps) {
+function NoteRow({ note, bookingId, authorName, canEdit, canDelete }: NoteRowProps) {
+  const displayName = authorName || "Admin";
+  const avatarInitial = displayName.charAt(0).toUpperCase();
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(note.noteText);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -61,9 +65,9 @@ function NoteRow({ note, bookingId, canEdit, canDelete }: NoteRowProps) {
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold uppercase text-neutral-600">
-            A
+            {avatarInitial}
           </div>
-          <span className="text-xs font-medium text-neutral-700">Admin</span>
+          <span className="text-xs font-medium text-neutral-700">{displayName}</span>
           <span className="text-[11px] text-neutral-400">
             · {formatRelativeTime(note.createdAt)}
           </span>
@@ -143,9 +147,17 @@ export function BookingNotes({ bookingId }: BookingNotesProps) {
 
   const { data: notes, isLoading } = useBookingNotes(bookingId);
   const addNoteMutation = useAddBookingNote(bookingId);
+  const { data: adminUsersData } = useAdminUsers({ includeInactive: true });
 
   const user = useAuthStore((s) => s.user);
   const { isAdmin } = usePermissions();
+
+  // Build a map from adminUserId → name for note author resolution
+  const adminNameMap = useMemo(() => {
+    const map = new Map<string, string>();
+    (adminUsersData?.items ?? []).forEach((u) => map.set(u.id, u.name));
+    return map;
+  }, [adminUsersData]);
 
   const handleAddNote = () => {
     if (!newNoteText.trim()) return;
@@ -183,6 +195,7 @@ export function BookingNotes({ bookingId }: BookingNotesProps) {
               key={note.id}
               note={note}
               bookingId={bookingId}
+              authorName={adminNameMap.get(note.createdByAdminUserId)}
               canEdit={note.createdByAdminUserId === user?.userId || isAdmin}
               canDelete={note.createdByAdminUserId === user?.userId || isAdmin}
             />

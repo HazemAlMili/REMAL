@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useParams } from "next/navigation";
 import {
@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FileQuestion, AlertCircle } from "lucide-react";
 import { ROUTES } from "@/lib/constants/routes";
+import { ApiError } from "@/lib/api/api-error";
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
 
@@ -45,8 +46,7 @@ export default function BookingDetailPage() {
   }
 
   if (isError) {
-    // @ts-expect-error Axios error type mapping
-    const isNotFound = error?.response?.status === 404;
+    const isNotFound = error instanceof ApiError && error.status === 404;
 
     if (isNotFound) {
       return (

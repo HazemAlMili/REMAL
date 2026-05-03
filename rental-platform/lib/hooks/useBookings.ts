@@ -1,10 +1,11 @@
-﻿import {
+import {
   useQuery,
   useMutation,
   useQueryClient,
   keepPreviousData,
 } from "@tanstack/react-query";
 import { bookingsService } from "@/lib/api/services/bookings.service";
+import { ApiError } from "@/lib/api/api-error";
 import { queryKeys } from "@/lib/utils/query-keys";
 import type {
   AddInvoiceManualAdjustmentRequest,
@@ -390,7 +391,17 @@ export function useDeleteBookingNote(bookingId: string) {
 export function useBookingAssignment(bookingId: string) {
   return useQuery({
     queryKey: queryKeys.bookings.assignment(bookingId),
-    queryFn: () => bookingsService.getAssignment(bookingId),
+    queryFn: async () => {
+      try {
+        return await bookingsService.getAssignment(bookingId);
+      } catch (err: unknown) {
+        if (err instanceof ApiError && err.status === 404) {
+          return null; // No assignment yet — treat as Unassigned
+        }
+        throw err;
+      }
+    },
+    retry: false,
   });
 }
 

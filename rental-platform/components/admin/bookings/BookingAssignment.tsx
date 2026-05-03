@@ -21,7 +21,7 @@ interface BookingAssignmentProps {
 export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [showUnassignConfirm, setShowUnassignConfirm] = useState(false);
-  const { canManageAdminUsers } = usePermissions();
+  const { canAssignLeads } = usePermissions();
 
   const { data: assignment, isLoading: assignmentLoading } =
     useBookingAssignment(bookingId);
@@ -70,7 +70,7 @@ export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
               Assigned {formatRelativeTime(assignment.assignedAt)}
             </p>
           </div>
-          {canManageAdminUsers && (
+          {canAssignLeads && (
             <Button
               variant="ghost"
               size="sm"
@@ -86,7 +86,7 @@ export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
         </div>
       )}
 
-      {canManageAdminUsers && (
+      {canAssignLeads && (
         <div className="flex items-end gap-2">
           <Select
             value={selectedUserId}

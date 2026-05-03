@@ -1,4 +1,4 @@
-﻿// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // lib/types/booking.types.ts
 // Booking form types — shared across multi-step form
 // AND admin booking management types
@@ -30,8 +30,10 @@ export interface BookingFormData {
 export type FormalBookingStatus =
   | "Pending"
   | "Confirmed"
+  | "CheckIn"
+  | "Completed"
   | "Cancelled"
-  | "Completed";
+  | "LeftEarly";
 
 export type InvoiceStatus = "Draft" | "Issued" | "Cancelled";
 
@@ -143,8 +145,7 @@ export interface UpdateBookingNoteRequest {
 }
 
 export interface AssignBookingRequest {
-  adminUserId?: string;
-  assignedAdminUserId?: string;
+  assignedAdminUserId: string;
 }
 
 export interface PaymentResponse {
@@ -182,10 +183,6 @@ export interface CancelPaymentRequest {
 
 export interface BookingFinanceSnapshotResponse {
   bookingId: string;
-  totalPrice: number;
-  totalPaid: number;
-  totalRefunded: number;
-  balance: number;
   remainingAmount: number;
   invoicedAmount: number;
   paidAmount: number;
@@ -230,9 +227,7 @@ export interface InvoiceBalanceResponse {
 }
 
 export interface AddInvoiceManualAdjustmentRequest {
-  amount: number;
-  reason: string;
-  description?: string;
-  quantity?: number;
-  unitAmount?: number;
+  description: string;
+  quantity: number;
+  unitAmount: number;
 }
