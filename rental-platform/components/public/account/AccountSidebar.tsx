@@ -7,7 +7,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/lib/stores/auth.store";
-import { useClientLogout } from "@/lib/hooks/useClientAuth";
+import { useLogout } from "@/lib/hooks/useLogout";
 import { Button } from "@/components/ui/Button";
 import { CalendarCheck, Star, Bell, LogOut, Home } from "lucide-react";
 
@@ -20,7 +20,7 @@ const NAV_ITEMS = [
 export function AccountSidebar() {
   const pathname = usePathname();
   const { user } = useAuthStore();
-  const { handleLogout, isLoggingOut } = useClientLogout();
+  const { logout, isLoading: isLoggingOut } = useLogout();
 
   return (
     <aside className="min-h-[calc(100vh-80px)] w-64 shrink-0 border-r border-neutral-100 bg-white">
@@ -78,7 +78,7 @@ export function AccountSidebar() {
           <Button
             variant="ghost"
             className="w-full justify-start text-neutral-600 hover:text-red-600"
-            onClick={handleLogout}
+            onClick={logout}
             isLoading={isLoggingOut}
           >
             <LogOut className="mr-3 h-5 w-5" />

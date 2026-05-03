@@ -1,31 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Menu, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { useUIStore } from "@/lib/stores/ui.store";
+import { useLogout } from "@/lib/hooks/useLogout";
 import { OwnerNotificationBell } from "./OwnerNotificationBell";
 
 export function OwnerHeader() {
-  const router = useRouter();
-  const { user, clearAuth } = useAuthStore();
+  const { user } = useAuthStore();
   const { toggleSidebar } = useUIStore();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-    } finally {
-      clearAuth();
-      router.replace("/auth/owner/login");
-    }
-  };
+  const { logout, isLoading: isLoggingOut } = useLogout();
 
   return (
     <header className="flex h-16 items-center justify-between border-b border-neutral-200 bg-white px-4 sm:px-6">
@@ -50,7 +35,7 @@ export function OwnerHeader() {
         <Button
           variant="ghost"
           size="sm"
-          onClick={handleLogout}
+          onClick={logout}
           disabled={isLoggingOut}
           leftIcon={<LogOut className="h-4 w-4" />}
         >

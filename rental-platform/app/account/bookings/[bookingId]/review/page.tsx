@@ -7,6 +7,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuthStore } from "@/lib/stores/auth.store";
+import { ROUTES } from "@/lib/constants/routes";
 import { useBookingReview } from "@/lib/hooks/useClient";
 import api from "@/lib/api/axios";
 import { endpoints } from "@/lib/api/endpoints";
@@ -29,7 +30,7 @@ export default function ReviewSubmissionPage() {
   // Auth guard — must be logged in as client
   useEffect(() => {
     if (subjectType !== "Client") {
-      router.replace("/client/login");
+      router.replace(ROUTES.auth.clientLogin);
     }
   }, [subjectType, router]);
 

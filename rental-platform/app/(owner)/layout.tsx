@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/stores/auth.store";
+import { ROUTES } from "@/lib/constants/routes";
 import { OwnerSidebar } from "@/components/owner/layout/OwnerSidebar";
 import { OwnerHeader } from "@/components/owner/layout/OwnerHeader";
 
@@ -12,15 +13,15 @@ export default function OwnerLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { role } = useAuthStore();
+  const { subjectType } = useAuthStore();
 
   useEffect(() => {
-    if (role !== "Owner") {
-      router.replace("/auth/owner/login");
+    if (subjectType !== "Owner") {
+      router.replace(ROUTES.auth.ownerLogin);
     }
-  }, [role, router]);
+  }, [subjectType, router]);
 
-  if (role !== "Owner") {
+  if (subjectType !== "Owner") {
     return null;
   }
 

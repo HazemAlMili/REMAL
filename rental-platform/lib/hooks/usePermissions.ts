@@ -55,7 +55,7 @@ export function usePermissions(): Permissions {
     canManageOwners: isSuperAdmin,
     canViewClients: isSuperAdmin || isSales,
     canModerateReviews: isSuperAdmin || isSales,
-    canManageAdminUsers: isSuperAdmin || isTech,
+    canManageAdminUsers: isSuperAdmin,
     canManageAreas: isSuperAdmin,
     canManageAmenities: isSuperAdmin,
     canManageUnits: isSuperAdmin || isTech,
