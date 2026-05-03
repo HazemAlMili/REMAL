@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useAuthStore } from "@/lib/stores/auth.store";
 
 export interface Permissions {
@@ -38,27 +39,38 @@ export function usePermissions(): Permissions {
   const isFinance = isAdmin && role === "Finance";
   const isTech = isAdmin && role === "Tech";
 
-  return {
-    isAdmin,
-    isOwner,
-    isClient,
+  return useMemo(
+    () => ({
+      isAdmin,
+      isOwner,
+      isClient,
 
-    canViewCRM: isSuperAdmin || isSales,
-    canManageCRM: isSuperAdmin || isSales,
-    canAssignLeads: isSuperAdmin,
-    canViewBookings: isSuperAdmin || isSales || isFinance,
-    canViewFinance: isSuperAdmin || isFinance,
-    canManageFinance: isSuperAdmin || isFinance,
-    canManageBookings: isSuperAdmin || isSales,
-    canViewUnits: isSuperAdmin || isSales || isFinance || isTech,
-    canViewOwners: isSuperAdmin || isFinance || isSales,
-    canManageOwners: isSuperAdmin,
-    canViewClients: isSuperAdmin || isSales,
-    canModerateReviews: isSuperAdmin || isSales,
-    canManageAdminUsers: isSuperAdmin,
-    canManageAreas: isSuperAdmin,
-    canManageAmenities: isSuperAdmin,
-    canManageUnits: isSuperAdmin || isTech,
-    canViewReports: isSuperAdmin || isFinance,
-  };
+      canViewCRM: isSuperAdmin || isSales,
+      canManageCRM: isSuperAdmin || isSales,
+      canAssignLeads: isSuperAdmin,
+      canViewBookings: isSuperAdmin || isSales || isFinance,
+      canViewFinance: isSuperAdmin || isFinance,
+      canManageFinance: isSuperAdmin || isFinance,
+      canManageBookings: isSuperAdmin || isSales,
+      canViewUnits: isSuperAdmin || isSales || isFinance || isTech,
+      canViewOwners: isSuperAdmin || isFinance || isSales,
+      canManageOwners: isSuperAdmin,
+      canViewClients: isSuperAdmin || isSales,
+      canModerateReviews: isSuperAdmin || isSales,
+      canManageAdminUsers: isSuperAdmin,
+      canManageAreas: isSuperAdmin,
+      canManageAmenities: isSuperAdmin,
+      canManageUnits: isSuperAdmin || isTech,
+      canViewReports: isSuperAdmin || isFinance,
+    }),
+    [
+      isAdmin,
+      isOwner,
+      isClient,
+      isSuperAdmin,
+      isSales,
+      isFinance,
+      isTech,
+    ]
+  );
 }

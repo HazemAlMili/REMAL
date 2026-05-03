@@ -7,19 +7,13 @@ import { z } from "zod";
 import { useClientRegister } from "@/lib/hooks/useAuth";
 import { ApiError } from "@/lib/api/api-error";
 import { ROUTES } from "@/lib/constants/routes";
+import { registerSchema } from "@/lib/validations/auth";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
-const clientRegisterSchema = z
-  .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    phone: z.string().min(1, "Phone number is required"),
-    email: z
-      .string()
-      .email("Invalid email format")
-      .optional()
-      .or(z.literal("")),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+const clientRegisterSchema = registerSchema
+  .extend({
+    name: registerSchema.shape.name.min(2, "Name must be at least 2 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -56,8 +50,7 @@ export function ClientRegisterForm() {
       await registerClient({
         name: data.name,
         phone: data.phone,
-        // Send undefined (not empty string) when email is not provided
-        email: data.email || undefined,
+        email: data.email,
         password: data.password,
       });
       // Redirect is handled inside the hook on success

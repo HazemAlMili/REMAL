@@ -52,7 +52,7 @@ export function useOwnerLogin(): UseOwnerLoginReturn {
         expiresInSeconds: response.expiresInSeconds,
         subjectType: response.subjectType, // 'Owner'
         user: response.user,
-        role: 'Owner',
+        role: null,
       })
       router.push(ROUTES.owner.dashboard)
     },
@@ -79,7 +79,7 @@ export function useClientLogin(): UseClientLoginReturn {
         expiresInSeconds: response.expiresInSeconds,
         subjectType: response.subjectType, // 'Client'
         user: response.user,
-        role: 'Client',
+        role: null,
       })
       router.push(ROUTES.client.account)
     },
@@ -120,7 +120,7 @@ export function useClientRegister(): UseClientRegisterReturn {
         expiresInSeconds: loginResponse.expiresInSeconds,
         subjectType: loginResponse.subjectType,
         user: loginResponse.user,
-        role: 'Client',
+        role: null,
       })
 
       router.push(ROUTES.client.account)
