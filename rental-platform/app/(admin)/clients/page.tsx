@@ -83,7 +83,7 @@ function ClientsListPageContent() {
   // Handle total empty state correctly: no items across DB at all.
   // Because no filters are used except pagination, page 1 empty means everything empty
   const noClientsAtAll =
-    !isLoading && paginatedClients?.pagination.totalCount === 0 && page === 1;
+    !isLoading && paginatedClients?.pagination?.totalCount === 0 && page === 1;
 
   return (
     <div className="space-y-6">

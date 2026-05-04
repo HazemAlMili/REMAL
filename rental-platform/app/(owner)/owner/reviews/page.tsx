@@ -66,7 +66,7 @@ export default function OwnerReviewsPage() {
               className="block w-full rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-900 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="">Choose a unit to view reviews...</option>
-              {units?.items.map((unit) => (
+              {(units?.items ?? []).map((unit) => (
                 <option key={unit.unitId} value={unit.unitId}>
                   {unit.unitName}
                 </option>

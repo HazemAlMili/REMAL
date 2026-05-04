@@ -41,7 +41,7 @@ export function useLeadsPipeline() {
 
   return {
     groupedLeads,
-    totalCount: query.data?.pagination.totalCount ?? 0,
+    totalCount: query.data?.pagination?.totalCount ?? 0,
     isLoading: query.isLoading,
     isError: query.isError,
     refetch: query.refetch,

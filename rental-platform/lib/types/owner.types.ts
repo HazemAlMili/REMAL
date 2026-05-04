@@ -9,6 +9,7 @@ export interface OwnerFormValues {
   name: string;
   phone: string;
   email?: string;
+  password?: string;
   commissionRate: number;
   status: OwnerStatus;
   notes?: string;
@@ -50,6 +51,7 @@ export interface CreateOwnerRequest {
   name: string;
   phone: string;
   email?: string;
+  password: string;
   commissionRate: number; // percentage: send 20.00 for 20%
   status: OwnerStatus;
   notes?: string;

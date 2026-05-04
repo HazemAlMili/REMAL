@@ -173,7 +173,7 @@ export default function ReviewsModerationPage() {
 
   const unitOptions = [
     { value: "", label: unitsLoading ? "Loading..." : "Select a unit..." },
-    ...(unitsData?.items.map((u) => ({ value: u.id, label: u.name })) ?? []),
+    ...(unitsData?.items ?? []).map((u) => ({ value: u.id, label: u.name })),
   ];
 
   return (

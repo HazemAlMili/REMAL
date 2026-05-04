@@ -27,7 +27,7 @@ export function TopUnitsWidget() {
   }
 
   const activeUnits =
-    unitsData?.items.filter((u) => u.isActive).slice(0, 5) ?? [];
+    (unitsData?.items ?? []).filter((u) => u.isActive).slice(0, 5);
 
   if (activeUnits.length === 0) {
     return (

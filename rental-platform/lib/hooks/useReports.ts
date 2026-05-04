@@ -23,6 +23,10 @@ export const useReports = () => {
         queryKey: queryKeys.reports.bookingsDaily(filters || {}),
         queryFn: () => reportsService.getBookingsDaily(filters),
         staleTime: 1000 * 60 * 10, // 10 minutes
+        select: (data: unknown) => {
+          const d = data as Record<string, unknown>;
+          return (Array.isArray(d?.items) ? d.items : Array.isArray(data) ? data : []) as import("../types/report.types").BookingAnalyticsDailySummaryResponse[];
+        },
       }),
 
     useFinanceDaily: (filters?: ReportDailyFilters) =>
@@ -30,6 +34,10 @@ export const useReports = () => {
         queryKey: queryKeys.reports.financeDaily(filters || {}),
         queryFn: () => reportsService.getFinanceDaily(filters),
         staleTime: 1000 * 60 * 10, // 10 minutes
+        select: (data: unknown) => {
+          const d = data as Record<string, unknown>;
+          return (Array.isArray(d?.items) ? d.items : Array.isArray(data) ? data : []) as import("../types/report.types").FinanceAnalyticsDailySummaryResponse[];
+        },
       }),
 
     useActiveUnitsCount: () =>

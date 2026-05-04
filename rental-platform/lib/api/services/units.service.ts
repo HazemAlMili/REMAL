@@ -23,216 +23,117 @@ import {
 
 export const unitsService = {
   // Public
-  getPublicList: async (filters?: object): Promise<PaginatedUnits> => {
-    const { data } = await api.get(endpoints.units.publicList, {
-      params: filters,
-    });
-    return data;
-  },
+  getPublicList: (filters?: object): Promise<PaginatedUnits> =>
+    api.get(endpoints.units.publicList, { params: filters }),
 
-  getPublicById: async (id: string): Promise<UnitDetailsResponse> => {
-    const { data } = await api.get(endpoints.units.publicById(id));
-    return data;
-  },
+  getPublicById: (id: string): Promise<UnitDetailsResponse> =>
+    api.get(endpoints.units.publicById(id)),
 
-  getPublicImages: async (unitId: string): Promise<UnitImageResponse[]> => {
-    const { data } = await api.get(endpoints.units.images(unitId));
-    return data;
-  },
+  getPublicImages: (unitId: string): Promise<UnitImageResponse[]> =>
+    api.get(endpoints.units.images(unitId)),
 
-  getUnitPricing: async (
+  getUnitPricing: (
     unitId: string,
     dataPayload: CheckOperationalAvailabilityRequest
-  ): Promise<UnitPricingResponse> => {
-    const { data } = await api.post(
-      endpoints.units.pricingCalculate(unitId),
-      dataPayload
-    );
-    return data;
-  },
+  ): Promise<UnitPricingResponse> =>
+    api.post(endpoints.units.pricingCalculate(unitId), dataPayload),
 
   // Internal
-  getInternalList: async (
-    filters?: UnitListFilters
-  ): Promise<PaginatedUnits> => {
-    const { data } = await api.get(endpoints.internalUnits.list, {
-      params: filters,
-    });
-    return data;
-  },
+  getInternalList: (filters?: UnitListFilters): Promise<PaginatedUnits> =>
+    api.get(endpoints.internalUnits.list, { params: filters }),
 
-  getInternalById: async (id: string): Promise<UnitDetailsResponse> => {
-    const { data } = await api.get(endpoints.internalUnits.byId(id));
-    return data;
-  },
+  getInternalById: (id: string): Promise<UnitDetailsResponse> =>
+    api.get(endpoints.internalUnits.byId(id)),
 
-  create: async (
-    dataPayload: CreateUnitRequest
-  ): Promise<UnitDetailsResponse> => {
-    const { data } = await api.post(
-      endpoints.internalUnits.create,
-      dataPayload
-    );
-    return data;
-  },
+  create: (dataPayload: CreateUnitRequest): Promise<UnitDetailsResponse> =>
+    api.post(endpoints.internalUnits.create, dataPayload),
 
-  update: async (
+  update: (
     id: string,
     dataPayload: UpdateUnitRequest
-  ): Promise<UnitDetailsResponse> => {
-    const { data } = await api.put(
-      endpoints.internalUnits.update(id),
-      dataPayload
-    );
-    return data;
-  },
+  ): Promise<UnitDetailsResponse> =>
+    api.put(endpoints.internalUnits.update(id), dataPayload),
 
-  delete: async (id: string): Promise<void> => {
-    const { data } = await api.delete(endpoints.internalUnits.delete(id));
-    return data;
-  },
+  delete: (id: string): Promise<void> =>
+    api.delete(endpoints.internalUnits.delete(id)),
 
-  updateStatus: async (
+  updateStatus: (
     id: string,
     isActive: boolean
-  ): Promise<UnitDetailsResponse> => {
-    const { data } = await api.patch(endpoints.internalUnits.status(id), {
-      isActive,
-    });
-    return data;
-  },
+  ): Promise<UnitDetailsResponse> =>
+    api.patch(endpoints.internalUnits.status(id), { isActive }),
 
   // Images
-  addImage: async (
+  addImage: (
     unitId: string,
     dataPayload: AddUnitImageRequest
-  ): Promise<UnitImageResponse> => {
-    const { data } = await api.post(
-      endpoints.internalUnitImages.create(unitId),
-      dataPayload
-    );
-    return data;
-  },
+  ): Promise<UnitImageResponse> =>
+    api.post(endpoints.internalUnitImages.create(unitId), dataPayload),
 
-  reorderImages: async (
+  reorderImages: (
     unitId: string,
     dataPayload: ReorderUnitImagesRequest
-  ): Promise<void> => {
-    const { data } = await api.put(
-      endpoints.internalUnitImages.reorder(unitId),
-      dataPayload
-    );
-    return data;
-  },
+  ): Promise<void> =>
+    api.put(endpoints.internalUnitImages.reorder(unitId), dataPayload),
 
-  setCoverImage: async (unitId: string, imageId: string): Promise<void> => {
-    const { data } = await api.patch(
-      endpoints.internalUnitImages.cover(unitId, imageId)
-    );
-    return data;
-  },
+  setCoverImage: (unitId: string, imageId: string): Promise<void> =>
+    api.patch(endpoints.internalUnitImages.cover(unitId, imageId)),
 
-  deleteImage: async (unitId: string, imageId: string): Promise<void> => {
-    const { data } = await api.delete(
-      endpoints.internalUnitImages.delete(unitId, imageId)
-    );
-    return data;
-  },
+  deleteImage: (unitId: string, imageId: string): Promise<void> =>
+    api.delete(endpoints.internalUnitImages.delete(unitId, imageId)),
 
   // Amenities
-  getAmenities: async (unitId: string): Promise<UnitAmenityResponse[]> => {
-    const { data } = await api.get(endpoints.units.amenities(unitId));
-    return data;
-  },
+  getAmenities: (unitId: string): Promise<UnitAmenityResponse[]> =>
+    api.get(endpoints.units.amenities(unitId)),
 
-  replaceAmenities: async (
+  replaceAmenities: (
     unitId: string,
     amenityIds: string[]
-  ): Promise<UnitAmenityResponse[]> => {
-    const { data } = await api.put(
-      endpoints.internalUnitAmenities.replace(unitId),
-      { amenityIds }
-    );
-    return data;
-  },
+  ): Promise<UnitAmenityResponse[]> =>
+    api.put(endpoints.internalUnitAmenities.replace(unitId), { amenityIds }),
 
   // Date blocks
-  getDateBlocks: async (unitId: string): Promise<DateBlockResponse[]> => {
-    const { data } = await api.get(endpoints.dateBlocks.list(unitId));
-    return data;
-  },
+  getDateBlocks: (unitId: string): Promise<DateBlockResponse[]> =>
+    api.get(endpoints.dateBlocks.list(unitId)),
 
-  createDateBlock: async (
+  createDateBlock: (
     unitId: string,
     dataPayload: CreateDateBlockRequest
-  ): Promise<DateBlockResponse> => {
-    const { data } = await api.post(
-      endpoints.dateBlocks.create(unitId),
-      dataPayload
-    );
-    return data;
-  },
+  ): Promise<DateBlockResponse> =>
+    api.post(endpoints.dateBlocks.create(unitId), dataPayload),
 
-  updateDateBlock: async (
+  updateDateBlock: (
     id: string,
     dataPayload: UpdateDateBlockRequest
-  ): Promise<DateBlockResponse> => {
-    const { data } = await api.put(
-      endpoints.dateBlocks.update(id),
-      dataPayload
-    );
-    return data;
-  },
+  ): Promise<DateBlockResponse> =>
+    api.put(endpoints.dateBlocks.update(id), dataPayload),
 
-  deleteDateBlock: async (id: string): Promise<void> => {
-    const { data } = await api.delete(endpoints.dateBlocks.delete(id));
-    return data;
-  },
+  deleteDateBlock: (id: string): Promise<void> =>
+    api.delete(endpoints.dateBlocks.delete(id)),
 
   // Seasonal pricing
-  getSeasonalPricing: async (
-    unitId: string
-  ): Promise<SeasonalPricingResponse[]> => {
-    const { data } = await api.get(endpoints.seasonalPricing.list(unitId));
-    return data;
-  },
+  getSeasonalPricing: (unitId: string): Promise<SeasonalPricingResponse[]> =>
+    api.get(endpoints.seasonalPricing.list(unitId)),
 
-  createSeasonalPricing: async (
+  createSeasonalPricing: (
     unitId: string,
     dataPayload: CreateSeasonalPricingRequest
-  ): Promise<SeasonalPricingResponse> => {
-    const { data } = await api.post(
-      endpoints.seasonalPricing.create(unitId),
-      dataPayload
-    );
-    return data;
-  },
+  ): Promise<SeasonalPricingResponse> =>
+    api.post(endpoints.seasonalPricing.create(unitId), dataPayload),
 
-  updateSeasonalPricing: async (
+  updateSeasonalPricing: (
     id: string,
     dataPayload: UpdateSeasonalPricingRequest
-  ): Promise<SeasonalPricingResponse> => {
-    const { data } = await api.put(
-      endpoints.seasonalPricing.update(id),
-      dataPayload
-    );
-    return data;
-  },
+  ): Promise<SeasonalPricingResponse> =>
+    api.put(endpoints.seasonalPricing.update(id), dataPayload),
 
-  deleteSeasonalPricing: async (id: string): Promise<void> => {
-    const { data } = await api.delete(endpoints.seasonalPricing.delete(id));
-    return data;
-  },
+  deleteSeasonalPricing: (id: string): Promise<void> =>
+    api.delete(endpoints.seasonalPricing.delete(id)),
 
   // Availability
-  checkOperationalAvailability: async (
+  checkOperationalAvailability: (
     unitId: string,
     dataPayload: CheckOperationalAvailabilityRequest
-  ): Promise<OperationalAvailabilityResponse> => {
-    const { data } = await api.post(
-      endpoints.units.operationalCheck(unitId),
-      dataPayload
-    );
-    return data;
-  },
+  ): Promise<OperationalAvailabilityResponse> =>
+    api.post(endpoints.units.operationalCheck(unitId), dataPayload),
 };

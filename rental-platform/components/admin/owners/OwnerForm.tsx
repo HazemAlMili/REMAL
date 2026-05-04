@@ -19,6 +19,7 @@ const ownerFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   phone: z.string().min(1, "Phone is required"),
   email: z.string().email().optional().or(z.literal("")),
+  password: z.string().optional(),
   commissionRate: z
     .number()
     .min(0, "Cannot be negative")
@@ -57,6 +58,7 @@ export function OwnerForm({
       name: defaultValues?.name ?? "",
       phone: defaultValues?.phone ?? "",
       email: defaultValues?.email ?? "",
+      password: "",
       commissionRate: defaultValues?.commissionRate ?? 0,
       status: defaultValues?.status ?? "active",
       notes: defaultValues?.notes ?? "",
@@ -70,6 +72,7 @@ export function OwnerForm({
         name: string;
         phone: string;
         email?: string;
+        password?: string;
         commissionRate: number;
         status: "active" | "inactive";
         notes?: string;
@@ -79,6 +82,14 @@ export function OwnerForm({
         commissionRate: data.commissionRate,
         status: data.status,
       };
+
+      if (mode === "create") {
+        if (!data.password || data.password.trim().length === 0) {
+          toastError("Password is required");
+          return;
+        }
+        requestBody.password = data.password;
+      }
 
       // Only include email if it's not empty
       if (data.email && data.email.trim() !== "") {
@@ -151,6 +162,17 @@ export function OwnerForm({
             placeholder="e.g. john@example.com"
             type="email"
           />
+
+          {mode === "create" && (
+            <Input
+              label="Password"
+              type="password"
+              {...register("password")}
+              error={errors.password?.message}
+              disabled={isLoading}
+              placeholder="Set owner account password"
+            />
+          )}
 
           <Input
             label="Commission Rate (%)"

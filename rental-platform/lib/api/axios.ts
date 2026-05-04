@@ -57,6 +57,11 @@ api.interceptors.response.use(
         envelope.errors ?? []
       );
     }
+    // If the response includes pagination, return { items, pagination }
+    // so all paginated hooks receive the correct structure.
+    if (envelope?.pagination) {
+      return { items: envelope.data, pagination: envelope.pagination } as unknown as AxiosResponse;
+    }
     // Unwrap: return the inner `data` field directly
     return envelope.data as unknown as AxiosResponse;
   },

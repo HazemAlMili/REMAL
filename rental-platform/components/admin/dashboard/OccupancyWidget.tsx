@@ -31,7 +31,7 @@ export function OccupancyWidget() {
     return <Skeleton height={160} className="rounded-lg" />;
   }
 
-  if (!bookingsSummary || !unitsData) {
+  if (!bookingsSummary || !unitsData?.items) {
     return (
       <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
         <h3 className="mb-2 font-medium text-neutral-700">Occupancy Rate</h3>
@@ -41,7 +41,7 @@ export function OccupancyWidget() {
   }
 
   // Compute occupancy rate
-  const activeUnitCount = unitsData.items.filter((u) => u.isActive).length ?? 0;
+  const activeUnitCount = unitsData.items.filter((u) => u.isActive).length;
   const daysInRange =
     differenceInDays(new Date(dateTo), new Date(dateFrom)) + 1;
   const totalActiveDays = daysInRange * activeUnitCount;
