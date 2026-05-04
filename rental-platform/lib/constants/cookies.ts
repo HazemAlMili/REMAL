@@ -7,5 +7,5 @@
  * If the backend changes the cookie name, update it here in one place.
  */
 export const COOKIE_NAMES = {
-  refreshToken: 'refreshToken',
+  refreshToken: 'refresh_token',
 } as const

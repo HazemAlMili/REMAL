@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
   const hasRefreshToken = request.cookies.has(REFRESH_TOKEN_COOKIE);
 
   // ── Protect admin routes ──
-  if (pathname.startsWith("/admin")) {
+  if (pathname.startsWith("/admin") && !pathname.startsWith("/auth/")) {
     if (!hasRefreshToken) {
       return NextResponse.redirect(
         new URL(ROUTES.auth.adminLogin, request.url)
@@ -19,7 +19,7 @@ export function middleware(request: NextRequest) {
   }
 
   // ── Protect owner routes ──
-  if (pathname.startsWith("/owner")) {
+  if (pathname.startsWith("/owner") && !pathname.startsWith("/auth/")) {
     if (!hasRefreshToken) {
       return NextResponse.redirect(
         new URL(ROUTES.auth.ownerLogin, request.url)

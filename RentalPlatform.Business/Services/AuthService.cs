@@ -30,7 +30,7 @@ public class AuthService : IAuthService
         return new AuthenticatedSubject
         {
             UserId = admin.Id,
-            SubjectType = "admin",
+            SubjectType = "Admin",
             Identifier = admin.Email,
             AdminRole = admin.Role
         };
@@ -49,7 +49,7 @@ public class AuthService : IAuthService
         return new AuthenticatedSubject
         {
             UserId = client.Id,
-            SubjectType = "client",
+            SubjectType = "Client",
             Identifier = client.Phone,
             AdminRole = null
         };
@@ -69,7 +69,7 @@ public class AuthService : IAuthService
         return new AuthenticatedSubject
         {
             UserId = owner.Id,
-            SubjectType = "owner",
+            SubjectType = "Owner",
             Identifier = owner.Phone,
             AdminRole = null
         };

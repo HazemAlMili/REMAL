@@ -104,10 +104,13 @@ public class AuthController : ControllerBase
         if (string.IsNullOrEmpty(subClaim) || string.IsNullOrEmpty(subjectTypeClaim))
             return Unauthorized(ApiResponse.CreateFailure("Invalid token claims."));
 
+        // Normalize subjectType claim (JWT stores lowercase) back to PascalCase for the response body
+        var normalizedSubjectType = char.ToUpper(subjectTypeClaim[0]) + subjectTypeClaim.Substring(1);
+
         var subject = new AuthenticatedSubject
         {
             UserId = Guid.Parse(subClaim),
-            SubjectType = subjectTypeClaim,
+            SubjectType = normalizedSubjectType,
             Identifier = subClaim, // Best effort
             AdminRole = string.IsNullOrEmpty(roleClaim) ? null : Enum.Parse<Shared.Enums.AdminRole>(roleClaim)
         };

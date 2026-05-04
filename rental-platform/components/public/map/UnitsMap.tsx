@@ -17,7 +17,10 @@ import type { AreaResponse } from "@/lib/types/area.types";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 // Token from environment — NEVER hardcoded
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? "";
+if (MAPBOX_TOKEN) {
+  mapboxgl.accessToken = MAPBOX_TOKEN;
+}
 
 interface UnitsMapProps {
   areas: AreaResponse[];
@@ -28,9 +31,9 @@ export function UnitsMap({ areas }: UnitsMapProps) {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
 
-  // Initialize map
+  // Initialize map (skipped if no token)
   useEffect(() => {
-    if (!mapContainerRef.current || mapRef.current) return;
+    if (!MAPBOX_TOKEN || !mapContainerRef.current || mapRef.current) return;
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -63,7 +66,7 @@ export function UnitsMap({ areas }: UnitsMapProps) {
 
   // Add markers when map is loaded and areas are available
   useEffect(() => {
-    if (!mapRef.current || !mapLoaded) return;
+    if (!MAPBOX_TOKEN || !mapRef.current || !mapLoaded) return;
 
     const markers: mapboxgl.Marker[] = [];
 
@@ -119,6 +122,18 @@ export function UnitsMap({ areas }: UnitsMapProps) {
       markers.forEach((m) => m.remove());
     };
   }, [areas, mapLoaded]);
+
+  // Fallback when no Mapbox token is configured
+  if (!MAPBOX_TOKEN) {
+    return (
+      <div className="h-[400px] w-full lg:h-[500px] flex items-center justify-center bg-stone-100 rounded-lg border border-stone-200">
+        <div className="text-center text-stone-400 space-y-1">
+          <p className="text-sm font-medium">Map not available</p>
+          <p className="text-xs">Configure NEXT_PUBLIC_MAPBOX_TOKEN to enable</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

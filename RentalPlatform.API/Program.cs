@@ -173,6 +173,18 @@ builder.Services.AddAuthorization(options =>
         policy.RequireClaim("subjectType", "client"));
 });
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 // Configure Routing
 builder.Services.Configure<Microsoft.AspNetCore.Routing.RouteOptions>(options =>
 {
@@ -238,6 +250,8 @@ app.UseSwaggerUI(options =>
 });
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
