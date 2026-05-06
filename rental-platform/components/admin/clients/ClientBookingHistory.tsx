@@ -100,9 +100,9 @@ export function ClientBookingHistory({ clientId }: ClientBookingHistoryProps) {
                 <td className="p-3 text-sm">
                   <Link
                     href={`${ROUTES.admin.bookings.detail(booking.id)}`}
-                    className="font-mono text-blue-600 hover:underline"
+                    className="font-medium text-blue-600 hover:underline"
                   >
-                    {booking.unitId.slice(0, 8)}…
+                    {booking.unitName ?? `${booking.unitId.slice(0, 8)}...`}
                   </Link>
                 </td>
                 <td className="p-3 text-sm">

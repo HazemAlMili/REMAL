@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RentalPlatform.API.DTOs.Requests.Clients;
 using RentalPlatform.API.DTOs.Responses.Clients;
 using RentalPlatform.API.Models;
 using RentalPlatform.Business.Interfaces;
@@ -27,9 +28,10 @@ public class ClientsController : ControllerBase
     public async Task<ActionResult<ApiResponse<IReadOnlyList<ClientListItemResponse>>>> GetAll(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
-        [FromQuery] bool includeInactive = false)
+        [FromQuery] bool includeInactive = false,
+        [FromQuery] string? search = null)
     {
-        var clients = await _clientService.GetAllAsync(includeInactive);
+        var clients = await _clientService.GetAllAsync(includeInactive, search);
         
         var totalCount = clients.Count;
         var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
@@ -54,6 +56,16 @@ public class ClientsController : ControllerBase
             return NotFound(ApiResponse.CreateFailure("Client not found."));
 
         return Ok(ApiResponse<ClientDetailsResponse>.CreateSuccess(MapToDetailsResponse(client)));
+    }
+
+    [HttpPatch("{id}/status")]
+    public async Task<ActionResult<ApiResponse<ClientDetailsResponse>>> UpdateStatus(Guid id, UpdateClientStatusRequest request)
+    {
+        var client = await _clientService.UpdateStatusAsync(id, request.IsActive);
+
+        return Ok(ApiResponse<ClientDetailsResponse>.CreateSuccess(
+            MapToDetailsResponse(client),
+            client.IsActive ? "Client reactivated successfully." : "Client deactivated successfully."));
     }
 
     private static ClientListItemResponse MapToListItemResponse(Client client)

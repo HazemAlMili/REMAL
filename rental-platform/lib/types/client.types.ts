@@ -26,8 +26,13 @@ export interface ClientDetailsResponse {
 // API documents: includeInactive, page, pageSize (NOT search, NOT isActive)
 export interface ClientListFilters {
   includeInactive?: boolean;
+  search?: string;
   page?: number;
   pageSize?: number;
+}
+
+export interface UpdateClientStatusRequest {
+  isActive: boolean;
 }
 
 // ── Paginated Clients ──
@@ -51,6 +56,7 @@ export interface ClientBooking {
   id: string; // P10: NOT 'bookingId'
   clientId: string; // P10: FLAT — not nested object
   unitId: string; // P10: FLAT — not nested object
+  unitName: string | null;
   ownerId: string;
   assignedAdminUserId: string | null; // P10: NOT 'assignedToUserId' or 'assignedToName'
   bookingStatus: string; // P10: NOT 'status' — Pending|Confirmed|CheckIn|Completed|Cancelled|LeftEarly

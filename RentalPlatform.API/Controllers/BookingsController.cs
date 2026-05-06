@@ -30,10 +30,11 @@ public class BookingsController : ControllerBase
     public async Task<ActionResult<ApiResponse<IReadOnlyList<BookingListItemResponse>>>> ListInternalBookings(
         [FromQuery] string? bookingStatus = null,
         [FromQuery] Guid? assignedAdminUserId = null,
+        [FromQuery] Guid? clientId = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
-        var allBookings = await _bookingService.GetAllAsync(bookingStatus, assignedAdminUserId);
+        var allBookings = await _bookingService.GetAllAsync(bookingStatus, assignedAdminUserId, clientId);
         
         int total = allBookings.Count;
         int totalPages = (int)Math.Ceiling(total / (double)pageSize);
@@ -124,6 +125,7 @@ public class BookingsController : ControllerBase
             Id = booking.Id,
             ClientId = booking.ClientId,
             UnitId = booking.UnitId,
+            UnitName = booking.Unit?.Name,
             OwnerId = booking.OwnerId,
             AssignedAdminUserId = booking.AssignedAdminUserId,
             BookingStatus = booking.BookingStatus,
@@ -144,6 +146,7 @@ public class BookingsController : ControllerBase
             Id = booking.Id,
             ClientId = booking.ClientId,
             UnitId = booking.UnitId,
+            UnitName = booking.Unit?.Name,
             OwnerId = booking.OwnerId,
             AssignedAdminUserId = booking.AssignedAdminUserId,
             BookingStatus = booking.BookingStatus,

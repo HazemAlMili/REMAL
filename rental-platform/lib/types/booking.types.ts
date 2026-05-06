@@ -66,6 +66,7 @@ export interface BookingListItemResponse {
   id: string;
   clientId: string;
   unitId: string;
+  unitName: string | null;
   ownerId: string;
   assignedAdminUserId: string | null;
   bookingStatus: FormalBookingStatus;
@@ -82,6 +83,7 @@ export interface BookingDetailsResponse {
   id: string;
   clientId: string;
   unitId: string;
+  unitName: string | null;
   ownerId: string;
   assignedAdminUserId: string | null;
   bookingStatus: FormalBookingStatus;

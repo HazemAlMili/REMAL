@@ -21,7 +21,7 @@ public class ClientService : IClientService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IReadOnlyList<Client>> GetAllAsync(bool includeInactive = false, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Client>> GetAllAsync(bool includeInactive = false, string? search = null, CancellationToken cancellationToken = default)
     {
         var query = _unitOfWork.Clients.Query();
 
@@ -30,7 +30,17 @@ public class ClientService : IClientService
             query = query.Where(c => c.IsActive);
         }
 
-        return await query.ToListAsync(cancellationToken);
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var normalizedSearch = search.Trim().ToLower();
+            query = query.Where(c =>
+                c.Name.ToLower().Contains(normalizedSearch) ||
+                c.Phone.ToLower().Contains(normalizedSearch));
+        }
+
+        return await query
+            .OrderByDescending(c => c.CreatedAt)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<Client?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -97,6 +107,19 @@ public class ClientService : IClientService
         client.Name = trimmedName;
         client.Phone = trimmedPhone;
         client.Email = string.IsNullOrWhiteSpace(trimmedEmail) ? null : trimmedEmail;
+        client.IsActive = isActive;
+
+        _unitOfWork.Clients.Update(client);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return client;
+    }
+
+    public async Task<Client> UpdateStatusAsync(Guid id, bool isActive, CancellationToken cancellationToken = default)
+    {
+        var client = await _unitOfWork.Clients.GetByIdAsync(id, cancellationToken)
+            ?? throw new NotFoundException($"Client with ID {id} not found.");
+
         client.IsActive = isActive;
 
         _unitOfWork.Clients.Update(client);

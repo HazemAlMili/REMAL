@@ -28,9 +28,11 @@ public class BookingService : IBookingService
     public async Task<IReadOnlyList<Booking>> GetAllAsync(
         string? bookingStatus = null,
         Guid? assignedAdminUserId = null,
+        Guid? clientId = null,
         CancellationToken cancellationToken = default)
     {
-        var query = _unitOfWork.Bookings.Query();
+        IQueryable<Booking> query = _unitOfWork.Bookings.Query()
+            .Include(b => b.Unit);
 
         if (!string.IsNullOrWhiteSpace(bookingStatus))
         {
@@ -43,12 +45,19 @@ public class BookingService : IBookingService
             query = query.Where(b => b.AssignedAdminUserId == assignedAdminUserId.Value);
         }
 
+        if (clientId.HasValue)
+        {
+            query = query.Where(b => b.ClientId == clientId.Value);
+        }
+
         return await query.ToListAsync(cancellationToken);
     }
 
     public async Task<Booking?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.Bookings.GetByIdAsync(id, cancellationToken);
+        return await _unitOfWork.Bookings.Query()
+            .Include(b => b.Unit)
+            .FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
     }
 
     public async Task<Booking> CreateAsync(
@@ -115,6 +124,7 @@ public class BookingService : IBookingService
             Id = Guid.NewGuid(),
             ClientId = clientId,
             UnitId = unitId,
+            Unit = unit,
             OwnerId = unit.OwnerId, // snapshot from unit, not caller input
             AssignedAdminUserId = assignedAdminUserId,
             BookingStatus = DefaultStatus,
@@ -215,6 +225,7 @@ public class BookingService : IBookingService
         booking.CheckInDate = checkInDate;
         booking.CheckOutDate = checkOutDate;
         booking.GuestCount = guestCount;
+        booking.Unit = unit;
         booking.Source = normalizedSource;
         booking.AssignedAdminUserId = assignedAdminUserId;
         booking.InternalNotes = internalNotes?.Trim();

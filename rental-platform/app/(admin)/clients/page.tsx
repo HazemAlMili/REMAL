@@ -2,9 +2,11 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Search, X } from "lucide-react";
 import { SkeletonTable } from "@/components/ui/SkeletonTable";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { ClientListFilters } from "@/lib/types/client.types";
 
 import { useClients } from "@/lib/hooks/useClients";
@@ -35,14 +37,52 @@ function ClientsListPageContent() {
   const page = Number(searchParams.get("page")) || DEFAULT_PAGE;
   const pageSize = Number(searchParams.get("pageSize")) || DEFAULT_PAGE_SIZE;
   const includeInactive = searchParams.get("includeInactive") === "true";
+  const search = searchParams.get("search") ?? "";
+  const [searchInput, setSearchInput] = React.useState(search);
+
+  React.useEffect(() => {
+    setSearchInput(search);
+  }, [search]);
+
+  React.useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      const trimmedSearch = searchInput.trim();
+
+      if (trimmedSearch === search) {
+        return;
+      }
+
+      const params = new URLSearchParams(searchParams.toString());
+      if (trimmedSearch) {
+        params.set("search", trimmedSearch);
+      } else {
+        params.delete("search");
+      }
+      params.set("page", "1");
+      params.set("pageSize", String(pageSize));
+      params.set("includeInactive", String(includeInactive));
+      router.replace(`${pathname}?${params.toString()}`);
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [
+    includeInactive,
+    pageSize,
+    pathname,
+    router,
+    search,
+    searchInput,
+    searchParams,
+  ]);
 
   const filters: ClientListFilters = React.useMemo(
     () => ({
       includeInactive,
+      search: search || undefined,
       page,
       pageSize,
     }),
-    [includeInactive, page, pageSize]
+    [includeInactive, page, pageSize, search]
   );
 
   const { data: paginatedClients, isLoading, isError } = useClients(filters);
@@ -80,9 +120,7 @@ function ClientsListPageContent() {
     );
   }
 
-  // Handle total empty state correctly: no items across DB at all.
-  // Because no filters are used except pagination, page 1 empty means everything empty
-  const noClientsAtAll =
+  const noClientsFound =
     !isLoading && paginatedClients?.pagination?.totalCount === 0 && page === 1;
 
   return (
@@ -99,7 +137,27 @@ function ClientsListPageContent() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-3 rounded-lg border border-neutral-200 bg-white p-4 sm:flex-row sm:items-center">
+        <div className="min-w-0 flex-1">
+          <Input
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search by client name or phone"
+            leftAddon={<Search className="h-4 w-4" />}
+            rightAddon={
+              searchInput ? (
+                <button
+                  type="button"
+                  aria-label="Clear search"
+                  onClick={() => setSearchInput("")}
+                  className="rounded p-0.5 text-neutral-400 hover:text-neutral-700"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              ) : null
+            }
+          />
+        </div>
         <label className="flex items-center gap-2 text-sm">
           <input
             type="checkbox"
@@ -115,11 +173,26 @@ function ClientsListPageContent() {
           />
           Include inactive clients
         </label>
+        {(search || includeInactive) && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setSearchInput("");
+              const params = new URLSearchParams();
+              params.set("page", "1");
+              params.set("pageSize", String(pageSize));
+              router.push(`${pathname}?${params.toString()}`);
+            }}
+          >
+            Clear
+          </Button>
+        )}
       </div>
 
       {isLoading ? (
         <SkeletonTable columns={6} rows={8} />
-      ) : noClientsAtAll ? (
+      ) : noClientsFound ? (
         <EmptyState
           icon={<div className="h-10 w-10 text-neutral-400">👤</div>}
           title="No clients found"

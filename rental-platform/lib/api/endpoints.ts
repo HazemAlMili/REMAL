@@ -217,6 +217,7 @@ export const endpoints = {
   clients: {
     list: "/api/clients",
     byId: (id: string) => `/api/clients/${id}`,
+    status: (id: string) => `/api/clients/${id}/status`,
   },
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEWS â€” PUBLIC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

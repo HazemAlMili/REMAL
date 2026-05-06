@@ -7,6 +7,7 @@ public record BookingListItemResponse
     public Guid Id { get; init; }
     public Guid ClientId { get; init; }
     public Guid UnitId { get; init; }
+    public string? UnitName { get; init; }
     public Guid OwnerId { get; init; }
     public Guid? AssignedAdminUserId { get; init; }
     public string BookingStatus { get; init; } = string.Empty;
@@ -24,6 +25,7 @@ public record BookingDetailsResponse
     public Guid Id { get; init; }
     public Guid ClientId { get; init; }
     public Guid UnitId { get; init; }
+    public string? UnitName { get; init; }
     public Guid OwnerId { get; init; }
     public Guid? AssignedAdminUserId { get; init; }
     public string BookingStatus { get; init; } = string.Empty;

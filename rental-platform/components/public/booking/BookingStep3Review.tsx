@@ -81,7 +81,7 @@ export function BookingStep3Review({
       desiredCheckInDate: startDate, // P06: desiredCheckInDate, NOT checkInDate
       desiredCheckOutDate: endDate, // P06: desiredCheckOutDate, NOT checkOutDate
       guestCount: guestCount, // P06: guestCount, NOT numberOfGuests
-      source: "Website", // PascalCase, hardcoded for public form
+      source: "website",
       contactName: contactName || "", // P06: contactName
       contactPhone: contactPhone || "", // P06: contactPhone
       contactEmail: contactEmail || undefined, // P06: contactEmail, optional

@@ -5,6 +5,7 @@ import type {
   ClientListFilters,
   PaginatedClients,
   PaginatedBookings,
+  UpdateClientStatusRequest,
 } from "@/lib/types";
 
 export const clientsService = {
@@ -13,6 +14,11 @@ export const clientsService = {
 
   getById: (id: string): Promise<ClientDetailsResponse> =>
     api.get(endpoints.clients.byId(id)),
+
+  updateStatus: (
+    id: string,
+    data: UpdateClientStatusRequest
+  ): Promise<ClientDetailsResponse> => api.patch(endpoints.clients.status(id), data),
 
   // Backend gap: client booking-history endpoint is not documented.
   // Keep this method blocked behind backend confirmation.
