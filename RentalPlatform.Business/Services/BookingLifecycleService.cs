@@ -14,11 +14,13 @@ public class BookingLifecycleService : IBookingLifecycleService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUnitAvailabilityService _availabilityService;
+    private readonly IInvoiceService _invoiceService;
 
-    public BookingLifecycleService(IUnitOfWork unitOfWork, IUnitAvailabilityService availabilityService)
+    public BookingLifecycleService(IUnitOfWork unitOfWork, IUnitAvailabilityService availabilityService, IInvoiceService invoiceService)
     {
         _unitOfWork = unitOfWork;
         _availabilityService = availabilityService;
+        _invoiceService = invoiceService;
     }
 
     public async Task<Booking> ConfirmAsync(
@@ -63,6 +65,16 @@ public class BookingLifecycleService : IBookingLifecycleService
         _unitOfWork.Bookings.Update(booking);
         await AppendStatusHistoryAsync(booking.Id, oldStatus, "confirmed", changedByAdminUserId, notes, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // Auto-generate invoice
+        var invoiceNumber = $"INV-{booking.Id.ToString()[..8].ToUpper()}";
+        var draftInvoice = await _invoiceService.CreateDraftFromBookingAsync(
+            booking.Id, 
+            invoiceNumber, 
+            "Auto-generated on confirmation", 
+            cancellationToken);
+
+        await _invoiceService.IssueAsync(draftInvoice.Id, cancellationToken);
 
         return booking;
     }
@@ -117,6 +129,44 @@ public class BookingLifecycleService : IBookingLifecycleService
 
         _unitOfWork.Bookings.Update(booking);
         await AppendStatusHistoryAsync(booking.Id, oldStatus, "completed", changedByAdminUserId, notes, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return booking;
+    }
+
+    public async Task<Booking> CheckInAsync(
+        Guid bookingId,
+        Guid changedByAdminUserId,
+        string? notes,
+        CancellationToken cancellationToken = default)
+    {
+        var booking = await GetBookingOrThrowAsync(bookingId, cancellationToken);
+        await ValidateAdminExistsAsync(changedByAdminUserId, cancellationToken);
+
+        // We don't change the booking status since check_in is not a valid DB status for bookings
+        // but we record it in the history
+        await AppendStatusHistoryAsync(booking.Id, booking.BookingStatus, "check_in", changedByAdminUserId, notes, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return booking;
+    }
+
+    public async Task<Booking> LeftEarlyAsync(
+        Guid bookingId,
+        Guid changedByAdminUserId,
+        string? notes,
+        CancellationToken cancellationToken = default)
+    {
+        var booking = await GetBookingOrThrowAsync(bookingId, cancellationToken);
+        await ValidateAdminExistsAsync(changedByAdminUserId, cancellationToken);
+
+        // Transition to completed when they leave early
+        var oldStatus = booking.BookingStatus;
+        booking.BookingStatus = "completed";
+        booking.UpdatedAt = DateTime.UtcNow;
+
+        _unitOfWork.Bookings.Update(booking);
+        await AppendStatusHistoryAsync(booking.Id, oldStatus, "left_early", changedByAdminUserId, notes, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return booking;

@@ -61,7 +61,7 @@ export function ConvertToBookingPanel({
       ? getNights(lead.desiredCheckInDate, lead.desiredCheckOutDate)
       : 0;
 
-  if (lead.leadStatus !== "Booked") {
+  if (lead.leadStatus !== "converted") {
     return null;
   }
 

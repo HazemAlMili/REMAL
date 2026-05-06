@@ -36,7 +36,7 @@ export function StatusTransitionDialog({
   if (!targetStatus) return null;
 
   const isDestructive =
-    targetStatus === "NotRelevant" || targetStatus === "Cancelled";
+    targetStatus === "lost";
 
   return (
     <Modal
@@ -61,9 +61,9 @@ export function StatusTransitionDialog({
           </p>
         )}
 
-        {targetStatus === "Booked" && (
+        {targetStatus === "converted" && (
           <p className="text-xs font-medium text-accent-blue">
-            Note: Moving to Booked will create a hold on the requested unit
+            Note: Moving to Converted will create a hold on the requested unit
             dates.
           </p>
         )}

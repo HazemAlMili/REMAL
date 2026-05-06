@@ -35,6 +35,8 @@ services:
       Jwt__Secret: "A_Very_Long_And_Secure_Secret_Key_For_Jwt_Signing_At_Least_32_Chars"
       Jwt__Issuer: "RentalPlatform"
       Jwt__Audience: "RentalPlatform"
+      Cors__AllowedOrigins__0: "${CORS_ORIGIN_0:-http://localhost:3000}"
+      Cors__AllowedOrigins__1: "${CORS_ORIGIN_1:-http://localhost:3001}"
     depends_on:
       db:
         condition: service_healthy

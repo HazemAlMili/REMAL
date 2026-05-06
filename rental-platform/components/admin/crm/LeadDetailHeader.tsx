@@ -44,7 +44,7 @@ export function LeadDetailHeader({ lead }: LeadDetailHeaderProps) {
         <div className="flex items-center gap-2">
           <Badge variant="info">{sourceLabel}</Badge>
           <Badge
-            variant={lead.leadStatus === "NoAnswer" ? "warning" : "neutral"}
+            variant={lead.leadStatus === "lost" ? "warning" : "neutral"}
           >
             {statusLabel}
           </Badge>

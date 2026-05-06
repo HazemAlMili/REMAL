@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import {
   BOOKING_VALID_TRANSITIONS,
@@ -30,10 +30,7 @@ export function BookingLifecycleActions({
   const completeMutation = useCompleteBooking(bookingId);
 
   const getValidTransitions = () => {
-    // Normalize status to handle case differences (DB returns lowercase, types expect capitalized)
-    const normalizedStatus = (currentStatus.charAt(0).toUpperCase() +
-      currentStatus.slice(1).toLowerCase()) as BookingStatus;
-    return BOOKING_VALID_TRANSITIONS[normalizedStatus] || [];
+    return BOOKING_VALID_TRANSITIONS[currentStatus] || [];
   };
 
   const validTransitions = getValidTransitions();
@@ -107,10 +104,9 @@ export function BookingLifecycleActions({
           <span className="font-bold">{currentStatus}</span>
         </div>
         <div>
-          Current Status (normalized):{" "}
+          Current Status:{" "}
           <span className="font-bold">
-            {currentStatus.charAt(0).toUpperCase() +
-              currentStatus.slice(1).toLowerCase()}
+            {currentStatus}
           </span>
         </div>
         <div>
@@ -122,7 +118,7 @@ export function BookingLifecycleActions({
       </div>
 
       <div className="flex flex-wrap gap-3">
-        {validTransitions.includes("Confirmed") && (
+        {validTransitions.includes("confirmed") && (
           <Button
             variant="primary"
             size="lg"
@@ -132,7 +128,7 @@ export function BookingLifecycleActions({
             <CheckCircle className="mr-2 h-5 w-5" />✓ Confirm Booking
           </Button>
         )}
-        {validTransitions.includes("Completed") && (
+        {validTransitions.includes("completed") && (
           <Button
             variant="success"
             size="lg"
@@ -142,7 +138,7 @@ export function BookingLifecycleActions({
             <CheckSquare className="mr-2 h-5 w-5" />☑ Complete Booking
           </Button>
         )}
-        {validTransitions.includes("Cancelled") && (
+        {validTransitions.includes("cancelled") && (
           <Button
             variant="danger"
             size="lg"

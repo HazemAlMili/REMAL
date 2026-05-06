@@ -119,7 +119,7 @@ export default function OwnerBookingsPage() {
           }}
           className={[
             "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-            bookingStatus === "Confirmed"
+            bookingStatus === "confirmed"
               ? "bg-primary-600 text-white"
               : "border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50",
           ].join(" ")}
@@ -134,7 +134,7 @@ export default function OwnerBookingsPage() {
           }}
           className={[
             "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-            bookingStatus === "Completed"
+            bookingStatus === "completed"
               ? "bg-primary-600 text-white"
               : "border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50",
           ].join(" ")}
@@ -149,7 +149,7 @@ export default function OwnerBookingsPage() {
           }}
           className={[
             "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
-            bookingStatus === "Cancelled"
+            bookingStatus === "cancelled"
               ? "bg-primary-600 text-white"
               : "border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50",
           ].join(" ")}

@@ -1,89 +1,69 @@
 export const CRM_LEAD_STATUSES = {
-  Prospecting: "Prospecting",
-  Relevant: "Relevant",
-  NoAnswer: "NoAnswer",
-  NotRelevant: "NotRelevant",
-  Booked: "Booked",
-  Confirmed: "Confirmed",
-  CheckIn: "CheckIn",
-  Completed: "Completed",
-  Cancelled: "Cancelled",
-  LeftEarly: "LeftEarly",
+  new: "new",
+  contacted: "contacted",
+  qualified: "qualified",
+  converted: "converted",
+  lost: "lost",
 } as const;
 
 export type CrmLeadStatus =
   (typeof CRM_LEAD_STATUSES)[keyof typeof CRM_LEAD_STATUSES];
 
 export const BOOKING_STATUSES = {
-  Pending: "Pending",
-  Confirmed: "Confirmed",
-  Completed: "Completed",
-  Cancelled: "Cancelled",
+  Pending: "pending",
+  Confirmed: "confirmed",
+  Completed: "completed",
+  Cancelled: "cancelled",
 } as const;
 
 export type BookingStatus =
   (typeof BOOKING_STATUSES)[keyof typeof BOOKING_STATUSES];
 
 export const CRM_STATUS_LABELS: Record<CrmLeadStatus, string> = {
-  Prospecting: "Prospecting",
-  Relevant: "Relevant",
-  NoAnswer: "No Answer",
-  NotRelevant: "Not Relevant",
-  Booked: "Booked",
-  Confirmed: "Confirmed",
-  CheckIn: "Check In",
-  Completed: "Completed",
-  Cancelled: "Cancelled",
-  LeftEarly: "Left Early",
+  new: "New",
+  contacted: "Contacted",
+  qualified: "Qualified",
+  converted: "Converted",
+  lost: "Lost",
 };
 
 export const BOOKING_STATUS_LABELS: Record<BookingStatus, string> = {
-  Pending: "Pending",
-  Confirmed: "Confirmed",
-  Completed: "Completed",
-  Cancelled: "Cancelled",
+  pending: "Pending",
+  confirmed: "Confirmed",
+  completed: "Completed",
+  cancelled: "Cancelled",
 };
 
 export const BOOKING_STATUS_COLORS: Record<BookingStatus, string> = {
-  Pending: "warning",
-  Confirmed: "success",
-  Completed: "success",
-  Cancelled: "danger",
+  pending: "warning",
+  confirmed: "success",
+  completed: "success",
+  cancelled: "danger",
 } as const;
 
 export const CRM_PIPELINE_COLUMNS: CrmLeadStatus[] = [
-  "Prospecting",
-  "Relevant",
-  "NoAnswer",
-  "Booked",
-  "Confirmed",
-  "CheckIn",
-  "Completed",
+  "new",
+  "contacted",
+  "qualified",
+  "converted",
 ];
 
 export const CRM_CLOSED_STATUSES: CrmLeadStatus[] = [
-  "NotRelevant",
-  "Cancelled",
-  "LeftEarly",
+  "lost",
 ];
 
 export const CRM_VALID_TRANSITIONS: Record<CrmLeadStatus, CrmLeadStatus[]> = {
-  Prospecting: ["Relevant", "NoAnswer", "NotRelevant"],
-  Relevant: ["Booked", "NoAnswer", "NotRelevant"],
-  NoAnswer: ["Relevant", "NotRelevant"],
-  Booked: ["Confirmed", "NotRelevant"],
-  Confirmed: ["CheckIn", "Cancelled"],
-  CheckIn: ["Completed", "LeftEarly"],
-  Completed: [],
-  Cancelled: [],
-  LeftEarly: [],
-  NotRelevant: [],
+  new: ["contacted", "lost"],
+  contacted: ["qualified", "lost"],
+  qualified: ["converted", "lost"],
+  converted: [],
+  lost: [],
 };
 
 export const BOOKING_VALID_TRANSITIONS: Record<BookingStatus, BookingStatus[]> =
   {
-    Pending: ["Confirmed", "Cancelled"],
-    Confirmed: ["Completed", "Cancelled"],
-    Completed: [],
-    Cancelled: [],
+    pending: ["confirmed", "cancelled"],
+    confirmed: ["completed", "cancelled"],
+    completed: [],
+    cancelled: [],
   };

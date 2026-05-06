@@ -174,15 +174,14 @@ builder.Services.AddAuthorization(options =>
 });
 
 // CORS
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? Array.Empty<string>();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:3000",
-                "http://localhost:3001",
-                "http://127.0.0.1:3000",
-                "http://127.0.0.1:3001")
+        policy.WithOrigins(corsOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

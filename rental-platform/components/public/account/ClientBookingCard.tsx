@@ -28,7 +28,7 @@ interface ClientBookingCardProps {
 }
 
 export function ClientBookingCard({ booking }: ClientBookingCardProps) {
-  const isCompleted = booking.bookingStatus === "Completed"; // P10: bookingStatus
+  const isCompleted = booking.bookingStatus === "completed"; // P10: bookingStatus
   const nightsCount = getNights(booking.checkInDate, booking.checkOutDate);
 
   // Check if review exists (only for Completed bookings)

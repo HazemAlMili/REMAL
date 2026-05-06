@@ -69,7 +69,7 @@ export function ClientBookingTable({
               booking.checkInDate,
               booking.checkOutDate
             );
-            const isCompleted = booking.bookingStatus === "Completed"; // P10: bookingStatus
+            const isCompleted = booking.bookingStatus === "completed"; // P10: bookingStatus
             const reviewInfo = reviewStatuses[booking.id]; // P10: id, NOT bookingId
             const isLoadingReview = reviewLoadingIds.has(booking.id);
 

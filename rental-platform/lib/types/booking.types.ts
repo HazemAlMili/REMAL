@@ -30,10 +30,10 @@ export interface BookingFormData {
 // Database schema only supports these 4 statuses (lowercase in DB, capitalized in frontend)
 // See: db/migrations/0016_create_bookings.sql - ck_bookings_status constraint
 export type FormalBookingStatus =
-  | "Pending"
-  | "Confirmed"
-  | "Completed"
-  | "Cancelled";
+  | "pending"
+  | "confirmed"
+  | "completed"
+  | "cancelled";
 
 export type InvoiceStatus = "Draft" | "Issued" | "Cancelled";
 

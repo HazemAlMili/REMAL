@@ -16,3 +16,13 @@ public record CompleteBookingRequest
 {
     public string? Notes { get; init; }
 }
+
+public record CheckInBookingRequest
+{
+    public string? Notes { get; init; }
+}
+
+public record LeftEarlyBookingRequest
+{
+    public string? Notes { get; init; }
+}

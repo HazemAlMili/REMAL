@@ -62,7 +62,7 @@ export function ClientBookingHistory({ clientId }: ClientBookingHistoryProps) {
 
   // Compute summary stats
   const activeBookings = bookings.filter((b) =>
-    ["Confirmed", "CheckIn", "Completed"].includes(b.bookingStatus)
+    ["confirmed", "completed"].includes(b.bookingStatus)
   );
   const totalSpent = activeBookings.reduce((sum, b) => sum + b.finalAmount, 0);
 

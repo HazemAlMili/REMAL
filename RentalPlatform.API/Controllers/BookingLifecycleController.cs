@@ -53,6 +53,26 @@ public class BookingLifecycleController : ControllerBase
         return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(MapToDetailsResponse(booking), "Booking completed successfully."));
     }
 
+    // 4. POST /api/internal/bookings/{id}/check-in
+    [HttpPost("check-in")]
+    public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> CheckInBooking(Guid id, CheckInBookingRequest request)
+    {
+        var adminId = GetCurrentAdminId();
+        var booking = await _lifecycleService.CheckInAsync(id, adminId, request.Notes);
+        
+        return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(MapToDetailsResponse(booking), "Booking checked in successfully."));
+    }
+
+    // 5. POST /api/internal/bookings/{id}/left-early
+    [HttpPost("left-early")]
+    public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> LeftEarlyBooking(Guid id, LeftEarlyBookingRequest request)
+    {
+        var adminId = GetCurrentAdminId();
+        var booking = await _lifecycleService.LeftEarlyAsync(id, adminId, request.Notes);
+        
+        return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(MapToDetailsResponse(booking), "Booking marked as left early successfully."));
+    }
+
     private Guid GetCurrentAdminId()
     {
         var subClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
