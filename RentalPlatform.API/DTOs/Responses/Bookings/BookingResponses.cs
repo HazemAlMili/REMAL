@@ -6,6 +6,8 @@ public record BookingListItemResponse
 {
     public Guid Id { get; init; }
     public Guid ClientId { get; init; }
+    public string? ClientName { get; init; }
+    public string? ClientPhone { get; init; }
     public Guid UnitId { get; init; }
     public string? UnitName { get; init; }
     public Guid OwnerId { get; init; }

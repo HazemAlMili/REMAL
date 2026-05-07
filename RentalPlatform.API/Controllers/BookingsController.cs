@@ -31,10 +31,11 @@ public class BookingsController : ControllerBase
         [FromQuery] string? bookingStatus = null,
         [FromQuery] Guid? assignedAdminUserId = null,
         [FromQuery] Guid? clientId = null,
+        [FromQuery] string? search = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
-        var allBookings = await _bookingService.GetAllAsync(bookingStatus, assignedAdminUserId, clientId);
+        var allBookings = await _bookingService.GetAllAsync(bookingStatus, assignedAdminUserId, clientId, search);
         
         int total = allBookings.Count;
         int totalPages = (int)Math.Ceiling(total / (double)pageSize);
@@ -124,6 +125,8 @@ public class BookingsController : ControllerBase
         {
             Id = booking.Id,
             ClientId = booking.ClientId,
+            ClientName = booking.Client?.Name,
+            ClientPhone = booking.Client?.Phone,
             UnitId = booking.UnitId,
             UnitName = booking.Unit?.Name,
             OwnerId = booking.OwnerId,

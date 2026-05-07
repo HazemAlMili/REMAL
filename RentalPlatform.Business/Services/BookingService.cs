@@ -29,10 +29,12 @@ public class BookingService : IBookingService
         string? bookingStatus = null,
         Guid? assignedAdminUserId = null,
         Guid? clientId = null,
+        string? search = null,
         CancellationToken cancellationToken = default)
     {
         IQueryable<Booking> query = _unitOfWork.Bookings.Query()
-            .Include(b => b.Unit);
+            .Include(b => b.Unit)
+            .Include(b => b.Client);
 
         if (!string.IsNullOrWhiteSpace(bookingStatus))
         {
@@ -48,6 +50,15 @@ public class BookingService : IBookingService
         if (clientId.HasValue)
         {
             query = query.Where(b => b.ClientId == clientId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var s = search.Trim().ToLower();
+            query = query.Where(b =>
+                b.Client.Name.ToLower().Contains(s) ||
+                b.Client.Phone.ToLower().Contains(s) ||
+                b.Unit.Name.ToLower().Contains(s));
         }
 
         return await query.ToListAsync(cancellationToken);

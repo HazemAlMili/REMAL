@@ -23,7 +23,7 @@ const dispatchSchema = z.object({
   recipientId: z.string().min(1, "Recipient is required"),
   templateCode: z.string().min(1, "Template code is required"),
   scheduledAt: z.string().optional(),
-  channel: z.enum(["Email", "InApp"]), // SMS excluded (deferred)
+  channel: z.enum(["email", "in_app"]),
 });
 
 type DispatchFormData = z.infer<typeof dispatchSchema>;
@@ -40,8 +40,8 @@ const RECIPIENT_TYPE_OPTIONS = [
 ];
 
 const CHANNEL_OPTIONS = [
-  { value: "Email", label: "Email" },
-  { value: "InApp", label: "In-app" },
+  { value: "email", label: "Email" },
+  { value: "in_app", label: "In-app" },
 ];
 
 export function DispatchNotificationModal({
@@ -76,7 +76,7 @@ export function DispatchNotificationModal({
       recipientType: "Admin",
       recipientId: "",
       templateCode: "",
-      channel: "InApp",
+      channel: "in_app",
       scheduledAt: "",
     },
   });

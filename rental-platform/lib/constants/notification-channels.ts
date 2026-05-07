@@ -3,16 +3,18 @@ import type { BadgeVariant } from "@/components/ui/Badge";
 
 export const NOTIFICATION_CHANNEL_LABELS: Record<NotificationChannel, string> =
   {
-    Email: "Email",
-    SMS: "SMS",
-    InApp: "In-app",
+    email: "Email",
+    sms: "SMS",
+    in_app: "In-app",
+    whatsapp: "WhatsApp",
   };
 
 export const NOTIFICATION_CHANNEL_BADGE: Record<
   NotificationChannel,
   BadgeVariant
 > = {
-  Email: "info",
-  SMS: "warning",
-  InApp: "neutral",
+  email: "info",
+  sms: "warning",
+  in_app: "neutral",
+  whatsapp: "success",
 };

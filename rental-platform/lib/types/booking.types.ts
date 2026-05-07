@@ -65,6 +65,8 @@ export interface PaginatedBookings {
 export interface BookingListItemResponse {
   id: string;
   clientId: string;
+  clientName: string | null;
+  clientPhone: string | null;
   unitId: string;
   unitName: string | null;
   ownerId: string;

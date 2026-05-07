@@ -33,7 +33,7 @@ export function BookingTable({
   const columns: ColumnDef<BookingListItemResponse>[] = [
     {
       accessorKey: "clientId",
-      header: "Client / Phone",
+      header: "Client",
       cell: ({ row }) => {
         let isToday = false;
         if (row.original.checkInDate) {
@@ -52,14 +52,11 @@ export function BookingTable({
                 title="Checking in today"
               />
             )}
-            <div
-              className="max-w-[120px] truncate font-medium text-neutral-900 sm:max-w-full"
-              title={row.original.clientId}
-            >
-              {row.original.clientId.split("-")[0]}...
+            <div className="max-w-[140px] truncate font-medium text-neutral-900 sm:max-w-full">
+              {row.original.clientName ?? row.original.clientId.split("-")[0] + "..."}
             </div>
             <div className="mt-0.5 truncate text-xs text-neutral-500">
-              {maskPhone(null)}
+              {maskPhone(row.original.clientPhone)}
             </div>
           </div>
         );
@@ -70,10 +67,10 @@ export function BookingTable({
       header: "Unit",
       cell: ({ row }) => (
         <span
-          className="font-medium text-neutral-900"
-          title={row.original.unitId}
+          className="max-w-[180px] truncate font-medium text-neutral-900 block"
+          title={row.original.unitName ?? row.original.unitId}
         >
-          {row.original.unitId.split("-")[0]}...
+          {row.original.unitName ?? row.original.unitId.split("-")[0] + "..."}
         </span>
       ),
     },

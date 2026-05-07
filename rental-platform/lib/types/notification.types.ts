@@ -5,15 +5,16 @@
 // ──────────────────────────────────────────────────────────────────────────────
 
 // ── Enums ──
-export type NotificationChannel = "Email" | "SMS" | "InApp"; // PascalCase — 'InApp' not 'in_app'
+export type NotificationChannel = "email" | "sms" | "in_app" | "whatsapp";
 
 export type NotificationStatus =
-  | "Pending"
-  | "Queued"
-  | "Sent"
-  | "Delivered"
-  | "Failed"
-  | "Cancelled";
+  | "pending"
+  | "queued"
+  | "sent"
+  | "delivered"
+  | "failed"
+  | "cancelled"
+  | "read";
 
 // ── Notification inbox item ──
 // Per P27: subject (not title), readAt (not isRead), notificationStatus and createdAt present
