@@ -36,8 +36,8 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
             .HasMaxLength(50)
             .IsRequired()
             .HasConversion(
-                v => v.ToString().ToLower(),
-                v => Enum.Parse<BookingStatus>(v, ignoreCase: true));
+                v => v.ToString(), // Store as PascalCase
+                v => Enum.Parse<BookingStatus>(v, true)); // true = ignoreCase
 
         builder.Property(b => b.CheckInDate)
             .HasColumnName("check_in_date")

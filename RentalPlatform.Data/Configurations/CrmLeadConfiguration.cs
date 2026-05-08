@@ -54,8 +54,8 @@ public class CrmLeadConfiguration : IEntityTypeConfiguration<CrmLead>
             .HasMaxLength(50)
             .IsRequired()
             .HasConversion(
-                v => v.ToString().ToLower(),
-                v => Enum.Parse<LeadStatus>(v, ignoreCase: true));
+                v => v.ToString(), // Store as PascalCase
+                v => Enum.Parse<LeadStatus>(v, true)); // true = ignoreCase
 
         builder.Property(e => e.Source)
             .HasColumnName("source")

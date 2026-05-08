@@ -10,6 +10,7 @@ using RentalPlatform.Data;
 using RentalPlatform.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -84,7 +85,11 @@ builder.Services.AddControllers(options =>
     })
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        // Serialize enums as strings using their exact names (PascalCase: New, Contacted, etc.)
+        // This matches the frontend TypeScript constants
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(namingPolicy: null, allowIntegerValues: false));
+        // Keep property names in camelCase (id, contactName, leadStatus, etc.)
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
 
 // Register FluentValidation explicitly from API assembly as required
