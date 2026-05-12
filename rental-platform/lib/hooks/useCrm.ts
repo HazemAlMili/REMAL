@@ -5,7 +5,7 @@ import { crmService } from "@/lib/api/services/crm.service";
 import { ApiError } from "@/lib/api/api-error";
 import { queryKeys } from "@/lib/utils/query-keys";
 import { ROUTES } from "@/lib/constants/routes";
-import { toastSuccess } from "@/lib/utils";
+import { toastSuccess, toastError } from "@/lib/utils";
 import { CRM_STATUS_LABELS } from "@/lib/constants/booking-statuses";
 import type {
   CrmLeadStatus,
@@ -64,7 +64,10 @@ export function useCreateLead() {
     mutationFn: (data: CreateCrmLeadRequest) => crmService.createLead(data),
     onSuccess: () => {
       toastSuccess("Lead created successfully");
-      queryClient.invalidateQueries({ queryKey: queryKeys.crm.leads() });
+      queryClient.refetchQueries({ queryKey: queryKeys.crm.leads() });
+    },
+    onError: () => {
+      toastError("Failed to create lead. Please try again.");
     },
   });
 }
@@ -100,6 +103,13 @@ export function useConvertToBooking(leadId: string) {
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.crm.leads() });
       router.push(ROUTES.admin.bookings.detail(booking.id));
+    },
+    onError: (error: unknown) => {
+      const message =
+        error instanceof ApiError
+          ? (error.errors[0] ?? error.message)
+          : "Failed to convert lead to booking. Please try again.";
+      toastError(message);
     },
   });
 }

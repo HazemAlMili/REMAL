@@ -20,7 +20,7 @@ CREATE TABLE bookings (
     CONSTRAINT fk_bookings_owner_id FOREIGN KEY (owner_id) REFERENCES owners(id) ON DELETE RESTRICT,
     CONSTRAINT fk_bookings_assigned_admin_user_id FOREIGN KEY (assigned_admin_user_id) REFERENCES admin_users(id) ON DELETE SET NULL,
 
-    CONSTRAINT ck_bookings_status CHECK (booking_status IN ('inquiry', 'pending', 'confirmed', 'cancelled', 'completed')),
+    CONSTRAINT ck_bookings_status CHECK (booking_status IN ('prospecting', 'relevant', 'noanswer', 'notrelevant', 'booked', 'confirmed', 'checkin', 'completed', 'cancelled', 'leftearly')),
     CONSTRAINT ck_bookings_source CHECK (source IN ('direct', 'admin', 'phone', 'whatsapp', 'website')),
 
     CONSTRAINT ck_bookings_valid_stay_range CHECK (check_out_date > check_in_date),

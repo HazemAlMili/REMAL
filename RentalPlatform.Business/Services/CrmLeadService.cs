@@ -23,7 +23,7 @@ public class CrmLeadService : ICrmLeadService
     {
         { LeadStatus.New,       new[] { LeadStatus.Contacted, LeadStatus.Lost } },
         { LeadStatus.Contacted, new[] { LeadStatus.Qualified, LeadStatus.Lost } },
-        { LeadStatus.Qualified, new[] { LeadStatus.Converted, LeadStatus.Lost } },
+        { LeadStatus.Qualified, new[] { LeadStatus.Lost } },
         { LeadStatus.Converted, Array.Empty<LeadStatus>() },
         { LeadStatus.Lost,      Array.Empty<LeadStatus>() },
     };

@@ -45,6 +45,28 @@ public class CrmLeadsController : ControllerBase
         return Ok(ApiResponse<CrmLeadDetailsResponse>.CreateSuccess(MapToDetailsResponse(lead), "Lead captured successfully."));
     }
 
+    // 1b. POST /api/internal/crm/leads - Internal Admin Create
+    [HttpPost("api/internal/crm/leads")]
+    [Authorize(Policy = "SalesOrSuperAdmin")]
+    public async Task<ActionResult<ApiResponse<CrmLeadDetailsResponse>>> InternalCreateLead(InternalCreateCrmLeadRequest request)
+    {
+        var lead = await _crmLeadService.CreateAsync(
+            request.ClientId,
+            request.TargetUnitId,
+            request.AssignedAdminUserId,
+            request.ContactName,
+            request.ContactPhone,
+            request.ContactEmail,
+            request.DesiredCheckInDate,
+            request.DesiredCheckOutDate,
+            request.GuestCount,
+            request.Source,
+            request.Notes
+        );
+
+        return Ok(ApiResponse<CrmLeadDetailsResponse>.CreateSuccess(MapToDetailsResponse(lead), "Lead created successfully."));
+    }
+
     // 2. GET /api/internal/crm/leads - Internal List
     [HttpGet("api/internal/crm/leads")]
     [Authorize(Policy = "SalesOrSuperAdmin")]

@@ -1,12 +1,7 @@
 import type { PaginationMeta } from "@/lib/api/types";
+import type { CrmLeadStatus } from "@/lib/constants/booking-statuses";
 
-// ── Status Types ──
-export type CrmLeadStatus =
-  | "new"
-  | "contacted"
-  | "qualified"
-  | "converted"
-  | "lost";
+export type { CrmLeadStatus };
 
 // ── CRM Lead List Item (from GET /api/internal/crm/leads) ──
 export interface CrmLeadListItemResponse {

@@ -6,6 +6,7 @@ import type {
   PaginatedClients,
   PaginatedBookings,
   UpdateClientStatusRequest,
+  CreateClientRequest,
 } from "@/lib/types";
 
 export const clientsService = {
@@ -14,6 +15,9 @@ export const clientsService = {
 
   getById: (id: string): Promise<ClientDetailsResponse> =>
     api.get(endpoints.clients.byId(id)),
+
+  create: (data: CreateClientRequest): Promise<ClientDetailsResponse> =>
+    api.post(endpoints.clients.list, data),
 
   updateStatus: (
     id: string,

@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useConvertToBooking } from "@/lib/hooks/useCrm";
+import { useCreateClient } from "@/lib/hooks/useClients";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -12,6 +14,7 @@ import type {
   CrmLeadDetailsResponse,
   ConvertLeadToBookingRequest,
 } from "@/lib/types/crm.types";
+import type { CreateClientRequest } from "@/lib/types";
 
 const convertSchema = z.object({
   clientId: z.string().min(1, "Client is required"),
@@ -22,6 +25,12 @@ const convertSchema = z.object({
     .number({ invalid_type_error: "Guest count is required" })
     .min(1),
   internalNotes: z.string().optional(),
+});
+
+const newClientSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  phone: z.string().min(1, "Phone is required"),
+  email: z.string().email("Invalid email").optional().or(z.literal("")),
 });
 
 interface ConvertToBookingPanelProps {
@@ -35,10 +44,13 @@ export function ConvertToBookingPanel({
 }: ConvertToBookingPanelProps) {
   const { canManageCRM } = usePermissions();
   const convertMutation = useConvertToBooking(leadId);
+  const createClientMutation = useCreateClient();
+  const [showNewClientForm, setShowNewClientForm] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<ConvertLeadToBookingRequest>({
     resolver: zodResolver(convertSchema),
@@ -52,8 +64,35 @@ export function ConvertToBookingPanel({
     },
   });
 
+  const {
+    register: registerClient,
+    handleSubmit: handleClientSubmit,
+    reset: resetClientForm,
+    formState: { errors: clientErrors },
+  } = useForm<CreateClientRequest>({
+    resolver: zodResolver(newClientSchema),
+    defaultValues: {
+      name: lead.contactName ?? "",
+      phone: lead.contactPhone ?? "",
+      email: lead.contactEmail ?? "",
+    },
+  });
+
   const onSubmit = (data: ConvertLeadToBookingRequest) => {
     convertMutation.mutate(data);
+  };
+
+  const onCreateClient = (data: CreateClientRequest) => {
+    createClientMutation.mutate(
+      { ...data, email: data.email || undefined },
+      {
+        onSuccess: (client) => {
+          setValue("clientId", client.id, { shouldValidate: true });
+          setShowNewClientForm(false);
+          resetClientForm();
+        },
+      }
+    );
   };
 
   const nights =
@@ -61,7 +100,7 @@ export function ConvertToBookingPanel({
       ? getNights(lead.desiredCheckInDate, lead.desiredCheckOutDate)
       : 0;
 
-  if (lead.leadStatus !== "converted") {
+  if (lead.leadStatus === "Converted" || lead.leadStatus === "Lost") {
     return null;
   }
 
@@ -90,13 +129,67 @@ export function ConvertToBookingPanel({
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-        <Input
-          label="Client ID"
-          {...register("clientId")}
-          error={errors.clientId?.message}
-          required
-          disabled={convertMutation.isPending}
-        />
+        {/* Client ID field + create toggle */}
+        <div className="space-y-1">
+          <Input
+            label="Client ID"
+            {...register("clientId")}
+            error={errors.clientId?.message}
+            required
+            disabled={convertMutation.isPending}
+            placeholder="Paste client ID or create one below"
+          />
+          <button
+            type="button"
+            className="text-xs text-primary-600 hover:underline"
+            onClick={() => setShowNewClientForm((v) => !v)}
+          >
+            {showNewClientForm
+              ? "▲ Hide new client form"
+              : "▼ Lead isn't a client yet? Create one"}
+          </button>
+        </div>
+
+        {/* Inline new client form */}
+        {showNewClientForm && (
+          <div className="space-y-3 rounded-md border border-neutral-200 bg-white p-3">
+            <p className="text-xs font-medium text-neutral-600">
+              Create client — the ID will be filled in automatically
+            </p>
+            <Input
+              label="Full Name"
+              {...registerClient("name")}
+              error={clientErrors.name?.message}
+              required
+              disabled={createClientMutation.isPending}
+            />
+            <Input
+              label="Phone"
+              {...registerClient("phone")}
+              error={clientErrors.phone?.message}
+              required
+              disabled={createClientMutation.isPending}
+            />
+            <Input
+              label="Email (optional)"
+              type="email"
+              {...registerClient("email")}
+              error={clientErrors.email?.message}
+              disabled={createClientMutation.isPending}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              isLoading={createClientMutation.isPending}
+              disabled={createClientMutation.isPending}
+              onClick={handleClientSubmit(onCreateClient)}
+            >
+              Create Client
+            </Button>
+          </div>
+        )}
+
         <Input
           label="Unit ID"
           {...register("unitId")}
@@ -152,4 +245,4 @@ export function ConvertToBookingPanel({
       </form>
     </div>
   );
-}
+}

@@ -51,6 +51,10 @@ export function ClientDetailHeader({ client }: ClientDetailHeaderProps) {
           <span className="text-neutral-500">Email</span>
           <p className="font-medium">{client.email ?? "Not provided"}</p>
         </div>
+        <div className="col-span-2">
+          <span className="text-neutral-500">Client ID</span>
+          <p className="font-mono text-xs text-neutral-700 break-all select-all">{client.id}</p>
+        </div>
         <div>
           <span className="text-neutral-500">Registered</span>
           <p>{formatDate(client.createdAt)}</p>

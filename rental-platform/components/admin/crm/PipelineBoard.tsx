@@ -1,6 +1,6 @@
 "use client";
 
-import { useLeadsPipeline, useUpdateLeadStatus } from "@/lib/hooks/useCrm";
+import { useLeadsPipeline } from "@/lib/hooks/useCrm";
 import { PipelineColumn } from "./PipelineColumn";
 import { PipelineColumnSkeleton } from "./PipelineColumnSkeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -12,7 +12,6 @@ import {
   CRM_CLOSED_STATUSES,
   CRM_STATUS_LABELS,
 } from "@/lib/constants/booking-statuses";
-import type { CrmLeadStatus } from "@/lib/types/crm.types";
 import { toastError, toastSuccess } from "@/lib/utils/toast";
 
 export default function PipelineBoard() {

@@ -54,7 +54,7 @@ public class CrmLeadConfiguration : IEntityTypeConfiguration<CrmLead>
             .HasMaxLength(50)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(), // Store as PascalCase
+                v => v.ToString().ToLower(), // Store as lowercase to match DB CHECK constraint
                 v => Enum.Parse<LeadStatus>(v, true)); // true = ignoreCase
 
         builder.Property(e => e.Source)

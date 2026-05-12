@@ -11,12 +11,13 @@ import type {
   NotificationChannel,
 } from "@/lib/types/notification.types";
 
-const CHANNELS: NotificationChannel[] = ["Email", "SMS", "InApp"];
+const CHANNELS: NotificationChannel[] = ["email", "sms", "in_app"];
 
 const CHANNEL_LABELS: Record<NotificationChannel, string> = {
-  Email: "Email",
-  SMS: "SMS",
-  InApp: "In-app",
+  email: "Email",
+  sms: "SMS",
+  in_app: "In-app",
+  whatsapp: "WhatsApp",
 };
 
 // Group preferences by preferenceKey for matrix display

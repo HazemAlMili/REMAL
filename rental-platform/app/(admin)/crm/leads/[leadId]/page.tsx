@@ -72,14 +72,14 @@ export default function LeadDetailPage() {
       {/* Status & Actions - FE-3-CRM-05 */}
       <LeadStatusTransition leadId={lead.id} currentStatus={lead.leadStatus} />
 
+      {/* Convert to Booking - FE-3-CRM-09 */}
+      <ConvertToBookingPanel leadId={lead.id} lead={lead} />
+
       {/* Notes - FE-3-CRM-06 */}
       <LeadNotes leadId={lead.id} />
 
       {/* Assignment - FE-3-CRM-07 */}
       <LeadAssignment leadId={lead.id} />
-
-      {/* Convert to Booking - FE-3-CRM-09 */}
-      <ConvertToBookingPanel leadId={lead.id} lead={lead} />
     </div>
   );
 }

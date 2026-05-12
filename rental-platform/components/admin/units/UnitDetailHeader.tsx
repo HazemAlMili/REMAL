@@ -45,6 +45,10 @@ export function UnitDetailHeader({
 
         <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-neutral-500">
           <span>
+            Unit ID:{" "}
+            <span className="font-mono text-xs font-medium text-neutral-700 select-all">{unit.id}</span>
+          </span>
+          <span>
             Owner ID:{" "}
             <span className="font-medium text-neutral-700">{unit.ownerId}</span>
           </span>

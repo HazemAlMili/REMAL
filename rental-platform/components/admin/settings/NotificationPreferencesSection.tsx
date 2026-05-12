@@ -12,7 +12,7 @@ import { toast } from "react-hot-toast";
 import { NOTIFICATION_CHANNEL_LABELS } from "@/lib/constants/notification-channels";
 import type { NotificationChannel } from "@/lib/types/notification.types";
 
-const CHANNELS: NotificationChannel[] = ["Email", "SMS", "InApp"];
+const CHANNELS: NotificationChannel[] = ["email", "sms", "in_app"];
 
 export function NotificationPreferencesSection() {
   const {

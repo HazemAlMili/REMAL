@@ -38,6 +38,39 @@ public class PublicCreateCrmLeadRequestValidator : AbstractValidator<PublicCreat
     }
 }
 
+public class InternalCreateCrmLeadRequestValidator : AbstractValidator<InternalCreateCrmLeadRequest>
+{
+    private static readonly string[] AllowedSources = { "direct", "admin", "phone", "whatsapp", "website" };
+
+    public InternalCreateCrmLeadRequestValidator()
+    {
+        RuleFor(x => x.ContactName)
+            .NotEmpty()
+            .Must(x => !string.IsNullOrWhiteSpace(x?.Trim()))
+            .WithMessage("ContactName is required.");
+
+        RuleFor(x => x.ContactPhone)
+            .NotEmpty()
+            .Must(x => !string.IsNullOrWhiteSpace(x?.Trim()))
+            .WithMessage("ContactPhone is required.");
+
+        RuleFor(x => x.Source)
+            .NotEmpty()
+            .Must(x => !string.IsNullOrWhiteSpace(x) && AllowedSources.Contains(x.Trim().ToLower()))
+            .WithMessage($"Source must be one of: {string.Join(", ", AllowedSources)}.");
+
+        RuleFor(x => x.DesiredCheckOutDate)
+            .GreaterThan(x => x.DesiredCheckInDate)
+            .When(x => x.DesiredCheckInDate.HasValue && x.DesiredCheckOutDate.HasValue)
+            .WithMessage("DesiredCheckOutDate must be after DesiredCheckInDate.");
+
+        RuleFor(x => x.GuestCount)
+            .GreaterThan(0)
+            .When(x => x.GuestCount.HasValue)
+            .WithMessage("GuestCount must be greater than 0.");
+    }
+}
+
 public class UpdateCrmLeadRequestValidator : AbstractValidator<UpdateCrmLeadRequest>
 {
     private static readonly string[] AllowedSources = { "direct", "admin", "phone", "whatsapp", "website" };

@@ -96,29 +96,8 @@ export function BookingLifecycleActions({
 
   return (
     <div className="space-y-4">
-      {/* Debug info */}
-      <div className="rounded-md bg-blue-50 p-3 text-xs text-blue-700">
-        <div className="font-semibold">Debug Info:</div>
-        <div>
-          Current Status (raw):{" "}
-          <span className="font-bold">{currentStatus}</span>
-        </div>
-        <div>
-          Current Status:{" "}
-          <span className="font-bold">
-            {currentStatus}
-          </span>
-        </div>
-        <div>
-          Available Transitions:{" "}
-          <span className="font-bold">
-            {validTransitions.join(", ") || "None"}
-          </span>
-        </div>
-      </div>
-
       <div className="flex flex-wrap gap-3">
-        {validTransitions.includes("confirmed") && (
+        {validTransitions.includes("Confirmed") && (
           <Button
             variant="primary"
             size="lg"
@@ -128,7 +107,7 @@ export function BookingLifecycleActions({
             <CheckCircle className="mr-2 h-5 w-5" />✓ Confirm Booking
           </Button>
         )}
-        {validTransitions.includes("completed") && (
+        {validTransitions.includes("Completed") && (
           <Button
             variant="success"
             size="lg"
@@ -138,7 +117,7 @@ export function BookingLifecycleActions({
             <CheckSquare className="mr-2 h-5 w-5" />☑ Complete Booking
           </Button>
         )}
-        {validTransitions.includes("cancelled") && (
+        {validTransitions.includes("Cancelled") && (
           <Button
             variant="danger"
             size="lg"

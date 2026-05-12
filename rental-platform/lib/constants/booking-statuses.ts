@@ -73,7 +73,7 @@ export const CRM_CLOSED_STATUSES: CrmLeadStatus[] = [
 export const CRM_VALID_TRANSITIONS: Record<CrmLeadStatus, CrmLeadStatus[]> = {
   New: ["Contacted", "Lost"],
   Contacted: ["Qualified", "Lost"],
-  Qualified: ["Converted", "Lost"],
+  Qualified: ["Lost"],
   Converted: [],
   Lost: [],
 };

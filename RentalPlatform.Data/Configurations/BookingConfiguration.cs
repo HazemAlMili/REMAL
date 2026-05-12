@@ -36,7 +36,7 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
             .HasMaxLength(50)
             .IsRequired()
             .HasConversion(
-                v => v.ToString(), // Store as PascalCase
+                v => v.ToString().ToLower(), // Store as lowercase to match DB CHECK constraint
                 v => Enum.Parse<BookingStatus>(v, true)); // true = ignoreCase
 
         builder.Property(b => b.CheckInDate)

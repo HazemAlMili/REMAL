@@ -35,6 +35,12 @@ export interface UpdateClientStatusRequest {
   isActive: boolean;
 }
 
+export interface CreateClientRequest {
+  name: string;
+  phone: string;
+  email?: string;
+}
+
 // ── Paginated Clients ──
 export interface PaginatedClients {
   items: ClientListItemResponse[];

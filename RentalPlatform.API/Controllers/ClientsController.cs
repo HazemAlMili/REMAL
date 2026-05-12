@@ -24,6 +24,19 @@ public class ClientsController : ControllerBase
         _clientService = clientService;
     }
 
+    [HttpPost]
+    public async Task<ActionResult<ApiResponse<ClientDetailsResponse>>> Create(
+        [FromBody] CreateClientRequest request,
+        CancellationToken cancellationToken)
+    {
+        var tempPassword = Guid.NewGuid().ToString("N");
+        var client = await _clientService.CreateAsync(
+            request.Name, request.Phone, request.Email, tempPassword, cancellationToken);
+
+        return Ok(ApiResponse<ClientDetailsResponse>.CreateSuccess(
+            MapToDetailsResponse(client), "Client created successfully."));
+    }
+
     [HttpGet]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<ClientListItemResponse>>>> GetAll(
         [FromQuery] int page = 1,
