@@ -39,7 +39,12 @@ export type FormalBookingStatus =
   | "Cancelled"
   | "LeftEarly";
 
-export type InvoiceStatus = "Draft" | "Issued" | "Cancelled";
+export type InvoiceStatus =
+  | "Draft"
+  | "Issued"
+  | "Paid"
+  | "Cancelled"
+  | "Superseded";
 
 export type PaymentStatus = "Pending" | "Paid" | "Failed" | "Cancelled";
 

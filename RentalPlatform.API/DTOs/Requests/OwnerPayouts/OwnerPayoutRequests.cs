@@ -6,6 +6,7 @@ public record CreateOrUpdateOwnerPayoutRequest
 {
     public Guid BookingId { get; init; }
     public decimal CommissionRate { get; init; }
+    public string? ProofOfPaymentUrl { get; init; }
     public string? Notes { get; init; }
 }
 
@@ -16,6 +17,7 @@ public record SetOwnerPayoutScheduledRequest
 
 public record MarkOwnerPayoutPaidRequest
 {
+    public string? ProofOfPaymentUrl { get; init; }
     public string? Notes { get; init; }
 }
 

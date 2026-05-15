@@ -13,6 +13,7 @@ public class OwnerPayout
     public decimal PayoutAmount { get; set; }
     public DateTime? ScheduledAt { get; set; }
     public DateTime? PaidAt { get; set; }
+    public string? ProofOfPaymentUrl { get; set; }
     public string? Notes { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

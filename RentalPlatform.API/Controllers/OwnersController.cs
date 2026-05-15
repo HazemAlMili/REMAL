@@ -17,10 +17,12 @@ namespace RentalPlatform.API.Controllers;
 public class OwnersController : ControllerBase
 {
     private readonly IOwnerService _ownerService;
+    private readonly IUnitService _unitService;
 
-    public OwnersController(IOwnerService ownerService)
+    public OwnersController(IOwnerService ownerService, IUnitService unitService)
     {
         _ownerService = ownerService;
+        _unitService = unitService;
     }
 
     [HttpGet]
@@ -114,6 +116,37 @@ public class OwnersController : ControllerBase
         return Ok(ApiResponse<OwnerDetailsResponse>.CreateSuccess(MapToDetailsResponse(updatedOwner), $"Owner status updated to {request.Status}."));
     }
 
+    [HttpGet("{id}/units")]
+    [Authorize(Policy = "InternalAdminReadOwners")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<OwnerUnitResponse>>>> GetOwnerUnits(
+        Guid id,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50,
+        [FromQuery] bool includeInactive = true)
+    {
+        // Verify owner exists
+        var owner = await _ownerService.GetByIdAsync(id);
+        if (owner == null)
+            return NotFound(ApiResponse.CreateFailure("Owner not found."));
+
+        // Get units filtered by owner
+        var units = await _unitService.GetAllAsync(includeInactive: includeInactive, ownerId: id);
+        
+        var totalCount = units.Count;
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+        if (totalPages == 0) totalPages = 1;
+        
+        var pagedUnits = units
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(MapToOwnerUnitResponse)
+            .ToList();
+
+        var pagination = new PaginationMeta(totalCount, page, pageSize, totalPages);
+        
+        return Ok(ApiResponse<IReadOnlyList<OwnerUnitResponse>>.CreateSuccess(pagedUnits, pagination: pagination));
+    }
+
     private static OwnerListItemResponse MapToListItemResponse(Owner owner)
     {
         return new OwnerListItemResponse(
@@ -139,6 +172,22 @@ public class OwnersController : ControllerBase
             owner.Status,
             owner.CreatedAt,
             owner.UpdatedAt
+        );
+    }
+
+    private static OwnerUnitResponse MapToOwnerUnitResponse(Unit unit)
+    {
+        return new OwnerUnitResponse(
+            unit.Id,
+            unit.Name,
+            unit.UnitType,
+            unit.AreaId,
+            unit.Bedrooms,
+            unit.Bathrooms,
+            unit.MaxGuests,
+            unit.BasePricePerNight,
+            unit.IsActive,
+            unit.CreatedAt
         );
     }
 }

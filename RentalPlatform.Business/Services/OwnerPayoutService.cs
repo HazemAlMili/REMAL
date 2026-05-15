@@ -52,6 +52,7 @@ public class OwnerPayoutService : IOwnerPayoutService
     public async Task<OwnerPayout> CreateOrUpdateFromBookingAsync(
         Guid bookingId,
         decimal commissionRate,
+        string? proofOfPaymentUrl,
         string? notes,
         CancellationToken cancellationToken = default)
     {
@@ -84,6 +85,9 @@ public class OwnerPayoutService : IOwnerPayoutService
             existing.CommissionAmount = commissionAmount;
             existing.PayoutAmount = payoutAmount;
 
+            if (proofOfPaymentUrl != null)
+                existing.ProofOfPaymentUrl = proofOfPaymentUrl.Trim();
+
             if (notes != null)
                 existing.Notes = notes.Trim();
 
@@ -105,6 +109,7 @@ public class OwnerPayoutService : IOwnerPayoutService
             CommissionRate = commissionRate,
             CommissionAmount = commissionAmount,
             PayoutAmount = payoutAmount,
+            ProofOfPaymentUrl = proofOfPaymentUrl?.Trim(),
             Notes = notes?.Trim(),
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -143,17 +148,21 @@ public class OwnerPayoutService : IOwnerPayoutService
 
     public async Task<OwnerPayout> MarkPaidAsync(
         Guid payoutId,
+        string? proofOfPaymentUrl,
         string? notes,
         CancellationToken cancellationToken = default)
     {
         var payout = await GetPayoutOrThrowAsync(payoutId, cancellationToken);
 
-        if (payout.PayoutStatus != "scheduled")
+        if (payout.PayoutStatus != "pending" && payout.PayoutStatus != "scheduled")
             throw new ConflictException(
-                $"Owner payout {payoutId} cannot be marked as paid: current status is '{payout.PayoutStatus}'. Only scheduled payouts can be marked as paid.");
+                $"Owner payout {payoutId} cannot be marked as paid: current status is '{payout.PayoutStatus}'. Only pending or scheduled payouts can be marked as paid.");
 
         payout.PayoutStatus = "paid";
         payout.PaidAt ??= DateTime.UtcNow;
+
+        if (proofOfPaymentUrl != null)
+            payout.ProofOfPaymentUrl = proofOfPaymentUrl.Trim();
 
         if (notes != null)
             payout.Notes = notes.Trim();

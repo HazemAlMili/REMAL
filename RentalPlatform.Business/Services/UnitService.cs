@@ -21,13 +21,18 @@ public class UnitService : IUnitService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IReadOnlyList<Unit>> GetAllAsync(bool includeInactive = true, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Unit>> GetAllAsync(bool includeInactive = true, Guid? ownerId = null, CancellationToken cancellationToken = default)
     {
         var query = _unitOfWork.Units.Query();
         
         if (!includeInactive)
         {
             query = query.Where(u => u.IsActive);
+        }
+
+        if (ownerId.HasValue)
+        {
+            query = query.Where(u => u.OwnerId == ownerId.Value);
         }
 
         return await query.ToListAsync(cancellationToken);

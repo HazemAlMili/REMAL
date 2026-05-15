@@ -27,14 +27,13 @@ public class FinanceSummaryService : IFinanceSummaryService
         if (invoice == null)
             throw new NotFoundException($"Invoice with ID {invoiceId} not found");
 
+        // Count ALL paid payments for this booking (not just invoice-linked ones)
+        // This ensures accurate balance calculation even if payments were made before invoice creation
         var paidAmount = await _unitOfWork.Payments.Query()
-            .Where(p => p.InvoiceId == invoiceId && p.PaymentStatus == "paid")
+            .Where(p => p.BookingId == invoice.BookingId && p.PaymentStatus == "paid")
             .SumAsync(p => p.Amount, cancellationToken);
 
         var remaining = invoice.TotalAmount - paidAmount;
-        if (remaining < 0)
-            throw new ConflictException(
-                $"Invoice {invoiceId} has a negative remaining balance ({remaining:F2}). Paid amount ({paidAmount:F2}) exceeds invoice total ({invoice.TotalAmount:F2}).");
 
         return new InvoiceBalanceResult
         {
@@ -42,7 +41,7 @@ public class FinanceSummaryService : IFinanceSummaryService
             TotalAmount = invoice.TotalAmount,
             PaidAmount = paidAmount,
             RemainingAmount = remaining,
-            IsFullyPaid = remaining == 0
+            IsFullyPaid = remaining <= 0
         };
     }
 
@@ -54,31 +53,25 @@ public class FinanceSummaryService : IFinanceSummaryService
         if (!bookingExists)
             throw new NotFoundException($"Booking with ID {bookingId} not found");
 
-        // Non-cancelled invoices only
+        // Active invoice only (exclude cancelled and superseded)
         var invoice = await _unitOfWork.Invoices
-            .FirstOrDefaultAsync(i => i.BookingId == bookingId && i.InvoiceStatus != "cancelled", cancellationToken);
-
-        // All paid payments for the booking (booking-level view)
-        var paidAmount = await _unitOfWork.Payments.Query()
-            .Where(p => p.BookingId == bookingId && p.PaymentStatus == "paid")
-            .SumAsync(p => p.Amount, cancellationToken);
+            .FirstOrDefaultAsync(i => i.BookingId == bookingId
+                && i.InvoiceStatus != "cancelled"
+                && i.InvoiceStatus != "superseded", cancellationToken);
 
         var payout = await _unitOfWork.OwnerPayouts
             .FirstOrDefaultAsync(op => op.BookingId == bookingId, cancellationToken);
 
         var invoicedAmount = invoice?.TotalAmount ?? 0m;
 
-        // Remaining based on invoice-linked paid payments only
-        decimal remaining = 0m;
-        if (invoice != null)
-        {
-            var invoicePaidAmount = await _unitOfWork.Payments.Query()
-                .Where(p => p.InvoiceId == invoice.Id && p.PaymentStatus == "paid")
-                .SumAsync(p => p.Amount, cancellationToken);
+        // Calculate paid amount from ALL paid payments for this booking (not just invoice-linked ones)
+        // This ensures that payments made before invoice creation are counted
+        decimal paidAmount = await _unitOfWork.Payments.Query()
+            .Where(p => p.BookingId == bookingId && p.PaymentStatus == "paid")
+            .SumAsync(p => p.Amount, cancellationToken);
 
-            remaining = invoice.TotalAmount - invoicePaidAmount;
-            if (remaining < 0) remaining = 0;
-        }
+        // Calculate remaining based on invoice total (if exists) or 0
+        decimal remaining = invoicedAmount - paidAmount;
 
         return new BookingFinanceSnapshotResult
         {

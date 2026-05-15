@@ -7,6 +7,7 @@ import {
   CreateOwnerRequest,
   UpdateOwnerRequest,
   OwnerStatus,
+  OwnerUnitResponse,
 } from "@/lib/types/owner.types";
 import {
   OwnerPayoutResponse,
@@ -38,8 +39,9 @@ export const ownersService = {
   getPayouts: (id: string): Promise<OwnerPayoutResponse[]> =>
     api.get(endpoints.ownerPayouts.byOwner(id)),
 
-  getOwnerPayoutSummary: (
-    id: string
-  ): Promise<OwnerPayoutSummaryResponse> =>
+  getOwnerPayoutSummary: (id: string): Promise<OwnerPayoutSummaryResponse> =>
     api.get(endpoints.financeSummary.ownerPayoutSummary(id)),
+
+  getOwnerUnits: (id: string): Promise<OwnerUnitResponse[]> =>
+    api.get(endpoints.owners.units(id)),
 };

@@ -111,6 +111,16 @@ public class InvoicesController : ControllerBase
         return Ok(ApiResponse<InvoiceResponse>.CreateSuccess(MapToResponse(invoice), "Invoice cancelled."));
     }
 
+    // POST /api/internal/invoices/{id}/reissue
+    [HttpPost("{id}/reissue")]
+    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    public async Task<ActionResult<ApiResponse<InvoiceResponse>>> ReissueInvoice(Guid id, ReissueInvoiceRequest request)
+    {
+        var invoice = await _invoiceService.ReissueAsync(id, request.NewInvoiceNumber, request.Notes);
+
+        return Ok(ApiResponse<InvoiceResponse>.CreateSuccess(MapToResponse(invoice), "Invoice re-issued successfully. Old invoice marked as superseded."));
+    }
+
     // POST /api/internal/invoices/link-orphaned-payments
     [HttpPost("link-orphaned-payments")]
     [Authorize(Policy = "FinanceOrSuperAdmin")]

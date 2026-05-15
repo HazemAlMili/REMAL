@@ -14,6 +14,7 @@ public record OwnerPayoutResponse
     public decimal PayoutAmount { get; init; }
     public DateTime? ScheduledAt { get; init; }
     public DateTime? PaidAt { get; init; }
+    public string? ProofOfPaymentUrl { get; init; }
     public string? Notes { get; init; }
     public DateTime CreatedAt { get; init; }
     public DateTime UpdatedAt { get; init; }

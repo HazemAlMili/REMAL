@@ -33,6 +33,46 @@ public class BookingLifecycleController : ControllerBase
         return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(MapToDetailsResponse(booking), "Booking confirmed successfully."));
     }
 
+    // 1.5. POST /api/internal/bookings/{id}/booked
+    [HttpPost("booked")]
+    public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> BookedBooking(Guid id, BookedBookingRequest request)
+    {
+        var adminId = GetCurrentAdminId();
+        var booking = await _lifecycleService.TransitionAsync(id, RentalPlatform.Shared.Enums.BookingStatus.Booked, adminId, request.Notes);
+        
+        return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(MapToDetailsResponse(booking), "Booking marked as booked successfully."));
+    }
+
+    // 1.6. POST /api/internal/bookings/{id}/relevant
+    [HttpPost("relevant")]
+    public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> RelevantBooking(Guid id, RelevantBookingRequest request)
+    {
+        var adminId = GetCurrentAdminId();
+        var booking = await _lifecycleService.TransitionAsync(id, RentalPlatform.Shared.Enums.BookingStatus.Relevant, adminId, request.Notes);
+        
+        return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(MapToDetailsResponse(booking), "Booking marked as relevant successfully."));
+    }
+
+    // 1.7. POST /api/internal/bookings/{id}/no-answer
+    [HttpPost("no-answer")]
+    public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> NoAnswerBooking(Guid id, NoAnswerBookingRequest request)
+    {
+        var adminId = GetCurrentAdminId();
+        var booking = await _lifecycleService.TransitionAsync(id, RentalPlatform.Shared.Enums.BookingStatus.NoAnswer, adminId, request.Notes);
+        
+        return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(MapToDetailsResponse(booking), "Booking marked as no answer successfully."));
+    }
+
+    // 1.8. POST /api/internal/bookings/{id}/not-relevant
+    [HttpPost("not-relevant")]
+    public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> NotRelevantBooking(Guid id, NotRelevantBookingRequest request)
+    {
+        var adminId = GetCurrentAdminId();
+        var booking = await _lifecycleService.TransitionAsync(id, RentalPlatform.Shared.Enums.BookingStatus.NotRelevant, adminId, request.Notes);
+        
+        return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(MapToDetailsResponse(booking), "Booking marked as not relevant successfully."));
+    }
+
     // 2. POST /api/internal/bookings/{id}/cancel
     [HttpPost("cancel")]
     public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> CancelBooking(Guid id, CancelBookingRequest request)

@@ -20,3 +20,9 @@ public record CancelInvoiceRequest
 {
     public string? Notes { get; init; }
 }
+
+public record ReissueInvoiceRequest
+{
+    public string NewInvoiceNumber { get; init; } = string.Empty;
+    public string? Notes { get; init; }
+}

@@ -199,6 +199,11 @@ public class CrmLeadService : ICrmLeadService
         if (lead.LeadStatus == LeadStatus.Lost)
             throw new ConflictException($"CRM lead {leadId} is marked as lost and cannot be converted");
 
+        if (lead.LeadStatus != LeadStatus.Qualified)
+            throw new ConflictException(
+                $"CRM lead {leadId} must be in 'Qualified' status before conversion. Current status: {lead.LeadStatus}. " +
+                $"Please move the lead through the sales funnel: New → Contacted → Qualified → Convert to Booking");
+
         if (lead.ClientId.HasValue && lead.ClientId.Value != clientId)
             throw new ConflictException(
                 $"CRM lead {leadId} is already linked to client {lead.ClientId.Value}, but conversion was requested for client {clientId}");

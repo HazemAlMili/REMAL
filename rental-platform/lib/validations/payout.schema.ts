@@ -7,6 +7,7 @@ export const createPayoutSchema = z.object({
     .number({ invalid_type_error: "Commission rate is required" })
     .min(0, "Rate must be at least 0")
     .max(100, "Rate cannot exceed 100"),
+  proofOfPaymentUrl: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -14,6 +15,7 @@ export type CreatePayoutFormValues = z.infer<typeof createPayoutSchema>;
 
 // Mark paid schema
 export const markPaidSchema = z.object({
+  proofOfPaymentUrl: z.string().optional(),
   notes: z.string().optional(),
 });
 

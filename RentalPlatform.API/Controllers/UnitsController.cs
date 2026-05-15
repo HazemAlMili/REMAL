@@ -58,9 +58,13 @@ public class UnitsController : ControllerBase
     // 3. GET /api/internal/units (Internal)
     [HttpGet("api/internal/units")]
     [Authorize(Policy = "SalesOrSuperAdmin")]
-    public async Task<ActionResult<ApiResponse<IReadOnlyList<UnitListItemResponse>>>> GetInternalUnits([FromQuery] int page = 1, [FromQuery] int pageSize = 20, [FromQuery] bool includeInactive = true)
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<UnitListItemResponse>>>> GetInternalUnits(
+        [FromQuery] int page = 1, 
+        [FromQuery] int pageSize = 20, 
+        [FromQuery] bool includeInactive = true,
+        [FromQuery] Guid? ownerId = null)
     {
-        var allUnits = await _unitService.GetAllAsync(includeInactive: includeInactive);
+        var allUnits = await _unitService.GetAllAsync(includeInactive: includeInactive, ownerId: ownerId);
         
         int total = allUnits.Count;
         int totalPages = (int)Math.Ceiling(total / (double)pageSize);

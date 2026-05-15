@@ -23,3 +23,16 @@ public record OwnerDetailsResponse(
     DateTime CreatedAt,
     DateTime UpdatedAt
 );
+
+public record OwnerUnitResponse(
+    Guid Id,
+    string Name,
+    string UnitType,
+    Guid AreaId,
+    int Bedrooms,
+    int Bathrooms,
+    int MaxGuests,
+    decimal BasePricePerNight,
+    bool IsActive,
+    DateTime CreatedAt
+);

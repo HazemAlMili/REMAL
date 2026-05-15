@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { clientsService } from "@/lib/api/services/clients.service";
 import { queryKeys } from "@/lib/utils/query-keys";
-import { toastSuccess } from "@/lib/utils/toast";
+import { toastSuccess, toastError } from "@/lib/utils/toast";
+import { ApiError } from "@/lib/api/api-error";
 import type {
   ClientListFilters,
   UpdateClientStatusRequest,
@@ -37,6 +38,28 @@ export function useCreateClient() {
       toastSuccess(`Client "${client.name}" created successfully`);
       queryClient.invalidateQueries({ queryKey: queryKeys.clients.all });
     },
+    onError: (error: unknown) => {
+      if (error instanceof ApiError) {
+        // Check if it's a duplicate phone error
+        if (
+          error.status === 409 ||
+          error.message.toLowerCase().includes("phone")
+        ) {
+          toastError("This phone number is already registered");
+        } else if (error.status === 400) {
+          // Show validation errors
+          if (error.errors && error.errors.length > 0) {
+            toastError(error.errors.join(", "));
+          } else {
+            toastError(error.message || "Invalid client data");
+          }
+        } else {
+          toastError(error.message || "Failed to create client");
+        }
+      } else {
+        toastError("Failed to create client. Please try again.");
+      }
+    },
   });
 }
 
@@ -47,11 +70,20 @@ export function useUpdateClientStatus(id: string) {
     mutationFn: (data: UpdateClientStatusRequest) =>
       clientsService.updateStatus(id, data),
     onSuccess: (client) => {
-      toastSuccess(client.isActive ? "Client reactivated" : "Client deactivated");
+      toastSuccess(
+        client.isActive ? "Client reactivated" : "Client deactivated"
+      );
       queryClient.invalidateQueries({ queryKey: queryKeys.clients.all });
       queryClient.invalidateQueries({
         queryKey: queryKeys.clients.detail(id),
       });
+    },
+    onError: (error: unknown) => {
+      if (error instanceof ApiError) {
+        toastError(error.message || "Failed to update client status");
+      } else {
+        toastError("Failed to update client status. Please try again.");
+      }
     },
   });
 }

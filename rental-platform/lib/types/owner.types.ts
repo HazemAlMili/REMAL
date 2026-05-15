@@ -75,3 +75,17 @@ export interface PaginatedOwners {
   items: OwnerListItemResponse[];
   pagination: PaginationMeta;
 }
+
+// ── Owner Units (Admin view) ──
+export interface OwnerUnitResponse {
+  id: string;
+  name: string;
+  unitType: string; // 'apartment' | 'villa' | 'chalet' | 'studio'
+  areaId: string;
+  bedrooms: number;
+  bathrooms: number;
+  maxGuests: number;
+  basePricePerNight: number;
+  isActive: boolean;
+  createdAt: string;
+}

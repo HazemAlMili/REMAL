@@ -30,6 +30,7 @@ public class BookingService : IBookingService
         string? bookingStatus = null,
         Guid? assignedAdminUserId = null,
         Guid? clientId = null,
+        Guid? ownerId = null,
         string? search = null,
         CancellationToken cancellationToken = default)
     {
@@ -52,6 +53,11 @@ public class BookingService : IBookingService
         if (clientId.HasValue)
         {
             query = query.Where(b => b.ClientId == clientId.Value);
+        }
+
+        if (ownerId.HasValue)
+        {
+            query = query.Where(b => b.OwnerId == ownerId.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(search))

@@ -30,5 +30,10 @@ public interface IInvoiceService
 
     Task<Invoice> IssueAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Invoice> CancelAsync(Guid id, string? notes, CancellationToken cancellationToken = default);
+    Task<Invoice> ReissueAsync(
+        Guid id,
+        string newInvoiceNumber,
+        string? notes,
+        CancellationToken cancellationToken = default);
     Task<int> LinkOrphanedPaymentsAsync(CancellationToken cancellationToken = default);
 }

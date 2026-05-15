@@ -41,23 +41,23 @@ export function LifecycleActionDialog({
   };
 
   return (
-    <Modal
-      isOpen={open}
-      onClose={handleClose}
-      title={title}
-      size="sm"
-    >
-      <div className="py-4 space-y-4">
+    <Modal isOpen={open} onClose={handleClose} title={title} size="sm">
+      <div className="space-y-4 py-4">
         <p className="text-sm text-neutral-600">{description}</p>
-        
+
         <div className="grid gap-2">
-          <label htmlFor="notes" className="text-sm font-medium text-neutral-700">
+          <label
+            htmlFor="notes"
+            className="text-sm font-medium text-neutral-700"
+          >
             Notes {requireNotes ? "(Required)" : "(Optional)"}
           </label>
           <Textarea
             id="notes"
             value={notes}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              setNotes(e.target.value)
+            }
             placeholder="Add any internal notes about this status change..."
             className="resize-none"
             rows={3}
@@ -66,12 +66,12 @@ export function LifecycleActionDialog({
         </div>
       </div>
       <ModalFooter>
-        <div className="flex justify-end gap-3 w-full">
+        <div className="flex w-full justify-end gap-3">
           <Button variant="outline" onClick={handleClose} disabled={isPending}>
             Cancel
           </Button>
-          <Button 
-            onClick={handleConfirm} 
+          <Button
+            onClick={handleConfirm}
             disabled={isPending || (requireNotes && !notes.trim())}
           >
             {isPending ? "Processing..." : actionLabel}
@@ -81,4 +81,3 @@ export function LifecycleActionDialog({
     </Modal>
   );
 }
-

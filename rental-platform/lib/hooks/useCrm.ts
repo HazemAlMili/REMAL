@@ -48,8 +48,6 @@ export function useLeadsPipeline() {
   };
 }
 
-
-
 export function useLeadDetail(leadId: string) {
   return useQuery({
     queryKey: queryKeys.crm.leadDetail(leadId),
@@ -66,12 +64,30 @@ export function useCreateLead() {
       toastSuccess("Lead created successfully");
       queryClient.refetchQueries({ queryKey: queryKeys.crm.leads() });
     },
-    onError: () => {
-      toastError("Failed to create lead. Please try again.");
+    onError: (error: unknown) => {
+      if (error instanceof ApiError) {
+        // Check for specific error types
+        if (
+          error.status === 409 ||
+          error.message.toLowerCase().includes("phone")
+        ) {
+          toastError("This phone number already has a lead");
+        } else if (error.status === 400) {
+          // Show validation errors
+          if (error.errors && error.errors.length > 0) {
+            toastError(error.errors.join(", "));
+          } else {
+            toastError(error.message || "Invalid lead data");
+          }
+        } else {
+          toastError(error.message || "Failed to create lead");
+        }
+      } else {
+        toastError("Failed to create lead. Please try again.");
+      }
     },
   });
 }
-
 
 export function useUpdateLeadStatus(leadId: string) {
   const queryClient = useQueryClient();
@@ -86,6 +102,13 @@ export function useUpdateLeadStatus(leadId: string) {
         queryKey: queryKeys.crm.leadDetail(leadId),
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.crm.leads() });
+    },
+    onError: (error: unknown) => {
+      if (error instanceof ApiError) {
+        toastError(error.message || "Failed to update lead status");
+      } else {
+        toastError("Failed to update lead status. Please try again.");
+      }
     },
   });
 }

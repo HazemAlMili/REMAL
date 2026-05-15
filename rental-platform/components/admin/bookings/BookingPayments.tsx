@@ -5,6 +5,7 @@ import {
   useMarkPaymentFailed,
   useCancelPayment,
 } from "@/lib/hooks/useBookings";
+import { useLinkPaidPaymentsToInvoices } from "@/lib/hooks/usePayments";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { RecordPaymentModal } from "./RecordPaymentModal";
 import { Button } from "@/components/ui/Button";
@@ -14,7 +15,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { formatCurrency, formatDate } from "@/lib/utils/format";
 import { PAYMENT_METHOD_LABELS } from "@/lib/constants/payment-methods";
-import { CreditCard } from "lucide-react";
+import { CreditCard, Link } from "lucide-react";
 
 interface BookingPaymentsProps {
   bookingId: string;
@@ -31,9 +32,15 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
   const markPaidMutation = useMarkPaymentPaid(bookingId);
   const markFailedMutation = useMarkPaymentFailed(bookingId);
   const cancelMutation = useCancelPayment(bookingId);
+  const linkPaymentsMutation = useLinkPaidPaymentsToInvoices();
 
   const { canManageFinance, canManageBookings } = usePermissions();
   const canRecordPayment = canManageFinance || canManageBookings;
+
+  // Check if there are unlinked paid payments
+  const hasUnlinkedPaidPayments =
+    payments?.items.some((p) => p.paymentStatus === "paid" && !p.invoiceId) ??
+    false;
 
   if (isLoading) {
     return <Skeleton className="h-48 w-full" />;
@@ -43,12 +50,32 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-neutral-700">Payments</h3>
-        {canRecordPayment && (
-          <Button size="sm" onClick={() => setShowRecordModal(true)}>
-            Record Payment
-          </Button>
-        )}
+        <div className="flex gap-2">
+          {canRecordPayment && hasUnlinkedPaidPayments && (
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => linkPaymentsMutation.mutate()}
+              isLoading={linkPaymentsMutation.isPending}
+              leftIcon={<Link className="h-4 w-4" />}
+            >
+              Fix Unlinked Payments
+            </Button>
+          )}
+          {canRecordPayment && (
+            <Button size="sm" onClick={() => setShowRecordModal(true)}>
+              Record Payment
+            </Button>
+          )}
+        </div>
       </div>
+
+      {hasUnlinkedPaidPayments && (
+        <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3 text-xs text-yellow-700">
+          ⚠️ Some paid payments are not linked to an invoice. Click Fix Unlinked
+          Payments to resolve this issue.
+        </div>
+      )}
 
       {!payments || payments.items.length === 0 ? (
         <EmptyState
@@ -84,7 +111,7 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
               </div>
 
               {canRecordPayment &&
-                payment.paymentStatus.toLowerCase() === "pending" && (
+                payment.paymentStatus?.trim().toLowerCase() === "pending" && (
                   <div className="flex gap-1">
                     <Button
                       variant="success"
@@ -119,11 +146,6 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
                     </Button>
                   </div>
                 )}
-
-              {/* Debug: Show payment status */}
-              <div className="ml-2 text-xs text-blue-600">
-                Status: &quot;{payment.paymentStatus}&quot;
-              </div>
             </div>
           ))}
         </div>

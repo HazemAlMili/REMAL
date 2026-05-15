@@ -8,7 +8,7 @@ public static class BookingStatusTransitions
 {
     private static readonly Dictionary<BookingStatus, BookingStatus[]> AllowedTransitions = new()
     {
-        { BookingStatus.Prospecting,  new[] { BookingStatus.Relevant, BookingStatus.NoAnswer, BookingStatus.NotRelevant } },
+        { BookingStatus.Prospecting,  new[] { BookingStatus.Relevant, BookingStatus.NoAnswer, BookingStatus.NotRelevant, BookingStatus.Booked } },
         { BookingStatus.Relevant,     new[] { BookingStatus.Booked, BookingStatus.NoAnswer, BookingStatus.NotRelevant } },
         { BookingStatus.NoAnswer,     new[] { BookingStatus.Relevant, BookingStatus.NotRelevant } },
         { BookingStatus.Booked,       new[] { BookingStatus.Confirmed, BookingStatus.NotRelevant } },

@@ -40,3 +40,14 @@ public class CancelInvoiceRequestValidator : AbstractValidator<CancelInvoiceRequ
 {
     public CancelInvoiceRequestValidator() { }
 }
+
+public class ReissueInvoiceRequestValidator : AbstractValidator<ReissueInvoiceRequest>
+{
+    public ReissueInvoiceRequestValidator()
+    {
+        RuleFor(x => x.NewInvoiceNumber)
+            .NotEmpty()
+            .Must(n => !string.IsNullOrWhiteSpace(n))
+            .WithMessage("NewInvoiceNumber is required and cannot be blank.");
+    }
+}

@@ -7,6 +7,26 @@ public record ConfirmBookingRequest
     public string? Notes { get; init; }
 }
 
+public record BookedBookingRequest
+{
+    public string? Notes { get; init; }
+}
+
+public record RelevantBookingRequest
+{
+    public string? Notes { get; init; }
+}
+
+public record NoAnswerBookingRequest
+{
+    public string? Notes { get; init; }
+}
+
+public record NotRelevantBookingRequest
+{
+    public string? Notes { get; init; }
+}
+
 public record CancelBookingRequest
 {
     public string? Notes { get; init; }

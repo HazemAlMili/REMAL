@@ -44,6 +44,30 @@ export const bookingsService = {
   ): Promise<BookingDetailsResponse> =>
     api.post(endpoints.bookingLifecycle.confirm(id), data ?? {}),
 
+  booked: (
+    id: string,
+    data?: { notes?: string }
+  ): Promise<BookingDetailsResponse> =>
+    api.post(endpoints.bookingLifecycle.booked(id), data ?? {}),
+
+  relevant: (
+    id: string,
+    data?: { notes?: string }
+  ): Promise<BookingDetailsResponse> =>
+    api.post(endpoints.bookingLifecycle.relevant(id), data ?? {}),
+
+  noAnswer: (
+    id: string,
+    data?: { notes?: string }
+  ): Promise<BookingDetailsResponse> =>
+    api.post(endpoints.bookingLifecycle.noAnswer(id), data ?? {}),
+
+  notRelevant: (
+    id: string,
+    data?: { notes?: string }
+  ): Promise<BookingDetailsResponse> =>
+    api.post(endpoints.bookingLifecycle.notRelevant(id), data ?? {}),
+
   cancel: (
     id: string,
     data?: CancelBookingRequest
@@ -156,6 +180,11 @@ export const bookingsService = {
     id: string,
     data?: { notes?: string }
   ): Promise<InvoiceResponse> => api.post(endpoints.invoices.cancel(id), data),
+
+  reissueInvoice: (
+    id: string,
+    data: { newInvoiceNumber: string; notes?: string }
+  ): Promise<InvoiceResponse> => api.post(endpoints.invoices.reissue(id), data),
 
   addAdjustment: (
     id: string,
