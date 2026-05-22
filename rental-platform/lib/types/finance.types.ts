@@ -15,6 +15,7 @@ export interface OwnerPayoutResponse {
   payoutAmount: number;
   scheduledAt: string | null;
   paidAt: string | null;
+  proofOfPaymentUrl: string | null;
   notes: string | null;
   createdAt: string;
   updatedAt: string;
@@ -23,6 +24,7 @@ export interface OwnerPayoutResponse {
 export interface CreateOwnerPayoutRequest {
   bookingId: string;
   commissionRate: number; // 0..100 percentage
+  proofOfPaymentUrl?: string;
   notes?: string;
 }
 
@@ -31,6 +33,7 @@ export interface SetOwnerPayoutScheduledRequest {
 }
 
 export interface MarkOwnerPayoutPaidRequest {
+  proofOfPaymentUrl?: string;
   notes?: string;
 }
 

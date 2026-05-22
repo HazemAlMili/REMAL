@@ -65,10 +65,7 @@ export const CRM_PIPELINE_COLUMNS: CrmLeadStatus[] = [
   "Qualified",
 ];
 
-export const CRM_CLOSED_STATUSES: CrmLeadStatus[] = [
-  "Converted",
-  "Lost",
-];
+export const CRM_CLOSED_STATUSES: CrmLeadStatus[] = ["Converted", "Lost"];
 
 export const CRM_VALID_TRANSITIONS: Record<CrmLeadStatus, CrmLeadStatus[]> = {
   New: ["Contacted", "Lost"],
@@ -80,7 +77,7 @@ export const CRM_VALID_TRANSITIONS: Record<CrmLeadStatus, CrmLeadStatus[]> = {
 
 export const BOOKING_VALID_TRANSITIONS: Record<BookingStatus, BookingStatus[]> =
   {
-    Prospecting: ["Relevant", "NoAnswer", "NotRelevant"],
+    Prospecting: ["Relevant", "NoAnswer", "NotRelevant", "Booked"],
     Relevant: ["Booked", "NoAnswer", "NotRelevant"],
     NoAnswer: ["Relevant", "NotRelevant"],
     Booked: ["Confirmed", "NotRelevant"],

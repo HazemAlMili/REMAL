@@ -30,10 +30,21 @@ export function OwnerPayoutsTab({ ownerId }: OwnerPayoutsTabProps) {
   const [markPaidPayoutId, setMarkPaidPayoutId] = useState<string | null>(null);
   const [cancelPayoutId, setCancelPayoutId] = useState<string | null>(null);
 
-  const { data: payouts, isLoading: payoutsLoading } = useOwnerPayouts(ownerId);
-  const { data: summary, isLoading: summaryLoading } =
-    useOwnerPayoutSummary(ownerId);
-  const { canManageFinance } = usePermissions();
+  const { canManageFinance, canViewFinance } = usePermissions();
+
+  // Only fetch payout data if user has finance permissions
+  const { data: payouts, isLoading: payoutsLoading } = useOwnerPayouts(
+    ownerId,
+    {
+      enabled: canViewFinance,
+    }
+  );
+  const { data: summary, isLoading: summaryLoading } = useOwnerPayoutSummary(
+    ownerId,
+    {
+      enabled: canViewFinance,
+    }
+  );
 
   const handleSchedule = (id: string) => setScheduledPayoutId(id);
   const handleMarkPaid = (id: string) => setMarkPaidPayoutId(id);
@@ -44,6 +55,36 @@ export function OwnerPayoutsTab({ ownerId }: OwnerPayoutsTabProps) {
     setMarkPaidPayoutId(null);
     setCancelPayoutId(null);
   };
+
+  // Show access denied message for non-finance users
+  if (!canViewFinance) {
+    return (
+      <div className="rounded-2xl border border-neutral-200 bg-white p-8 text-center shadow-sm">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100">
+          <svg
+            className="h-8 w-8 text-neutral-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+            />
+          </svg>
+        </div>
+        <h3 className="mb-2 text-lg font-semibold text-neutral-900">
+          Access Restricted
+        </h3>
+        <p className="text-sm text-neutral-600">
+          You don&apos;t have permission to view financial data. Please contact
+          your administrator if you need access.
+        </p>
+      </div>
+    );
+  }
 
   if (payoutsLoading) {
     return <SkeletonTable rows={5} columns={7} />;
@@ -115,6 +156,13 @@ export function OwnerPayoutsTab({ ownerId }: OwnerPayoutsTabProps) {
             </div>
           </div>
         )}
+
+        {/* Modal must be rendered even when there are no payouts */}
+        <RecordPayoutModal
+          isOpen={isRecordModalOpen}
+          onClose={() => setIsRecordModalOpen(false)}
+          ownerId={ownerId}
+        />
       </div>
     );
   }

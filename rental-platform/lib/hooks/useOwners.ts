@@ -22,11 +22,14 @@ export function useOwner(id: string) {
   });
 }
 
-export function useOwnerFinancialSummary(id: string) {
+export function useOwnerFinancialSummary(
+  id: string,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: queryKeys.owners.payoutSummary(id),
     queryFn: () => ownersService.getOwnerPayoutSummary(id),
-    enabled: !!id,
+    enabled: !!id && options?.enabled !== false,
   });
 }
 
@@ -65,5 +68,16 @@ export function useUpdateOwnerStatus() {
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.owners.all });
     },
+  });
+}
+
+export function useOwnerUnits(
+  ownerId: string,
+  options?: { enabled?: boolean }
+) {
+  return useQuery({
+    queryKey: queryKeys.owners.units(ownerId),
+    queryFn: () => ownersService.getOwnerUnits(ownerId),
+    enabled: !!ownerId && options?.enabled !== false,
   });
 }

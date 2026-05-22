@@ -45,7 +45,9 @@ export function BookingFinancialSummary({
         <div>
           <p className="text-xs text-neutral-500">Remaining Amount</p>
           <p
-            className={`text-sm font-semibold ${hasOutstanding ? "text-red-600" : "text-green-600"}`}
+            className={`text-sm font-semibold ${
+              hasOutstanding ? "text-red-600" : "text-green-600"
+            }`}
           >
             {formatCurrency(snapshot.remainingAmount)}
           </p>

@@ -13,6 +13,7 @@ import {
   useOwnerFinancialSummary,
   useUpdateOwnerStatus,
 } from "@/lib/hooks/useOwners";
+import { usePermissions } from "@/lib/hooks/usePermissions";
 import { OwnerDetailHeader } from "@/components/admin/owners/OwnerDetailHeader";
 import { OwnerFinancialSummary } from "@/components/admin/owners/OwnerFinancialSummary";
 import { OwnerUnitsList } from "@/components/admin/owners/OwnerUnitsList";
@@ -27,15 +28,16 @@ export default function OwnerDetailPage({ params }: OwnerDetailPageProps) {
   const { id } = params;
   const router = useRouter();
 
+  const { canViewFinance } = usePermissions();
   const { data: owner, isLoading, isError } = useOwner(id);
   const { data: financialSummary, isLoading: isFinancialLoading } =
-    useOwnerFinancialSummary(id);
+    useOwnerFinancialSummary(id, { enabled: canViewFinance });
   const { mutateAsync: updateStatus, isPending: isStatusPending } =
     useUpdateOwnerStatus();
 
-  const [activeTab, setActiveTab] = React.useState<"overview" | "payouts">(
-    "overview"
-  );
+  const [activeTab, setActiveTab] = React.useState<
+    "overview" | "payouts" | "units"
+  >("overview");
 
   const [statusConfirmOpen, setStatusConfirmOpen] = React.useState(false);
 
@@ -129,22 +131,24 @@ export default function OwnerDetailPage({ params }: OwnerDetailPageProps) {
       </div>
 
       {/* Financial Summary */}
-      <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-sm font-semibold text-neutral-700">
-          Financial Summary
-        </h2>
-        <OwnerFinancialSummary
-          summary={
-            financialSummary || {
-              ownerId: id,
-              totalPending: 0,
-              totalScheduled: 0,
-              totalPaid: 0,
+      {canViewFinance && (
+        <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-sm font-semibold text-neutral-700">
+            Financial Summary
+          </h2>
+          <OwnerFinancialSummary
+            summary={
+              financialSummary || {
+                ownerId: id,
+                totalPending: 0,
+                totalScheduled: 0,
+                totalPaid: 0,
+              }
             }
-          }
-          isLoading={isFinancialLoading}
-        />
-      </div>
+            isLoading={isFinancialLoading}
+          />
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm">
@@ -162,18 +166,20 @@ export default function OwnerDetailPage({ params }: OwnerDetailPageProps) {
             >
               Overview
             </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("payouts")}
-              className={cn(
-                "whitespace-nowrap border-b-2 px-4 py-3 text-sm font-medium transition-colors",
-                activeTab === "payouts"
-                  ? "border-primary-600 text-primary-700"
-                  : "border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
-              )}
-            >
-              Payouts
-            </button>
+            {canViewFinance && (
+              <button
+                type="button"
+                onClick={() => setActiveTab("payouts")}
+                className={cn(
+                  "whitespace-nowrap border-b-2 px-4 py-3 text-sm font-medium transition-colors",
+                  activeTab === "payouts"
+                    ? "border-primary-600 text-primary-700"
+                    : "border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
+                )}
+              >
+                Payouts
+              </button>
+            )}
           </nav>
         </div>
 

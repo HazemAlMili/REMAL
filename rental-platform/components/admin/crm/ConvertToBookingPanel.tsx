@@ -104,6 +104,25 @@ export function ConvertToBookingPanel({
     return null;
   }
 
+  // Only show convert panel if lead is Qualified
+  if (lead.leadStatus !== "Qualified") {
+    return (
+      <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-4">
+        <h3 className="text-sm font-semibold text-amber-800">
+          Convert to Booking
+        </h3>
+        <p className="text-sm text-amber-700">
+          This lead must be moved to <strong>Qualified</strong> status before it
+          can be converted to a booking.
+        </p>
+        <p className="text-xs text-amber-600">
+          Sales funnel: <strong>New</strong> → <strong>Contacted</strong> →{" "}
+          <strong>Qualified</strong> → <strong>Convert to Booking</strong>
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-primary-50/30 space-y-4 rounded-lg border border-primary-200 p-4">
       <h3 className="text-sm font-semibold text-primary-800">
@@ -245,4 +264,4 @@ export function ConvertToBookingPanel({
       </form>
     </div>
   );
-}
+}

@@ -43,6 +43,7 @@ export const queryKeys = {
     detail: (id: string) => ["owners", "detail", id] as const,
     payouts: (id: string) => ["owners", id, "payouts"] as const,
     payoutSummary: (id: string) => ["owners", id, "payout-summary"] as const,
+    units: (id: string) => ["owners", id, "units"] as const,
   },
   reviews: {
     all: ["reviews"] as const,

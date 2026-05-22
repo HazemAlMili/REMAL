@@ -7,17 +7,43 @@ import {
 import { LifecycleActionDialog } from "./LifecycleActionDialog";
 import {
   useConfirmBooking,
+  useBookedBooking,
+  useRelevantBooking,
+  useNoAnswerBooking,
+  useNotRelevantBooking,
   useCancelBooking,
   useCompleteBooking,
+  useCheckInBooking,
+  useLeftEarlyBooking,
 } from "@/lib/hooks/useBookings";
-import { CheckCircle, XCircle, CheckSquare } from "lucide-react";
+import {
+  CheckCircle,
+  XCircle,
+  CheckSquare,
+  LogIn,
+  LogOut,
+  Calendar,
+  ThumbsUp,
+  PhoneOff,
+  ThumbsDown,
+} from "lucide-react";
 
 interface BookingLifecycleActionsProps {
   bookingId: string;
   currentStatus: BookingStatus;
 }
 
-type ActionType = "confirm" | "cancel" | "complete" | null;
+type ActionType =
+  | "confirm"
+  | "booked"
+  | "relevant"
+  | "noAnswer"
+  | "notRelevant"
+  | "cancel"
+  | "complete"
+  | "checkIn"
+  | "leftEarly"
+  | null;
 
 export function BookingLifecycleActions({
   bookingId,
@@ -26,8 +52,14 @@ export function BookingLifecycleActions({
   const [activeAction, setActiveAction] = useState<ActionType>(null);
 
   const confirmMutation = useConfirmBooking(bookingId);
+  const bookedMutation = useBookedBooking(bookingId);
+  const relevantMutation = useRelevantBooking(bookingId);
+  const noAnswerMutation = useNoAnswerBooking(bookingId);
+  const notRelevantMutation = useNotRelevantBooking(bookingId);
   const cancelMutation = useCancelBooking(bookingId);
   const completeMutation = useCompleteBooking(bookingId);
+  const checkInMutation = useCheckInBooking(bookingId);
+  const leftEarlyMutation = useLeftEarlyBooking(bookingId);
 
   const getValidTransitions = () => {
     return BOOKING_VALID_TRANSITIONS[currentStatus] || [];
@@ -41,6 +73,30 @@ export function BookingLifecycleActions({
     switch (activeAction) {
       case "confirm":
         confirmMutation.mutate(data, {
+          onSuccess: () => {
+            setActiveAction(null);
+          },
+        });
+        break;
+      case "booked":
+        bookedMutation.mutate(data, {
+          onSuccess: () => {
+            setActiveAction(null);
+          },
+        });
+        break;
+      case "relevant":
+        relevantMutation.mutate(data, {
+          onSuccess: () => setActiveAction(null),
+        });
+        break;
+      case "noAnswer":
+        noAnswerMutation.mutate(data, {
+          onSuccess: () => setActiveAction(null),
+        });
+        break;
+      case "notRelevant":
+        notRelevantMutation.mutate(data, {
           onSuccess: () => setActiveAction(null),
         });
         break;
@@ -52,11 +108,53 @@ export function BookingLifecycleActions({
           onSuccess: () => setActiveAction(null),
         });
         break;
+      case "checkIn":
+        checkInMutation.mutate(data, {
+          onSuccess: () => setActiveAction(null),
+        });
+        break;
+      case "leftEarly":
+        leftEarlyMutation.mutate(data, {
+          onSuccess: () => setActiveAction(null),
+        });
+        break;
     }
   };
 
   const getDialogConfig = () => {
     switch (activeAction) {
+      case "relevant":
+        return {
+          title: "Mark as Relevant",
+          description:
+            "Mark this booking as relevant. This indicates the lead is worth pursuing.",
+          actionLabel: "Mark as Relevant",
+          isPending: relevantMutation.isPending,
+        };
+      case "noAnswer":
+        return {
+          title: "Mark as No Answer",
+          description:
+            "Mark this booking as no answer. This indicates the client is not responding to contact attempts.",
+          actionLabel: "Mark as No Answer",
+          isPending: noAnswerMutation.isPending,
+        };
+      case "notRelevant":
+        return {
+          title: "Mark as Not Relevant",
+          description:
+            "Mark this booking as not relevant. This indicates the lead is not worth pursuing further.",
+          actionLabel: "Mark as Not Relevant",
+          isPending: notRelevantMutation.isPending,
+        };
+      case "booked":
+        return {
+          title: "Mark as Booked",
+          description:
+            "Mark this booking as booked. This indicates the client has committed to the booking and you're ready to confirm it.",
+          actionLabel: "Mark as Booked",
+          isPending: bookedMutation.isPending,
+        };
       case "confirm":
         return {
           title: "Confirm Booking",
@@ -64,6 +162,31 @@ export function BookingLifecycleActions({
             "Are you sure you want to confirm this booking? This will generate the invoice and send a confirmation to the client.",
           actionLabel: "Confirm Booking",
           isPending: confirmMutation.isPending,
+        };
+      case "checkIn":
+        return {
+          title: "Check In Client",
+          description:
+            "Mark the client as checked in. Use this when the client arrives and takes possession of the unit.",
+          actionLabel: "Check In",
+          isPending: checkInMutation.isPending,
+        };
+      case "complete":
+        return {
+          title: "Complete Booking",
+          description:
+            "Mark the booking as completed. Use this when the client has checked out normally at the end of their stay.",
+          actionLabel: "Complete Booking",
+          isPending: completeMutation.isPending,
+        };
+      case "leftEarly":
+        return {
+          title: "Left Early",
+          description:
+            "Record that the client left before the scheduled checkout date. This may affect billing and availability.",
+          actionLabel: "Mark Left Early",
+          isPending: leftEarlyMutation.isPending,
+          requireNotes: true,
         };
       case "cancel":
         return {
@@ -73,14 +196,6 @@ export function BookingLifecycleActions({
           actionLabel: "Cancel Booking",
           isPending: cancelMutation.isPending,
           requireNotes: true,
-        };
-      case "complete":
-        return {
-          title: "Complete Booking",
-          description:
-            "Mark the booking as completed. Use this when the client has checked out normally at the end of their stay.",
-          actionLabel: "Complete Booking",
-          isPending: completeMutation.isPending,
         };
       default:
         return {
@@ -97,6 +212,50 @@ export function BookingLifecycleActions({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-3">
+        {validTransitions.includes("Relevant") && (
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={() => setActiveAction("relevant")}
+            className="shadow-md hover:shadow-lg"
+          >
+            <ThumbsUp className="mr-2 h-5 w-5" />
+            👍 Mark as Relevant
+          </Button>
+        )}
+        {validTransitions.includes("NoAnswer") && (
+          <Button
+            variant="warning"
+            size="lg"
+            onClick={() => setActiveAction("noAnswer")}
+            className="shadow-md hover:shadow-lg"
+          >
+            <PhoneOff className="mr-2 h-5 w-5" />
+            📵 No Answer
+          </Button>
+        )}
+        {validTransitions.includes("NotRelevant") && (
+          <Button
+            variant="ghost"
+            size="lg"
+            onClick={() => setActiveAction("notRelevant")}
+            className="shadow-md hover:shadow-lg"
+          >
+            <ThumbsDown className="mr-2 h-5 w-5" />
+            👎 Not Relevant
+          </Button>
+        )}
+        {validTransitions.includes("Booked") && (
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={() => setActiveAction("booked")}
+            className="shadow-md hover:shadow-lg"
+          >
+            <Calendar className="mr-2 h-5 w-5" />
+            📅 Mark as Booked
+          </Button>
+        )}
         {validTransitions.includes("Confirmed") && (
           <Button
             variant="primary"
@@ -107,6 +266,17 @@ export function BookingLifecycleActions({
             <CheckCircle className="mr-2 h-5 w-5" />✓ Confirm Booking
           </Button>
         )}
+        {validTransitions.includes("CheckIn") && (
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={() => setActiveAction("checkIn")}
+            className="shadow-md hover:shadow-lg"
+          >
+            <LogIn className="mr-2 h-5 w-5" />
+            🚪 Check In Client
+          </Button>
+        )}
         {validTransitions.includes("Completed") && (
           <Button
             variant="success"
@@ -115,6 +285,16 @@ export function BookingLifecycleActions({
             className="shadow-md hover:shadow-lg"
           >
             <CheckSquare className="mr-2 h-5 w-5" />☑ Complete Booking
+          </Button>
+        )}
+        {validTransitions.includes("LeftEarly") && (
+          <Button
+            variant="warning"
+            size="lg"
+            onClick={() => setActiveAction("leftEarly")}
+            className="shadow-md hover:shadow-lg"
+          >
+            <LogOut className="mr-2 h-5 w-5" />⏰ Left Early
           </Button>
         )}
         {validTransitions.includes("Cancelled") && (

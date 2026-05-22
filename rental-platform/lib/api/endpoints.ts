@@ -105,6 +105,10 @@ export const endpoints = {
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ BOOKING LIFECYCLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   bookingLifecycle: {
     confirm: (id: string) => `/api/internal/bookings/${id}/confirm`,
+    booked: (id: string) => `/api/internal/bookings/${id}/booked`,
+    relevant: (id: string) => `/api/internal/bookings/${id}/relevant`,
+    noAnswer: (id: string) => `/api/internal/bookings/${id}/no-answer`,
+    notRelevant: (id: string) => `/api/internal/bookings/${id}/not-relevant`,
     cancel: (id: string) => `/api/internal/bookings/${id}/cancel`,
     complete: (id: string) => `/api/internal/bookings/${id}/complete`,
     checkIn: (id: string) => `/api/internal/bookings/${id}/check-in`,
@@ -170,6 +174,7 @@ export const endpoints = {
       `/api/internal/invoices/${id}/items/manual-adjustment`,
     issue: (id: string) => `/api/internal/invoices/${id}/issue`,
     cancel: (id: string) => `/api/internal/invoices/${id}/cancel`,
+    reissue: (id: string) => `/api/internal/invoices/${id}/reissue`,
     balance: (id: string) => `/api/internal/invoices/${id}/balance`,
   },
 
@@ -211,6 +216,7 @@ export const endpoints = {
     byId: (id: string) => `/api/owners/${id}`,
     update: (id: string) => `/api/owners/${id}`,
     status: (id: string) => `/api/owners/${id}/status`,
+    units: (id: string) => `/api/owners/${id}/units`,
   },
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CLIENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

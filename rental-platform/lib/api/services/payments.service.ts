@@ -5,7 +5,10 @@ import type {
   MarkPaymentFailedRequest,
   CancelPaymentRequest,
 } from "@/lib/types/booking.types";
-import type { PaymentListFilters, PaginatedPayments } from "@/lib/types/finance.types";
+import type {
+  PaymentListFilters,
+  PaginatedPayments,
+} from "@/lib/types/finance.types";
 
 export const paymentsService = {
   // Get all payments with filters
@@ -16,9 +19,9 @@ export const paymentsService = {
   getById: (id: string): Promise<PaymentResponse> =>
     api.get(endpoints.payments.byId(id)),
 
-  // Mark payment as paid (POST with NO body)
+  // Mark payment as paid (POST with empty body)
   markPaid: (id: string): Promise<PaymentResponse> =>
-    api.post(endpoints.payments.markPaid(id)),
+    api.post(endpoints.payments.markPaid(id), {}),
 
   // Mark payment as failed
   markFailed: (
@@ -28,9 +31,10 @@ export const paymentsService = {
     api.post(endpoints.payments.markFailed(id), data),
 
   // Cancel a payment
-  cancel: (
-    id: string,
-    data: CancelPaymentRequest
-  ): Promise<PaymentResponse> =>
+  cancel: (id: string, data: CancelPaymentRequest): Promise<PaymentResponse> =>
     api.post(endpoints.payments.cancel(id), data),
+
+  // Link orphaned paid payments to their invoices
+  linkPaidToInvoices: (): Promise<{ linkedPaymentsCount: number }> =>
+    api.post(endpoints.payments.linkPaidToInvoices),
 };

@@ -6,15 +6,19 @@ import {
   useIssueInvoice,
   useCancelInvoice,
   useCreateInvoiceDraft,
+  useReissueInvoice,
 } from "@/lib/hooks/useBookings";
+import { usePaymentsList } from "@/lib/hooks/usePayments";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { AddAdjustmentModal } from "./AddAdjustmentModal";
+import { InvoiceActionDialog } from "@/components/admin/finance/InvoiceActionDialog";
 import { Button } from "@/components/ui/Button";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Modal, ModalFooter } from "@/components/ui/Modal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { formatCurrency, formatDate } from "@/lib/utils/format";
+import { toastError } from "@/lib/utils/toast";
 import { FileText, Plus } from "lucide-react";
 import { INVOICE_STATUS_LABELS } from "@/lib/constants/invoice-statuses";
 import type { InvoiceStatus } from "@/lib/types/booking.types";
@@ -27,16 +31,154 @@ interface BookingInvoiceProps {
 export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
   const [showAdjustmentModal, setShowAdjustmentModal] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showInvoiceActionDialog, setShowInvoiceActionDialog] = useState(false);
   const [cancelNotes, setCancelNotes] = useState("");
 
   const { data: invoice, isLoading: invoiceLoading } =
     useInvoiceDetail(invoiceId);
   const { data: balance, isLoading: balanceLoading } =
     useInvoiceBalance(invoiceId);
+  const { data: paymentsData } = usePaymentsList({ bookingId });
   const issueMutation = useIssueInvoice(invoiceId!, bookingId);
   const cancelMutation = useCancelInvoice(invoiceId!, bookingId);
   const createDraftMutation = useCreateInvoiceDraft(bookingId);
+  const reissueMutation = useReissueInvoice(invoiceId!, bookingId);
   const { canManageFinance } = usePermissions();
+
+  // Check if there are payment updates that might affect the invoice
+  const checkPaymentUpdates = () => {
+    if (!paymentsData?.items || !invoice) return null;
+
+    const payments = paymentsData.items;
+    const hasFailedPayments = payments.some(
+      (p) => p.paymentStatus === "failed"
+    );
+    const hasCancelledPayments = payments.some(
+      (p) => p.paymentStatus === "cancelled"
+    );
+    const hasPendingPayments = payments.some(
+      (p) => p.paymentStatus === "pending"
+    );
+
+    // Only show dialog for ISSUED invoices with payment issues
+    if (invoice.invoiceStatus?.toLowerCase() !== "issued") {
+      return null;
+    }
+
+    if (hasFailedPayments) {
+      return "There are failed payments for this invoice. You may want to re-issue or create a new invoice.";
+    }
+    if (hasCancelledPayments) {
+      return "There are cancelled payments for this invoice. Consider re-issuing or creating a new invoice.";
+    }
+    if (hasPendingPayments) {
+      return "There are pending payments. Re-issuing may help synchronize the invoice with current payment status.";
+    }
+
+    return null;
+  };
+
+  const handleIssueInvoiceClick = () => {
+    // For draft invoices
+    if (invoice?.invoiceStatus?.toLowerCase() === "draft") {
+      issueMutation.mutate();
+      return;
+    }
+
+    // For issued invoices, check for payment issues
+    const paymentIssue = checkPaymentUpdates();
+    if (paymentIssue) {
+      setShowInvoiceActionDialog(true);
+    }
+  };
+
+  const handleReissueInvoice = () => {
+    // Use the backend's ReissueAsync endpoint which marks old invoice as "superseded"
+    // This works even when the invoice has paid payments
+
+    // Generate new invoice number
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
+    const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+    const newInvoiceNumber = `INV-${dateStr}-${randomStr}`;
+
+    reissueMutation.mutate(
+      {
+        newInvoiceNumber,
+        notes: "Re-issued invoice due to payment updates",
+      },
+      {
+        onSuccess: () => {
+          setShowInvoiceActionDialog(false);
+        },
+        onError: () => {
+          toastError("Failed to re-issue invoice");
+        },
+      }
+    );
+  };
+
+  const handleCreateNewInvoice = () => {
+    // Cancel the old invoice and create a completely new draft
+    // This is different from re-issue which marks old as "superseded"
+
+    if (!invoiceId) {
+      toastError("No invoice to replace");
+      return;
+    }
+
+    // First cancel the old invoice
+    cancelMutation.mutate(
+      { notes: "Cancelled to create new invoice due to payment updates" },
+      {
+        onSuccess: () => {
+          // Then create a new draft invoice
+          const now = new Date();
+          const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
+          const randomStr = Math.random()
+            .toString(36)
+            .substring(2, 7)
+            .toUpperCase();
+          const newInvoiceNumber = `INV-${dateStr}-${randomStr}`;
+
+          createDraftMutation.mutate(
+            { invoiceNumber: newInvoiceNumber },
+            {
+              onSuccess: () => {
+                setShowInvoiceActionDialog(false);
+              },
+              onError: () => {
+                toastError("Failed to create new invoice");
+              },
+            }
+          );
+        },
+        onError: () => {
+          // If cancellation fails (e.g., has paid payments), use re-issue instead
+          toastError(
+            "Cannot cancel invoice with paid payments. Use re-issue instead."
+          );
+          setShowInvoiceActionDialog(false);
+        },
+      }
+    );
+  };
+
+  const handleSkipInvoiceAction = () => {
+    // User wants to proceed with issuing anyway despite payment issues
+
+    if (invoice?.invoiceStatus?.toLowerCase() !== "draft") {
+      toastError("Cannot issue: invoice must be in draft status");
+      setShowInvoiceActionDialog(false);
+      return;
+    }
+
+    issueMutation.mutate(undefined, {
+      onSuccess: () => {
+        setShowInvoiceActionDialog(false);
+      },
+    });
+  };
 
   if (!invoiceId) {
     return (
@@ -52,10 +194,6 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
               <Button
                 variant="primary"
                 onClick={() => {
-                  console.log(
-                    "Create Invoice button clicked for booking:",
-                    bookingId
-                  );
                   // Generate invoice number: INV-YYYYMMDD-XXXXX
                   const now = new Date();
                   const dateStr = now
@@ -68,7 +206,6 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
                     .toUpperCase();
                   const invoiceNumber = `INV-${dateStr}-${randomStr}`;
 
-                  console.log("Generated invoice number:", invoiceNumber);
                   createDraftMutation.mutate({ invoiceNumber });
                 }}
                 isLoading={createDraftMutation.isPending}
@@ -108,6 +245,8 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
   const isDraft = normalizedStatus === "Draft";
   const isIssued = normalizedStatus === "Issued";
   const isCancelled = normalizedStatus === "Cancelled";
+  const isSuperseded = normalizedStatus === "Superseded";
+  const isPaid = normalizedStatus === "Paid";
 
   return (
     <div className="space-y-4">
@@ -202,11 +341,25 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
         )}
       </div>
 
+      {/* Show re-issue button for ANY invoice status if there are payments */}
+      {canManageFinance &&
+        paymentsData?.items &&
+        paymentsData.items.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="secondary"
+              onClick={() => setShowInvoiceActionDialog(true)}
+            >
+              Re-issue Invoice
+            </Button>
+          </div>
+        )}
+
       {canManageFinance && isDraft && (
         <div className="flex flex-wrap gap-2">
           <Button
             variant="success"
-            onClick={() => issueMutation.mutate()}
+            onClick={handleIssueInvoiceClick}
             isLoading={issueMutation.isPending}
           >
             Issue Invoice
@@ -219,37 +372,6 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
           </Button>
           <Button variant="danger" onClick={() => setShowCancelConfirm(true)}>
             Cancel Invoice
-          </Button>
-        </div>
-      )}
-
-      {/* Debug info */}
-      <div className="rounded-md bg-blue-50 p-3 text-xs text-blue-700">
-        <div className="font-semibold">Debug Info:</div>
-        <div>canManageFinance: {canManageFinance ? "✅ true" : "❌ false"}</div>
-        <div>isDraft: {isDraft ? "✅ true" : "❌ false"}</div>
-        <div>Invoice Status: {invoice.invoiceStatus}</div>
-        <div>
-          Should show buttons:{" "}
-          {canManageFinance && isDraft ? "✅ YES" : "❌ NO"}
-        </div>
-      </div>
-
-      {/* Temporary Issue Button - Always Show for Draft */}
-      {isDraft && (
-        <div className="rounded-md border-2 border-yellow-300 bg-yellow-50 p-4">
-          <p className="mb-2 text-sm font-semibold text-yellow-800">
-            ⚠️ Temporary Issue Button (for testing)
-          </p>
-          <Button
-            variant="success"
-            onClick={() => {
-              console.log("Issuing invoice:", invoice.id);
-              issueMutation.mutate();
-            }}
-            isLoading={issueMutation.isPending}
-          >
-            🚀 Issue Invoice Now
           </Button>
         </div>
       )}
@@ -267,12 +389,42 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
         </div>
       )}
 
+      {isSuperseded && (
+        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-xs text-yellow-700">
+          This invoice has been superseded by a newer invoice.
+        </div>
+      )}
+
+      {isPaid && (
+        <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-xs text-green-700">
+          This invoice has been fully paid.
+        </div>
+      )}
+
       {showAdjustmentModal && (
         <AddAdjustmentModal
           isOpen={showAdjustmentModal}
           onClose={() => setShowAdjustmentModal(false)}
           invoiceId={invoiceId}
           bookingId={bookingId}
+        />
+      )}
+
+      {showInvoiceActionDialog && invoice && (
+        <InvoiceActionDialog
+          isOpen={showInvoiceActionDialog}
+          onClose={() => setShowInvoiceActionDialog(false)}
+          onReissue={handleReissueInvoice}
+          onCreateNew={handleCreateNewInvoice}
+          onSkip={handleSkipInvoiceAction}
+          invoiceNumber={invoice.invoiceNumber}
+          reason={checkPaymentUpdates() || "Payment status has changed"}
+          isLoading={
+            issueMutation.isPending ||
+            cancelMutation.isPending ||
+            createDraftMutation.isPending ||
+            reissueMutation.isPending
+          }
         />
       )}
 

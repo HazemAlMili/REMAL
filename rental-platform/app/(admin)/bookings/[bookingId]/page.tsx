@@ -33,6 +33,7 @@ export default function BookingDetailPage() {
   } = useBookingDetail(bookingId as string);
   const { data: snapshot, isLoading: snapshotLoading } =
     useBookingFinanceSnapshot(bookingId as string);
+
   const { data: unit, isLoading: isUnitLoading } = useInternalUnitDetail(
     booking?.unitId || ""
   );

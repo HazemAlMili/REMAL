@@ -56,6 +56,7 @@ public class OwnerPayoutsController : ControllerBase
         var payout = await _ownerPayoutService.CreateOrUpdateFromBookingAsync(
             request.BookingId,
             request.CommissionRate,
+            request.ProofOfPaymentUrl,
             request.Notes
         );
 
@@ -77,7 +78,7 @@ public class OwnerPayoutsController : ControllerBase
     [Authorize(Policy = "FinanceOrSuperAdmin")]
     public async Task<ActionResult<ApiResponse<OwnerPayoutResponse>>> MarkPayoutPaid(Guid id, MarkOwnerPayoutPaidRequest request)
     {
-        var payout = await _ownerPayoutService.MarkPaidAsync(id, request.Notes);
+        var payout = await _ownerPayoutService.MarkPaidAsync(id, request.ProofOfPaymentUrl, request.Notes);
 
         return Ok(ApiResponse<OwnerPayoutResponse>.CreateSuccess(MapToResponse(payout), "Owner payout marked as paid."));
     }
@@ -106,6 +107,7 @@ public class OwnerPayoutsController : ControllerBase
             PayoutAmount = payout.PayoutAmount,
             ScheduledAt = payout.ScheduledAt,
             PaidAt = payout.PaidAt,
+            ProofOfPaymentUrl = payout.ProofOfPaymentUrl,
             Notes = payout.Notes,
             CreatedAt = payout.CreatedAt,
             UpdatedAt = payout.UpdatedAt

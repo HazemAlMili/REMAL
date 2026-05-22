@@ -17,27 +17,36 @@ export const payoutQueryKeys = {
     [...payoutQueryKeys.all, "summary", ownerId] as const,
 };
 
-export function useOwnerPayouts(ownerId: string) {
+export function useOwnerPayouts(
+  ownerId: string,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: payoutQueryKeys.byOwner(ownerId),
     queryFn: () => payoutsService.getByOwner(ownerId),
-    enabled: !!ownerId,
+    enabled: !!ownerId && options?.enabled !== false,
   });
 }
 
-export function useBookingPayout(bookingId: string) {
+export function useBookingPayout(
+  bookingId: string,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: payoutQueryKeys.byBooking(bookingId),
     queryFn: () => payoutsService.getByBooking(bookingId),
-    enabled: !!bookingId,
+    enabled: !!bookingId && options?.enabled !== false,
   });
 }
 
-export function useOwnerPayoutSummary(ownerId: string) {
+export function useOwnerPayoutSummary(
+  ownerId: string,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: payoutQueryKeys.summary(ownerId),
     queryFn: () => payoutsService.getSummary(ownerId),
-    enabled: !!ownerId,
+    enabled: !!ownerId && options?.enabled !== false,
   });
 }
 

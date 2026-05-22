@@ -20,6 +20,24 @@ export function LeadDetailHeader({ lead }: LeadDetailHeaderProps) {
     CRM_STATUS_LABELS[lead.leadStatus as keyof typeof CRM_STATUS_LABELS] ??
     lead.leadStatus;
 
+  // Determine badge variant based on status
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case "New":
+        return "info";
+      case "Contacted":
+        return "warning";
+      case "Qualified":
+        return "success";
+      case "Converted":
+        return "success";
+      case "Lost":
+        return "danger";
+      default:
+        return "neutral";
+    }
+  };
+
   return (
     <div className="flex flex-col justify-between gap-4 rounded-lg border border-neutral-100 bg-white p-6 shadow-sm md:flex-row md:items-center">
       <div className="space-y-1">
@@ -43,9 +61,7 @@ export function LeadDetailHeader({ lead }: LeadDetailHeaderProps) {
       <div className="flex shrink-0 flex-col gap-2 md:items-end">
         <div className="flex items-center gap-2">
           <Badge variant="info">{sourceLabel}</Badge>
-          <Badge
-            variant={lead.leadStatus === "Lost" ? "warning" : "neutral"}
-          >
+          <Badge variant={getStatusVariant(lead.leadStatus)}>
             {statusLabel}
           </Badge>
         </div>

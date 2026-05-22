@@ -80,7 +80,18 @@ export default function OwnerPayoutsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Owner Payouts</h1>
         {canManageFinance && (
-          <Button onClick={() => setCreateModalOpen(true)}>New Payout</Button>
+          <Button
+            onClick={() => {
+              if (!selectedOwnerId) {
+                toast.error("Please select an owner first");
+                return;
+              }
+              setCreateModalOpen(true);
+            }}
+            disabled={!selectedOwnerId}
+          >
+            New Payout
+          </Button>
         )}
       </div>
 

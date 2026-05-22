@@ -115,7 +115,9 @@ public class PaymentService : IPaymentService
         if (!payment.InvoiceId.HasValue)
         {
             var activeInvoice = await _unitOfWork.Invoices.Query()
-                .Where(i => i.BookingId == payment.BookingId && i.InvoiceStatus != "cancelled")
+                .Where(i => i.BookingId == payment.BookingId 
+                    && i.InvoiceStatus != "cancelled" 
+                    && i.InvoiceStatus != "superseded")
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (activeInvoice != null)
@@ -135,20 +137,34 @@ public class PaymentService : IPaymentService
                 throw new ConflictException(
                     $"Payment {id} cannot be marked as paid: linked invoice {linkedInvoice.Id} is cancelled.");
 
-            if (linkedInvoice.InvoiceStatus == "draft")
-                throw new ConflictException(
-                    $"Payment {id} cannot be marked as paid: linked invoice {linkedInvoice.Id} is in draft status. Issue the invoice before recording payment.");
+            // Allow payments to be marked as paid even if invoice is in draft status
+            // This supports the workflow where payments are received before invoice is issued
+        }
 
-            // Overpayment check: existing paid total for this invoice, excluding current payment
-            var existingPaidTotal = await _unitOfWork.Payments.Query()
-                .Where(p => p.InvoiceId == payment.InvoiceId.Value
-                         && p.PaymentStatus == "paid"
-                         && p.Id != id)
-                .SumAsync(p => p.Amount, cancellationToken);
+        // Check for overpayment - calculate total paid amount for this booking
+        // IMPORTANT: Exclude the current payment to avoid double-counting if this is a retry
+        var currentPaidTotal = await _unitOfWork.Payments.Query()
+            .Where(p => p.BookingId == payment.BookingId 
+                && p.PaymentStatus == "paid" 
+                && p.Id != id)
+            .SumAsync(p => p.Amount, cancellationToken);
 
-            if (existingPaidTotal + payment.Amount > linkedInvoice.TotalAmount)
-                throw new ConflictException(
-                    $"Payment {id} would cause total paid ({existingPaidTotal + payment.Amount}) to exceed invoice total ({linkedInvoice.TotalAmount}).");
+        var projectedPaidTotal = currentPaidTotal + payment.Amount;
+
+        // Get the active invoice total for this booking
+        var bookingInvoice = await _unitOfWork.Invoices.Query()
+            .Where(i => i.BookingId == payment.BookingId 
+                && i.InvoiceStatus != "cancelled" 
+                && i.InvoiceStatus != "superseded")
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (bookingInvoice != null && projectedPaidTotal > bookingInvoice.TotalAmount)
+        {
+            var overpaymentAmount = projectedPaidTotal - bookingInvoice.TotalAmount;
+            throw new ConflictException(
+                $"Payment {id} cannot be marked as paid: this would result in an overpayment of {overpaymentAmount:F2}. " +
+                $"Invoice total: {bookingInvoice.TotalAmount:F2}, Current paid: {currentPaidTotal:F2}, This payment: {payment.Amount:F2}. " +
+                $"Overpayments are not allowed.");
         }
 
         payment.PaymentStatus = "paid";
@@ -164,17 +180,18 @@ public class PaymentService : IPaymentService
 
         _unitOfWork.Payments.Update(payment);
 
-        // Sync invoice status when fully covered
+        // Sync invoice status when fully covered or overpaid
         if (linkedInvoice != null)
         {
-            var newPaidTotal = await _unitOfWork.Payments.Query()
+            var invoicePaidTotal = await _unitOfWork.Payments.Query()
                 .Where(p => p.InvoiceId == linkedInvoice.Id
                          && p.PaymentStatus == "paid"
                          && p.Id != id)
                 .SumAsync(p => p.Amount, cancellationToken);
-            newPaidTotal += payment.Amount;
+            invoicePaidTotal += payment.Amount;
 
-            if (newPaidTotal == linkedInvoice.TotalAmount)
+            // Mark invoice as paid when total paid amount >= invoice total
+            if (invoicePaidTotal >= linkedInvoice.TotalAmount && linkedInvoice.InvoiceStatus != "paid")
             {
                 linkedInvoice.InvoiceStatus = "paid";
                 linkedInvoice.UpdatedAt = DateTime.UtcNow;

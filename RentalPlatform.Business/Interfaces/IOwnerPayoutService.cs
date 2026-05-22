@@ -18,10 +18,17 @@ public interface IOwnerPayoutService
     Task<OwnerPayout> CreateOrUpdateFromBookingAsync(
         Guid bookingId,
         decimal commissionRate,
+        string? proofOfPaymentUrl,
         string? notes,
         CancellationToken cancellationToken = default);
-
+    
     Task<OwnerPayout> SetScheduledAsync(Guid payoutId, string? notes, CancellationToken cancellationToken = default);
-    Task<OwnerPayout> MarkPaidAsync(Guid payoutId, string? notes, CancellationToken cancellationToken = default);
+    
+    Task<OwnerPayout> MarkPaidAsync(
+        Guid payoutId,
+        string? proofOfPaymentUrl,
+        string? notes,
+        CancellationToken cancellationToken = default);
+    
     Task<OwnerPayout> CancelAsync(Guid payoutId, string? notes, CancellationToken cancellationToken = default);
 }

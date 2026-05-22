@@ -1,4 +1,4 @@
-import {
+﻿import {
   useQuery,
   useMutation,
   useQueryClient,
@@ -20,7 +20,7 @@ import type {
   MarkPaymentFailedRequest,
   CancelPaymentRequest,
 } from "@/lib/types/booking.types";
-import { toastSuccess } from "@/lib/utils/toast";
+import { toastSuccess, toastError } from "@/lib/utils/toast";
 
 export function useBookingsList(filters: BookingListFilters) {
   return useQuery({
@@ -43,7 +43,9 @@ export function useBookingFinanceSnapshot(bookingId: string) {
   return useQuery({
     queryKey: queryKeys.bookings.financeSnapshot(bookingId),
     queryFn: () => bookingsService.getFinanceSnapshot(bookingId),
-    staleTime: 1000 * 30, // 30 seconds
+    staleTime: 2000, // Consider data stale after 2 seconds (reduced from 30s)
+    refetchInterval: 5000, // Auto-refetch every 5 seconds
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
   });
 }
 
@@ -52,11 +54,12 @@ export function useConfirmBooking(bookingId: string) {
   return useMutation({
     mutationFn: (data?: ConfirmBookingRequest) =>
       bookingsService.confirm(bookingId, data),
-    onSuccess: () => {
-      toastSuccess("Booking confirmed â€” invoice generated");
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.bookings.detail(bookingId),
-      });
+    onSuccess: (updatedBooking) => {
+      toastSuccess("Booking confirmed - invoice generated");
+      queryClient.setQueryData(
+        queryKeys.bookings.detail(bookingId),
+        updatedBooking
+      );
       queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.financeSnapshot(bookingId),
       });
@@ -69,16 +72,93 @@ export function useConfirmBooking(bookingId: string) {
   });
 }
 
+export function useBookedBooking(bookingId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data?: { notes?: string }) =>
+      bookingsService.booked(bookingId, data),
+    onSuccess: (updatedBooking) => {
+      toastSuccess("Booking marked as booked");
+      queryClient.setQueryData(
+        queryKeys.bookings.detail(bookingId),
+        updatedBooking
+      );
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.list({}) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.bookings.statusHistory(bookingId),
+      });
+    },
+  });
+}
+
+export function useRelevantBooking(bookingId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data?: { notes?: string }) =>
+      bookingsService.relevant(bookingId, data),
+    onSuccess: (updatedBooking) => {
+      toastSuccess("Booking marked as relevant");
+      queryClient.setQueryData(
+        queryKeys.bookings.detail(bookingId),
+        updatedBooking
+      );
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.list({}) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.bookings.statusHistory(bookingId),
+      });
+    },
+  });
+}
+
+export function useNoAnswerBooking(bookingId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data?: { notes?: string }) =>
+      bookingsService.noAnswer(bookingId, data),
+    onSuccess: (updatedBooking) => {
+      toastSuccess("Booking marked as no answer");
+      queryClient.setQueryData(
+        queryKeys.bookings.detail(bookingId),
+        updatedBooking
+      );
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.list({}) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.bookings.statusHistory(bookingId),
+      });
+    },
+  });
+}
+
+export function useNotRelevantBooking(bookingId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data?: { notes?: string }) =>
+      bookingsService.notRelevant(bookingId, data),
+    onSuccess: (updatedBooking) => {
+      toastSuccess("Booking marked as not relevant");
+      queryClient.setQueryData(
+        queryKeys.bookings.detail(bookingId),
+        updatedBooking
+      );
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.list({}) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.bookings.statusHistory(bookingId),
+      });
+    },
+  });
+}
+
 export function useCancelBooking(bookingId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data?: CancelBookingRequest) =>
       bookingsService.cancel(bookingId, data),
-    onSuccess: () => {
+    onSuccess: (updatedBooking) => {
       toastSuccess("Booking cancelled");
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.bookings.detail(bookingId),
-      });
+      queryClient.setQueryData(
+        queryKeys.bookings.detail(bookingId),
+        updatedBooking
+      );
       queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.financeSnapshot(bookingId),
       });
@@ -95,11 +175,12 @@ export function useCompleteBooking(bookingId: string) {
   return useMutation({
     mutationFn: (data?: CompleteBookingRequest) =>
       bookingsService.complete(bookingId, data),
-    onSuccess: () => {
+    onSuccess: (updatedBooking) => {
       toastSuccess("Booking completed");
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.bookings.detail(bookingId),
-      });
+      queryClient.setQueryData(
+        queryKeys.bookings.detail(bookingId),
+        updatedBooking
+      );
       queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.financeSnapshot(bookingId),
       });
@@ -116,11 +197,12 @@ export function useCheckInBooking(bookingId: string) {
   return useMutation({
     mutationFn: (data?: { notes?: string }) =>
       bookingsService.checkIn(bookingId, data),
-    onSuccess: () => {
+    onSuccess: (updatedBooking) => {
       toastSuccess("Client checked in");
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.bookings.detail(bookingId),
-      });
+      queryClient.setQueryData(
+        queryKeys.bookings.detail(bookingId),
+        updatedBooking
+      );
       queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.financeSnapshot(bookingId),
       });
@@ -137,11 +219,12 @@ export function useLeftEarlyBooking(bookingId: string) {
   return useMutation({
     mutationFn: (data?: { notes?: string }) =>
       bookingsService.leftEarly(bookingId, data),
-    onSuccess: () => {
+    onSuccess: (updatedBooking) => {
       toastSuccess("Early departure recorded");
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.bookings.detail(bookingId),
-      });
+      queryClient.setQueryData(
+        queryKeys.bookings.detail(bookingId),
+        updatedBooking
+      );
       queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.financeSnapshot(bookingId),
       });
@@ -171,6 +254,9 @@ export function useCreatePayment() {
         queryKey: queryKeys.bookings.payments(variables.bookingId),
       });
       queryClient.invalidateQueries({
+        queryKey: queryKeys.payments.list({ bookingId: variables.bookingId }),
+      });
+      queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.financeSnapshot(variables.bookingId),
       });
       queryClient.invalidateQueries({
@@ -188,6 +274,9 @@ export function useMarkPaymentPaid(bookingId: string) {
       toastSuccess("Payment marked as paid");
       queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.payments(bookingId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.payments.list({ bookingId }),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.financeSnapshot(bookingId),
@@ -215,6 +304,9 @@ export function useMarkPaymentFailed(bookingId: string) {
         queryKey: queryKeys.bookings.payments(bookingId),
       });
       queryClient.invalidateQueries({
+        queryKey: queryKeys.payments.list({ bookingId }),
+      });
+      queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.financeSnapshot(bookingId),
       });
       queryClient.invalidateQueries({
@@ -238,6 +330,9 @@ export function useCancelPayment(bookingId: string) {
       toastSuccess("Payment cancelled");
       queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.payments(bookingId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.payments.list({ bookingId }),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.financeSnapshot(bookingId),
@@ -268,21 +363,21 @@ export function useInvoiceDetail(invoiceId: string | null) {
     queryKey: queryKeys.invoices.detail(invoiceId!),
     queryFn: () => bookingsService.getInvoiceById(invoiceId!),
     enabled: !!invoiceId,
+    refetchInterval: 5000, // Auto-refetch every 5 seconds
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    staleTime: 2000, // Consider data stale after 2 seconds
   });
 }
 
 export function useCreateInvoiceDraft(bookingId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { invoiceNumber?: string; notes?: string }) => {
-      console.log("Creating invoice draft for booking:", bookingId, data);
-      return bookingsService.createInvoiceDraft({
+    mutationFn: (data: { invoiceNumber?: string; notes?: string }) =>
+      bookingsService.createInvoiceDraft({
         bookingId,
         ...data,
-      });
-    },
-    onSuccess: (result) => {
-      console.log("Invoice draft created successfully:", result);
+      }),
+    onSuccess: () => {
       toastSuccess("Invoice draft created successfully");
       queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.financeSnapshot(bookingId),
@@ -292,12 +387,6 @@ export function useCreateInvoiceDraft(bookingId: string) {
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.invoices.all });
     },
-    onError: (error: Error) => {
-      console.error("Failed to create invoice draft:", error);
-      console.error("Error details:", {
-        message: error.message,
-      });
-    },
   });
 }
 
@@ -306,6 +395,9 @@ export function useInvoiceBalance(invoiceId: string | null) {
     queryKey: queryKeys.invoices.balance(invoiceId!),
     queryFn: () => bookingsService.getInvoiceBalance(invoiceId!),
     enabled: !!invoiceId,
+    refetchInterval: 5000, // Auto-refetch every 5 seconds
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    staleTime: 2000, // Consider data stale after 2 seconds
   });
 }
 
@@ -313,20 +405,38 @@ export function useIssueInvoice(invoiceId: string, bookingId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => bookingsService.issueInvoice(invoiceId),
-    onSuccess: () => {
+    onSuccess: async (updatedInvoice) => {
       toastSuccess("Invoice issued successfully");
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.invoices.detail(invoiceId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.invoices.balance(invoiceId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.bookings.financeSnapshot(bookingId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.bookings.detail(bookingId),
-      });
+
+      // IMMEDIATELY update the cache with the response data
+      // This ensures the UI updates instantly without waiting for refetch
+      queryClient.setQueryData(
+        queryKeys.invoices.detail(invoiceId),
+        updatedInvoice
+      );
+
+      // Invalidate related queries to trigger background refetch
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.invoices.balance(invoiceId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.bookings.financeSnapshot(bookingId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.bookings.detail(bookingId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.invoices.all,
+        }),
+      ]);
+    },
+    onError: (error: unknown) => {
+      if (error instanceof ApiError) {
+        toastError(error.message || "Failed to issue invoice");
+      } else {
+        toastError("Failed to issue invoice. Please try again.");
+      }
     },
   });
 }
@@ -350,6 +460,53 @@ export function useCancelInvoice(invoiceId: string, bookingId: string) {
       queryClient.invalidateQueries({
         queryKey: queryKeys.bookings.detail(bookingId),
       });
+    },
+  });
+}
+
+export function useReissueInvoice(invoiceId: string, bookingId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { newInvoiceNumber: string; notes?: string }) =>
+      bookingsService.reissueInvoice(invoiceId, data),
+    onSuccess: async (newInvoice) => {
+      toastSuccess(
+        "Invoice re-issued successfully. Old invoice marked as superseded."
+      );
+
+      // Invalidate the old invoice
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.invoices.detail(invoiceId),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.invoices.balance(invoiceId),
+      });
+
+      // Set the new invoice data immediately
+      queryClient.setQueryData(
+        queryKeys.invoices.detail(newInvoice.id),
+        newInvoice
+      );
+
+      // Invalidate related queries and wait for refetch
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.bookings.financeSnapshot(bookingId),
+          refetchType: "active",
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.bookings.detail(bookingId),
+          refetchType: "active",
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.invoices.all,
+          refetchType: "active",
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.payments.all,
+          refetchType: "active",
+        }),
+      ]);
     },
   });
 }
