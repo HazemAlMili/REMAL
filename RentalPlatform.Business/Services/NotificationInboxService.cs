@@ -175,6 +175,25 @@ public class NotificationInboxService : INotificationInboxService
     }
 
     // -------------------------------------------------------------------------
+    // Mark all read
+    // -------------------------------------------------------------------------
+
+    public async Task MarkAllAdminReadAsync(Guid adminUserId, CancellationToken cancellationToken = default)
+    {
+        await MarkAllReadAsync(n => n.AdminUserId == adminUserId, cancellationToken);
+    }
+
+    public async Task MarkAllClientReadAsync(Guid clientId, CancellationToken cancellationToken = default)
+    {
+        await MarkAllReadAsync(n => n.ClientId == clientId, cancellationToken);
+    }
+
+    public async Task MarkAllOwnerReadAsync(Guid ownerId, CancellationToken cancellationToken = default)
+    {
+        await MarkAllReadAsync(n => n.OwnerId == ownerId, cancellationToken);
+    }
+
+    // -------------------------------------------------------------------------
     // Private helpers
     // -------------------------------------------------------------------------
 
@@ -279,5 +298,30 @@ public class NotificationInboxService : INotificationInboxService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return notification;
+    }
+
+    private async Task MarkAllReadAsync(
+        System.Linq.Expressions.Expression<Func<Notification, bool>> recipientFilter,
+        CancellationToken cancellationToken)
+    {
+        var notifications = await _unitOfWork.Notifications.Query()
+            .Where(n => n.Channel == "in_app"
+                     && n.NotificationStatus == "delivered"
+                     && n.ReadAt == null)
+            .Where(recipientFilter)
+            .ToListAsync(cancellationToken);
+
+        if (notifications.Count == 0)
+            return;
+
+        var now = DateTime.UtcNow;
+        foreach (var notification in notifications)
+        {
+            notification.NotificationStatus = "read";
+            notification.ReadAt = now;
+            _unitOfWork.Notifications.Update(notification);
+        }
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

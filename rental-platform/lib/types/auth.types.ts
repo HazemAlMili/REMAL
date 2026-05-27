@@ -23,6 +23,7 @@ export interface AuthUserPayload {
   identifier: string
   subjectType: SubjectType
   adminRole: AdminRole | null
+  name: string | null
 }
 
 export interface AuthResponse {

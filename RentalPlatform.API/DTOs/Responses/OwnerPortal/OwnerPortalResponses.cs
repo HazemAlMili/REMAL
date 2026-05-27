@@ -72,3 +72,13 @@ public record OwnerPortalDashboardSummaryResponse
     public decimal TotalPendingPayoutAmount { get; init; }
     public decimal TotalPaidPayoutAmount { get; init; }
 }
+
+public record OwnerPortalProfileResponse
+{
+    public Guid Id { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public string Phone { get; init; } = string.Empty;
+    public string? Email { get; init; }
+    public decimal CommissionRate { get; init; }
+    public string Status { get; init; } = string.Empty;
+}

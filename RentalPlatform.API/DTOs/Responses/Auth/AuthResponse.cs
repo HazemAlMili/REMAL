@@ -4,7 +4,8 @@ public record AuthenticatedUserResponse(
     Guid UserId,
     string Identifier,
     string SubjectType,
-    string? AdminRole
+    string? AdminRole,
+    string? Name
 );
 
 public record AuthResponse(

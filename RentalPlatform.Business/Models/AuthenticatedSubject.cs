@@ -7,5 +7,6 @@ public class AuthenticatedSubject
     public Guid UserId { get; set; }
     public string SubjectType { get; set; } = string.Empty;
     public string? Identifier { get; set; }
+    public string? Name { get; set; }
     public AdminRole? AdminRole { get; set; }
 }

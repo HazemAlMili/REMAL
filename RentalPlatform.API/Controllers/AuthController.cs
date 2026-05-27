@@ -141,7 +141,8 @@ public class AuthController : ControllerBase
                 UserId: subject.UserId,
                 Identifier: subject.Identifier ?? subject.UserId.ToString(),
                 SubjectType: subject.SubjectType,
-                AdminRole: subject.AdminRole?.ToString()
+                AdminRole: subject.AdminRole?.ToString(),
+                Name: subject.Name
             )
         );
 

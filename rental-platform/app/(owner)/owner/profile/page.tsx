@@ -10,7 +10,7 @@ export default function OwnerProfilePage() {
   const { data: profile, isLoading, isError } = useOwnerProfile();
 
   // Fallback to auth store identifier if profile endpoint is unavailable
-  const displayName = profile?.name ?? "—";
+  const displayName = profile?.name ?? user?.name ?? "—";
   const displayPhone = profile?.phone ?? user?.identifier ?? "—";
   const displayEmail = profile?.email ?? null;
   const displayCommission = profile?.commissionRate;

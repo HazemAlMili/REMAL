@@ -56,4 +56,8 @@ public interface INotificationInboxService
     Task<NotificationRecipientInboxSummaryResult> GetOwnerInboxSummaryAsync(
         Guid ownerId,
         CancellationToken cancellationToken = default);
+
+    Task MarkAllAdminReadAsync(Guid adminUserId, CancellationToken cancellationToken = default);
+    Task MarkAllClientReadAsync(Guid clientId, CancellationToken cancellationToken = default);
+    Task MarkAllOwnerReadAsync(Guid ownerId, CancellationToken cancellationToken = default);
 }

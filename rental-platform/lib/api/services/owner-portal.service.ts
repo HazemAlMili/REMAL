@@ -108,7 +108,7 @@ export const ownerPortalService = {
     reviewId: string,
     data: CreateReviewReplyRequest
   ): Promise<ReviewReplyResponse> =>
-    api.post(endpoints.ownerPortal.reviews.createReply(reviewId), data),
+    api.put(endpoints.ownerPortal.reviews.createReply(reviewId), data),
 
   updateReviewReply: (
     reviewId: string,

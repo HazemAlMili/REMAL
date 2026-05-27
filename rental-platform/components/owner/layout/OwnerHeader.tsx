@@ -25,7 +25,7 @@ export function OwnerHeader() {
         <div className="min-w-0">
           <p className="text-sm font-medium text-neutral-900">Owner Portal</p>
           <p className="truncate text-xs text-neutral-500">
-            {user?.identifier ?? "Owner"}
+            {user?.name ?? user?.identifier ?? "Owner"}
           </p>
         </div>
       </div>

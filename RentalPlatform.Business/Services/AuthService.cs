@@ -51,6 +51,7 @@ public class AuthService : IAuthService
             UserId = client.Id,
             SubjectType = "Client",
             Identifier = client.Phone,
+            Name = client.Name,
             AdminRole = null
         };
     }
@@ -71,6 +72,7 @@ public class AuthService : IAuthService
             UserId = owner.Id,
             SubjectType = "Owner",
             Identifier = owner.Phone,
+            Name = owner.Name,
             AdminRole = null
         };
     }

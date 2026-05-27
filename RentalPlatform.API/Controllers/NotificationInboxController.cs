@@ -71,6 +71,17 @@ public class NotificationInboxController : ControllerBase
             MapToNotificationResponse(notification), "Notification marked as read."));
     }
 
+    // POST /api/internal/me/notifications/inbox/read-all
+    [HttpPost("api/internal/me/notifications/inbox/read-all")]
+    [Authorize(Policy = "AdminAuthenticated")]
+    public async Task<ActionResult<ApiResponse<string>>> MarkAllAdminRead(
+        CancellationToken cancellationToken)
+    {
+        var adminId = GetCurrentAdminId();
+        await _inboxService.MarkAllAdminReadAsync(adminId, cancellationToken);
+        return Ok(ApiResponse<string>.CreateSuccess("All notifications marked as read."));
+    }
+
     // -------------------------------------------------------------------------
     // Client scope
     // -------------------------------------------------------------------------
@@ -115,6 +126,17 @@ public class NotificationInboxController : ControllerBase
             MapToNotificationResponse(notification), "Notification marked as read."));
     }
 
+    // POST /api/client/me/notifications/inbox/read-all
+    [HttpPost("api/client/me/notifications/inbox/read-all")]
+    [Authorize(Policy = "ClientOnly")]
+    public async Task<ActionResult<ApiResponse<string>>> MarkAllClientRead(
+        CancellationToken cancellationToken)
+    {
+        var clientId = GetCurrentClientId();
+        await _inboxService.MarkAllClientReadAsync(clientId, cancellationToken);
+        return Ok(ApiResponse<string>.CreateSuccess("All notifications marked as read."));
+    }
+
     // -------------------------------------------------------------------------
     // Owner scope
     // -------------------------------------------------------------------------
@@ -157,6 +179,17 @@ public class NotificationInboxController : ControllerBase
         var notification = await _inboxService.MarkOwnerReadAsync(notificationId, ownerId, cancellationToken);
         return Ok(ApiResponse<NotificationResponse>.CreateSuccess(
             MapToNotificationResponse(notification), "Notification marked as read."));
+    }
+
+    // POST /api/owner/me/notifications/inbox/read-all
+    [HttpPost("api/owner/me/notifications/inbox/read-all")]
+    [Authorize(Policy = "OwnerOnly")]
+    public async Task<ActionResult<ApiResponse<string>>> MarkAllOwnerRead(
+        CancellationToken cancellationToken)
+    {
+        var ownerId = GetCurrentOwnerId();
+        await _inboxService.MarkAllOwnerReadAsync(ownerId, cancellationToken);
+        return Ok(ApiResponse<string>.CreateSuccess("All notifications marked as read."));
     }
 
     // -------------------------------------------------------------------------
