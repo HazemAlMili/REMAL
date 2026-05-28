@@ -37,6 +37,8 @@ services:
       Jwt__Audience: "RentalPlatform"
       Cors__AllowedOrigins__0: "${CORS_ORIGIN_0:-http://localhost:3000}"
       Cors__AllowedOrigins__1: "${CORS_ORIGIN_1:-http://localhost:3001}"
+    volumes:
+      - ./uploads:/app/uploads
     depends_on:
       db:
         condition: service_healthy

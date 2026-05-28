@@ -59,11 +59,11 @@ export function usePublicUnitDetail(id: string) {
 }
 
 // ── Unit Images ──
-export function useUnitImages(unitId: string) {
+export function useUnitImages(unitId: string, enabled = true) {
   return useQuery({
     queryKey: queryKeys.units.images(unitId),
     queryFn: () => publicService.getUnitImages(unitId),
-    enabled: !!unitId,
+    enabled: !!unitId && enabled,
   });
 }
 

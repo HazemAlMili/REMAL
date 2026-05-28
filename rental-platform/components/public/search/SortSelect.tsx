@@ -1,16 +1,15 @@
 // ═══════════════════════════════════════════════════════════
 // components/public/search/SortSelect.tsx
-// Sort dropdown — ⚠️ P34 backend gap
+// Sort dropdown
 // ═══════════════════════════════════════════════════════════
 
 "use client";
 import { Select } from "@/components/ui/Select";
 
 const SORT_OPTIONS = [
-  { value: "", label: "Default" },
-  { value: "cheapest", label: "Price: Low to High" }, // ⚠️ P34
-  { value: "highest_rated", label: "Highest Rated" }, // ⚠️ P34
-  { value: "most_booked", label: "Most Popular" }, // ⚠️ P34
+  { value: "", label: "Newest Arrivals" },
+  { value: "price_asc", label: "Price: Low to High" },
+  { value: "price_desc", label: "Price: High to Low" },
 ];
 
 interface SortSelectProps {

@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.Units;
+using RentalPlatform.API.DTOs.Responses.UnitImages;
 using RentalPlatform.API.DTOs.Responses.Units;
 using RentalPlatform.API.Models;
 using RentalPlatform.Business.Interfaces;
+using RentalPlatform.Business.Models;
 using RentalPlatform.Data.Entities;
 using System;
 using System.Collections.Generic;
@@ -25,19 +27,30 @@ public class UnitsController : ControllerBase
     // 1. GET /api/units (Public)
     [HttpGet("api/units")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<IReadOnlyList<UnitListItemResponse>>>> GetPublicUnits([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<UnitListItemResponse>>>> GetPublicUnits([FromQuery] PublicUnitCatalogRequest request)
     {
-        var allUnits = await _unitService.GetAllAsync(includeInactive: false);
-        // Only active units
-        var activeUnits = allUnits.Where(u => u.IsActive).ToList();
-        
-        int total = activeUnits.Count;
-        int totalPages = (int)Math.Ceiling(total / (double)pageSize);
+        if (!TryParseAmenityIds(request.AmenityIds, out var amenityIds, out var amenityError))
+            return BadRequest(ApiResponse.CreateFailure("Invalid amenityIds query parameter.", new[] { amenityError! }));
+
+        var page = Math.Max(request.Page, 1);
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var result = await _unitService.GetPublicCatalogAsync(new PublicUnitCatalogFilter(
+            page,
+            pageSize,
+            request.AreaId,
+            request.UnitType,
+            request.MinGuests,
+            request.MinPrice,
+            request.MaxPrice,
+            request.Search,
+            request.SortBy,
+            amenityIds));
+
+        int totalPages = (int)Math.Ceiling(result.Total / (double)pageSize);
         if (totalPages == 0) totalPages = 1;
-        var pagedUnits = activeUnits.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-        
-        var response = pagedUnits.Select(MapToListItemResponse).ToList();
-        var pagination = new PaginationMeta(total, page, pageSize, totalPages);
+
+        var response = result.Items.Select(MapToListItemResponse).ToList();
+        var pagination = new PaginationMeta(result.Total, page, pageSize, totalPages);
         
         return Ok(ApiResponse<IReadOnlyList<UnitListItemResponse>>.CreateSuccess(response, null, pagination));
     }
@@ -173,7 +186,52 @@ public class UnitsController : ControllerBase
             MaxGuests = unit.MaxGuests,
             BasePricePerNight = unit.BasePricePerNight,
             IsActive = unit.IsActive,
-            CreatedAt = unit.CreatedAt
+            CreatedAt = unit.CreatedAt,
+            Images = unit.UnitImages
+                .OrderByDescending(image => image.IsCover)
+                .ThenBy(image => image.DisplayOrder)
+                .Select(MapToImageResponse)
+                .ToList()
+        };
+    }
+
+    private static bool TryParseAmenityIds(IEnumerable<string> rawAmenityIds, out IReadOnlyList<Guid> amenityIds, out string? error)
+    {
+        var parsed = new List<Guid>();
+
+        foreach (var rawValue in rawAmenityIds)
+        {
+            if (string.IsNullOrWhiteSpace(rawValue))
+                continue;
+
+            foreach (var part in rawValue.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                if (!Guid.TryParse(part, out var amenityId))
+                {
+                    amenityIds = Array.Empty<Guid>();
+                    error = $"'{part}' is not a valid amenity id.";
+                    return false;
+                }
+
+                parsed.Add(amenityId);
+            }
+        }
+
+        amenityIds = parsed.Distinct().ToList();
+        error = null;
+        return true;
+    }
+
+    private static UnitImageResponse MapToImageResponse(UnitImage image)
+    {
+        return new UnitImageResponse
+        {
+            Id = image.Id,
+            UnitId = image.UnitId,
+            FileKey = image.FileKey,
+            IsCover = image.IsCover,
+            DisplayOrder = image.DisplayOrder,
+            CreatedAt = image.CreatedAt
         };
     }
 

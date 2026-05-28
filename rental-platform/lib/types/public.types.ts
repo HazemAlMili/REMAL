@@ -19,6 +19,7 @@ export interface PublicUnitListItem {
   basePricePerNight: number;
   isActive: boolean; // NOT 'status: UnitStatus' per P01
   createdAt: string;
+  images?: UnitImage[];
 }
 
 // ── Public Unit Detail ──
@@ -41,20 +42,17 @@ export interface PublicUnitDetail {
 }
 
 // ── Public Unit Search Filters ──
-// Only page + pageSize are documented for GET /api/units (API Reference §5)
-// ⚠️ P34: areaId, unitType, minGuests, minPrice, maxPrice, sortBy, search
-//    are NOT documented — NEEDS BACKEND CONFIRMATION before adding
 export interface PublicUnitFilters {
   page?: number;
   pageSize?: number;
-  // ⚠️ P34 Backend gap — following params not confirmed by API Reference:
   areaId?: string;
   unitType?: string; // 'villa' | 'chalet' | 'studio'
   minGuests?: number;
   minPrice?: number;
   maxPrice?: number;
-  sortBy?: "cheapest" | "highest_rated" | "most_booked";
+  sortBy?: "newest" | "price_asc" | "price_desc" | "cheapest";
   search?: string;
+  amenityIds?: string[];
 }
 
 // ── Paginated Public Units ──

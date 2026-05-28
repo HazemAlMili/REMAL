@@ -24,6 +24,23 @@ import type {
   UnitPricingResponse,
 } from "@/lib/types/unit.types";
 
+function serializePublicUnitFilters(filters?: PublicUnitFilters): string {
+  const params = new URLSearchParams();
+
+  Object.entries(filters ?? {}).forEach(([key, value]) => {
+    if (value === undefined || value === "" || value === null) return;
+
+    if (Array.isArray(value)) {
+      value.filter(Boolean).forEach((item) => params.append(key, item));
+      return;
+    }
+
+    params.set(key, String(value));
+  });
+
+  return params.toString();
+}
+
 export const publicService = {
   // ── Areas (for landing page + search filters) ──
   getAreas: (): Promise<AreaResponse[]> => api.get(endpoints.areas.list),
@@ -34,7 +51,10 @@ export const publicService = {
 
   // ── Units ──
   getUnits: (filters?: PublicUnitFilters): Promise<PaginatedPublicUnits> =>
-    api.get(endpoints.units.publicList, { params: filters }),
+    api.get(endpoints.units.publicList, {
+      params: filters,
+      paramsSerializer: { serialize: serializePublicUnitFilters },
+    }),
 
   getUnitById: (id: string): Promise<PublicUnitDetail> =>
     api.get(endpoints.units.publicById(id)),

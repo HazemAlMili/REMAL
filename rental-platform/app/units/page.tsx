@@ -17,6 +17,16 @@ import { Button } from "@/components/ui/Button";
 import { Filter, X } from "lucide-react";
 import type { PublicUnitFilters } from "@/lib/types/public.types";
 
+function getArrayParam(params: URLSearchParams, key: string): string[] | undefined {
+  const values = params
+    .getAll(key)
+    .flatMap((value) => value.split(","))
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  return values.length > 0 ? values : undefined;
+}
+
 function filtersFromSearchParams(params: URLSearchParams): PublicUnitFilters {
   return {
     page: Number(params.get("page")) || 1,
@@ -28,6 +38,7 @@ function filtersFromSearchParams(params: URLSearchParams): PublicUnitFilters {
     maxPrice: Number(params.get("maxPrice")) || undefined,
     sortBy: (params.get("sortBy") as PublicUnitFilters["sortBy"]) || undefined,
     search: params.get("search") || undefined,
+    amenityIds: getArrayParam(params, "amenityIds"),
   };
 }
 
@@ -38,6 +49,11 @@ function updateUrlWithFilters(
   const params = new URLSearchParams();
   // Only append non-default values to keep URLs clean
   Object.entries(filters).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.filter(Boolean).forEach((item) => params.append(key, item));
+      return;
+    }
+
     if (
       value !== undefined &&
       value !== "" &&

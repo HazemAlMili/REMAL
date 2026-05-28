@@ -21,27 +21,26 @@ DEPENDS ON: FE-7-INFRA-01, FE-7-INFRA-03, FE-7-LP-06 (UnitCard component)
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-The units listing page at `/units` is where visitors browse available properties. For `GET /api/units`, documented query params are pagination only (`page`, `pageSize`). Search/filter controls (including area/active/type/guest/price/date/sort) are backend gaps until explicitly documented.
+The units listing page at `/units` is where visitors browse available properties. `GET /api/units` supports pagination plus public catalog filters for area, unit type, guests, price, amenities, search, and safe sort keys.
 
 ---
 
 ### Section 2 — Objective
 
-Build the units listing page at `/units` using `GET /api/units` with documented pagination (`page`, `pageSize`), URL sync, and the `<UnitCard>` component (from FE-7-LP-06), while treating search/filter controls as backend gaps until documented.
+Build the units listing page at `/units` using `GET /api/units` with documented pagination and filters, URL sync, and the `<UnitCard>` component (from FE-7-LP-06).
 
 ---
 
 ### Section 4 — In Scope
 
 - [ ] `app/(public)/units/page.tsx`
-- [ ] **Documented query params:** Pagination controls only (`page`, `pageSize`).
-- [ ] **Backend gap:** area/active/type/guest/price/date/sort/search filters are not documented for `GET /api/units`; keep them behind backend confirmation and do not treat as supported contract.
+- [ ] **Documented query params:** `page`, `pageSize`, `areaId`, `unitType`, `minGuests`, `minPrice`, `maxPrice`, `search`, `sortBy`, and repeated `amenityIds`.
 - [ ] **Results grid:** `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`
 - [ ] **URL sync:** `useSearchParams()` + `router.push()` on filter change
 - [ ] **Pagination:** Prev/Next + page numbers
 - [ ] **Results count:** "Showing 12 of 48 properties"
 - [ ] URL query params pre-populated from Hero search (reads them on mount)
-- [ ] Sort options are backend gap until documented for `GET /api/units`
+- [ ] Sort options: newest arrivals, price low to high, price high to low.
 - [ ] Empty state: "No properties match your filters" + "Clear all filters" button
 - [ ] Loading: 6 UnitCard skeletons
 

@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════════
 
 "use client";
-import { usePublicAreas } from "@/lib/hooks/usePublic";
+import { usePublicAmenities, usePublicAreas } from "@/lib/hooks/usePublic";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
@@ -18,6 +18,7 @@ interface UnitFiltersProps {
 
 export function UnitFilters({ filters, onChange, onClear }: UnitFiltersProps) {
   const { data: areas } = usePublicAreas();
+  const { data: amenities } = usePublicAmenities();
 
   const areaOptions = [
     { value: "", label: "All Areas" },
@@ -26,10 +27,24 @@ export function UnitFilters({ filters, onChange, onClear }: UnitFiltersProps) {
 
   const typeOptions = [
     { value: "", label: "All Types" },
+    { value: "apartment", label: "Apartment" },
     { value: "villa", label: "Villa" },
     { value: "chalet", label: "Chalet" },
     { value: "studio", label: "Studio" },
   ];
+
+  const selectedAmenityIds = filters.amenityIds ?? [];
+
+  function handleAmenityToggle(amenityId: string, checked: boolean) {
+    const nextAmenityIds = checked
+      ? [...selectedAmenityIds, amenityId]
+      : selectedAmenityIds.filter((id) => id !== amenityId);
+
+    onChange({
+      amenityIds: nextAmenityIds.length > 0 ? nextAmenityIds : undefined,
+      page: 1,
+    });
+  }
 
   return (
     <div className="space-y-6">
@@ -96,18 +111,37 @@ export function UnitFilters({ filters, onChange, onClear }: UnitFiltersProps) {
         />
       </div>
 
+      {/* Amenities */}
+      {amenities && amenities.length > 0 && (
+        <fieldset className="space-y-3">
+          <legend className="text-sm font-medium text-neutral-700">
+            Amenities
+          </legend>
+          <div className="space-y-2">
+            {amenities.map((amenity) => (
+              <label
+                key={amenity.id}
+                className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedAmenityIds.includes(amenity.id)}
+                  onChange={(event) =>
+                    handleAmenityToggle(amenity.id, event.target.checked)
+                  }
+                  className="h-4 w-4 rounded border-neutral-300 text-primary-500 focus:ring-primary-500"
+                />
+                <span>{amenity.name}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
+
       {/* Clear Filters */}
       <Button variant="ghost" onClick={onClear} className="w-full">
         Clear All Filters
       </Button>
-
-      {/* ⚠️ P34 Notice — developer-only, hidden in production */}
-      {process.env.NODE_ENV === "development" && (
-        <p className="rounded bg-amber-50 p-2 text-xs text-amber-600">
-          ⚠️ P34: Area/Type/Guests/Price filters not confirmed by backend. Only
-          pagination is documented in API Reference.
-        </p>
-      )}
     </div>
   );
 }

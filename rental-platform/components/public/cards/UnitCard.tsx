@@ -10,7 +10,7 @@ import { useUnitImages } from "@/lib/hooks/usePublic";
 import { ROUTES } from "@/lib/constants/routes";
 import { formatCurrency } from "@/lib/utils/format";
 import { getCoverImageUrl } from "@/lib/utils/image";
-import { Users } from "lucide-react";
+import { ImageIcon, Users } from "lucide-react";
 import type { PublicUnitListItem } from "@/lib/types/public.types";
 
 const UNIT_TYPE_LABELS: Record<string, string> = {
@@ -25,9 +25,10 @@ interface UnitCardProps {
 }
 
 export function UnitCard({ unit, className = "" }: UnitCardProps) {
-  // Fetch images for this unit — cached per unitId
-  const { data: images } = useUnitImages(unit.id);
-  const coverUrl = getCoverImageUrl(images);
+  const hasListImages = Boolean(unit.images && unit.images.length > 0);
+  const { data: images } = useUnitImages(unit.id, !hasListImages);
+  const cardImages = hasListImages ? unit.images : images;
+  const coverUrl = getCoverImageUrl(cardImages);
 
   return (
     <Link
@@ -42,14 +43,22 @@ export function UnitCard({ unit, className = "" }: UnitCardProps) {
     >
       {/* Image Container */}
       <div className="relative aspect-[4/3] overflow-hidden">
-        <Image
-          src={coverUrl}
-          alt={unit.name}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
-          sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"
-          quality={80}
-        />
+        {coverUrl ? (
+          <Image
+            src={coverUrl}
+            alt={unit.name}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"
+            quality={80}
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-[linear-gradient(135deg,#eef7f2_0%,#f8f5ee_55%,#edf2f7_100%)]">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/80 text-primary-500 shadow-sm">
+              <ImageIcon className="h-7 w-7" />
+            </div>
+          </div>
+        )}
 
         {/* Type Badge */}
         <div className="absolute left-3 top-3">

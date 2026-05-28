@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RentalPlatform.Business.Exceptions;
 using RentalPlatform.Business.Interfaces;
+using RentalPlatform.Business.Models;
 using RentalPlatform.Data;
 using RentalPlatform.Data.Entities;
+using RentalPlatform.Shared.Models;
 
 namespace RentalPlatform.Business.Services;
 
@@ -15,10 +17,76 @@ public class UnitService : IUnitService
 {
     private readonly IUnitOfWork _unitOfWork;
     private static readonly string[] AllowedUnitTypes = { "apartment", "villa", "chalet", "studio" };
+    private const int MaxPublicPageSize = 100;
 
     public UnitService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
+    }
+
+    public async Task<PagedResult<Unit>> GetPublicCatalogAsync(PublicUnitCatalogFilter filter, CancellationToken cancellationToken = default)
+    {
+        var page = Math.Max(filter.Page, 1);
+        var pageSize = Math.Clamp(filter.PageSize, 1, MaxPublicPageSize);
+
+        IQueryable<Unit> query = _unitOfWork.Units.Query()
+            .AsNoTracking()
+            .Include(u => u.UnitImages)
+            .Include(u => u.UnitAmenities)
+            .Where(u => u.IsActive);
+
+        if (filter.AreaId.HasValue)
+        {
+            query = query.Where(u => u.AreaId == filter.AreaId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.UnitType))
+        {
+            var normalizedType = filter.UnitType.Trim().ToLower();
+            if (!AllowedUnitTypes.Contains(normalizedType))
+                throw new BusinessValidationException($"Invalid unit type '{filter.UnitType}'. Allowed values: {string.Join(", ", AllowedUnitTypes)}");
+
+            query = query.Where(u => u.UnitType == normalizedType);
+        }
+
+        if (filter.MinGuests.HasValue)
+        {
+            query = query.Where(u => u.MaxGuests >= filter.MinGuests.Value);
+        }
+
+        if (filter.MinPrice.HasValue)
+        {
+            query = query.Where(u => u.BasePricePerNight >= filter.MinPrice.Value);
+        }
+
+        if (filter.MaxPrice.HasValue)
+        {
+            query = query.Where(u => u.BasePricePerNight <= filter.MaxPrice.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Search))
+        {
+            var search = filter.Search.Trim().ToLower();
+            query = query.Where(u =>
+                u.Name.ToLower().Contains(search) ||
+                (u.Address != null && u.Address.ToLower().Contains(search)) ||
+                (u.Description != null && u.Description.ToLower().Contains(search)));
+        }
+
+        var amenityIds = filter.AmenityIds.Distinct().ToArray();
+        foreach (var amenityId in amenityIds)
+        {
+            query = query.Where(u => u.UnitAmenities.Any(ua => ua.AmenityId == amenityId));
+        }
+
+        var total = await query.CountAsync(cancellationToken);
+        var items = await ApplyPublicCatalogSort(query, filter.SortBy)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .AsSplitQuery()
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<Unit>(items, total);
     }
 
     public async Task<IReadOnlyList<Unit>> GetAllAsync(bool includeInactive = true, Guid? ownerId = null, CancellationToken cancellationToken = default)
@@ -36,6 +104,37 @@ public class UnitService : IUnitService
         }
 
         return await query.ToListAsync(cancellationToken);
+    }
+
+    private static IOrderedQueryable<Unit> ApplyPublicCatalogSort(IQueryable<Unit> query, string? sortBy)
+    {
+        return NormalizePublicSort(sortBy) switch
+        {
+            "price_asc" => query
+                .OrderBy(u => u.BasePricePerNight)
+                .ThenByDescending(u => u.CreatedAt)
+                .ThenBy(u => u.Id),
+            "price_desc" => query
+                .OrderByDescending(u => u.BasePricePerNight)
+                .ThenByDescending(u => u.CreatedAt)
+                .ThenBy(u => u.Id),
+            _ => query
+                .OrderByDescending(u => u.CreatedAt)
+                .ThenBy(u => u.Id),
+        };
+    }
+
+    private static string NormalizePublicSort(string? sortBy)
+    {
+        var key = sortBy?.Trim().ToLower().Replace('-', '_');
+
+        return key switch
+        {
+            "price_asc" or "cheapest" => "price_asc",
+            "price_desc" or "expensive" or "highest_price" => "price_desc",
+            "newest" or "newest_arrivals" or "latest" => "newest",
+            _ => "newest",
+        };
     }
 
     public async Task<Unit?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
