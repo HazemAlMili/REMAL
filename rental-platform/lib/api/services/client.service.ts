@@ -5,9 +5,25 @@
 
 import api from "@/lib/api/axios";
 import { endpoints } from "@/lib/api/endpoints";
-import type { ClientReviewByBookingResponse } from "@/lib/types/client.types";
+import type { BookingListFilters, PaginatedBookings } from "@/lib/types/booking.types";
+import type {
+  ClientAccountProfileResponse,
+  ClientReviewByBookingResponse,
+  UpdateClientProfileRequest,
+} from "@/lib/types/client.types";
 
 export const clientService = {
+  getProfile: async (): Promise<ClientAccountProfileResponse> =>
+    api.get(endpoints.clientProfile.get),
+
+  updateProfile: async (
+    data: UpdateClientProfileRequest
+  ): Promise<ClientAccountProfileResponse> => api.put(endpoints.clientProfile.update, data),
+
+  getClientBookings: async (
+    params?: BookingListFilters
+  ): Promise<PaginatedBookings> => api.get(endpoints.clientBookings.list, { params }),
+
   /**
    * Check if a review exists for a booking.
    * GET /api/reviews/by-booking/{bookingId}
@@ -37,9 +53,4 @@ export const clientService = {
       throw error; // Re-throw other errors
     }
   },
-
-  // ⚠️ BACKEND GAP: getClientBookings not implemented
-  // No documented GET /api/client/bookings endpoint exists.
-  // This method will be added when the backend provides the endpoint.
-  // getClientBookings: async (params) => { ... }
 };

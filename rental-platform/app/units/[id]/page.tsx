@@ -4,7 +4,6 @@
 // ═══════════════════════════════════════════════════════════
 
 "use client";
-import { use } from "react";
 import {
   usePublicUnitDetail,
   usePublicUnitImages,
@@ -21,12 +20,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
 
-export default function UnitDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id: unitId } = use(params);
+export default function UnitDetailPage({ params }: { params: { id: string } }) {
+  const { id: unitId } = params;
   const router = useRouter();
 
   const {

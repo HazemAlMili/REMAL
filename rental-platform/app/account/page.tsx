@@ -1,16 +1,35 @@
 // ═══════════════════════════════════════════════════════════
 // app/account/page.tsx
-// Client dashboard — welcome + placeholder cards
+// Client dashboard
 // ═══════════════════════════════════════════════════════════
 
 "use client";
 import Link from "next/link";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { Button } from "@/components/ui/Button";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { useClientBookings, useClientProfile } from "@/lib/hooks/useClient";
+import {
+  useClientNotificationInbox,
+  useClientNotificationSummary,
+} from "@/lib/hooks/useNotifications";
+import { formatCurrency, formatDate } from "@/lib/utils/format";
 import { CalendarCheck, Bell, ArrowRight, Home } from "lucide-react";
 
 export default function AccountDashboardPage() {
   const { user } = useAuthStore();
+  const { data: profile } = useClientProfile();
+  const { data: bookingsData, isLoading: bookingsLoading } = useClientBookings({
+    page: 1,
+    pageSize: 5,
+  });
+  const { data: notificationSummary } = useClientNotificationSummary();
+  const { data: notifications = [], isLoading: notificationsLoading } =
+    useClientNotificationInbox({ page: 1, pageSize: 3 });
+
+  const bookings = bookingsData?.items ?? [];
+  const displayName = profile?.name ?? user?.identifier ?? "Client";
 
   return (
     <div className="space-y-8">
@@ -19,7 +38,7 @@ export default function AccountDashboardPage() {
         <h1 className="font-display text-2xl font-bold text-neutral-900 lg:text-3xl">
           Welcome back
         </h1>
-        <p className="mt-1 text-neutral-600">{user?.identifier || "Client"}</p>
+        <p className="mt-1 text-neutral-600">{displayName}</p>
       </div>
 
       {/* Quick Actions */}
@@ -38,7 +57,6 @@ export default function AccountDashboardPage() {
         </Link>
       </div>
 
-      {/* Recent Bookings Card — BLOCKED by backend gap */}
       <div className="rounded-2xl border border-neutral-100 bg-white p-6 shadow-card">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-lg font-semibold text-neutral-900">
@@ -52,21 +70,47 @@ export default function AccountDashboardPage() {
           </Link>
         </div>
 
-        {/* ⚠️ BACKEND GAP: No client-scoped bookings endpoint documented.
-            GET /api/internal/bookings requires admin auth.
-            Show placeholder until backend provides GET /api/client/bookings. */}
-        <div className="py-8 text-center">
-          <CalendarCheck className="mx-auto mb-3 h-10 w-10 text-neutral-300" />
-          <p className="text-sm text-neutral-500">
-            Your booking history will appear here
-          </p>
-          <p className="mt-1 text-xs text-neutral-400">
-            Bookings you submit will show up in this section
-          </p>
-        </div>
+        {bookingsLoading && (
+          <div className="space-y-3">
+            {[0, 1, 2].map((item) => (
+              <div key={item} className="h-16 animate-pulse rounded-xl bg-neutral-100" />
+            ))}
+          </div>
+        )}
+
+        {!bookingsLoading && bookings.length === 0 && (
+          <EmptyState
+            title="No bookings yet"
+            description="Submitted booking requests will appear here."
+            icon={<CalendarCheck className="h-12 w-12" />}
+            className="min-h-[190px]"
+          />
+        )}
+
+        {!bookingsLoading && bookings.length > 0 && (
+          <div className="divide-y divide-neutral-100">
+            {bookings.map((booking) => (
+              <div key={booking.id} className="flex items-center justify-between gap-4 py-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-neutral-900">
+                    {booking.unitName ?? "Property"}
+                  </p>
+                  <p className="mt-1 text-xs text-neutral-500">
+                    {formatDate(booking.checkInDate)} - {formatDate(booking.checkOutDate)}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-3">
+                  <span className="hidden text-sm font-semibold text-neutral-900 sm:inline">
+                    {formatCurrency(booking.finalAmount)}
+                  </span>
+                  <StatusBadge status={booking.bookingStatus} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Notifications Card — BLOCKED by backend gap */}
       <div className="rounded-2xl border border-neutral-100 bg-white p-6 shadow-card">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="font-display text-lg font-semibold text-neutral-900">
@@ -80,15 +124,49 @@ export default function AccountDashboardPage() {
           </Link>
         </div>
 
-        {/* ⚠️ BACKEND GAP: No /api/client/me/notifications/inbox endpoint documented.
-            Show placeholder until backend provides client notification endpoint. */}
-        <div className="py-8 text-center">
-          <Bell className="mx-auto mb-3 h-10 w-10 text-neutral-300" />
-          <p className="text-sm text-neutral-500">No new notifications</p>
-          <p className="mt-1 text-xs text-neutral-400">
-            Booking updates and reminders will appear here
-          </p>
+        <div className="mb-4 rounded-xl bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
+          {notificationSummary?.unreadCount ?? 0} unread of {notificationSummary?.totalCount ?? 0} total
         </div>
+
+        {notificationsLoading && (
+          <div className="space-y-3">
+            {[0, 1, 2].map((item) => (
+              <div key={item} className="h-14 animate-pulse rounded-xl bg-neutral-100" />
+            ))}
+          </div>
+        )}
+
+        {!notificationsLoading && notifications.length === 0 && (
+          <EmptyState
+            title="No notifications yet"
+            description="Booking updates and reminders will appear here."
+            icon={<Bell className="h-12 w-12" />}
+            className="min-h-[190px]"
+          />
+        )}
+
+        {!notificationsLoading && notifications.length > 0 && (
+          <div className="divide-y divide-neutral-100">
+            {notifications.map((notification) => (
+              <div key={notification.notificationId} className="py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-sm font-medium text-neutral-900">
+                    {notification.subject ?? "Notification"}
+                  </p>
+                  {!notification.readAt && (
+                    <span className="mt-1 h-2 w-2 rounded-full bg-primary-500" />
+                  )}
+                </div>
+                <p className="mt-1 line-clamp-2 text-sm text-neutral-600">
+                  {notification.body}
+                </p>
+                <p className="mt-1 text-xs text-neutral-400">
+                  {formatDate(notification.createdAt)}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

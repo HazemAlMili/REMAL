@@ -1,27 +1,19 @@
-// ═══════════════════════════════════════════════════════════
-// app/account/bookings/page.tsx
-// Client booking history — currently shows empty/placeholder state
-// due to backend gap (no client bookings endpoint)
-// ═══════════════════════════════════════════════════════════
-
 "use client";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
-import { CalendarCheck } from "lucide-react";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { SkeletonTable } from "@/components/ui/SkeletonTable";
+import { useClientBookings } from "@/lib/hooks/useClient";
+import { formatCurrency, formatDate } from "@/lib/utils/format";
+import { CalendarCheck, Home } from "lucide-react";
 import Link from "next/link";
 
 export default function ClientBookingsPage() {
-  // ⚠️ BACKEND GAP: No GET /api/client/bookings endpoint documented.
-  // GET /api/internal/bookings requires admin auth — cannot be used here.
-  // The page structure is built but data integration is BLOCKED.
-  //
-  // When the backend adds a client bookings endpoint:
-  // 1. Add useClientBookings() hook in lib/hooks/useClient.ts
-  // 2. Call it here to fetch bookings
-  // 3. Pass bookings to ClientBookingTable / ClientBookingCard
-  // 4. Use P10-corrected field names: id, bookingStatus, guestCount, finalAmount, etc.
-
-  const bookings: never[] = []; // Empty until backend endpoint is available
+  const { data, isLoading, isError } = useClientBookings({
+    page: 1,
+    pageSize: 20,
+  });
+  const bookings = data?.items ?? [];
 
   return (
     <div className="space-y-6">
@@ -32,8 +24,17 @@ export default function ClientBookingsPage() {
         </h1>
       </div>
 
-      {/* Empty State — No bookings yet OR backend gap */}
-      {bookings.length === 0 && (
+      {isLoading && <SkeletonTable rows={5} columns={6} />}
+
+      {isError && (
+        <EmptyState
+          title="Bookings could not load"
+          description="Refresh the page or try again after a moment."
+          icon={<CalendarCheck className="h-12 w-12" />}
+        />
+      )}
+
+      {!isLoading && !isError && bookings.length === 0 && (
         <EmptyState
           title="No bookings yet"
           description="When you submit booking requests, they'll appear here so you can track their status."
@@ -46,49 +47,77 @@ export default function ClientBookingsPage() {
         />
       )}
 
-      {/* ⚠️ DEVELOPMENT NOTE — Remove when backend endpoint is added */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
-          <p className="font-medium text-amber-800">
-            ⚠️ Backend Endpoint Pending
-          </p>
-          <p className="mt-1 text-amber-700">
-            Client bookings require a documented{" "}
-            <code className="rounded bg-amber-100 px-1">
-              GET /api/client/bookings
-            </code>{" "}
-            endpoint. The admin endpoint (
-            <code className="rounded bg-amber-100 px-1">
-              GET /api/internal/bookings
-            </code>
-            ) requires admin authentication and cannot be used for client
-            accounts.
-          </p>
-          <p className="mt-2 text-amber-700">
-            When the endpoint is added, use P10-corrected field names:{" "}
-            <code className="rounded bg-amber-100 px-1">id</code> (not
-            bookingId),{" "}
-            <code className="rounded bg-amber-100 px-1">bookingStatus</code>{" "}
-            (not status),{" "}
-            <code className="rounded bg-amber-100 px-1">guestCount</code> (not
-            numberOfGuests),{" "}
-            <code className="rounded bg-amber-100 px-1">finalAmount</code> (not
-            totalAmount).
-          </p>
-        </div>
-      )}
-
-      {/* Booking List — Will render when data is available */}
-      {bookings.length > 0 && (
+      {!isLoading && !isError && bookings.length > 0 && (
         <>
-          {/* Desktop Table */}
           <div className="hidden overflow-hidden rounded-2xl border border-neutral-100 bg-white shadow-card md:block">
-            {/* <ClientBookingTable ... /> */}
+            <table className="w-full text-left text-sm">
+              <thead className="bg-neutral-50 text-neutral-500">
+                <tr>
+                  <th className="p-4 font-medium">Property</th>
+                  <th className="p-4 font-medium">Dates</th>
+                  <th className="p-4 font-medium">Guests</th>
+                  <th className="p-4 font-medium">Total</th>
+                  <th className="p-4 font-medium">Status</th>
+                  <th className="p-4 font-medium">Created</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-100">
+                {bookings.map((booking) => (
+                  <tr key={booking.id} className="hover:bg-neutral-50">
+                    <td className="p-4 font-medium text-neutral-900">
+                      {booking.unitName ?? "Property"}
+                    </td>
+                    <td className="p-4 text-neutral-600">
+                      {formatDate(booking.checkInDate)} - {formatDate(booking.checkOutDate)}
+                    </td>
+                    <td className="p-4 text-neutral-600">{booking.guestCount}</td>
+                    <td className="p-4 font-medium text-neutral-900">
+                      {formatCurrency(booking.finalAmount)}
+                    </td>
+                    <td className="p-4">
+                      <StatusBadge status={booking.bookingStatus} />
+                    </td>
+                    <td className="p-4 text-neutral-500">
+                      {formatDate(booking.createdAt)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
-          {/* Mobile Cards */}
           <div className="space-y-4 md:hidden">
-            {/* {bookings.map(booking => <ClientBookingCard key={booking.id} booking={booking} />)} */}
+            {bookings.map((booking) => (
+              <div
+                key={booking.id}
+                className="rounded-xl border border-neutral-100 bg-white p-4 shadow-card"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-neutral-900">
+                      <Home className="h-4 w-4 shrink-0 text-neutral-400" />
+                      <span className="truncate">{booking.unitName ?? "Property"}</span>
+                    </div>
+                    <p className="mt-2 text-sm text-neutral-600">
+                      {formatDate(booking.checkInDate)} - {formatDate(booking.checkOutDate)}
+                    </p>
+                  </div>
+                  <StatusBadge status={booking.bookingStatus} />
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <p className="text-neutral-500">Guests</p>
+                    <p className="font-medium text-neutral-900">{booking.guestCount}</p>
+                  </div>
+                  <div>
+                    <p className="text-neutral-500">Total</p>
+                    <p className="font-medium text-neutral-900">
+                      {formatCurrency(booking.finalAmount)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </>
       )}

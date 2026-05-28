@@ -8,19 +8,32 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { useLogout } from "@/lib/hooks/useLogout";
+import { useClientNotificationSummary } from "@/lib/hooks/useNotifications";
 import { Button } from "@/components/ui/Button";
-import { CalendarCheck, Star, Bell, LogOut, Home } from "lucide-react";
+import {
+  CalendarCheck,
+  Star,
+  Bell,
+  LogOut,
+  Home,
+  LayoutDashboard,
+  User,
+} from "lucide-react";
 
 const NAV_ITEMS = [
+  { href: "/account", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/account/bookings", label: "My Bookings", icon: CalendarCheck },
   { href: "/account/reviews", label: "Reviews", icon: Star },
   { href: "/account/notifications", label: "Notifications", icon: Bell },
+  { href: "/account/profile", label: "Profile", icon: User },
 ];
 
 export function AccountSidebar() {
   const pathname = usePathname();
   const { user } = useAuthStore();
   const { logout, isLoading: isLoggingOut } = useLogout();
+  const { data: notificationSummary } = useClientNotificationSummary();
+  const unreadCount = notificationSummary?.unreadCount ?? 0;
 
   return (
     <aside className="min-h-[calc(100vh-80px)] w-64 shrink-0 border-r border-neutral-100 bg-white">
@@ -38,7 +51,9 @@ export function AccountSidebar() {
         {/* Navigation */}
         <nav className="space-y-1">
           {NAV_ITEMS.map((item) => {
-            const isActive = pathname.startsWith(item.href);
+            const isActive = item.exact
+              ? pathname === item.href
+              : pathname.startsWith(item.href);
             const Icon = item.icon;
 
             return (
@@ -55,7 +70,12 @@ export function AccountSidebar() {
                 `}
               >
                 <Icon className="h-5 w-5" />
-                {item.label}
+                <span className="flex-1">{item.label}</span>
+                {item.href === "/account/notifications" && unreadCount > 0 && (
+                  <span className="rounded-full bg-primary-500 px-2 py-0.5 text-xs text-white">
+                    {unreadCount}
+                  </span>
+                )}
               </Link>
             );
           })}

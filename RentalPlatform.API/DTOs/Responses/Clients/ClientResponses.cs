@@ -20,3 +20,13 @@ public record ClientDetailsResponse(
     DateTime CreatedAt,
     DateTime UpdatedAt
 );
+
+public record ClientProfileResponse(
+    Guid Id,
+    string Name,
+    string Phone,
+    string? Email,
+    bool IsActive,
+    DateTime CreatedAt,
+    DateTime UpdatedAt
+);

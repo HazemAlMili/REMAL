@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RentalPlatform.Business.Exceptions;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data;
@@ -17,12 +20,25 @@ public class BookingLifecycleService : IBookingLifecycleService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUnitAvailabilityService _availabilityService;
     private readonly IInvoiceService _invoiceService;
+    private readonly INotificationService _notificationService;
+    private readonly ILogger<BookingLifecycleService> _logger;
 
-    public BookingLifecycleService(IUnitOfWork unitOfWork, IUnitAvailabilityService availabilityService, IInvoiceService invoiceService)
+    private const string InAppChannel = "in_app";
+    private const string BookingConfirmedTemplateCode = "booking_confirmed";
+    private const string BookingStatusChangedTemplateCode = "booking_status_changed";
+
+    public BookingLifecycleService(
+        IUnitOfWork unitOfWork,
+        IUnitAvailabilityService availabilityService,
+        IInvoiceService invoiceService,
+        INotificationService notificationService,
+        ILogger<BookingLifecycleService> logger)
     {
         _unitOfWork = unitOfWork;
         _availabilityService = availabilityService;
         _invoiceService = invoiceService;
+        _notificationService = notificationService;
+        _logger = logger;
     }
 
     public async Task<Booking> TransitionAsync(
@@ -43,12 +59,16 @@ public class BookingLifecycleService : IBookingLifecycleService
                 $"Allowed transitions: {(allowed.Length > 0 ? string.Join(", ", allowed) : "none (terminal state)")}.");
         }
 
-        return targetStatus switch
+        var transitionedBooking = targetStatus switch
         {
             BookingStatus.Confirmed => await ConfirmInternalAsync(booking, changedByAdminUserId, notes, cancellationToken),
             BookingStatus.Cancelled => await CancelInternalAsync(booking, changedByAdminUserId, notes, cancellationToken),
             _ => await ApplySimpleTransitionAsync(booking, targetStatus, changedByAdminUserId, notes, cancellationToken),
         };
+
+        await NotifyClientOfStatusChangeAsync(transitionedBooking, targetStatus, cancellationToken);
+
+        return transitionedBooking;
     }
 
     public async Task<Booking> ConfirmAsync(
@@ -254,5 +274,68 @@ public class BookingLifecycleService : IBookingLifecycleService
         if (hasOverlap)
             throw new ConflictException(
                 $"Cannot confirm: the requested dates overlap with an existing booking on unit {unitId}");
+    }
+
+    private async Task NotifyClientOfStatusChangeAsync(
+        Booking booking,
+        BookingStatus targetStatus,
+        CancellationToken cancellationToken)
+    {
+        var templateCode = targetStatus == BookingStatus.Confirmed
+            ? BookingConfirmedTemplateCode
+            : BookingStatusChangedTemplateCode;
+
+        try
+        {
+            var variables = await BuildNotificationVariablesAsync(booking, targetStatus, cancellationToken);
+            await _notificationService.CreateForClientAsync(
+                templateCode,
+                InAppChannel,
+                booking.ClientId,
+                variables,
+                scheduledAt: null,
+                cancellationToken);
+        }
+        catch (Exception ex) when (ex is NotFoundException or BusinessValidationException or ConflictException)
+        {
+            _logger.LogWarning(
+                ex,
+                "Booking {BookingId} transitioned to {BookingStatus}, but client notification template {TemplateCode} could not be used.",
+                booking.Id,
+                targetStatus,
+                templateCode);
+        }
+    }
+
+    private async Task<IReadOnlyDictionary<string, string>> BuildNotificationVariablesAsync(
+        Booking booking,
+        BookingStatus targetStatus,
+        CancellationToken cancellationToken)
+    {
+        var unitName = booking.Unit?.Name;
+        if (string.IsNullOrWhiteSpace(unitName))
+        {
+            var unit = await _unitOfWork.Units.GetByIdAsync(booking.UnitId, cancellationToken);
+            unitName = unit?.Name;
+        }
+
+        var clientName = booking.Client?.Name;
+        if (string.IsNullOrWhiteSpace(clientName))
+        {
+            var client = await _unitOfWork.Clients.GetByIdAsync(booking.ClientId, cancellationToken);
+            clientName = client?.Name;
+        }
+
+        return new Dictionary<string, string>
+        {
+            ["booking_id"] = booking.Id.ToString(),
+            ["booking_short_id"] = booking.Id.ToString()[..8].ToUpperInvariant(),
+            ["booking_status"] = targetStatus.ToString(),
+            ["client_name"] = clientName ?? "Client",
+            ["unit_name"] = unitName ?? "your unit",
+            ["check_in_date"] = booking.CheckInDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            ["check_out_date"] = booking.CheckOutDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            ["final_amount"] = booking.FinalAmount.ToString("N2", CultureInfo.InvariantCulture)
+        };
     }
 }

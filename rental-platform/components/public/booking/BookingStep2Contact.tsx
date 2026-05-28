@@ -35,6 +35,18 @@ export function BookingStep2Contact({
   const [activeTab, setActiveTab] = useState<ContactTab>("register");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  const handleSignedInClientContinue = () => {
+    if (!user) return;
+
+    onContactSet({
+      clientId: user.userId,
+      contactName: user.name?.trim() || user.identifier,
+      contactPhone: user.identifier,
+      contactEmail: null,
+    });
+    onContinue();
+  };
+
   // ─── Case 1: Already logged in as Client → Auto-skip ───
   if (subjectType === "Client" && user) {
     return (
@@ -57,7 +69,7 @@ export function BookingStep2Contact({
             variant="primary"
             size="lg"
             className="flex-1"
-            onClick={onContinue}
+            onClick={handleSignedInClientContinue}
           >
             Continue to Review
           </Button>

@@ -57,6 +57,19 @@
       [...queryKeys.bookings.all, id, "payments"] as const,
   },
 
+  clientBookings: {
+    all: ["client-bookings"] as const,
+    list: (filters?: object) =>
+      [...queryKeys.clientBookings.all, "list", filters ?? {}] as const,
+    detail: (id: string) =>
+      [...queryKeys.clientBookings.all, "detail", id] as const,
+  },
+
+  clientProfile: {
+    all: ["client-profile"] as const,
+    detail: () => [...queryKeys.clientProfile.all, "detail"] as const,
+  },
+
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CRM LEADS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   crm: {
     all: ["crm"] as const,

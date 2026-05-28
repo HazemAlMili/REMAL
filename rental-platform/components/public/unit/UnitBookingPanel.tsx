@@ -12,7 +12,7 @@ import {
 } from "@/lib/hooks/usePublic";
 import { Button } from "@/components/ui/Button";
 import { PricingBreakdown } from "./PricingBreakdown";
-import { formatCurrency } from "@/lib/utils/format";
+import { formatCurrency, getTodayDateString } from "@/lib/utils/format";
 import { ShieldCheck, AlertCircle, Calendar } from "lucide-react";
 
 interface UnitBookingPanelProps {
@@ -52,8 +52,8 @@ export function UnitBookingPanel({
     );
   };
 
-  // Get today's date in YYYY-MM-DD format for min date
-  const today = new Date().toISOString().split("T")[0];
+  // Get today's local calendar date in YYYY-MM-DD format for min date.
+  const today = getTodayDateString();
 
   return (
     <div className="sticky top-24 rounded-2xl border border-neutral-100 bg-white p-6 shadow-card">

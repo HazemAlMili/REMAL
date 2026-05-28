@@ -20,7 +20,7 @@ interface PaymentsTableProps {
   isLoading: boolean;
   pagination: PaginationMeta;
   onPageChange: (page: number) => void;
-  onMarkPaid: (id: string) => void;
+  onMarkPaid: (payment: PaymentResponse) => void;
   onMarkFailed: (id: string) => void;
   onCancel: (id: string) => void;
 }
@@ -80,7 +80,7 @@ export function PaymentsTable({
                   ] ?? payment.paymentMethod}
                 </td>
                 <td className="p-4 font-mono text-neutral-500">
-                  {payment.referenceNumber ?? "â€”"}
+                  {payment.referenceNumber ?? "-"}
                 </td>
                 <td className="p-4">
                   <StatusBadge
@@ -96,7 +96,7 @@ export function PaymentsTable({
                   {formatDate(payment.createdAt)}
                 </td>
                 <td className="p-4 text-right">
-                  {payment.paymentStatus === "Pending" && (
+                  {payment.paymentStatus?.trim().toLowerCase() === "pending" && (
                     <PaymentActions
                       payment={payment}
                       onMarkPaid={onMarkPaid}
@@ -123,13 +123,13 @@ function PaymentActions({
   onCancel,
 }: {
   payment: PaymentResponse;
-  onMarkPaid: (id: string) => void;
+  onMarkPaid: (payment: PaymentResponse) => void;
   onMarkFailed: (id: string) => void;
   onCancel: (id: string) => void;
 }) {
   return (
     <div className="flex justify-end gap-2">
-      <Button size="sm" onClick={() => onMarkPaid(payment.id)}>
+      <Button size="sm" onClick={() => onMarkPaid(payment)}>
         Mark Paid
       </Button>
       <Button

@@ -8,6 +8,7 @@ using RentalPlatform.Business.Exceptions;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Business.Models;
 using RentalPlatform.Data;
+using RentalPlatform.Shared.Constants;
 
 namespace RentalPlatform.Business.Services;
 
@@ -61,6 +62,34 @@ public class UnitAvailabilityService : IUnitAvailabilityService
                 EndDate = endDate,
                 IsAvailable = false,
                 Reason = "date_blocked",
+                BlockedDates = blockedDates.OrderBy(d => d).ToList()
+            };
+        }
+
+        var holdingStatuses = BookingStatusTransitions.HoldingStatuses;
+        var overlappingBookings = await _unitOfWork.Bookings.Query()
+            .Where(b => b.UnitId == unitId)
+            .Where(b => holdingStatuses.Contains(b.BookingStatus))
+            .Where(b => startDate < b.CheckOutDate && endDate > b.CheckInDate)
+            .ToListAsync(cancellationToken);
+
+        if (overlappingBookings.Any())
+        {
+            for (var date = startDate; date < endDate; date = date.AddDays(1))
+            {
+                if (overlappingBookings.Any(b => date >= b.CheckInDate && date < b.CheckOutDate))
+                {
+                    blockedDates.Add(date);
+                }
+            }
+
+            return new UnitAvailabilityResult
+            {
+                UnitId = unitId,
+                StartDate = startDate,
+                EndDate = endDate,
+                IsAvailable = false,
+                Reason = "date_booked",
                 BlockedDates = blockedDates.OrderBy(d => d).ToList()
             };
         }

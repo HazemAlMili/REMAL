@@ -83,6 +83,14 @@ public class CrmLeadService : ICrmLeadService
         var normalizedSource = ValidateAndNormalizeSource(source);
 
         await ValidateOptionalReferencesAsync(clientId, targetUnitId, assignedAdminUserId, cancellationToken);
+        await EnsureNoDuplicateOpenLeadAsync(
+            clientId,
+            targetUnitId,
+            contactPhone,
+            desiredCheckInDate,
+            desiredCheckOutDate,
+            guestCount,
+            cancellationToken);
 
         var lead = new CrmLead
         {
@@ -317,5 +325,34 @@ public class CrmLeadService : ICrmLeadService
             if (!adminExists)
                 throw new NotFoundException($"Active admin user with ID {assignedAdminUserId.Value} not found");
         }
+    }
+
+    private async Task EnsureNoDuplicateOpenLeadAsync(
+        Guid? clientId,
+        Guid? targetUnitId,
+        string contactPhone,
+        DateOnly? desiredCheckInDate,
+        DateOnly? desiredCheckOutDate,
+        int? guestCount,
+        CancellationToken cancellationToken)
+    {
+        if (!targetUnitId.HasValue || !desiredCheckInDate.HasValue || !desiredCheckOutDate.HasValue || !guestCount.HasValue)
+            return;
+
+        var normalizedPhone = contactPhone.Trim();
+        var openStatuses = new[] { LeadStatus.New, LeadStatus.Contacted, LeadStatus.Qualified };
+
+        var duplicateExists = await _unitOfWork.CrmLeads.Query()
+            .AnyAsync(l =>
+                l.TargetUnitId == targetUnitId.Value &&
+                l.DesiredCheckInDate == desiredCheckInDate.Value &&
+                l.DesiredCheckOutDate == desiredCheckOutDate.Value &&
+                l.GuestCount == guestCount.Value &&
+                openStatuses.Contains(l.LeadStatus) &&
+                (clientId.HasValue ? l.ClientId == clientId.Value : l.ContactPhone == normalizedPhone),
+                cancellationToken);
+
+        if (duplicateExists)
+            throw new ConflictException("A matching booking request is already open for these dates.");
     }
 }

@@ -75,5 +75,5 @@ export const publicService = {
   submitBookingRequest: (
     data: PublicCreateCrmLeadRequest
   ): Promise<PublicCreateCrmLeadResponse> =>
-    api.post(endpoints.crmLeads.create, data),
+    api.post(endpoints.crmLeads.publicCreate, data),
 };

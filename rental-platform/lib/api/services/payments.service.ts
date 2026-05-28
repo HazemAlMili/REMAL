@@ -2,6 +2,7 @@ import api from "@/lib/api/axios";
 import { endpoints } from "@/lib/api/endpoints";
 import type {
   PaymentResponse,
+  MarkPaymentPaidRequest,
   MarkPaymentFailedRequest,
   CancelPaymentRequest,
 } from "@/lib/types/booking.types";
@@ -19,9 +20,10 @@ export const paymentsService = {
   getById: (id: string): Promise<PaymentResponse> =>
     api.get(endpoints.payments.byId(id)),
 
-  // Mark payment as paid (POST with empty body)
-  markPaid: (id: string): Promise<PaymentResponse> =>
-    api.post(endpoints.payments.markPaid(id), {}),
+  markPaid: (
+    id: string,
+    data?: MarkPaymentPaidRequest
+  ): Promise<PaymentResponse> => api.post(endpoints.payments.markPaid(id), data ?? {}),
 
   // Mark payment as failed
   markFailed: (

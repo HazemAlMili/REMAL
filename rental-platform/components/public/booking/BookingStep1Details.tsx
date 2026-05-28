@@ -13,6 +13,7 @@ import {
   usePricingCalculate,
   useAvailabilityCheck,
 } from "@/lib/hooks/usePublic";
+import { formatDateForApi, parseDateOnly } from "@/lib/utils/format";
 import { ShieldCheck, AlertCircle } from "lucide-react";
 import type {
   PublicUnitDetail,
@@ -45,16 +46,18 @@ export function BookingStep1Details({
     from: Date | null;
     to: Date | null;
   }>({
-    from: startDate ? new Date(startDate) : null,
-    to: endDate ? new Date(endDate) : null,
+    from: startDate ? parseDateOnly(startDate) : null,
+    to: endDate ? parseDateOnly(endDate) : null,
   });
 
   // Sync local date state to parent
   useEffect(() => {
     const newStart: string | null = dateRange.from
-      ? formatISO(dateRange.from)
+      ? formatDateForApi(dateRange.from)
       : null;
-    const newEnd: string | null = dateRange.to ? formatISO(dateRange.to) : null;
+    const newEnd: string | null = dateRange.to
+      ? formatDateForApi(dateRange.to)
+      : null;
     onDatesChange(newStart, newEnd);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateRange]);
@@ -204,10 +207,4 @@ export function BookingStep1Details({
       </p>
     </div>
   );
-}
-
-function formatISO(date: Date): string {
-  const isoString = date.toISOString();
-  const datePart = isoString.split("T")[0];
-  return datePart!;
 }

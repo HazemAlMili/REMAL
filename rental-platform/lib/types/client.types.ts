@@ -41,6 +41,22 @@ export interface CreateClientRequest {
   email?: string;
 }
 
+export interface ClientAccountProfileResponse {
+  id: string;
+  name: string;
+  phone: string;
+  email: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpdateClientProfileRequest {
+  name: string;
+  phone: string;
+  email?: string | null;
+}
+
 // ── Paginated Clients ──
 export interface PaginatedClients {
   items: ClientListItemResponse[];
@@ -48,16 +64,9 @@ export interface PaginatedClients {
 }
 
 // ═══════════════════════════════════════════════════════════
-// CLIENT BOOKINGS — P10 corrected field names
-// ⚠️ BACKEND GAP: No GET /api/client/bookings endpoint documented
-// This is the EXPECTED shape when the endpoint is added
+// CLIENT BOOKINGS
 // ═══════════════════════════════════════════════════════════
 
-/**
- * Client Booking — P10 corrected field names
- * This is the EXPECTED shape when GET /api/client/bookings is added.
- * Currently BLOCKED — no documented client endpoint exists.
- */
 export interface ClientBooking {
   id: string; // P10: NOT 'bookingId'
   clientId: string; // P10: FLAT — not nested object
@@ -107,21 +116,9 @@ export interface ClientReviewByBookingResponse {
 }
 
 // ═══════════════════════════════════════════════════════════
-// CLIENT NOTIFICATIONS — P27 corrected field names
-// ⚠️ BACKEND GAP: No GET /api/client/me/notifications/... endpoints documented
-// This is the EXPECTED shape when the endpoints are added
+// CLIENT NOTIFICATIONS
 // ═══════════════════════════════════════════════════════════
 
-/**
- * Client Notification Item — P27 corrected
- * Per API Reference Section 32 (admin version — client version will likely mirror)
- *
- * P27 corrections:
- * - subject (NOT 'title')
- * - readAt: string | null (NOT 'isRead: boolean')
- * - notificationStatus (was missing)
- * - createdAt (was missing)
- */
 export interface ClientNotification {
   id: string;
   subject: string; // P27: NOT 'title'

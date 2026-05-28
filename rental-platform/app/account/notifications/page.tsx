@@ -1,47 +1,50 @@
-// ═══════════════════════════════════════════════════════════
-// app/account/notifications/page.tsx
-// Client notification inbox — currently shows empty/placeholder state
-// ═══════════════════════════════════════════════════════════
-
 "use client";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Bell, CheckCheck } from "lucide-react";
+import {
+  useClientNotificationInbox,
+  useClientNotificationSummary,
+  useMarkAllClientNotificationsRead,
+  useMarkClientNotificationRead,
+} from "@/lib/hooks/useNotifications";
+import { formatDate } from "@/lib/utils/format";
+import { Bell, Check, CheckCheck } from "lucide-react";
 
 type NotificationFilter = "all" | "unread";
 
 export default function ClientNotificationsPage() {
   const [activeFilter, setActiveFilter] = useState<NotificationFilter>("all");
-
-  // ⚠️ BACKEND GAP: No client notification endpoints documented.
-  // GET /api/internal/me/notifications/inbox requires admin auth.
-  // The page structure is built but data integration is BLOCKED.
-  //
-  // When the backend adds client notification endpoints:
-  // 1. Add useClientNotifications() hook call here
-  // 2. Pass notifications to NotificationCard components
-  // 3. Use P27-corrected field names: subject, readAt, notificationStatus, createdAt
-
-  const notifications: never[] = []; // Empty until backend endpoint is available
-  const unreadCount = 0;
+  const unreadOnly = activeFilter === "unread";
+  const { data: summary } = useClientNotificationSummary();
+  const { data: notifications = [], isLoading, isError } = useClientNotificationInbox({
+    unreadOnly,
+    page: 1,
+    pageSize: 50,
+  });
+  const markReadMutation = useMarkClientNotificationRead();
+  const markAllReadMutation = useMarkAllClientNotificationsRead();
+  const unreadCount = summary?.unreadCount ?? 0;
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold text-neutral-900">
-          Notifications
-        </h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-bold text-neutral-900">
+            Notifications
+          </h1>
+          <p className="mt-1 text-sm text-neutral-500">
+            {unreadCount} unread of {summary?.totalCount ?? 0} total
+          </p>
+        </div>
 
         {unreadCount > 0 && (
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => {
-              // Mark all as read (when endpoint available)
-              // markAllReadMutation.mutate(unreadNotificationIds)
-            }}
+            onClick={() => markAllReadMutation.mutate()}
+            isLoading={markAllReadMutation.isPending}
           >
             <CheckCheck className="mr-2 h-4 w-4" />
             Mark all as read
@@ -49,7 +52,6 @@ export default function ClientNotificationsPage() {
         )}
       </div>
 
-      {/* Filter Tabs */}
       <div className="flex border-b border-neutral-200">
         <button
           onClick={() => setActiveFilter("all")}
@@ -73,69 +75,71 @@ export default function ClientNotificationsPage() {
         </button>
       </div>
 
-      {/* Notification List */}
-      {notifications.length > 0 ? (
+      {isLoading && (
         <div className="space-y-3">
-          {/* {notifications
-            .filter(n => activeFilter === 'all' || n.readAt === null)   // P27: readAt === null
-            .map(notification => (
-              <NotificationCard
-                key={notification.id}
-                notification={notification}
-                onMarkRead={(id) => markReadMutation.mutate(id)}
-              />
-            ))
-          } */}
+          {[0, 1, 2, 3].map((item) => (
+            <div key={item} className="h-24 animate-pulse rounded-xl bg-neutral-100" />
+          ))}
         </div>
-      ) : (
+      )}
+
+      {isError && (
         <EmptyState
-          title="No notifications yet"
-          description="When you receive booking updates and reminders, they'll appear here."
+          title="Notifications could not load"
+          description="Refresh the page or try again after a moment."
           icon={<Bell className="h-12 w-12" />}
-          action={
-            <Button onClick={() => (window.location.href = "/units")}>
-              Browse Properties
-            </Button>
-          }
         />
       )}
 
-      {/* ⚠️ DEVELOPMENT NOTE — Remove when backend endpoints are added */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
-          <p className="font-medium text-amber-800">
-            ⚠️ Backend Endpoints Pending
-          </p>
-          <p className="mt-1 text-amber-700">
-            Client notifications require documented endpoints:
-          </p>
-          <ul className="mt-2 list-inside list-disc space-y-1 text-amber-700">
-            <li>
-              <code className="rounded bg-amber-100 px-1">
-                GET /api/client/me/notifications/inbox
-              </code>
-            </li>
-            <li>
-              <code className="rounded bg-amber-100 px-1">
-                GET /api/client/me/notifications/inbox/summary
-              </code>
-            </li>
-            <li>
-              <code className="rounded bg-amber-100 px-1">
-                POST /api/client/me/notifications/inbox/{"{id}"}/read
-              </code>
-            </li>
-          </ul>
-          <p className="mt-2 text-amber-700">
-            P27 field names:{" "}
-            <code className="rounded bg-amber-100 px-1">subject</code> (not
-            title), <code className="rounded bg-amber-100 px-1">readAt</code>{" "}
-            (not isRead),{" "}
-            <code className="rounded bg-amber-100 px-1">
-              notificationStatus
-            </code>
-            , <code className="rounded bg-amber-100 px-1">createdAt</code>.
-          </p>
+      {!isLoading && !isError && notifications.length === 0 && (
+        <EmptyState
+          title={unreadOnly ? "No unread notifications" : "No notifications yet"}
+          description="Booking updates and reminders will appear here."
+          icon={<Bell className="h-12 w-12" />}
+        />
+      )}
+
+      {!isLoading && !isError && notifications.length > 0 && (
+        <div className="space-y-3">
+          {notifications.map((notification) => {
+            const isUnread = !notification.readAt;
+
+            return (
+              <article
+                key={notification.notificationId}
+                className="rounded-xl border border-neutral-100 bg-white p-5 shadow-card"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      {isUnread && <span className="h-2 w-2 rounded-full bg-primary-500" />}
+                      <h2 className="text-sm font-semibold text-neutral-900">
+                        {notification.subject ?? "Notification"}
+                      </h2>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-neutral-600">
+                      {notification.body}
+                    </p>
+                    <p className="mt-3 text-xs text-neutral-400">
+                      {formatDate(notification.createdAt)}
+                    </p>
+                  </div>
+
+                  {isUnread && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => markReadMutation.mutate(notification.notificationId)}
+                      isLoading={markReadMutation.isPending}
+                    >
+                      <Check className="mr-2 h-4 w-4" />
+                      Mark read
+                    </Button>
+                  )}
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
     </div>

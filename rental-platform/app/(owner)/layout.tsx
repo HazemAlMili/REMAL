@@ -14,7 +14,7 @@ export default function OwnerLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { subjectType, accessToken, setAccessToken } = useAuthStore();
+  const { subjectType, accessToken, setAuth, clearAuth } = useAuthStore();
   // Start ready only if we already have a token in memory (in-app navigation).
   // On cold start (page refresh) the token is null until refresh completes.
   const [isAuthReady, setIsAuthReady] = useState(!!accessToken);
@@ -36,14 +36,23 @@ export default function OwnerLayout({
     // so queries never receive a 401 on initial page load.
     authService
       .refresh()
-      .then((token) => {
-        if (token) {
-          setAccessToken(token);
-        } else {
+      .then((auth) => {
+        if (!auth || auth.subjectType !== "Owner") {
+          clearAuth();
           router.replace(ROUTES.auth.ownerLogin);
+          return;
         }
+
+        setAuth({
+          accessToken: auth.accessToken,
+          expiresInSeconds: auth.expiresInSeconds,
+          subjectType: auth.subjectType,
+          user: auth.user,
+          role: "Owner",
+        });
       })
       .catch(() => {
+        clearAuth();
         router.replace(ROUTES.auth.ownerLogin);
       })
       .finally(() => {

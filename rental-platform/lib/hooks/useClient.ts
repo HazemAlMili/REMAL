@@ -4,9 +4,46 @@
 // ═══════════════════════════════════════════════════════════
 
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { clientService } from "@/lib/api/services/client.service";
 import { queryKeys } from "@/lib/utils/query-keys";
+import type { BookingListFilters } from "@/lib/types/booking.types";
+import type { UpdateClientProfileRequest } from "@/lib/types/client.types";
+import { toastSuccess } from "@/lib/utils/toast";
+
+export function useClientProfile() {
+  return useQuery({
+    queryKey: queryKeys.clientProfile.detail(),
+    queryFn: () => clientService.getProfile(),
+    staleTime: 1000 * 60,
+    retry: false,
+  });
+}
+
+export function useUpdateClientProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateClientProfileRequest) =>
+      clientService.updateProfile(data),
+    onSuccess: () => {
+      toastSuccess("Profile updated successfully.");
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.clientProfile.detail(),
+      });
+    },
+  });
+}
+
+export function useClientBookings(filters?: BookingListFilters) {
+  return useQuery({
+    queryKey: queryKeys.clientBookings.list(filters),
+    queryFn: () => clientService.getClientBookings(filters),
+    refetchOnWindowFocus: true,
+    staleTime: 1000 * 30,
+    retry: false,
+  });
+}
 
 /**
  * Check if a review exists for a specific booking.

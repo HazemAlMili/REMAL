@@ -69,7 +69,8 @@ export const queryKeys = {
     ownerInboxSummary: () =>
       ["notifications", "owner", "inbox", "summary"] as const,
     ownerPreferences: () => ["notifications", "owner", "preferences"] as const,
-    clientInbox: () => ["notifications", "client", "inbox"] as const,
+    clientInbox: (filters?: object) =>
+      ["notifications", "client", "inbox", filters ?? {}] as const,
     clientInboxSummary: () =>
       ["notifications", "client", "inbox", "summary"] as const,
     clientPreferences: () =>

@@ -9,13 +9,14 @@ import { AccountSidebar } from "@/components/public/account/AccountSidebar";
 import { Skeleton } from "@/components/ui/Skeleton";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarCheck, Star, Bell, Home } from "lucide-react";
+import { CalendarCheck, Star, Bell, Home, User } from "lucide-react";
 
 const MOBILE_NAV_ITEMS = [
   { href: "/account", label: "Dashboard", icon: Home },
   { href: "/account/bookings", label: "Bookings", icon: CalendarCheck },
   { href: "/account/reviews", label: "Reviews", icon: Star },
   { href: "/account/notifications", label: "Notifications", icon: Bell },
+  { href: "/account/profile", label: "Profile", icon: User },
 ];
 
 function MobileAccountNav() {

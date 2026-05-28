@@ -5,6 +5,7 @@ import { toastSuccess, toastError } from "@/lib/utils/toast";
 import { ApiError } from "@/lib/api/api-error";
 import type { PaymentListFilters } from "@/lib/types/finance.types";
 import type {
+  MarkPaymentPaidRequest,
   MarkPaymentFailedRequest,
   CancelPaymentRequest,
 } from "@/lib/types/booking.types";
@@ -31,13 +32,10 @@ export function usePaymentDetail(id: string) {
 export function useMarkPaymentPaid() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => paymentsService.markPaid(id),
+    mutationFn: ({ id, data }: { id: string; data?: MarkPaymentPaidRequest }) =>
+      paymentsService.markPaid(id, data),
     onSuccess: async () => {
-      console.log(
-        "[useMarkPaymentPaid] Payment marked as paid, invalidating queries..."
-      );
       toastSuccess("Payment marked as paid successfully");
-      // Invalidate all related queries and force refetch
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: queryKeys.payments.all,
@@ -52,10 +50,8 @@ export function useMarkPaymentPaid() {
           refetchType: "active",
         }),
       ]);
-      console.log("[useMarkPaymentPaid] All queries invalidated and refetched");
     },
     onError: (error: unknown) => {
-      console.error("[useMarkPaymentPaid] Error:", error);
       if (error instanceof ApiError) {
         toastError(error.message || "Failed to mark payment as paid");
       } else {

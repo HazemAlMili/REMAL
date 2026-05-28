@@ -102,6 +102,16 @@ export const endpoints = {
       `/api/internal/bookings/${id}/status-history`,
   },
 
+  clientBookings: {
+    list: "/api/client/bookings",
+    byId: (id: string) => `/api/client/bookings/${id}`,
+  },
+
+  clientProfile: {
+    get: "/api/client/profile",
+    update: "/api/client/profile",
+  },
+
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ BOOKING LIFECYCLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   bookingLifecycle: {
     confirm: (id: string) => `/api/internal/bookings/${id}/confirm`,
@@ -117,6 +127,7 @@ export const endpoints = {
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CRM LEADS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   crmLeads: {
+    publicCreate: "/api/crm/leads",
     create: "/api/internal/crm/leads", // Internal endpoint for admin use
     list: "/api/internal/crm/leads",
     byId: (id: string) => `/api/internal/crm/leads/${id}`,
@@ -228,10 +239,11 @@ export const endpoints = {
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEWS â€” PUBLIC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   publicReviews: {
-    byUnitSummary: (unitId: string) => `/api/units/${unitId}/reviews/summary`,
-    byUnitList: (unitId: string) => `/api/units/${unitId}/reviews`,
+    byUnitSummary: (unitId: string) =>
+      `/api/public/units/${unitId}/reviews/summary`,
+    byUnitList: (unitId: string) => `/api/public/units/${unitId}/reviews`,
     byUnitDetail: (unitId: string, reviewId: string) =>
-      `/api/units/${unitId}/reviews/${reviewId}`,
+      `/api/public/units/${unitId}/reviews/${reviewId}`,
   },
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEWS â€” CLIENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

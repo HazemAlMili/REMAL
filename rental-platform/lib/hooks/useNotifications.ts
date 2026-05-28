@@ -6,6 +6,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { notificationsService } from "../api/services/notifications.service";
+import type { NotificationInboxParams } from "../api/services/notifications.service";
 import { queryKeys } from "./query-keys";
 import type {
   UpsertNotificationPreferenceRequest,
@@ -164,10 +165,10 @@ export function useUpdateOwnerNotificationPreference() {
 
 // ── Client Inbox (for Wave 7) ──
 
-export function useClientNotificationInbox() {
+export function useClientNotificationInbox(params?: NotificationInboxParams) {
   return useQuery({
-    queryKey: queryKeys.notifications.clientInbox(),
-    queryFn: () => notificationsService.getClientInbox(),
+    queryKey: queryKeys.notifications.clientInbox(params),
+    queryFn: () => notificationsService.getClientInbox(params),
     staleTime: 0,
   });
 }
@@ -189,7 +190,22 @@ export function useMarkClientNotificationRead() {
       notificationsService.markClientRead(notificationId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.notifications.clientInbox(),
+        queryKey: ["notifications", "client", "inbox"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notifications.clientInboxSummary(),
+      });
+    },
+  });
+}
+
+export function useMarkAllClientNotificationsRead() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => notificationsService.markAllClientRead(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["notifications", "client", "inbox"],
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.notifications.clientInboxSummary(),

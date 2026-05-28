@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 :root {
+  /* Offline-safe font tokens. Avoid next/font/google build-time network fetches. */
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-body: "Segoe UI", Arial, sans-serif;
+  --font-ui: "Segoe UI", Arial, sans-serif;
+  --font-accent: "Segoe UI", Arial, sans-serif;
+
   /* Primary — Warm Terracotta */
   --color-primary-50:   #FFF8F5;
   --color-primary-100:  #FFE8DF;

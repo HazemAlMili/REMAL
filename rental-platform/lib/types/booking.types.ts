@@ -46,7 +46,7 @@ export type InvoiceStatus =
   | "Cancelled"
   | "Superseded";
 
-export type PaymentStatus = "Pending" | "Paid" | "Failed" | "Cancelled";
+export type PaymentStatus = "pending" | "paid" | "failed" | "cancelled";
 
 export interface BookingListFilters {
   page?: number;
@@ -184,7 +184,10 @@ export interface CreatePaymentRequest {
   notes?: string;
 }
 
-export type MarkPaymentPaidRequest = Record<string, never>;
+export interface MarkPaymentPaidRequest {
+  referenceNumber?: string;
+  notes?: string;
+}
 
 export interface MarkPaymentFailedRequest {
   notes?: string;

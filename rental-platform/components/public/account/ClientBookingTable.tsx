@@ -4,22 +4,14 @@
 // ═══════════════════════════════════════════════════════════
 
 "use client";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 import Link from "next/link";
 import { formatCurrency, formatDate, getNights } from "@/lib/utils/format";
+import { BOOKING_STATUSES } from "@/lib/constants/booking-statuses";
+import { isBookingStatus } from "@/lib/utils/status";
 import { Star } from "lucide-react";
 import type { ClientBooking } from "@/lib/types/client.types";
-import type { BadgeVariant } from "@/components/ui/Badge";
-
-const BOOKING_STATUS_VARIANT: Record<string, BadgeVariant> = {
-  Pending: "warning",
-  Confirmed: "info",
-  CheckIn: "success",
-  Completed: "success",
-  Cancelled: "danger",
-  LeftEarly: "danger",
-};
 
 interface ClientBookingTableProps {
   bookings: ClientBooking[];
@@ -69,7 +61,10 @@ export function ClientBookingTable({
               booking.checkInDate,
               booking.checkOutDate
             );
-            const isCompleted = booking.bookingStatus === "completed"; // P10: bookingStatus
+            const isCompleted = isBookingStatus(
+              booking.bookingStatus,
+              BOOKING_STATUSES.Completed
+            );
             const reviewInfo = reviewStatuses[booking.id]; // P10: id, NOT bookingId
             const isLoadingReview = reviewLoadingIds.has(booking.id);
 
@@ -110,13 +105,7 @@ export function ClientBookingTable({
 
                 {/* Status */}
                 <td className="px-4 py-3 text-center">
-                  <Badge
-                    variant={
-                      BOOKING_STATUS_VARIANT[booking.bookingStatus] || "neutral"
-                    }
-                  >
-                    {booking.bookingStatus}
-                  </Badge>
+                  <StatusBadge status={booking.bookingStatus} />
                 </td>
 
                 {/* Action */}

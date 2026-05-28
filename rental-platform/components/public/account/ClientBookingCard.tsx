@@ -5,30 +5,24 @@
 
 "use client";
 import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Button } from "@/components/ui/Button";
 import { formatCurrency, formatDate, getNights } from "@/lib/utils/format";
 import { useBookingReview } from "@/lib/hooks/useClient";
+import { BOOKING_STATUSES } from "@/lib/constants/booking-statuses";
+import { isBookingStatus } from "@/lib/utils/status";
 import { Calendar, Users, Star } from "lucide-react";
 import type { ClientBooking } from "@/lib/types/client.types";
-import type { BadgeVariant } from "@/components/ui/Badge";
-
-// Status badge color mapping (P10: bookingStatus, NOT status)
-const BOOKING_STATUS_VARIANT: Record<string, BadgeVariant> = {
-  Pending: "warning",
-  Confirmed: "info",
-  CheckIn: "success",
-  Completed: "success",
-  Cancelled: "danger",
-  LeftEarly: "danger",
-};
 
 interface ClientBookingCardProps {
   booking: ClientBooking;
 }
 
 export function ClientBookingCard({ booking }: ClientBookingCardProps) {
-  const isCompleted = booking.bookingStatus === "completed"; // P10: bookingStatus
+  const isCompleted = isBookingStatus(
+    booking.bookingStatus,
+    BOOKING_STATUSES.Completed
+  );
   const nightsCount = getNights(booking.checkInDate, booking.checkOutDate);
 
   // Check if review exists (only for Completed bookings)
@@ -46,11 +40,7 @@ export function ClientBookingCard({ booking }: ClientBookingCardProps) {
     <div className="space-y-4 rounded-xl border border-neutral-100 bg-white p-5 shadow-card">
       {/* Status + Date Row */}
       <div className="flex items-center justify-between">
-        <Badge
-          variant={BOOKING_STATUS_VARIANT[booking.bookingStatus] || "neutral"}
-        >
-          {booking.bookingStatus}
-        </Badge>
+        <StatusBadge status={booking.bookingStatus} />
         <span className="text-xs text-neutral-400">
           {formatDate(booking.createdAt)}
         </span>

@@ -10,6 +10,11 @@ import { usePublicAreas } from "@/lib/hooks/usePublic";
 import { ROUTES } from "@/lib/constants/routes";
 import { GuestSelector } from "./GuestSelector";
 import { Search } from "lucide-react";
+import {
+  formatDateForApi,
+  getTodayDateString,
+  parseDateOnly,
+} from "@/lib/utils/format";
 
 export function HeroSearchBar() {
   const router = useRouter();
@@ -26,12 +31,12 @@ export function HeroSearchBar() {
   // Validation
   const checkOutMin = useMemo(() => {
     if (!checkIn) return "";
-    const next = new Date(checkIn);
+    const next = parseDateOnly(checkIn);
     next.setDate(next.getDate() + 1);
-    return next.toISOString().split("T")[0];
+    return formatDateForApi(next);
   }, [checkIn]);
 
-  const todayStr = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const todayStr = useMemo(() => getTodayDateString(), []);
 
   // Reset checkOut if it becomes invalid after checkIn changes
   const handleCheckInChange = (value: string) => {

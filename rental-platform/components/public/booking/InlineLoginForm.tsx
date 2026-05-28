@@ -58,12 +58,11 @@ export function InlineLoginForm({ onSuccess }: InlineLoginFormProps) {
         role: "Client",
       });
 
-      // Pass contact info to parent booking form
-      // Note: login response doesn't include name/email, only user.identifier (phone)
-      // The parent page will need to fetch client profile separately for full details
+      // Pass contact info to parent booking form.
+      // Some deployed API builds may not include name yet, so fall back to phone.
       onSuccess({
         clientId: authData.user.userId,
-        contactName: "", // Will be populated from profile or booking context
+        contactName: authData.user.name?.trim() || authData.user.identifier,
         contactPhone: authData.user.identifier, // Phone number for clients
         contactEmail: null,
       });

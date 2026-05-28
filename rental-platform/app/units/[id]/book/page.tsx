@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════════
 
 "use client";
-import { use, useState, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -215,12 +215,8 @@ function BookingPageContent({ unitId }: { unitId: string }) {
   );
 }
 
-export default function BookingPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id: unitId } = use(params);
+export default function BookingPage({ params }: { params: { id: string } }) {
+  const { id: unitId } = params;
 
   return (
     <Suspense

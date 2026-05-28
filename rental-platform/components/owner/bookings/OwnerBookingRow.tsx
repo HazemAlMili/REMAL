@@ -1,5 +1,6 @@
 import type { OwnerPortalBookingResponse } from "@/lib/types/owner-portal.types";
 import { formatCurrency } from "@/lib/utils/format";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 
 interface OwnerBookingRowProps {
   booking: OwnerPortalBookingResponse;
@@ -16,27 +17,6 @@ export function OwnerBookingRow({ booking, onClick }: OwnerBookingRowProps) {
       day: "numeric",
       year: "numeric",
     });
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "confirmed":
-      case "completed":
-        return "bg-green-100 text-green-700";
-      case "booked":
-      case "checkin":
-        return "bg-blue-100 text-blue-700";
-      case "cancelled":
-      case "notrelevant":
-        return "bg-red-100 text-red-700";
-      case "prospecting":
-      case "relevant":
-      case "noanswer":
-      case "leftearly":
-        return "bg-yellow-100 text-yellow-700";
-      default:
-        return "bg-neutral-100 text-neutral-700";
-    }
   };
 
   return (
@@ -64,14 +44,7 @@ export function OwnerBookingRow({ booking, onClick }: OwnerBookingRowProps) {
         {booking.guestCount}
       </td>
       <td className="px-4 py-3">
-        <span
-          className={[
-            "inline-flex rounded-full px-2.5 py-1 text-xs font-medium",
-            getStatusColor(booking.bookingStatus),
-          ].join(" ")}
-        >
-          {booking.bookingStatus}
-        </span>
+        <StatusBadge status={booking.bookingStatus} />
       </td>
       <td className="px-4 py-3 text-sm font-medium text-neutral-900">
         {formatCurrency(booking.finalAmount)}

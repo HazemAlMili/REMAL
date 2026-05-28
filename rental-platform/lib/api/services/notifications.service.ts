@@ -16,6 +16,12 @@ import type {
   CreateOwnerNotificationRequest,
 } from "@/lib/types/notification.types";
 
+export interface NotificationInboxParams {
+  unreadOnly?: boolean;
+  page?: number;
+  pageSize?: number;
+}
+
 export const notificationsService = {
   // ── Admin inbox ──
   getAdminInbox: (): Promise<NotificationListItemResponse[]> =>
@@ -73,8 +79,10 @@ export const notificationsService = {
     api.post(endpoints.notifications.owner.readAll),
 
   // ── Client inbox (for Wave 7 Guest App) ──
-  getClientInbox: (): Promise<NotificationListItemResponse[]> =>
-    api.get(endpoints.notifications.client.inbox),
+  getClientInbox: (
+    params?: NotificationInboxParams
+  ): Promise<NotificationListItemResponse[]> =>
+    api.get(endpoints.notifications.client.inbox, { params }),
 
   getClientSummary: (): Promise<NotificationRecipientInboxSummaryResponse> =>
     api.get(endpoints.notifications.client.summary),

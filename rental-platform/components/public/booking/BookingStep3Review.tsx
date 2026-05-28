@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════════
 
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useSubmitBookingRequest } from "@/lib/hooks/usePublic";
@@ -66,6 +66,7 @@ export function BookingStep3Review({
 }: BookingStep3ReviewProps) {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const submitInFlightRef = useRef(false);
 
   const submitMutation = useSubmitBookingRequest();
 
@@ -73,6 +74,9 @@ export function BookingStep3Review({
   const nightsCount = getNights(startDate, endDate);
 
   const handleSubmit = async () => {
+    if (submitInFlightRef.current) return;
+
+    submitInFlightRef.current = true;
     setSubmitError(null);
 
     // Build CRM lead request (P06 corrected)
@@ -95,12 +99,16 @@ export function BookingStep3Review({
     } catch (error) {
       const errorData = error as {
         response?: { data?: { message?: string; errors?: string[] } };
+        message?: string;
       };
       const message =
         errorData?.response?.data?.message ||
         errorData?.response?.data?.errors?.[0] ||
+        errorData?.message ||
         "Something went wrong. Please try again.";
       setSubmitError(message);
+    } finally {
+      submitInFlightRef.current = false;
     }
   };
 

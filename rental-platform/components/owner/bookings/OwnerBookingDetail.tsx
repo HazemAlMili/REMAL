@@ -1,5 +1,6 @@
 import type { OwnerPortalBookingResponse } from "@/lib/types/owner-portal.types";
 import { formatCurrency } from "@/lib/utils/format";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 
 interface OwnerBookingDetailProps {
   booking: OwnerPortalBookingResponse;
@@ -30,27 +31,6 @@ export function OwnerBookingDetail({ booking }: OwnerBookingDetailProps) {
     });
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "confirmed":
-      case "completed":
-        return "bg-green-100 text-green-700";
-      case "booked":
-      case "checkin":
-        return "bg-blue-100 text-blue-700";
-      case "cancelled":
-      case "notrelevant":
-        return "bg-red-100 text-red-700";
-      case "prospecting":
-      case "relevant":
-      case "noanswer":
-      case "leftearly":
-        return "bg-yellow-100 text-yellow-700";
-      default:
-        return "bg-neutral-100 text-neutral-700";
-    }
-  };
-
   const nightCount = Math.ceil(
     (checkOutDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24)
   );
@@ -59,14 +39,7 @@ export function OwnerBookingDetail({ booking }: OwnerBookingDetailProps) {
     <div className="space-y-6">
       {/* Status badge */}
       <div>
-        <span
-          className={[
-            "inline-flex rounded-full px-3 py-1.5 text-sm font-medium",
-            getStatusColor(booking.bookingStatus),
-          ].join(" ")}
-        >
-          {booking.bookingStatus}
-        </span>
+        <StatusBadge status={booking.bookingStatus} />
       </div>
 
       {/* Stay details */}

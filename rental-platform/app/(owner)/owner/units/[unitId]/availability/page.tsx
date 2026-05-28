@@ -1,5 +1,4 @@
 "use client";
-import { use } from "react";
 import { useOwnerUnit } from "@/lib/hooks/useOwnerPortal";
 import { OwnerAvailabilityCalendar } from "@/components/owner/units/OwnerAvailabilityCalendar";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -10,9 +9,9 @@ import { ROUTES } from "@/lib/constants/routes";
 export default function OwnerUnitAvailabilityPage({
   params,
 }: {
-  params: Promise<{ unitId: string }>;
+  params: { unitId: string };
 }) {
-  const { unitId } = use(params);
+  const { unitId } = params;
   const { data: unit, isLoading } = useOwnerUnit(unitId);
 
   if (isLoading) {

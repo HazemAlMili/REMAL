@@ -33,13 +33,13 @@ export const authService = {
    * Uses a raw axios instance (not the intercepted `api`) to avoid
    * triggering the 401 interceptor loop.
    */
-  refresh: async (): Promise<string | null> => {
+  refresh: async (): Promise<AuthResponse | null> => {
     const response = await axios.post(
       `${API_URL}${endpoints.auth.refresh}`,
       {},
       { withCredentials: true }
     )
-    return (response.data as ApiResponse<{ accessToken: string }>).data?.accessToken ?? null
+    return (response.data as ApiResponse<AuthResponse>).data ?? null
   },
 }
 

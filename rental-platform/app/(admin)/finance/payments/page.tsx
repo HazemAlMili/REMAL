@@ -15,6 +15,7 @@ import {
 } from "@/lib/hooks/usePayments";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { toast } from "react-hot-toast";
+import type { PaymentResponse } from "@/lib/types/booking.types";
 import type { PaymentListFilters } from "@/lib/types/finance.types";
 
 export default function PaymentsListPage() {
@@ -40,6 +41,12 @@ export default function PaymentsListPage() {
     paymentId: "",
   });
   const [dialogNotes, setDialogNotes] = useState("");
+  const [markPaidDialog, setMarkPaidDialog] = useState<{
+    isOpen: boolean;
+    payment: PaymentResponse | null;
+  }>({ isOpen: false, payment: null });
+  const [paidReferenceNumber, setPaidReferenceNumber] = useState("");
+  const [paidNotes, setPaidNotes] = useState("");
 
   const { data, isLoading } = usePaymentsList(filters);
 
@@ -47,16 +54,45 @@ export default function PaymentsListPage() {
   const markFailedMutation = useMarkPaymentFailed();
   const cancelMutation = useCancelPayment();
 
-  const handleMarkPaid = (paymentId: string) => {
-    markPaidMutation.mutate(paymentId, {
-      onSuccess: () => {
-        toast.success("Payment marked as paid");
+  const openMarkPaidDialog = (payment: PaymentResponse) => {
+    setMarkPaidDialog({ isOpen: true, payment });
+    setPaidReferenceNumber(payment.referenceNumber ?? "");
+    setPaidNotes(payment.notes ?? "");
+  };
+
+  const closeMarkPaidDialog = () => {
+    setMarkPaidDialog({ isOpen: false, payment: null });
+    setPaidReferenceNumber("");
+    setPaidNotes("");
+  };
+
+  const handleMarkPaid = () => {
+    const payment = markPaidDialog.payment;
+    if (!payment) return;
+
+    markPaidMutation.mutate(
+      {
+        id: payment.id,
+        data: {
+          referenceNumber: paidReferenceNumber || undefined,
+          notes: paidNotes || undefined,
+        },
       },
-      onError: (error: unknown) => {
-        const err = error as { response?: { data?: { message?: string } } };
-        toast.error(err.response?.data?.message || "Failed to mark as paid");
-      },
-    });
+      {
+        onSuccess: () => {
+          closeMarkPaidDialog();
+          toast.success("Payment marked as paid");
+        },
+        onError: (error: unknown) => {
+          const err = error as { response?: { data?: { message?: string } } };
+          toast.error(err.response?.data?.message || "Failed to mark as paid");
+        },
+      }
+    );
+  };
+
+  const handleOpenMarkPaid = (payment: PaymentResponse) => {
+    openMarkPaidDialog(payment);
   };
 
   const handleMarkFailed = () => {
@@ -121,20 +157,20 @@ export default function PaymentsListPage() {
           label="Status"
           options={[
             { value: "", label: "All Statuses" },
-            { value: "Pending", label: "Pending" },
-            { value: "Paid", label: "Paid" },
-            { value: "Failed", label: "Failed" },
-            { value: "Cancelled", label: "Cancelled" },
+            { value: "pending", label: "Pending" },
+            { value: "paid", label: "Paid" },
+            { value: "failed", label: "Failed" },
+            { value: "cancelled", label: "Cancelled" },
           ]}
           value={filters.paymentStatus ?? ""}
           onChange={(value) =>
             setFilters({
               ...filters,
               paymentStatus: value as string as
-                | "Pending"
-                | "Paid"
-                | "Failed"
-                | "Cancelled",
+                | "pending"
+                | "paid"
+                | "failed"
+                | "cancelled",
               page: 1,
             })
           }
@@ -184,13 +220,42 @@ export default function PaymentsListPage() {
             }
           }
           onPageChange={(page) => setFilters({ ...filters, page })}
-          onMarkPaid={handleMarkPaid}
+          onMarkPaid={handleOpenMarkPaid}
           onMarkFailed={(id) =>
             setMarkFailedDialog({ isOpen: true, paymentId: id })
           }
           onCancel={(id) => setCancelDialog({ isOpen: true, paymentId: id })}
         />
       )}
+
+      {/* Mark Paid Dialog */}
+      <ConfirmDialog
+        isOpen={markPaidDialog.isOpen}
+        onClose={closeMarkPaidDialog}
+        title="Mark Payment as Paid"
+        onConfirm={handleMarkPaid}
+        isLoading={markPaidMutation.isPending}
+        confirmLabel="Mark Paid"
+        variant="primary"
+      >
+        <div className="space-y-4 py-2">
+          <p className="text-sm text-neutral-600">
+            Add the verified receipt reference before closing this payment.
+          </p>
+          <Input
+            label="Reference Number"
+            placeholder="INSTAPAY-202608-001"
+            value={paidReferenceNumber}
+            onChange={(e) => setPaidReferenceNumber(e.target.value)}
+          />
+          <Textarea
+            label="Notes (optional)"
+            placeholder="Payment verification notes..."
+            value={paidNotes}
+            onChange={(e) => setPaidNotes(e.target.value)}
+          />
+        </div>
+      </ConfirmDialog>
 
       {/* Mark Failed Dialog */}
       <ConfirmDialog

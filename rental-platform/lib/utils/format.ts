@@ -3,7 +3,26 @@ import { differenceInDays, format, parseISO, isValid } from "date-fns";
 export function formatCurrency(amount: number | null | undefined): string {
   if (amount === null || amount === undefined || Number.isNaN(amount))
     return "—";
-  return `${amount.toLocaleString("en-US", { maximumFractionDigits: 2 })} EGP`;
+  return `${amount.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })} EGP`;
+}
+
+export function formatDateForApi(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function getTodayDateString(): string {
+  return formatDateForApi(new Date());
+}
+
+export function parseDateOnly(value: string): Date {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(year!, month! - 1, day);
 }
 
 export function formatDate(input: string | Date | null | undefined): string {

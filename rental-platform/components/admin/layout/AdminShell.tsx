@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { authService } from "@/lib/api/services/auth.service";
+import { ROUTES } from "@/lib/constants/routes";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminHeader } from "./AdminHeader";
 
@@ -14,13 +16,22 @@ import { AdminHeader } from "./AdminHeader";
  * issue API calls, so no child ever sees a 401 on its first request.
  */
 export function AdminShell({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const accessToken = useAuthStore((s) => s.accessToken);
-  const setAccessToken = useAuthStore((s) => s.setAccessToken);
+  const subjectType = useAuthStore((s) => s.subjectType);
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     // Token already present (e.g. navigated client-side after login)
     if (accessToken) {
+      if (subjectType !== "Admin") {
+        const target = subjectType === "Owner" ? ROUTES.owner.dashboard : ROUTES.client.account;
+        router.replace(target);
+        return;
+      }
+
       setIsReady(true);
       return;
     }
@@ -28,18 +39,34 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     // No token → try the refresh cookie before mounting any API-calling child
     authService
       .refresh()
-      .then((token) => {
-        if (token) setAccessToken(token);
+      .then((auth) => {
+        if (!auth) {
+          router.replace(ROUTES.auth.adminLogin);
+          return;
+        }
+
+        setAuth({
+          accessToken: auth.accessToken,
+          expiresInSeconds: auth.expiresInSeconds,
+          subjectType: auth.subjectType,
+          user: auth.user,
+          role: auth.subjectType === "Admin" ? auth.adminRole : null,
+        });
+
+        if (auth.subjectType !== "Admin") {
+          const target = auth.subjectType === "Owner" ? ROUTES.owner.dashboard : ROUTES.client.account;
+          router.replace(target);
+          return;
+        }
+
+        setIsReady(true);
       })
       .catch(() => {
-        // Refresh failed (expired / not logged in).
-        // Leave token null — existing interceptor will redirect to login.
+        clearAuth();
+        router.replace(ROUTES.auth.adminLogin);
       })
-      .finally(() => {
-        setIsReady(true);
-      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [accessToken, subjectType, router, setAuth, clearAuth]);
 
   if (!isReady) {
     return (
