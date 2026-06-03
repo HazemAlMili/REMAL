@@ -10,5 +10,11 @@ public record NotificationListItemResponse(
     string Body,
     DateTime CreatedAt,
     DateTime? SentAt,
-    DateTime? ReadAt
+    DateTime? ReadAt,
+    /// <summary>
+    /// Application-layer sender label. Either the dispatching admin's display name
+    /// or the platform system fallback. Never null or empty.
+    /// </summary>
+    string SenderLabel
 );
+

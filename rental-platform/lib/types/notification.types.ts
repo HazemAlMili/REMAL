@@ -27,6 +27,8 @@ export interface NotificationListItemResponse {
   createdAt: string; // Per P27 — was missing in old tickets
   sentAt: string | null;
   readAt: string | null; // Per P27 — NOT "isRead: boolean". null = unread
+  /** Application-layer sender label: admin name or platform fallback string */
+  senderLabel: string;
 }
 
 // ── Inbox summary (for bell badge count) ──

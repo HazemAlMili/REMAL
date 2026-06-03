@@ -232,7 +232,8 @@ public class NotificationInboxController : ControllerBase
         Body: r.Body,
         CreatedAt: r.CreatedAt,
         SentAt: r.SentAt,
-        ReadAt: r.ReadAt
+        ReadAt: r.ReadAt,
+        SenderLabel: r.SenderLabel
     );
 
     private static NotificationRecipientInboxSummaryResponse MapToSummaryResponse(

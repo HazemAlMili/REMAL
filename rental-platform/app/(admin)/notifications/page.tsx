@@ -6,12 +6,14 @@ import {
   useMarkAdminNotificationRead,
 } from "@/lib/hooks/useNotifications";
 import { NotificationItem } from "@/components/admin/notifications/NotificationItem";
+import { NotificationDetailDrawer } from "@/components/admin/notifications/NotificationDetailDrawer";
 import { DispatchNotificationModal } from "@/components/admin/notifications/DispatchNotificationModal";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { toast } from "react-hot-toast";
+import type { NotificationListItemResponse } from "@/lib/types/notification.types";
 
 export default function AdminNotificationsPage() {
   const { data: notifications, isLoading, error } = useAdminNotificationInbox();
@@ -19,6 +21,8 @@ export default function AdminNotificationsPage() {
   const [markingAllRead, setMarkingAllRead] = useState(false);
   const [markingItemId, setMarkingItemId] = useState<string | null>(null);
   const [dispatchModal, setDispatchModal] = useState(false);
+  const [selectedNotification, setSelectedNotification] =
+    useState<NotificationListItemResponse | null>(null);
   const { canManageAdminUsers } = usePermissions();
 
   // Per P27: readAt === null means unread
@@ -132,17 +136,26 @@ export default function AdminNotificationsPage() {
               key={notification.notificationId}
               notification={notification}
               onMarkRead={handleMarkRead}
+              onSelect={setSelectedNotification}
               isMarkingRead={markingItemId === notification.notificationId}
             />
           ))}
         </div>
       )}
 
-      {/* Dispatch Modal */}
-      <DispatchNotificationModal
-        isOpen={dispatchModal}
-        onClose={() => setDispatchModal(false)}
+      {/* Detail Drawer — opens on notification click */}
+      <NotificationDetailDrawer
+        notification={selectedNotification}
+        onClose={() => setSelectedNotification(null)}
       />
+
+      {/* Dispatch Modal */}
+      {dispatchModal && (
+        <DispatchNotificationModal
+          isOpen={dispatchModal}
+          onClose={() => setDispatchModal(false)}
+        />
+      )}
     </div>
   );
 }

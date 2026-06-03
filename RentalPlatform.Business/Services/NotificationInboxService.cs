@@ -207,7 +207,11 @@ public class NotificationInboxService : INotificationInboxService
 
     private IQueryable<Notification> BuildInboxQuery(bool unreadOnly)
     {
+        // Include AdminUser so we can derive the SenderLabel without any schema change.
+        // The Include is safe because it is a left-join – most notifications are system-generated
+        // and will have AdminUser == null, which we handle with the null-coalescing fallback below.
         var query = _unitOfWork.Notifications.Query()
+            .Include(n => n.AdminUser)
             .Where(n => n.Channel == "in_app"
                      && (n.NotificationStatus == "delivered" || n.NotificationStatus == "read"));
 
@@ -223,23 +227,33 @@ public class NotificationInboxService : INotificationInboxService
         int pageSize,
         CancellationToken cancellationToken)
     {
-        return await query
+        // NOTE: We materialise the query before projecting SenderLabel because EF Core
+        // cannot translate the conditional string formatting into SQL. The result set is
+        // already bounded by page/pageSize so this is safe.
+        var raw = await query
             .OrderByDescending(n => n.CreatedAt)
             .ThenByDescending(n => n.Id)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(n => new NotificationListItemResult
-            {
-                NotificationId = n.Id,
-                Channel = n.Channel,
-                NotificationStatus = n.NotificationStatus,
-                Subject = n.Subject,
-                Body = n.Body,
-                CreatedAt = n.CreatedAt,
-                SentAt = n.SentAt,
-                ReadAt = n.ReadAt
-            })
             .ToListAsync(cancellationToken);
+
+        return raw.Select(n => new NotificationListItemResult
+        {
+            NotificationId = n.Id,
+            Channel = n.Channel,
+            NotificationStatus = n.NotificationStatus,
+            Subject = n.Subject,
+            Body = n.Body,
+            CreatedAt = n.CreatedAt,
+            SentAt = n.SentAt,
+            ReadAt = n.ReadAt,
+            // Derive the sender label from the AdminUser navigation (no FK change needed).
+            // If the notification was dispatched by an admin, show their name; otherwise
+            // show the generic platform label so the UI never renders an empty field.
+            SenderLabel = n.AdminUser != null
+                ? n.AdminUser.Name
+                : "إشعار تلقائي من المنصة"
+        }).ToList();
     }
 
     private async Task<NotificationRecipientInboxSummaryResult> BuildSummaryAsync(
