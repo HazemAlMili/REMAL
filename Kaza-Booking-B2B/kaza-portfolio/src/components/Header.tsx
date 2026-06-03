@@ -72,7 +72,7 @@ export default function Header() {
             {lang === "ar" ? "EN" : "عربي"}
           </button>
           <a
-            href="https://demo-jade-beta.vercel.app/owner-dashboard"
+            href="https://demo-3p09xh5p0-ravensolutions2-2927s-projects.vercel.app/owner-dashboard"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden lg:block text-white hover:text-kaza-gold text-sm font-medium transition-colors"

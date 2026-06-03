@@ -67,7 +67,7 @@ export default function OwnerEarningsPage() {
                 <input
                   type="range"
                   min={500}
-                  max={10000}
+                  max={50000}
                   step={100}
                   value={avgNightRate}
                   onChange={(event) => setAvgNightRate(Number(event.target.value))}
