@@ -5,6 +5,7 @@
 
 import api from "@/lib/api/axios";
 import { endpoints } from "@/lib/api/endpoints";
+import { ApiError } from "@/lib/api/api-error";
 import type { BookingListFilters, PaginatedBookings } from "@/lib/types/booking.types";
 import type {
   ClientAccountProfileResponse,
@@ -36,18 +37,10 @@ export const clientService = {
       const response = await api.get(
         endpoints.clientReviews.byBooking(bookingId)
       );
-      return response.data as ClientReviewByBookingResponse;
+      return response as unknown as ClientReviewByBookingResponse;
     } catch (error: unknown) {
       // 404 means no review exists — return null
-      if (
-        error &&
-        typeof error === "object" &&
-        "response" in error &&
-        error.response &&
-        typeof error.response === "object" &&
-        "status" in error.response &&
-        error.response.status === 404
-      ) {
+      if (error instanceof ApiError && error.status === 404) {
         return null;
       }
       throw error; // Re-throw other errors

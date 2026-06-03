@@ -89,6 +89,9 @@ builder.Services.AddControllers(options =>
         // Serialize enums as strings using their exact names (PascalCase: New, Contacted, etc.)
         // This matches the frontend TypeScript constants
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(namingPolicy: null, allowIntegerValues: false));
+        // Force DateTime serialization to include Z suffix
+        options.JsonSerializerOptions.Converters.Add(new RentalPlatform.API.Converters.DateTimeUtcJsonConverter());
+        options.JsonSerializerOptions.Converters.Add(new RentalPlatform.API.Converters.NullableDateTimeUtcJsonConverter());
         // Keep property names in camelCase (id, contactName, leadStatus, etc.)
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });

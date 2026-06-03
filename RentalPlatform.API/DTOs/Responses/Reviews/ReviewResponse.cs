@@ -17,4 +17,8 @@ public record ReviewResponse
     public DateTime? PublishedAt { get; init; }
     public DateTime CreatedAt { get; init; }
     public DateTime UpdatedAt { get; init; }
+    public string? UnitName { get; init; }
+    public string? ClientName { get; init; }
+    public string? OwnerReplyText { get; init; }
+    public DateTime? OwnerReplyUpdatedAt { get; init; }
 }

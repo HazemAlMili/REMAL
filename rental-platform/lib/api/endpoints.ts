@@ -248,21 +248,22 @@ export const endpoints = {
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEWS â€” CLIENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   clientReviews: {
-    create: "/api/reviews",
-    update: (reviewId: string) => `/api/reviews/${reviewId}`,
-    byBooking: (bookingId: string) => `/api/reviews/by-booking/${bookingId}`,
+    create: "/api/client/reviews",
+    update: (reviewId: string) => `/api/client/reviews/${reviewId}`,
+    byBooking: (bookingId: string) => `/api/client/reviews/by-booking/${bookingId}`,
   },
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEW MODERATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── REVIEW MODERATION ──
   reviewModeration: {
-    publish: (reviewId: string) => `/api/reviews/${reviewId}/publish`,
-    reject: (reviewId: string) => `/api/reviews/${reviewId}/reject`,
-    hide: (reviewId: string) => `/api/reviews/${reviewId}/hide`,
+    list: "/api/internal/reviews",
+    publish: (reviewId: string) => `/api/internal/reviews/${reviewId}/publish`,
+    reject: (reviewId: string) => `/api/internal/reviews/${reviewId}/reject`,
+    hide: (reviewId: string) => `/api/internal/reviews/${reviewId}/hide`,
     statusHistory: (reviewId: string) =>
-      `/api/reviews/${reviewId}/status-history`,
+      `/api/internal/reviews/${reviewId}/status-history`,
   },
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEW REPLIES (Owner) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ──────────────── REVIEW REPLIES (Owner) ────────────────
   reviewReplies: {
     get: (reviewId: string) => `/api/owner/reviews/${reviewId}/reply`,
     upsert: (reviewId: string) => `/api/owner/reviews/${reviewId}/reply`,

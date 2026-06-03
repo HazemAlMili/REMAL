@@ -101,11 +101,17 @@ public class ClientReviewsController : ControllerBase
             Rating = review.Rating,
             Title = review.Title,
             Comment = review.Comment,
-            ReviewStatus = review.ReviewStatus,
+            ReviewStatus = MapStatus(review.ReviewStatus),
             SubmittedAt = review.SubmittedAt,
             PublishedAt = review.PublishedAt,
             CreatedAt = review.CreatedAt,
             UpdatedAt = review.UpdatedAt
         };
+    }
+
+    private static string MapStatus(string status)
+    {
+        if (string.IsNullOrWhiteSpace(status)) return string.Empty;
+        return char.ToUpper(status[0]) + status.Substring(1).ToLower();
     }
 }

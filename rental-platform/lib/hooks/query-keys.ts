@@ -57,6 +57,8 @@ export const queryKeys = {
       ["reviews", "statusHistory", reviewId] as const,
     byBooking: (bookingId: string) =>
       ["reviews", "byBooking", bookingId] as const,
+    moderation: (filters?: object) =>
+      ["reviews", "moderation", filters ?? {}] as const,
 
     reply: (reviewId: string) => ["reviews", "reply", reviewId] as const,
   },

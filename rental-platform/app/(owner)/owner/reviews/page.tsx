@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 import { useOwnerUnits } from "@/lib/hooks/useOwnerPortal";
-import {
-  usePublicReviews,
-  usePublicReviewSummary,
-} from "@/lib/hooks/useReviews";
+import { usePublicReviews, usePublicReviewSummary } from "@/lib/hooks/useReviews";
 import { OwnerReviewSummary } from "@/components/owner/reviews/OwnerReviewSummary";
 import { OwnerReviewCard } from "@/components/owner/reviews/OwnerReviewCard";
 import { OwnerReviewReplyPanel } from "@/components/owner/reviews/OwnerReviewReplyPanel";
@@ -20,9 +17,10 @@ export default function OwnerReviewsPage() {
   const { data: units, isLoading: unitsLoading } = useOwnerUnits();
 
   // Fetch reviews + summary for selected unit
+  // Both hooks use canonical queryKeys.reviews.* keys for consistent cache management.
   const { data: reviews, isLoading: reviewsLoading } =
     usePublicReviews(selectedUnitId);
-  const { data: summary, isLoading: summaryLoading } =
+  const { data: reviewSummary, isLoading: summaryLoading } =
     usePublicReviewSummary(selectedUnitId);
 
   const handleReplyClick = (reviewId: string) => {
@@ -106,8 +104,8 @@ export default function OwnerReviewsPage() {
           {/* Summary */}
           {summaryLoading ? (
             <div className="h-24 w-full animate-pulse rounded-lg bg-neutral-200" />
-          ) : summary ? (
-            <OwnerReviewSummary summary={summary} />
+          ) : reviewSummary ? (
+            <OwnerReviewSummary summary={reviewSummary} />
           ) : null}
 
           {/* Reviews List */}

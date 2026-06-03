@@ -70,7 +70,7 @@ public class UnitsController : ControllerBase
 
     // 3. GET /api/internal/units (Internal)
     [HttpGet("api/internal/units")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = "InternalAnalyticsRead")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<UnitListItemResponse>>>> GetInternalUnits(
         [FromQuery] int page = 1, 
         [FromQuery] int pageSize = 20, 
@@ -92,7 +92,7 @@ public class UnitsController : ControllerBase
 
     // 4. GET /api/internal/units/{id} (Internal)
     [HttpGet("api/internal/units/{id}")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = "InternalAnalyticsRead")]
     public async Task<ActionResult<ApiResponse<UnitDetailsResponse>>> GetInternalUnitById(Guid id)
     {
         var unit = await _unitService.GetByIdAsync(id);

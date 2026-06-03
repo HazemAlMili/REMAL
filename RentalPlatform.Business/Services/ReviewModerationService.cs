@@ -45,8 +45,16 @@ public class ReviewModerationService : IReviewModerationService
 
         _unitOfWork.Reviews.Update(review);
         await AppendHistoryAsync(review.Id, oldStatus, "published", changedByAdminUserId, notes, now, cancellationToken);
-        await RecomputeSummaryAsync(review.UnitId, cancellationToken);
 
+        // ── Flush the status change BEFORE recomputing the summary. ──────────
+        // RecomputeSummaryAsync executes a SQL GROUP BY aggregate against the
+        // database. If SaveChanges has not been called yet, the DB still holds
+        // the old 'pending' status and the newly-published review is excluded
+        // from the count/average — producing a stale snapshot.
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        // Now the DB reflects the published status; recompute and persist the snapshot.
+        await RecomputeSummaryAsync(review.UnitId, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return review;
@@ -75,8 +83,11 @@ public class ReviewModerationService : IReviewModerationService
 
         _unitOfWork.Reviews.Update(review);
         await AppendHistoryAsync(review.Id, oldStatus, "rejected", changedByAdminUserId, notes, now, cancellationToken);
-        await RecomputeSummaryAsync(review.UnitId, cancellationToken);
 
+        // Flush before recompute (same ordering fix as PublishAsync).
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await RecomputeSummaryAsync(review.UnitId, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return review;
@@ -106,8 +117,11 @@ public class ReviewModerationService : IReviewModerationService
 
         _unitOfWork.Reviews.Update(review);
         await AppendHistoryAsync(review.Id, oldStatus, "hidden", changedByAdminUserId, notes, now, cancellationToken);
-        await RecomputeSummaryAsync(review.UnitId, cancellationToken);
 
+        // Flush before recompute (same ordering fix as PublishAsync).
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await RecomputeSummaryAsync(review.UnitId, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return review;
@@ -124,6 +138,42 @@ public class ReviewModerationService : IReviewModerationService
             .OrderByDescending(h => h.ChangedAt)
             .ThenByDescending(h => h.Id)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<(IReadOnlyList<Review> Reviews, int TotalCount)> GetPagedReviewsAsync(
+        string? reviewStatus,
+        Guid? unitId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _unitOfWork.Reviews.Query()
+            .Include(r => r.Unit)
+            .Include(r => r.Client)
+            .Include(r => r.Reply)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(reviewStatus))
+        {
+            var normalized = reviewStatus.Trim().ToLower();
+            query = query.Where(r => r.ReviewStatus == normalized);
+        }
+
+        if (unitId.HasValue)
+        {
+            query = query.Where(r => r.UnitId == unitId.Value);
+        }
+
+        query = query.OrderByDescending(r => r.SubmittedAt);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
     }
 
     // -------------------------------------------------------------------------

@@ -42,6 +42,21 @@ export function usePublicReviewById(unitId: string, reviewId: string) {
   });
 }
 
+// ── Admin Reviews List ──
+
+export function useAdminReviews(filters?: {
+  reviewStatus?: string;
+  unitId?: string;
+  page?: number;
+  pageSize?: number;
+}) {
+  return useQuery({
+    queryKey: queryKeys.reviews.moderation(filters),
+    queryFn: () => reviewsService.getInternalReviews(filters),
+    staleTime: 1000 * 60 * 2, // 2 minutes
+  });
+}
+
 // ── Review Status History ──
 
 export function useReviewStatusHistory(reviewId: string) {
@@ -135,6 +150,20 @@ export function useCreateReview() {
         queryKey: queryKeys.reviews.byBooking(variables.bookingId),
       });
     },
+  });
+}
+
+export function useSubmitReview() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: { bookingId: string; rating: number; title: string; comment?: string }) =>
+      reviewsService.submitClientReview(payload),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['bookings', 'client'] });
+      queryClient.invalidateQueries({ queryKey: ["client-bookings"] });
+      queryClient.invalidateQueries({ queryKey: ["client-reviews"] });
+      queryClient.invalidateQueries({ queryKey: ["reviews"] });
+    }
   });
 }
 

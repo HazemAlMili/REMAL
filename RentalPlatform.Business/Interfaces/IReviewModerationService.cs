@@ -29,4 +29,11 @@ public interface IReviewModerationService
     Task<IReadOnlyList<ReviewStatusHistory>> GetStatusHistoryAsync(
         Guid reviewId,
         CancellationToken cancellationToken = default);
+
+    Task<(IReadOnlyList<Review> Reviews, int TotalCount)> GetPagedReviewsAsync(
+        string? reviewStatus,
+        Guid? unitId,
+        int page,
+        int pageSize,
+        CancellationToken cancellationToken = default);
 }

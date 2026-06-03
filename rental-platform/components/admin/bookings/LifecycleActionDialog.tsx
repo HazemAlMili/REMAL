@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal, ModalFooter } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { Textarea } from "@/components/ui/Textarea";
@@ -26,16 +26,20 @@ export function LifecycleActionDialog({
 }: LifecycleActionDialogProps) {
   const [notes, setNotes] = useState("");
 
-  const handleConfirm = () => {
-    onConfirm(notes.trim() || undefined);
-    if (!isPending) {
+  // Reset notes when dialog is closed
+  useEffect(() => {
+    if (!open) {
       setNotes("");
     }
+  }, [open]);
+
+  const handleConfirm = () => {
+    if (isPending) return;
+    onConfirm(notes.trim() || undefined);
   };
 
   const handleClose = () => {
     if (!isPending) {
-      setNotes("");
       onOpenChange(false);
     }
   };

@@ -10,15 +10,12 @@ import {
   REVIEW_STATUS_LABELS,
 } from "@/lib/constants/review-statuses";
 import { formatDate } from "@/lib/utils/format";
-import type { PublishedReviewListItemResponse } from "@/lib/types/review.types";
+import type { ReviewResponse } from "@/lib/types/review.types";
 import type { ReviewStatus } from "@/lib/types/review.types";
 import { MessageSquare } from "lucide-react";
 
-// ⚠️ Using PublishedReviewListItemResponse as placeholder type.
-// When internal reviews list endpoint is documented, replace with internal type.
-
 interface ReviewTableProps {
-  reviews: PublishedReviewListItemResponse[];
+  reviews: ReviewResponse[];
   isLoading: boolean;
   statusFilter: ReviewStatus | "All";
   onStatusFilterChange: (status: ReviewStatus | "All") => void;
@@ -28,15 +25,18 @@ interface ReviewTableProps {
 
 function SkeletonTable({ rows }: { rows: number }) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      {/* Skeleton header */}
+      <div className="h-10 w-full bg-neutral-100 rounded animate-pulse" />
+      {/* Skeleton rows */}
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex gap-4">
-          <Skeleton width={100} height={40} />
-          <Skeleton width={200} height={40} />
-          <Skeleton width={300} height={40} />
-          <Skeleton width={100} height={40} />
-          <Skeleton width={120} height={40} />
-          <Skeleton width={150} height={40} />
+        <div key={i} className="flex gap-4 items-center">
+          <Skeleton width={120} height={24} />
+          <Skeleton width={120} height={24} />
+          <Skeleton width={100} height={24} />
+          <Skeleton width={300} height={24} />
+          <Skeleton width={80} height={24} />
+          <Skeleton width={100} height={24} />
         </div>
       ))}
     </div>
@@ -54,19 +54,6 @@ export function ReviewTable({
   if (isLoading) {
     return <SkeletonTable rows={5} />;
   }
-
-  // Client-side status filter (until backend supports server-side filter)
-  // ⚠️ PublishedReviewListItemResponse doesn't have reviewStatus field
-  // This filter will only work when internal list endpoint is available
-  // For now, public reviews are all "Published" by definition
-  const filteredReviews =
-    statusFilter === "All"
-      ? reviews
-      : reviews.filter(() => {
-          // Placeholder — cannot filter without reviewStatus field
-          // When internal endpoint is available, use: r.reviewStatus === statusFilter
-          return statusFilter === "Published"; // All public reviews are Published
-        });
 
   return (
     <div className="space-y-4">
@@ -92,64 +79,101 @@ export function ReviewTable({
       </div>
 
       {/* Reviews table */}
-      {filteredReviews.length === 0 ? (
+      {reviews.length === 0 ? (
         <EmptyState
           title="No reviews found"
           description="No reviews match the current filter."
           icon={<MessageSquare size={48} />}
         />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-neutral-200">
-          <table className="w-full">
+        <div className="overflow-x-auto rounded-lg border border-neutral-200 bg-white">
+          <table className="w-full text-left">
             <thead className="bg-neutral-50">
-              <tr className="border-b border-neutral-200 text-left text-sm text-neutral-600">
-                <th className="p-3 font-medium">Rating</th>
-                <th className="p-3 font-medium">Title</th>
-                <th className="p-3 font-medium">Comment</th>
-                <th className="p-3 font-medium">Status</th>
-                <th className="p-3 font-medium">Date</th>
-                <th className="p-3 font-medium">Actions</th>
+              <tr className="border-b border-neutral-200 text-xs font-semibold uppercase tracking-wider text-neutral-600">
+                <th className="p-4 font-medium">Property</th>
+                <th className="p-4 font-medium">Client</th>
+                <th className="p-4 font-medium">Rating</th>
+                <th className="p-4 font-medium">Comment</th>
+                <th className="p-4 font-medium">Status</th>
+                <th className="p-4 font-medium">Submitted</th>
+                <th className="p-4 font-medium">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {filteredReviews.map((review) => (
+            <tbody className="divide-y divide-neutral-100">
+              {reviews.map((review) => (
                 <tr
-                  key={review.reviewId}
-                  className="cursor-pointer border-b border-neutral-100 transition-colors hover:bg-neutral-50"
-                  onClick={() => onRowClick(review.reviewId)}
+                  key={review.id}
+                  className="cursor-pointer transition-colors hover:bg-neutral-50"
+                  onClick={() => onRowClick(review.id)}
                 >
-                  <td className="p-3">
+                  <td className="p-4 text-sm font-medium text-neutral-900">
+                    {review.unitName ?? "Deleted Unit"}
+                  </td>
+                  <td className="p-4 text-sm text-neutral-700">
+                    {review.clientName ?? "Deleted Client"}
+                  </td>
+                  <td className="p-4">
                     <StarRating rating={review.rating} size="sm" readOnly />
                   </td>
-                  <td className="p-3 text-sm font-medium text-neutral-800">
-                    {review.title}
+                  <td className="max-w-[250px] p-4 text-sm text-neutral-600">
+                    <div className="truncate font-medium text-neutral-800">
+                      {review.title}
+                    </div>
+                    {review.comment && (
+                      <div className="truncate text-xs text-neutral-400 mt-0.5">
+                        {review.comment}
+                      </div>
+                    )}
                   </td>
-                  <td className="max-w-[250px] truncate p-3 text-sm text-neutral-500">
-                    {review.comment ?? "—"}
-                  </td>
-                  <td className="p-3">
+                  <td className="p-4">
                     <StatusBadge
-                      status="Published"
+                      status={review.reviewStatus}
                       colorMap={REVIEW_STATUS_BADGE}
                       labelMap={REVIEW_STATUS_LABELS}
                     />
-                    {/* ⚠️ All public reviews are "Published" by definition.
-                        Status badges will work properly when internal list endpoint is available. */}
                   </td>
-                  <td className="p-3 text-sm text-neutral-500">
-                    {formatDate(review.publishedAt)}
+                  <td className="p-4 text-sm text-neutral-500">
+                    {formatDate(review.submittedAt)}
                   </td>
-                  <td className="p-3" onClick={(e) => e.stopPropagation()}>
-                    {/* Actions based on status — currently all are Published */}
-                    {/* These will work properly when internal list endpoint provides reviewStatus */}
-                    <div className="flex gap-1">
-                      <Button
-                        size="sm"
-                        variant="danger"
-                        onClick={() => onAction(review.reviewId, "hide")}
-                      >
-                        Hide
-                      </Button>
+                  <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex gap-1.5">
+                      {review.reviewStatus === "Pending" && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={() => onAction(review.id, "publish")}
+                          >
+                            Publish
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => onAction(review.id, "reject")}
+                          >
+                            Reject
+                          </Button>
+                        </>
+                      )}
+                      {review.reviewStatus === "Published" && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => onAction(review.id, "hide")}
+                        >
+                          Hide
+                        </Button>
+                      )}
+                      {(review.reviewStatus === "Rejected" ||
+                        review.reviewStatus === "Hidden") && (
+                        <Button
+                          size="sm"
+                          variant="primary"
+                          onClick={() => onAction(review.id, "publish")}
+                        >
+                          Publish
+                        </Button>
+                      )}
                     </div>
                   </td>
                 </tr>

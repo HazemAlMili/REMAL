@@ -7,6 +7,25 @@ interface OwnerReviewCardProps {
   onReplyClick: (reviewId: string) => void;
 }
 
+/**
+ * Renders the client's display name safely.
+ *
+ * The backend already formats names as "FirstName L."; this helper only adds
+ * a defensive layer:
+ *  - Explicit null/undefined/non-string check (avoids JS falsy coercion on "").
+ *  - Trims leading/trailing spaces and collapses NBSP (\u00A0) or multi-spaces
+ *    that may survive serialisation, so the rendered string is always clean.
+ *  - Falls back to the anonymous Arabic placeholder only when the value is
+ *    truly blank after normalization.
+ */
+function renderClientName(raw: string | null | undefined): string {
+  if (!raw || typeof raw !== 'string') return 'عميل المنصة';
+  // Normalize NBSP and consecutive whitespace to a single ASCII space, then trim.
+  const clean = raw.replace(/[\u00A0\s]+/g, ' ').trim();
+  if (!clean) return 'عميل المنصة';
+  return clean;
+}
+
 export function OwnerReviewCard({
   review,
   onReplyClick,
@@ -15,7 +34,17 @@ export function OwnerReviewCard({
 
   return (
     <div className="space-y-3 rounded-lg border border-neutral-200 p-4">
-      {/* Header: Stars + Date + Reply Badge */}
+      {/* Client Display Name Header */}
+      <div className="flex items-center justify-between border-b pb-2 mb-2">
+        <span className="font-semibold text-neutral-900 text-sm">
+          {renderClientName(review.clientDisplayName)}
+        </span>
+        <span className="text-xs text-neutral-400">
+          {new Date(review.publishedAt).toLocaleDateString()}
+        </span>
+      </div>
+
+      {/* Header: Stars + Reply Badge */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -40,11 +69,6 @@ export function OwnerReviewCard({
               Replied
             </span>
           )}
-          <span className="text-xs text-neutral-400">
-            {formatDistanceToNow(new Date(review.publishedAt), {
-              addSuffix: true,
-            })}
-          </span>
         </div>
       </div>
 

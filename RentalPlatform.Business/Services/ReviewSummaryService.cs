@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -62,6 +63,7 @@ public class ReviewSummaryService : IReviewSummaryService
         await EnsureUnitExistsAsync(unitId, cancellationToken);
 
         var reviews = await _unitOfWork.Reviews.Query()
+            .Include(r => r.Client)
             .Where(r => r.UnitId == unitId && r.ReviewStatus == "published")
             .OrderByDescending(r => r.PublishedAt)
             .ThenByDescending(r => r.Id)
@@ -90,7 +92,8 @@ public class ReviewSummaryService : IReviewSummaryService
                 Comment            = r.Comment,
                 PublishedAt        = r.PublishedAt!.Value,
                 OwnerReplyText     = reply?.ReplyText,
-                OwnerReplyUpdatedAt = reply?.UpdatedAt
+                OwnerReplyUpdatedAt = reply?.UpdatedAt,
+                ClientDisplayName  = FormatDisplayName(r.Client?.Name)
             };
         }).ToList();
     }
@@ -102,9 +105,11 @@ public class ReviewSummaryService : IReviewSummaryService
     {
         await EnsureUnitExistsAsync(unitId, cancellationToken);
 
-        var review = await _unitOfWork.Reviews.FirstOrDefaultAsync(
-            r => r.Id == reviewId && r.UnitId == unitId && r.ReviewStatus == "published",
-            cancellationToken);
+        var review = await _unitOfWork.Reviews.Query()
+            .Include(r => r.Client)
+            .FirstOrDefaultAsync(
+                r => r.Id == reviewId && r.UnitId == unitId && r.ReviewStatus == "published",
+                cancellationToken);
 
         if (review == null)
             throw new NotFoundException(
@@ -122,11 +127,39 @@ public class ReviewSummaryService : IReviewSummaryService
             Comment             = review.Comment,
             PublishedAt         = review.PublishedAt!.Value,
             OwnerReplyText      = reply?.ReplyText,
-            OwnerReplyUpdatedAt = reply?.UpdatedAt
+            OwnerReplyUpdatedAt = reply?.UpdatedAt,
+            ClientDisplayName   = FormatDisplayName(review.Client?.Name)
         };
     }
 
     // -------------------------------------------------------------------------
+    /// <summary>
+    /// Formats a raw client name as "FirstName L." for display.
+    /// Normalizes all Unicode whitespace (including non-breaking space \u00A0
+    /// that may arrive from Arabic-keyboard input or copy-paste) before
+    /// tokenizing, so two-part names are always parsed correctly.
+    /// Returns null when the input is blank so the caller can fall back to
+    /// an anonymous placeholder.
+    /// </summary>
+    private static string? FormatDisplayName(string? fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return null;
+
+        // Collapse all Unicode whitespace variants (\u00A0, \t, etc.) into a
+        // single regular space, then trim leading/trailing whitespace.
+        var normalized = Regex.Replace(fullName, @"\s+", " ").Trim();
+        if (normalized.Length == 0) return null;
+
+        var parts = normalized.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return null;
+        if (parts.Length == 1) return parts[0];
+
+        var firstName = parts[0];
+        var lastPart  = parts[parts.Length - 1];
+        // Guard: lastPart is guaranteed non-empty by RemoveEmptyEntries
+        return $"{firstName} {char.ToUpper(lastPart[0])}.";  // e.g. "Ahmed G."
+    }
+
     private async Task EnsureUnitExistsAsync(Guid unitId, CancellationToken cancellationToken)
     {
         var unitExists = await _unitOfWork.Units.ExistsAsync(

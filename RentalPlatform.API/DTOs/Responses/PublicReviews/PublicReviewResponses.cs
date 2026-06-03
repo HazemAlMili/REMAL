@@ -20,4 +20,5 @@ public record PublishedReviewListItemResponse
     public DateTime PublishedAt { get; init; }
     public string? OwnerReplyText { get; init; }
     public DateTime? OwnerReplyUpdatedAt { get; init; }
+    public string? ClientDisplayName { get; init; }
 }

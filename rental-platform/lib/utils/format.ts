@@ -82,3 +82,61 @@ export function formatRelativeTime(
   if (diffDays < 7 && diffDays > 0) return `${diffDays} days ago`;
   return formatDate(date);
 }
+
+export function formatRelativeTimeSafe(
+  input: string | Date | null | undefined
+): string {
+  if (!input) return "—";
+  let date: Date;
+  if (input instanceof Date) {
+    date = input;
+  } else {
+    let str = input;
+    // If the string lacks timezone indicator (Z or offset), append Z to parse as UTC
+    if (typeof str === "string" && !str.endsWith("Z") && !str.includes("+") && !/[-+]\d{2}:\d{2}$/.test(str)) {
+      str = str.includes("T") ? `${str}Z` : `${str.replace(" ", "T")}Z`;
+    }
+    date = parseISO(str);
+  }
+
+  if (!isValid(date)) return "—";
+
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+
+  // Stale Local Storage Clocks: cap negative or small positive diffs at "Just now"
+  if (diffSec < 10) {
+    return "Just now";
+  }
+
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 1) {
+    return "Just now";
+  }
+  if (diffMin === 1) {
+    return "1 minute ago";
+  }
+  if (diffMin < 60) {
+    return `${diffMin} minutes ago`;
+  }
+
+  const diffHours = Math.floor(diffMin / 60);
+  if (diffHours === 1) {
+    return "1 hour ago";
+  }
+  if (diffHours < 24) {
+    return `${diffHours} hours ago`;
+  }
+
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays === 1) {
+    return "Yesterday";
+  }
+  if (diffDays < 7) {
+    return `${diffDays} days ago`;
+  }
+
+  return format(date, "d MMM yyyy");
+}
+

@@ -14,7 +14,6 @@ namespace RentalPlatform.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Policy = "SalesOrSuperAdmin")]
 public class ClientsController : ControllerBase
 {
     private readonly IClientService _clientService;
@@ -25,6 +24,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "SalesOrSuperAdmin")]
     public async Task<ActionResult<ApiResponse<ClientDetailsResponse>>> Create(
         [FromBody] CreateClientRequest request,
         CancellationToken cancellationToken)
@@ -38,6 +38,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "InternalAdminRead")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<ClientListItemResponse>>>> GetAll(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
@@ -61,6 +62,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Policy = "InternalAdminRead")]
     public async Task<ActionResult<ApiResponse<ClientDetailsResponse>>> GetById(Guid id)
     {
         var client = await _clientService.GetByIdAsync(id);
@@ -72,6 +74,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpPatch("{id}/status")]
+    [Authorize(Policy = "SalesOrSuperAdmin")]
     public async Task<ActionResult<ApiResponse<ClientDetailsResponse>>> UpdateStatus(Guid id, UpdateClientStatusRequest request)
     {
         var client = await _clientService.UpdateStatusAsync(id, request.IsActive);

@@ -14,7 +14,6 @@ namespace RentalPlatform.API.Controllers;
 
 [ApiController]
 [Route("api/admin-users")]
-[Authorize(Policy = "SuperAdminOnly")]
 public class AdminUsersController : ControllerBase
 {
     private readonly IAdminUserService _adminUserService;
@@ -25,6 +24,7 @@ public class AdminUsersController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "AdminAuthenticated")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<AdminUserResponse>>>> GetAll(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
@@ -47,6 +47,7 @@ public class AdminUsersController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "SuperAdminOnly")]
     public async Task<ActionResult<ApiResponse<AdminUserResponse>>> Create(CreateAdminUserRequest request)
     {
         var admin = await _adminUserService.CreateAsync(
@@ -60,6 +61,7 @@ public class AdminUsersController : ControllerBase
     }
 
     [HttpPatch("{id}/role")]
+    [Authorize(Policy = "SuperAdminOnly")]
     public async Task<ActionResult<ApiResponse<AdminUserResponse>>> UpdateRole(Guid id, UpdateAdminUserRoleRequest request)
     {
         var admin = await _adminUserService.UpdateRoleAsync(id, request.Role);
@@ -67,6 +69,7 @@ public class AdminUsersController : ControllerBase
     }
 
     [HttpPatch("{id}/status")]
+    [Authorize(Policy = "SuperAdminOnly")]
     public async Task<ActionResult<ApiResponse<AdminUserResponse>>> UpdateStatus(Guid id, UpdateAdminUserStatusRequest request)
     {
         await _adminUserService.SetActiveAsync(id, request.IsActive);

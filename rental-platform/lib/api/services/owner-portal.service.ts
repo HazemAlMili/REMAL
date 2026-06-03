@@ -24,6 +24,7 @@ import type {
   OperationalAvailabilityRequest,
 } from "@/lib/types/owner-portal.types";
 import type { OperationalAvailabilityResponse } from "@/lib/types/unit.types";
+import type { UnitPublishedReviewSummaryResponse } from "@/lib/types/review.types";
 
 // Transform params: camelCase to PascalCase for .NET API
 function transformBookingFilters(
@@ -118,4 +119,9 @@ export const ownerPortalService = {
 
   deleteReviewReply: (reviewId: string): Promise<void> =>
     api.delete(endpoints.ownerPortal.reviews.deleteReply(reviewId)),
+
+  getUnitReviewSummary: (
+    unitId: string
+  ): Promise<UnitPublishedReviewSummaryResponse> =>
+    api.get(endpoints.publicReviews.byUnitSummary(unitId)),
 };

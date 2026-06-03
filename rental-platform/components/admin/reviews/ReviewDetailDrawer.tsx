@@ -19,14 +19,14 @@ import {
   REVIEW_STATUS_BADGE,
   REVIEW_STATUS_LABELS,
 } from "@/lib/constants/review-statuses";
-import type { ReviewDetailData } from "@/lib/types/review.types";
+import type { ReviewResponse } from "@/lib/types/review.types";
 import { Button } from "@/components/ui/Button";
 
 interface ReviewDetailDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   reviewId: string | null;
-  reviewData: ReviewDetailData | null;
+  reviewData: ReviewResponse | null;
   canModerate: boolean;
 }
 
@@ -56,7 +56,7 @@ export function ReviewDetailDrawer({
     onSuccess: () => {
       toastSuccess("Review published");
       queryClient.invalidateQueries({
-        queryKey: queryKeys.reviews.publicByUnit(reviewData?.unitId ?? ""),
+        queryKey: queryKeys.reviews.all,
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.reviews.statusHistory(reviewId ?? ""),
@@ -74,7 +74,7 @@ export function ReviewDetailDrawer({
     onSuccess: () => {
       toastSuccess("Review rejected");
       queryClient.invalidateQueries({
-        queryKey: queryKeys.reviews.publicByUnit(reviewData?.unitId ?? ""),
+        queryKey: queryKeys.reviews.all,
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.reviews.statusHistory(reviewId ?? ""),
@@ -92,7 +92,7 @@ export function ReviewDetailDrawer({
     onSuccess: () => {
       toastSuccess("Review hidden");
       queryClient.invalidateQueries({
-        queryKey: queryKeys.reviews.publicByUnit(reviewData?.unitId ?? ""),
+        queryKey: queryKeys.reviews.all,
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.reviews.statusHistory(reviewId ?? ""),
@@ -166,13 +166,25 @@ export function ReviewDetailDrawer({
             <StarRating rating={reviewData.rating} size="md" readOnly />
           </div>
 
+          {/* Unit / Client Metadata */}
+          <div className="grid grid-cols-2 gap-4 rounded-lg bg-neutral-50 p-4 text-sm text-neutral-600 border border-neutral-100">
+            <div>
+              <span className="font-semibold block text-neutral-400 text-xs uppercase tracking-wider">Property</span>
+              <span className="text-neutral-800 font-semibold block mt-0.5">{reviewData.unitName ?? "Deleted Unit"}</span>
+            </div>
+            <div>
+              <span className="font-semibold block text-neutral-400 text-xs uppercase tracking-wider">Client</span>
+              <span className="text-neutral-800 font-semibold block mt-0.5">{reviewData.clientName ?? "Deleted Client"}</span>
+            </div>
+          </div>
+
           {/* Title + Comment */}
           <div>
             <h3 className="text-lg font-semibold text-neutral-800">
               {reviewData.title}
             </h3>
             {reviewData.comment && (
-              <p className="mt-2 whitespace-pre-wrap text-neutral-600">
+              <p className="mt-2 whitespace-pre-wrap text-neutral-600 leading-relaxed">
                 {reviewData.comment}
               </p>
             )}
@@ -183,9 +195,12 @@ export function ReviewDetailDrawer({
             )}
           </div>
 
-          {/* Published Date */}
-          <div className="text-sm text-neutral-500">
-            Published: {formatDate(reviewData.publishedAt)}
+          {/* Date info */}
+          <div className="text-sm text-neutral-500 space-y-1">
+            <div>Submitted: {formatDate(reviewData.submittedAt)}</div>
+            {reviewData.publishedAt && (
+              <div>Published: {formatDate(reviewData.publishedAt)}</div>
+            )}
           </div>
 
           {/* Owner Reply */}

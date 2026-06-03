@@ -38,6 +38,14 @@ export const reviewsService = {
   ): Promise<PublishedReviewListItemResponse> =>
     api.get(endpoints.publicReviews.byUnitDetail(unitId, reviewId)),
 
+  getInternalReviews: (params?: {
+    reviewStatus?: string;
+    unitId?: string;
+    page?: number;
+    pageSize?: number;
+  }): Promise<{ items: ReviewResponse[]; pagination: { totalCount: number; page: number; pageSize: number; totalPages: number } }> =>
+    api.get(endpoints.reviewModeration.list, { params }),
+
   // ── Moderation ──
   publish: (
     reviewId: string,
@@ -62,6 +70,14 @@ export const reviewsService = {
   // ── Client review submission (used in Wave 7) ──
   createReview: (data: CreateReviewRequest): Promise<ReviewResponse> =>
     api.post(endpoints.clientReviews.create, data),
+
+  submitClientReview: (payload: {
+    bookingId: string;
+    rating: number;
+    title: string;
+    comment?: string;
+  }): Promise<ReviewResponse> =>
+    api.post(endpoints.clientReviews.create, payload),
 
   updateReview: (
     reviewId: string,

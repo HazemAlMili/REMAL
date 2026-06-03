@@ -21,6 +21,10 @@ export interface ReviewResponse {
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  unitName?: string;
+  clientName?: string;
+  ownerReplyText?: string | null;
+  ownerReplyUpdatedAt?: string | null;
 }
 
 // ── Public review (from GET /api/public/units/{unitId}/reviews) ──
@@ -35,6 +39,7 @@ export interface PublishedReviewListItemResponse {
   publishedAt: string;
   ownerReplyText: string | null;
   ownerReplyUpdatedAt: string | null;
+  clientDisplayName?: string | null;
 }
 
 // ── Public review summary ──
@@ -102,6 +107,8 @@ export interface ReviewDetailData {
   ownerReplyText: string | null;
   ownerReplyUpdatedAt: string | null;
   publishedAt: string;
+  unitName?: string;
+  clientName?: string;
   // Additional fields will be available when internal review detail endpoint is documented
 }
 

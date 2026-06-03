@@ -27,7 +27,7 @@ public static class NotificationTemplateRegistry
             {
                 DefaultTitle = "تم تأكيد حجزك بنجاح!",
                 DefaultBody = "عزيزنا العميل، تم تأكيد حجزك للوحدة بنجاح. المبلغ الإجمالي: {finalAmount}.",
-                AllowedChannels = new[] { "Email" }
+                AllowedChannels = new[] { "Email", "InApp" }
             }
         },
         {

@@ -5,7 +5,7 @@
 
 "use client";
 import { Badge } from "@/components/ui/Badge";
-import { formatRelativeTime } from "@/lib/utils/format";
+import { formatRelativeTimeSafe } from "@/lib/utils/format";
 import { Mail, MessageSquare, Bell, Check } from "lucide-react";
 import type { ClientNotification } from "@/lib/types/client.types";
 import type { BadgeVariant } from "@/components/ui/Badge";
@@ -81,7 +81,7 @@ export function NotificationCard({
 
           {/* Timestamp */}
           <p className="mt-2 text-xs text-neutral-400">
-            {formatRelativeTime(notification.createdAt)}{" "}
+            {formatRelativeTimeSafe(notification.createdAt)}{" "}
             {/* P27: createdAt, was missing */}
           </p>
         </div>

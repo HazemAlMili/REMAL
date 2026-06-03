@@ -17,7 +17,7 @@ using RentalPlatform.Data.Entities;
 namespace RentalPlatform.API.Controllers;
 
 [ApiController]
-[Route("api/internal/reviews/{reviewId:guid}")]
+[Route("api/internal/reviews")]
 [Authorize(Policy = "SalesOrSuperAdmin")]
 public class ReviewModerationController : ControllerBase
 {
@@ -28,7 +28,29 @@ public class ReviewModerationController : ControllerBase
         _reviewModerationService = reviewModerationService;
     }
 
-    [HttpPost("publish")]
+    [HttpGet]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<ReviewResponse>>>> GetAllReviews(
+        [FromQuery] string? reviewStatus,
+        [FromQuery] Guid? unitId,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
+    {
+        var (reviews, totalCount) = await _reviewModerationService.GetPagedReviewsAsync(
+            reviewStatus,
+            unitId,
+            page,
+            pageSize,
+            cancellationToken);
+
+        var response = reviews.Select(MapToReviewResponse).ToList();
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+        var pagination = new PaginationMeta(totalCount, page, pageSize, totalPages);
+
+        return Ok(ApiResponse<IReadOnlyList<ReviewResponse>>.CreateSuccess(response, pagination: pagination));
+    }
+
+    [HttpPost("{reviewId:guid}/publish")]
     public async Task<ActionResult<ApiResponse<ReviewResponse>>> PublishReview(
         Guid reviewId,
         [FromBody] PublishReviewRequest request,
@@ -47,7 +69,7 @@ public class ReviewModerationController : ControllerBase
             "Review published successfully."));
     }
 
-    [HttpPost("reject")]
+    [HttpPost("{reviewId:guid}/reject")]
     public async Task<ActionResult<ApiResponse<ReviewResponse>>> RejectReview(
         Guid reviewId,
         [FromBody] RejectReviewRequest request,
@@ -66,7 +88,7 @@ public class ReviewModerationController : ControllerBase
             "Review rejected successfully."));
     }
 
-    [HttpPost("hide")]
+    [HttpPost("{reviewId:guid}/hide")]
     public async Task<ActionResult<ApiResponse<ReviewResponse>>> HideReview(
         Guid reviewId,
         [FromBody] HideReviewRequest request,
@@ -85,7 +107,7 @@ public class ReviewModerationController : ControllerBase
             "Review hidden successfully."));
     }
 
-    [HttpGet("status-history")]
+    [HttpGet("{reviewId:guid}/status-history")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<ReviewStatusHistoryResponse>>>> GetReviewStatusHistory(
         Guid reviewId,
         CancellationToken cancellationToken)
@@ -117,12 +139,22 @@ public class ReviewModerationController : ControllerBase
             Rating = review.Rating,
             Title = review.Title,
             Comment = review.Comment,
-            ReviewStatus = review.ReviewStatus,
+            ReviewStatus = MapStatus(review.ReviewStatus),
             SubmittedAt = review.SubmittedAt,
             PublishedAt = review.PublishedAt,
             CreatedAt = review.CreatedAt,
-            UpdatedAt = review.UpdatedAt
+            UpdatedAt = review.UpdatedAt,
+            UnitName = review.Unit?.Name ?? "Deleted Unit",
+            ClientName = review.Client?.Name ?? "Deleted Client",
+            OwnerReplyText = review.Reply?.ReplyText,
+            OwnerReplyUpdatedAt = review.Reply?.UpdatedAt
         };
+    }
+
+    private static string MapStatus(string status)
+    {
+        if (string.IsNullOrWhiteSpace(status)) return string.Empty;
+        return char.ToUpper(status[0]) + status.Substring(1).ToLower();
     }
 
     private static ReviewStatusHistoryResponse MapToStatusHistoryResponse(ReviewStatusHistory history)
