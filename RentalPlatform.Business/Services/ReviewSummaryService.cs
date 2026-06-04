@@ -75,6 +75,7 @@ public class ReviewSummaryService : IReviewSummaryService
 
         // Load visible replies for the current page batch
         var visibleReplies = await _unitOfWork.ReviewReplies.Query()
+            .Include(rr => rr.Owner)
             .Where(rr => reviewIds.Contains(rr.ReviewId) && rr.IsVisible)
             .ToListAsync(cancellationToken);
 
@@ -93,6 +94,8 @@ public class ReviewSummaryService : IReviewSummaryService
                 PublishedAt        = r.PublishedAt!.Value,
                 OwnerReplyText     = reply?.ReplyText,
                 OwnerReplyUpdatedAt = reply?.UpdatedAt,
+                OwnerReplyAt       = reply != null ? DateTime.SpecifyKind(reply.UpdatedAt, DateTimeKind.Utc) : null,
+                OwnerName          = reply?.Owner?.Name,
                 ClientDisplayName  = FormatDisplayName(r.Client?.Name)
             };
         }).ToList();
@@ -115,8 +118,9 @@ public class ReviewSummaryService : IReviewSummaryService
             throw new NotFoundException(
                 $"Published review {reviewId} not found for unit {unitId}");
 
-        var reply = await _unitOfWork.ReviewReplies.FirstOrDefaultAsync(
-            rr => rr.ReviewId == reviewId && rr.IsVisible, cancellationToken);
+        var reply = await _unitOfWork.ReviewReplies.Query()
+            .Include(rr => rr.Owner)
+            .FirstOrDefaultAsync(rr => rr.ReviewId == reviewId && rr.IsVisible, cancellationToken);
 
         return new PublishedReviewListItemResult
         {
@@ -128,6 +132,8 @@ public class ReviewSummaryService : IReviewSummaryService
             PublishedAt         = review.PublishedAt!.Value,
             OwnerReplyText      = reply?.ReplyText,
             OwnerReplyUpdatedAt = reply?.UpdatedAt,
+            OwnerReplyAt        = reply != null ? DateTime.SpecifyKind(reply.UpdatedAt, DateTimeKind.Utc) : null,
+            OwnerName           = reply?.Owner?.Name,
             ClientDisplayName   = FormatDisplayName(review.Client?.Name)
         };
     }

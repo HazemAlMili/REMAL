@@ -55,8 +55,9 @@ public class ReviewService : IReviewService
 
     public async Task<Review?> GetByBookingIdAsync(Guid bookingId, CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.Reviews.FirstOrDefaultAsync(
-            r => r.BookingId == bookingId, cancellationToken);
+        return await _unitOfWork.Reviews.Query()
+            .Include(r => r.Reply)
+            .FirstOrDefaultAsync(r => r.BookingId == bookingId, cancellationToken);
     }
 
     public async Task<Review> CreateAsync(

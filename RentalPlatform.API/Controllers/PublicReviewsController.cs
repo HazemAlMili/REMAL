@@ -90,6 +90,8 @@ public class PublicReviewsController : ControllerBase
             PublishedAt = review.PublishedAt,
             OwnerReplyText = review.OwnerReplyText,
             OwnerReplyUpdatedAt = review.OwnerReplyUpdatedAt,
+            OwnerReplyAt = review.OwnerReplyAt,
+            OwnerName = review.OwnerName,
             ClientDisplayName = review.ClientDisplayName
         };
     }

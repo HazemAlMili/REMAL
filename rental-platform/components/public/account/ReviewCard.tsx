@@ -2,7 +2,7 @@
 import { Star, Edit } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils/cn";
-import { formatDate } from "@/lib/utils/format";
+import { formatDate, formatRelativeTime } from "@/lib/utils/format";
 import type { ClientReviewByBookingResponse } from "@/lib/types/client.types";
 
 interface ReviewCardProps {
@@ -69,6 +69,26 @@ export function ReviewCard({ review, unitName, onEdit }: ReviewCardProps) {
         <p className="text-sm text-neutral-600 leading-relaxed whitespace-pre-line">
           {review.comment}
         </p>
+      )}
+
+      {/* Owner Reply Block */}
+      {review.ownerReplyText && review.ownerReplyText.trim() && (
+        <div 
+          className="mt-3 mr-6 p-3 bg-neutral-50/70 border-r-2 border-primary-light rounded-l-md break-words" 
+          dir="rtl"
+        >
+          <div className="flex justify-between items-center mb-1 gap-2">
+            <span className="text-xs font-bold text-primary-dark">رد المالك</span>
+            {review.ownerReplyUpdatedAt && (
+              <span className="text-[10px] text-neutral-400 shrink-0">
+                {formatRelativeTime(review.ownerReplyUpdatedAt)}
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-neutral-700 leading-relaxed whitespace-pre-line">
+            <bdi>{review.ownerReplyText}</bdi>
+          </p>
+        </div>
       )}
 
       {/* Action Button: ONLY enable edit if Pending status */}

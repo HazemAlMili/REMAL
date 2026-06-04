@@ -20,6 +20,8 @@ const config: Config = {
           700: "var(--color-primary-700)",
           800: "var(--color-primary-800)",
           900: "var(--color-primary-900)",
+          light: "var(--color-primary-200)",
+          dark: "var(--color-primary-800)",
         },
         neutral: {
           50: "var(--color-neutral-50)",

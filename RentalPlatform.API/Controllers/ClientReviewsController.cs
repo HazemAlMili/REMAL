@@ -105,7 +105,9 @@ public class ClientReviewsController : ControllerBase
             SubmittedAt = review.SubmittedAt,
             PublishedAt = review.PublishedAt,
             CreatedAt = review.CreatedAt,
-            UpdatedAt = review.UpdatedAt
+            UpdatedAt = review.UpdatedAt,
+            OwnerReplyText = review.Reply?.ReplyText,
+            OwnerReplyUpdatedAt = review.Reply?.UpdatedAt
         };
     }
 

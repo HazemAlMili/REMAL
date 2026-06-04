@@ -39,6 +39,8 @@ export interface PublishedReviewListItemResponse {
   publishedAt: string;
   ownerReplyText: string | null;
   ownerReplyUpdatedAt: string | null;
+  ownerReplyAt?: string | null;
+  ownerName?: string | null;
   clientDisplayName?: string | null;
 }
 

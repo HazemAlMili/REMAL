@@ -1,4 +1,4 @@
-﻿import type { PaginationMeta } from "@/lib/api/types";
+import type { PaginationMeta } from "@/lib/api/types";
 
 // ── Client list item (from GET /api/clients) ──
 // Per API Reference Section 12 / P33: totalBookings does NOT exist in list response
@@ -113,6 +113,8 @@ export interface ClientReviewByBookingResponse {
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  ownerReplyText?: string | null;
+  ownerReplyUpdatedAt?: string | null;
 }
 
 // ═══════════════════════════════════════════════════════════
