@@ -19,35 +19,35 @@ const MAIN_IMAGE = "/kaza-furniture/kaza-furniture-2.jpeg";
 
 const GALLERY_IMAGES = Array.from({ length: 27 }, (_, i) => `/kaza-furniture/kaza-furniture-${i + 1}.jpeg`);
 const PEGASUS_GALLERY_IMAGES = [
-  "/pegasus-kitchen/pegasus/KITCHEN-page4-image1.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page5-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page5-image4.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page6-image1.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page7-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page7-image4.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page8-image1.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page9-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page9-image4.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page10-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page11-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page12-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page13-image1.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page14-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page15-image1.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page16-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page17-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page18-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page19-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page19-image4.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page20-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page21-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page22-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page22-image4.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page23-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page23-image4.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page24-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page25-image2.jpg",
-  "/pegasus-kitchen/pegasus/KITCHEN-page26-image2.jpg"
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page4-image1.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page5-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page5-image4.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page6-image1.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page7-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page7-image4.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page8-image1.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page9-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page9-image4.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page10-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page11-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page12-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page13-image1.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page14-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page15-image1.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page16-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page17-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page18-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page19-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page19-image4.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page20-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page21-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page22-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page22-image4.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page23-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page23-image4.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page24-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page25-image2.jpg",
+  "/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page26-image2.jpg"
 ];
 
 export default function FurniturePage() {
@@ -171,7 +171,7 @@ export default function FurniturePage() {
             <div className="absolute inset-0 bg-gradient-to-b from-kaza-navy/85 via-kaza-navy/60 to-kaza-navy/90 z-10" />
             <Image
               src={HERO_IMAGE}
-              alt={sectorData.title || "KAZA Furniture"}
+              alt={t.furniturePage.itcanSection.title}
               fill
               priority
               className="object-cover object-center"
@@ -194,7 +194,7 @@ export default function FurniturePage() {
               transition={{ duration: 0.8, delay: 0.1 }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 font-serif leading-tight drop-shadow-md"
             >
-              {sectorData.title}
+              {t.furniturePage.itcanSection.title}
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 15 }}
@@ -202,13 +202,13 @@ export default function FurniturePage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="max-w-2xl text-base md:text-lg leading-relaxed text-gray-200"
             >
-              {sectorData.heroSubtitle}
+              {t.furniturePage.itcanSection.subtitle}
             </motion.p>
           </div>
         </section>
 
         {/* Content Section */}
-        <section className="py-20 lg:py-24">
+        <section id="itcan-furniture" className="relative w-full py-20 lg:py-32">
           <div className="container mx-auto px-6 lg:px-12 max-w-6xl">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
               {/* Copywriting */}
@@ -223,8 +223,8 @@ export default function FurniturePage() {
                 </span>
                 <h2 className="text-3xl lg:text-4xl font-bold font-serif mb-6 text-kaza-navy leading-tight">
                   {lang === "ar"
-                    ? `إعادة تعريف خدمات ${sectorData.title} بمعايير فندقية`
-                    : `Redefining ${sectorData.title} with luxury hotel-grade operations`}
+                    ? `إعادة تعريف خدمات ${t.furniturePage.itcanSection.title} بمعايير فندقية`
+                    : `Redefining ${t.furniturePage.itcanSection.title} with luxury hotel-grade operations`}
                 </h2>
                 <p className="text-gray-600 text-lg leading-relaxed mb-8">
                   {sectorData.aboutSection}
@@ -257,7 +257,7 @@ export default function FurniturePage() {
               >
                 <Image
                   src={MAIN_IMAGE}
-                  alt={sectorData.title || "KAZA Furniture"}
+                  alt={t.furniturePage.itcanSection.title}
                   fill
                   className="object-cover hover:scale-105 transition-transform duration-700"
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -276,12 +276,10 @@ export default function FurniturePage() {
                 {lang === "ar" ? "معرض التصاميم" : "Design Showcase"}
               </span>
               <h2 className="text-3xl lg:text-5xl font-bold font-serif mb-4 text-white">
-                {lang === "ar" ? "معرض كازا للأثاث" : "KAZA Furniture Gallery"}
+                {t.furniturePage.gallery.title}
               </h2>
               <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-                {lang === "ar"
-                  ? "تصفح مجموعة من أرقى وحدات كازا المجهزة بأحدث تصاميم وتجهيزات كازا للأثاث الفاخر."
-                  : "Explore our curated collection of premium units furnished with luxury KAZA designs and custom setups."}
+                {t.furniturePage.gallery.description}
               </p>
             </div>
 
@@ -301,7 +299,7 @@ export default function FurniturePage() {
                   >
                     <Image
                       src={imgUrl}
-                      alt={`KAZA Furniture ${index + 1}`}
+                      alt={`${t.furniturePage.itcanSection.title} ${index + 1}`}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -394,7 +392,7 @@ export default function FurniturePage() {
               >
                 <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden shadow-2xl border border-kaza-gold/20 bg-gray-50">
                   <Image
-                    src="/pegasus-kitchen/pegasus/KITCHEN-page8-image1.jpg"
+                    src="/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page8-image1.jpg"
                     alt={t.pegasusSection.overview.title}
                     fill
                     className="object-cover"
@@ -476,7 +474,7 @@ export default function FurniturePage() {
                   transition={{ duration: 0.5 }}
                 >
                   <Image
-                    src="/pegasus-kitchen/pegasus/KITCHEN-page5-image2.jpg"
+                    src="/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page5-image2.jpg"
                     alt={t.pegasusSection.characteristics.lighting}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -500,7 +498,7 @@ export default function FurniturePage() {
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
                   <Image
-                    src="/pegasus-kitchen/pegasus/KITCHEN-page7-image2.jpg"
+                    src="/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page7-image2.jpg"
                     alt={t.pegasusSection.characteristics.materials}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -524,7 +522,7 @@ export default function FurniturePage() {
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
                   <Image
-                    src="/pegasus-kitchen/pegasus/KITCHEN-page9-image2.jpg"
+                    src="/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page9-image2.jpg"
                     alt={t.pegasusSection.characteristics.hidden}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -548,7 +546,7 @@ export default function FurniturePage() {
                   transition={{ duration: 0.5, delay: 0.3 }}
                 >
                   <Image
-                    src="/pegasus-kitchen/pegasus/KITCHEN-page11-image2.jpg"
+                    src="/kaza-furniture/pegasus-kitchen/pegasus/KITCHEN-page11-image2.jpg"
                     alt={t.pegasusSection.characteristics.islands}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -733,7 +731,7 @@ export default function FurniturePage() {
                 <div className="relative w-full h-full">
                   <Image
                     src={GALLERY_IMAGES[activeKazaIndex]}
-                    alt={`KAZA Furniture Design ${activeKazaIndex + 1}`}
+                    alt={`${t.furniturePage.gallery.designCaption} ${activeKazaIndex + 1}`}
                     fill
                     className="object-contain"
                     sizes="100vw"
@@ -744,8 +742,8 @@ export default function FurniturePage() {
                 <div className="absolute bottom-[-40px] text-center text-white">
                   <p className="text-sm font-medium tracking-wide">
                     {lang === "ar"
-                      ? `تصميم كازا للأثاث ${activeKazaIndex + 1} من ${GALLERY_IMAGES.length}`
-                      : `KAZA Furniture Design ${activeKazaIndex + 1} of ${GALLERY_IMAGES.length}`}
+                      ? `${t.furniturePage.gallery.designCaption} ${activeKazaIndex + 1} من ${GALLERY_IMAGES.length}`
+                      : `${t.furniturePage.gallery.designCaption} ${activeKazaIndex + 1} of ${GALLERY_IMAGES.length}`}
                   </p>
                 </div>
               </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -9,17 +9,24 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLang, copy } from "@/context/LanguageContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { CheckCircle2, ArrowLeft, ArrowRight } from "lucide-react";
+import { CheckCircle2, ArrowLeft, ArrowRight, X, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const SECTOR_KEY = "restaurant";
-const IMAGE_URL = "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=1200";
+const HERO_COVER_URL = "/images/restaurant/princess/landing-cover.jpg";
+const DETAIL_IMAGE_URL = "/images/restaurant/princess/dis.jpg";
+
+const GALLERY_IMAGES = Array.from({ length: 51 }, (_, i) => `/images/restaurant/princess/princess-${i + 1}.jpeg`);
 
 export default function RestaurantPage() {
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { lang, dir } = useLang();
+  
+  // Gallery & Lightbox states
+  const [visibleCount, setVisibleCount] = useState(8);
+  const [activeImgIndex, setActiveImgIndex] = useState<number | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -45,6 +52,45 @@ export default function RestaurantPage() {
     return () => ctx.revert();
   }, [mounted]);
 
+  // Handle keyboard events for lightbox navigation
+  useEffect(() => {
+    if (activeImgIndex === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveImgIndex(null);
+      } else if (e.key === "ArrowRight") {
+        setActiveImgIndex((prev) => (prev !== null ? (prev + 1) % GALLERY_IMAGES.length : null));
+      } else if (e.key === "ArrowLeft") {
+        setActiveImgIndex((prev) => (prev !== null ? (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length : null));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeImgIndex]);
+
+  // Handle page scrolling and Lenis scroll behavior when lightbox opens
+  useEffect(() => {
+    if (activeImgIndex !== null) {
+      document.body.style.overflow = "hidden";
+      if ((window as any).lenis) (window as any).lenis.stop();
+    } else {
+      document.body.style.overflow = "";
+      if ((window as any).lenis) (window as any).lenis.start();
+    }
+    return () => {
+      document.body.style.overflow = "";
+      if ((window as any).lenis) (window as any).lenis.start();
+    };
+  }, [activeImgIndex]);
+
+  const triggerResize = () => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("resize"));
+    }
+  };
+
   if (!mounted) {
     return (
       <div className="min-h-screen bg-kaza-navy flex items-center justify-center">
@@ -56,6 +102,7 @@ export default function RestaurantPage() {
   const t = copy[lang];
   const sectorData = ((t as any).sectors?.[SECTOR_KEY]) || {};
   const features = sectorData.features || [];
+  const pageCopy = (t as any).restaurantPage || {};
 
   return (
     <main dir={dir} className="min-h-screen bg-kaza-pearl text-kaza-navy flex flex-col justify-between">
@@ -67,8 +114,8 @@ export default function RestaurantPage() {
           <div className="sector-hero-bg absolute inset-0 z-0 w-full h-[120%] -top-[10%]">
             <div className="absolute inset-0 bg-gradient-to-b from-kaza-navy/85 via-kaza-navy/60 to-kaza-navy/90 z-10" />
             <Image
-              src={IMAGE_URL}
-              alt={sectorData.title || "Restaurant"}
+              src={HERO_COVER_URL}
+              alt={pageCopy.hero?.title || "Restaurant"}
               fill
               priority
               className="object-cover object-center"
@@ -83,7 +130,7 @@ export default function RestaurantPage() {
               transition={{ duration: 0.6 }}
               className="mb-4 inline-block px-4 py-1 rounded-full border border-kaza-gold/30 bg-kaza-gold/15 text-kaza-gold text-xs font-semibold tracking-wider uppercase"
             >
-              {lang === "ar" ? "قطاعات KAZA المميزه" : "KAZA Specialized Sectors"}
+              {lang === "ar" ? "شراكات KAZA المميزة" : "KAZA Featured Partnership"}
             </motion.span>
             <motion.h1
               initial={{ opacity: 0, y: 25 }}
@@ -91,7 +138,7 @@ export default function RestaurantPage() {
               transition={{ duration: 0.8, delay: 0.1 }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold mb-5 font-serif leading-tight drop-shadow-md"
             >
-              {sectorData.title}
+              {pageCopy.hero?.title}
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 15 }}
@@ -99,13 +146,124 @@ export default function RestaurantPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="max-w-2xl text-base md:text-lg leading-relaxed text-gray-200"
             >
-              {sectorData.heroSubtitle}
+              {pageCopy.hero?.subtitle}
             </motion.p>
           </div>
         </section>
 
-        {/* Content Section */}
-        <section className="py-20 lg:py-28">
+        {/* Featured Partner Section */}
+        <section className="py-20 lg:py-28 bg-kaza-navy text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(197,160,89,0.08),transparent_50%)] z-0 pointer-events-none" />
+          
+          <div className="container mx-auto px-6 lg:px-12 max-w-6xl relative z-10">
+            <div className="flex flex-col lg:flex-row rtl:lg:flex-row-reverse gap-12 lg:gap-20 items-center min-h-[500px] h-auto">
+              
+              {/* Copywriting */}
+              <motion.div
+                initial={{ opacity: 0, x: dir === "rtl" ? 40 : -40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+                className="w-full lg:w-1/2"
+              >
+                <span className="text-kaza-gold text-xs font-bold uppercase tracking-widest block mb-3">
+                  {pageCopy.featuredPartner?.badge}
+                </span>
+                <h2 className="text-3xl lg:text-4xl font-bold font-serif mb-6 text-kaza-gold-light leading-tight">
+                  {pageCopy.featuredPartner?.title}
+                </h2>
+                <p className="text-gray-300 text-base md:text-lg leading-relaxed mb-8">
+                  {pageCopy.featuredPartner?.description}
+                </p>
+              </motion.div>
+
+              {/* Imagery */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="w-full lg:w-1/2 flex justify-center"
+              >
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-kaza-gold/25 w-full max-w-[600px] aspect-[4/3]">
+                  <Image
+                    src={DETAIL_IMAGE_URL}
+                    alt={pageCopy.featuredPartner?.title || "Princess Restaurant"}
+                    width={600}
+                    height={450}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                    priority={false}
+                  />
+                </div>
+              </motion.div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* Dynamic Gallery Showcase */}
+        <section className="py-16 lg:py-24 bg-kaza-navy text-kaza-pearl relative border-t border-white/5">
+          <div className="container mx-auto px-6 lg:px-12 max-w-7xl">
+            <div className="text-center mb-16 max-w-3xl mx-auto">
+              <span className="text-kaza-gold text-xs font-bold uppercase tracking-widest block mb-3">
+                {lang === "ar" ? "معرض الصور" : "Culinary Gallery"}
+              </span>
+              <h2 className="text-3xl lg:text-5xl font-bold font-serif mb-4 text-white">
+                {pageCopy.gallery?.title}
+              </h2>
+              <p className="text-gray-400 text-sm md:text-base leading-relaxed">
+                {pageCopy.gallery?.description}
+              </p>
+            </div>
+
+            {/* Gallery Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+              <AnimatePresence>
+                {GALLERY_IMAGES.slice(0, visibleCount).map((imgUrl, index) => (
+                  <motion.div
+                    key={imgUrl}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.4 }}
+                    className="group relative aspect-square rounded-2xl overflow-hidden border border-white/10 bg-kaza-navy-light cursor-pointer shadow-lg hover:shadow-2xl"
+                    onClick={() => setActiveImgIndex(index)}
+                  >
+                    <Image
+                      src={imgUrl}
+                      alt={`${pageCopy.featuredPartner?.title || "Princess Restaurant"} ${index + 1}`}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      onLoad={triggerResize}
+                    />
+                    <div className="absolute inset-0 bg-kaza-navy/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <div className="bg-kaza-gold text-kaza-navy p-3 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-md">
+                        <Eye className="w-5 h-5" />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {/* Load More Button */}
+            {visibleCount < GALLERY_IMAGES.length && (
+              <div className="text-center mt-12">
+                <button
+                  onClick={() => setVisibleCount((prev) => Math.min(prev + 8, GALLERY_IMAGES.length))}
+                  className="bg-transparent hover:bg-kaza-gold text-kaza-gold hover:text-kaza-navy border border-kaza-gold hover:border-kaza-gold-light font-bold px-8 py-3.5 rounded-full transition-all duration-300 inline-flex items-center gap-2 transform hover:-translate-y-0.5"
+                >
+                  <span>{lang === "ar" ? "عرض المزيد من الصور" : "Show More Images"}</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* General Operational Overview Section */}
+        <section className="py-20 lg:py-28 bg-kaza-pearl">
           <div className="container mx-auto px-6 lg:px-12 max-w-6xl">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
               {/* Copywriting */}
@@ -120,8 +278,8 @@ export default function RestaurantPage() {
                 </span>
                 <h2 className="text-3xl lg:text-4xl font-bold font-serif mb-6 text-kaza-navy leading-tight">
                   {lang === "ar"
-                    ? `إعادة تعريف خدمات ${sectorData.title} بمعايير فندقية`
-                    : `Redefining ${sectorData.title} with luxury hotel-grade operations`}
+                    ? `إعادة تعريف شراكات المطابخ والطهي بمعايير فندقية`
+                    : `Redefining culinary partnerships with luxury hotel-grade operations`}
                 </h2>
                 <p className="text-gray-600 text-lg leading-relaxed mb-8">
                   {sectorData.aboutSection}
@@ -153,7 +311,7 @@ export default function RestaurantPage() {
                 className="relative aspect-video lg:aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-kaza-gold/25"
               >
                 <Image
-                  src={IMAGE_URL}
+                  src={DETAIL_IMAGE_URL}
                   alt={sectorData.title || "Restaurant"}
                   fill
                   className="object-cover hover:scale-105 transition-transform duration-700"
@@ -165,7 +323,7 @@ export default function RestaurantPage() {
         </section>
 
         {/* CTA Banner */}
-        <section className="pb-24 lg:pb-32">
+        <section className="pb-24 lg:pb-32 bg-kaza-pearl">
           <div className="container mx-auto px-6 lg:px-12 max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -209,6 +367,80 @@ export default function RestaurantPage() {
           </div>
         </section>
       </div>
+
+      {/* Lightbox Modal */}
+      <AnimatePresence>
+        {activeImgIndex !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-kaza-navy/95 backdrop-blur-md flex items-center justify-center p-4 select-none"
+            onClick={() => setActiveImgIndex(null)}
+          >
+            {/* Close Button */}
+            <button
+              className="absolute top-6 right-6 text-white/80 hover:text-kaza-gold p-2 transition-colors cursor-pointer bg-white/5 rounded-full border border-white/10"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveImgIndex(null);
+              }}
+              aria-label="Close Lightbox"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            {/* Prev Button */}
+            <button
+              className="absolute left-6 text-white/80 hover:text-kaza-gold p-3 transition-colors cursor-pointer bg-white/5 rounded-full border border-white/10"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveImgIndex((prev) => (prev !== null ? (prev - 1 + GALLERY_IMAGES.length) % GALLERY_IMAGES.length : null));
+              }}
+              aria-label="Previous Image"
+            >
+              <ChevronLeft className="w-8 h-8" />
+            </button>
+
+            {/* Next Button */}
+            <button
+              className="absolute right-6 text-white/80 hover:text-kaza-gold p-3 transition-colors cursor-pointer bg-white/5 rounded-full border border-white/10"
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveImgIndex((prev) => (prev !== null ? (prev + 1) % GALLERY_IMAGES.length : null));
+              }}
+              aria-label="Next Image"
+            >
+              <ChevronRight className="w-8 h-8" />
+            </button>
+
+            {/* Lightbox Content Container */}
+            <div
+              className="relative max-w-4xl max-h-[80vh] w-full h-full flex flex-col items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative w-full h-full">
+                <Image
+                  src={GALLERY_IMAGES[activeImgIndex]}
+                  alt={`${pageCopy.gallery?.designCaption || "Princess Culinary Image"} ${activeImgIndex + 1}`}
+                  fill
+                  className="object-contain"
+                  sizes="100vw"
+                  priority
+                />
+              </div>
+              {/* Caption / Progress */}
+              <div className="absolute bottom-[-40px] text-center text-white">
+                <p className="text-sm font-medium tracking-wide">
+                  {lang === "ar"
+                    ? `${pageCopy.gallery?.designCaption || ""} ${activeImgIndex + 1} من ${GALLERY_IMAGES.length}`
+                    : `${pageCopy.gallery?.designCaption || ""} ${activeImgIndex + 1} of ${GALLERY_IMAGES.length}`}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </main>

@@ -176,7 +176,7 @@ export const copy = {
       beach: "كازا للشاطئ",
       breakfast: "كازا للإفطار",
       restaurant: "كازا للمطعم",
-      furniture: "كازا للأثاث"
+      furniture: "إتقان للأثاث"
     },
 
     // Sectors
@@ -226,15 +226,15 @@ export const copy = {
         ctaText: "اطلب تفاصيل برنامج الشراكات"
       },
       furniture: {
-        title: "كازا للأثاث والتجهيز الداخلي",
+        title: "إتقان للأثاث والتجهيز الداخلي",
         heroSubtitle: "حوّل الوحدات الفارغة إلى مساحات ضيافة مذهلة وذات أداء تشغيلي مرتفع بتصميم متكامل وتجهيزات أثاث راقية.",
-        aboutSection: "التصميم يحدد مستوى الطلب. يعمل قسم كازا للأثاث والتجهيز الداخلي مع مصممي ديكور محترفين لتجهيز وتوريد وتركيب أثاث فاخر عالي التحمل ومحسن للتشغيل التجاري.",
+        aboutSection: "التصميم يحدد مستوى الطلب. يعمل قسم إتقان للأثاث والتجهيز الداخلي مع مصممي ديكور محترفين لتجهيز وتوريد وتركيب أثاث فاخر عالي التحمل ومحسن للتشغيل التجاري.",
         features: [
-          "حزم كازا للأثاث المتكاملة (مفتاح باليد): تنسيق كامل للمخططات، المشتريات، التوصيل، والتركيب.",
+          "حزم إتقان للأثاث المتكاملة (مفتاح باليد): تنسيق كامل للمخططات، المشتريات، التوصيل، والتركيب.",
           "متانة تجارية فندقية: أقمشة ومواد راقية مصممة لتحمل تشغيل الإيجارات المتكرر.",
           "تنسيق داخلي جذاب للصور: تنسيق جمالي استراتيجي لتعزيز معدلات الحجز عبر الإنترنت."
         ],
-        ctaText: "اطلب مقايسة كازا للأثاث والتجهيز"
+        ctaText: "اطلب مقايسة إتقان للأثاث والتجهيز"
       }
     },
     pegasusSection: {
@@ -303,6 +303,33 @@ export const copy = {
       videoSection: {
         title: "أبرز لقطات إنستاجرام",
         subtitle: "شاهد كواليس عملياتنا الحية وخبرتنا في تشغيل الشواطئ والمناطق الساحلية."
+      }
+    },
+    furniturePage: {
+      itcanSection: {
+        title: "إتقان للأثاث",
+        subtitle: "حلول الأثاث الفاخر، المطابخ، والخزائن المخصصة للملاك."
+      },
+      gallery: {
+        title: "معرض إتقان للأثاث",
+        description: "تصفح مجموعة من أرقى وحدات كازا المجهزة بأحدث تصاميم وتجهيزات إتقان للأثاث الفاخر.",
+        designCaption: "تصميم إتقان للأثاث"
+      }
+    },
+    restaurantPage: {
+      hero: {
+        title: "شراكات الطهي الحصرية",
+        subtitle: "تجارب طهي فاخرة ومنتقاة بعناية، مخصصة حصرياً لنزلاء كازا."
+      },
+      featuredPartner: {
+        badge: "شريك متميز",
+        title: "مطعم برنسس",
+        description: "تعمل كازا كوسييط حصري لتزويد زوارنا بفرص استثنائية للوصول إلى مطعم برنسس. استمتع بقوائم طعام مخصصة وحجوزات ممتازة خلال فترة إقامتك."
+      },
+      gallery: {
+        title: "معرض مطعم برنسس",
+        description: "استمتع بمشاهدة أطباق مطعم برنسس وتصميمه الراقي وخدمته المتميزة.",
+        designCaption: "أطباق وتصميم مطعم برنسس"
       }
     },
   },
@@ -438,7 +465,7 @@ export const copy = {
       beach: "KAZA Beach",
       breakfast: "KAZA Breakfast",
       restaurant: "KAZA Restaurant",
-      furniture: "KAZA Furniture"
+      furniture: "Itcan Furniture"
     },
 
     // Sectors
@@ -488,15 +515,15 @@ export const copy = {
         ctaText: "Request Partnership Program Details"
       },
       furniture: {
-        title: "KAZA Furniture & Interior Setup",
+        title: "Itcan Furniture & Interior Setup",
         heroSubtitle: "Transform empty units into stunning, high-performance hospitality spaces with turn-key design and custom furniture services.",
-        aboutSection: "Design dictates demand. KAZA's furniture and interior design department works with professional interior designers to curate, procure, and install high-durability, luxury furniture and equipment optimized for commercial rental operations.",
+        aboutSection: "Design dictates demand. Itcan's furniture and interior design department works with professional interior designers to curate, procure, and install high-durability, luxury furniture and equipment optimized for commercial rental operations.",
         features: [
-          "Turn-key KAZA Furniture Packages: Complete layout curation, purchase, delivery, and setup.",
+          "Turn-key Itcan Furniture Packages: Complete layout curation, purchase, delivery, and setup.",
           "Commercial-Grade Durability: High-end fabrics and materials designed to withstand vacation wear.",
           "Photogenic Interior Styling: Strategic aesthetic placement to maximize listing click-through rates."
         ],
-        ctaText: "Request a KAZA Furniture Quote"
+        ctaText: "Request an Itcan Furniture Quote"
       }
     },
     pegasusSection: {
@@ -564,6 +591,33 @@ export const copy = {
       videoSection: {
         title: "Instagram Video Highlights",
         subtitle: "Watch behind-the-scenes moments of our beachfront operations."
+      }
+    },
+    furniturePage: {
+      itcanSection: {
+        title: "Itcan Furniture",
+        subtitle: "Bespoke cabinetry and integrated luxury furnishing solutions."
+      },
+      gallery: {
+        title: "Itcan Furniture Gallery",
+        description: "Explore our curated collection of premium units furnished with luxury Itcan designs and custom setups.",
+        designCaption: "Itcan Furniture Design"
+      }
+    },
+    restaurantPage: {
+      hero: {
+        title: "Exclusive Culinary Partnerships",
+        subtitle: "Curated premium dining experiences reserved exclusively for KAZA guests."
+      },
+      featuredPartner: {
+        badge: "Featured Partner",
+        title: "Princess Restaurant",
+        description: "KAZA acts as an exclusive intermediary to provide our guests with unparalleled access to Princess. Enjoy tailored menus and elite concierge reservations during your stay."
+      },
+      gallery: {
+        title: "Princess Restaurant Gallery",
+        description: "Explore the exquisite dishes, premium design, and curated dining experiences at Princess.",
+        designCaption: "Princess Culinary Experience"
       }
     },
   },
