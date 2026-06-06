@@ -7,7 +7,6 @@ import { ReviewDetailDrawer } from "@/components/admin/reviews/ReviewDetailDrawe
 import { PublishReviewDialog } from "@/components/admin/reviews/PublishReviewDialog";
 import { RejectReviewDialog } from "@/components/admin/reviews/RejectReviewDialog";
 import { HideReviewDialog } from "@/components/admin/reviews/HideReviewDialog";
-import { EmptyState } from "@/components/ui/EmptyState";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { reviewsService } from "@/lib/api/services/reviews.service";
@@ -17,7 +16,6 @@ import { useAdminReviews } from "@/lib/hooks/useReviews";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { toastSuccess, toastError } from "@/lib/utils/toast";
 import type { ReviewStatus, ReviewResponse } from "@/lib/types/review.types";
-import { MessageSquare } from "lucide-react";
 
 export default function ReviewsModerationPage() {
   const { canModerateReviews } = usePermissions();

@@ -158,7 +158,7 @@ export function useSubmitReview() {
   return useMutation({
     mutationFn: (payload: { bookingId: string; rating: number; title: string; comment?: string }) =>
       reviewsService.submitClientReview(payload),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings', 'client'] });
       queryClient.invalidateQueries({ queryKey: ["client-bookings"] });
       queryClient.invalidateQueries({ queryKey: ["client-reviews"] });

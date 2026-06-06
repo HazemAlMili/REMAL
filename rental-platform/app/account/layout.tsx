@@ -6,7 +6,7 @@
 "use client";
 import { useClientGuard } from "@/lib/hooks/useClientAuth";
 import { AccountSidebar } from "@/components/public/account/AccountSidebar";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { PortalSplash, usePortalReady } from "@/components/ui/PortalSplash";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CalendarCheck, Star, Bell, Home, User } from "lucide-react";
@@ -61,18 +61,12 @@ export default function AccountLayout({
   children: React.ReactNode;
 }) {
   const { isClient } = useClientGuard();
+  // Keep the branded handoff visible briefly so it's seen after sign-in.
+  const showApp = usePortalReady(isClient);
 
-  // While redirecting, show skeleton
-  if (!isClient) {
-    return (
-      <div className="mx-auto max-w-container px-6 py-8">
-        <Skeleton className="mb-8 h-8 w-48" />
-        <div className="flex gap-8">
-          <Skeleton className="h-96 w-64 rounded-xl" />
-          <Skeleton className="h-96 flex-1 rounded-xl" />
-        </div>
-      </div>
-    );
+  // Authenticating / bootstrapping the account — branded loading handoff.
+  if (!showApp) {
+    return <PortalSplash label="Loading your account" />;
   }
 
   return (

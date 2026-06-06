@@ -10,12 +10,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from "@/lib/validations/auth";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import api from "@/lib/api/axios";
 import { authService } from "@/lib/api/services/auth.service";
-import { endpoints } from "@/lib/api/endpoints";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { Eye, EyeOff } from "lucide-react";
-import type { AuthResponse } from "@/lib/types/auth.types";
 
 interface InlineLoginFormProps {
   onSuccess: (data: {

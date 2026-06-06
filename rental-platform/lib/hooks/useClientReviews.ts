@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { reviewsService } from "@/lib/api/services/reviews.service";
 import { queryKeys } from "@/lib/utils/query-keys";
-import type { ReviewFormData } from "@/lib/validations/review";
 
 export function useCreateClientReview() {
   const queryClient = useQueryClient();

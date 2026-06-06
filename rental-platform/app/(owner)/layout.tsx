@@ -7,6 +7,7 @@ import { ROUTES } from "@/lib/constants/routes";
 import { OwnerSidebar } from "@/components/owner/layout/OwnerSidebar";
 import { OwnerHeader } from "@/components/owner/layout/OwnerHeader";
 import { authService } from "@/lib/api/services/auth.service";
+import { PortalSplash, usePortalReady } from "@/components/ui/PortalSplash";
 
 export default function OwnerLayout({
   children,
@@ -18,6 +19,8 @@ export default function OwnerLayout({
   // Start ready only if we already have a token in memory (in-app navigation).
   // On cold start (page refresh) the token is null until refresh completes.
   const [isAuthReady, setIsAuthReady] = useState(!!accessToken);
+  // Keep the branded handoff visible briefly so it's seen after sign-in.
+  const showApp = usePortalReady(isAuthReady && subjectType === "Owner");
 
   useEffect(() => {
     if (subjectType !== "Owner") {
@@ -61,8 +64,8 @@ export default function OwnerLayout({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (subjectType !== "Owner" || !isAuthReady) {
-    return null;
+  if (!showApp) {
+    return <PortalSplash label="Loading your dashboard" />;
   }
 
   return (

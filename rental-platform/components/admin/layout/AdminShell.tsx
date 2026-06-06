@@ -7,6 +7,7 @@ import { authService } from "@/lib/api/services/auth.service";
 import { ROUTES } from "@/lib/constants/routes";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminHeader } from "./AdminHeader";
+import { PortalSplash, usePortalReady } from "@/components/ui/PortalSplash";
 
 /**
  * AdminShell — client component that owns the admin layout chrome.
@@ -22,6 +23,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const setAuth = useAuthStore((s) => s.setAuth);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const [isReady, setIsReady] = useState(false);
+  // Hold the branded handoff visible briefly so it's actually seen after
+  // sign-in (the access token is already in memory, so auth resolves instantly).
+  const showApp = usePortalReady(isReady);
 
   useEffect(() => {
     // Token already present (e.g. navigated client-side after login)
@@ -68,12 +72,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken, subjectType, router, setAuth, clearAuth]);
 
-  if (!isReady) {
-    return (
-      <div className="portal-admin content-density-compact flex h-screen items-center justify-center bg-neutral-50">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-500 border-t-transparent" />
-      </div>
-    );
+  if (!showApp) {
+    return <PortalSplash className="portal-admin" label="Loading your workspace" />;
   }
 
   return (

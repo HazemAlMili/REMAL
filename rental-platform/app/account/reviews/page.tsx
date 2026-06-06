@@ -14,12 +14,12 @@ import { useReviewsUIStore } from "@/lib/stores";
 import { formatCurrency, formatDate } from "@/lib/utils/format";
 import { toastSuccess } from "@/lib/utils/toast";
 import { cn } from "@/lib/utils/cn";
-import { Star, CalendarCheck, MessageSquare, Calendar, Home, ArrowLeft } from "lucide-react";
-import type { BookingListItemResponse } from "@/lib/types/booking.types";
+import { Star, CalendarCheck, MessageSquare, Calendar, Home } from "lucide-react";
+import type { ClientReviewByBookingResponse } from "@/lib/types/client.types";
 import type { ReviewFormData } from "@/lib/validations/review";
 
 export default function AccountReviewsPage() {
-  const { data, isLoading: bookingsLoading, isError: bookingsError } = useClientBookings({
+  const { data, isLoading: bookingsLoading } = useClientBookings({
     page: 1,
     pageSize: 100, // Fetch up to 100 bookings to get complete history
   });
@@ -65,7 +65,7 @@ export default function AccountReviewsPage() {
   const awaitingReviewList: typeof completedBookings = [];
   const feedbackHistoryList: Array<{
     booking: typeof completedBookings[number];
-    review: any;
+    review: ClientReviewByBookingResponse;
   }> = [];
 
   if (!reviewsLoading && !bookingsLoading) {
@@ -148,7 +148,7 @@ export default function AccountReviewsPage() {
           response.data?.errors?.[0] ||
           "Failed to submit review. Please try again.";
       } else if (err && typeof err === "object" && "message" in err) {
-        message = (err as any).message;
+        message = (err as { message?: string }).message ?? message;
       }
       setSubmitError(message);
     } finally {

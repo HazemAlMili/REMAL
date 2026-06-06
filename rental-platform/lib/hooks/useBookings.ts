@@ -50,16 +50,20 @@ export function useBookingFinanceSnapshot(bookingId: string) {
   });
 }
 
-const handleMutationError = (error: any) => {
+const handleMutationError = (error: unknown) => {
+  const err = error as {
+    response?: { data?: { message?: string; errors?: string[] } };
+    message?: string;
+    errors?: string[];
+  };
   const apiMessage =
-    error.response?.data?.message ||
-    error.message ||
+    err.response?.data?.message ||
+    err.message ||
     "An unexpected conflict occurred.";
   const apiErrors =
-    error.response?.data?.errors ||
-    error.errors;
-  const displayMessage =
-    apiErrors && apiErrors.length > 0 ? apiErrors[0] : apiMessage;
+    err.response?.data?.errors ||
+    err.errors;
+  const displayMessage = apiErrors?.[0] ?? apiMessage;
   toastError(displayMessage);
 };
 
