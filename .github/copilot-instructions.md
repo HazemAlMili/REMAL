@@ -2,7 +2,7 @@
 
 Remal is a commission-based vacation-rental brokerage platform for Egyptian North-Coast resorts. The frontend is in [`rental-platform/`](../rental-platform/): **Next.js 14 App Router, TypeScript (strict), Tailwind CSS 3.4**, TanStack Query/Table, Zustand, React Hook Form + Zod, Recharts, lucide-react, sonner. Fonts are deliberately **offline-safe** (no `next/font/google`).
 
-When doing any design or frontend work on the operational portals, follow the Design Context below. The canonical copy lives in [`.impeccable.md`](../.impeccable.md) at the repo root — keep the two in sync.
+When doing any design or frontend work on the operational portals, follow the Design Context below. The canonical sources are [`PRODUCT.md`](../PRODUCT.md) (strategic) and [`DESIGN.md`](../DESIGN.md) (visual system) at the repo root — keep this summary in sync with them.
 
 ## Design Context
 
