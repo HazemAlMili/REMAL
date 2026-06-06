@@ -20,7 +20,7 @@ interface RevenueLineChartProps {
 
 export function RevenueLineChart({ data, isLoading }: RevenueLineChartProps) {
   if (isLoading) {
-    return <Skeleton height={280} className="rounded-lg" />;
+    return <Skeleton height={280} className="rounded-[4px]" />;
   }
 
   const chartData = data.map((d) => ({
@@ -29,9 +29,9 @@ export function RevenueLineChart({ data, isLoading }: RevenueLineChartProps) {
   }));
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
-      <h3 className="font-medium text-neutral-700 mb-4">
-        Revenue — Last 30 Days
+    <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
+      <h3 className="mb-4 text-sm font-semibold text-neutral-900">
+        Revenue, last 30 days
       </h3>
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={chartData}>
@@ -55,7 +55,7 @@ export function RevenueLineChart({ data, isLoading }: RevenueLineChartProps) {
             contentStyle={{
               backgroundColor: "var(--color-neutral-800)",
               border: "none",
-              borderRadius: "8px",
+              borderRadius: "4px",
               color: "#fff",
               fontSize: "13px",
             }}

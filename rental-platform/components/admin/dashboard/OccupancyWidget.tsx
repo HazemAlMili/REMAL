@@ -28,14 +28,16 @@ export function OccupancyWidget() {
   });
 
   if (summaryLoading || unitsLoading) {
-    return <Skeleton height={160} className="rounded-lg" />;
+    return <Skeleton height={260} className="rounded-[4px]" />;
   }
 
   if (!bookingsSummary || !unitsData?.items) {
     return (
-      <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
-        <h3 className="mb-2 font-medium text-neutral-700">Occupancy Rate</h3>
-        <p className="text-sm italic text-neutral-400">Data unavailable</p>
+      <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
+        <h3 className="mb-2 text-sm font-semibold text-neutral-900">
+          Occupancy rate
+        </h3>
+        <p className="text-sm text-neutral-400">Data unavailable</p>
       </div>
     );
   }
@@ -64,8 +66,10 @@ export function OccupancyWidget() {
         : { color: "var(--color-error)", label: "Low" };
 
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
-      <h3 className="mb-2 font-medium text-neutral-700">Occupancy Rate</h3>
+    <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
+      <h3 className="mb-1 text-sm font-semibold text-neutral-900">
+        Occupancy rate
+      </h3>
       <p className="mb-4 text-xs text-neutral-400">
         Current month (approximate)
       </p>

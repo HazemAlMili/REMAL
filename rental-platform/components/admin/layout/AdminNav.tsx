@@ -115,7 +115,7 @@ export function AdminNav({ isCollapsed }: AdminNavProps) {
   const permissions = usePermissions();
 
   return (
-    <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+    <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
       {NAV_ITEMS.map((item) => {
         // If there's a required permission and the user doesn't have it, hiding
         if (item.requiredPermission && !permissions[item.requiredPermission]) {
@@ -128,21 +128,30 @@ export function AdminNav({ isCollapsed }: AdminNavProps) {
           <Link
             key={item.label}
             href={item.href}
+            aria-current={isActive ? "page" : undefined}
             aria-label={isCollapsed ? item.label : undefined}
             title={isCollapsed ? item.label : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              "group relative flex min-h-[38px] items-center gap-3 rounded-[4px] px-3 text-sm transition-colors",
               isActive
-                ? "bg-primary-50 text-primary-600"
-                : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900",
+                ? "bg-neutral-100 font-semibold text-neutral-900"
+                : "font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900",
               isCollapsed && "justify-center px-2"
             )}
           >
+            {isActive && !isCollapsed && (
+              <span
+                aria-hidden
+                className="absolute inset-y-[7px] start-0 w-[2px] rounded-full bg-primary-500"
+              />
+            )}
             <item.icon
-              size={20}
+              size={18}
               className={cn(
-                "flex-shrink-0",
-                isActive ? "text-primary-600" : "text-neutral-500"
+                "flex-shrink-0 transition-colors",
+                isActive
+                  ? "text-primary-600"
+                  : "text-neutral-500 group-hover:text-neutral-700"
               )}
             />
             {!isCollapsed && <span className="truncate">{item.label}</span>}

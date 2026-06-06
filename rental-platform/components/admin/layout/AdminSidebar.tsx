@@ -10,25 +10,25 @@ export function AdminSidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col border-r border-neutral-200 bg-white transition-[width] duration-200 ease-in-out",
-        isSidebarOpen ? "w-64" : "w-16"
+        "flex flex-col border-e border-neutral-200 bg-white transition-[width] duration-200 ease-out",
+        isSidebarOpen ? "w-60" : "w-16"
       )}
     >
       <div
         className={cn(
-          "flex h-16 shrink-0 items-center border-b border-neutral-200 px-4",
-          isSidebarOpen ? "justify-start" : "justify-center"
+          "flex h-16 shrink-0 items-center gap-2.5 border-b border-neutral-200 px-3",
+          !isSidebarOpen && "justify-center"
         )}
       >
-        {isSidebarOpen ? (
-          <div className="flex w-full items-center justify-between">
-            <span className="font-display text-xl font-bold tracking-tight text-neutral-900">
-              Remal
-            </span>
-          </div>
-        ) : (
-          <span className="font-display text-xl font-bold tracking-tight text-neutral-900">
-            R
+        <span
+          aria-hidden
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-[5px] bg-primary-500 text-sm font-bold text-white"
+        >
+          R
+        </span>
+        {isSidebarOpen && (
+          <span className="text-[15px] font-semibold tracking-tight text-neutral-900">
+            Remal
           </span>
         )}
       </div>

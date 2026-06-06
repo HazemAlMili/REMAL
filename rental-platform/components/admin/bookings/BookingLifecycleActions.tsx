@@ -211,100 +211,95 @@ export function BookingLifecycleActions({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-2.5">
         {validTransitions.includes("Relevant") && (
           <Button
             variant="secondary"
-            size="lg"
+            size="md"
             onClick={() => setActiveAction("relevant")}
-            className="shadow-md hover:shadow-lg"
+            leftIcon={<ThumbsUp className="h-4 w-4" />}
           >
-            <ThumbsUp className="mr-2 h-5 w-5" />
-            👍 Mark as Relevant
+            Mark as relevant
           </Button>
         )}
         {validTransitions.includes("NoAnswer") && (
           <Button
             variant="warning"
-            size="lg"
+            size="md"
             onClick={() => setActiveAction("noAnswer")}
-            className="shadow-md hover:shadow-lg"
+            leftIcon={<PhoneOff className="h-4 w-4" />}
           >
-            <PhoneOff className="mr-2 h-5 w-5" />
-            📵 No Answer
+            No answer
           </Button>
         )}
         {validTransitions.includes("NotRelevant") && (
           <Button
             variant="ghost"
-            size="lg"
+            size="md"
             onClick={() => setActiveAction("notRelevant")}
-            className="shadow-md hover:shadow-lg"
+            leftIcon={<ThumbsDown className="h-4 w-4" />}
           >
-            <ThumbsDown className="mr-2 h-5 w-5" />
-            👎 Not Relevant
+            Not relevant
           </Button>
         )}
         {validTransitions.includes("Booked") && (
           <Button
             variant="secondary"
-            size="lg"
+            size="md"
             onClick={() => setActiveAction("booked")}
-            className="shadow-md hover:shadow-lg"
+            leftIcon={<Calendar className="h-4 w-4" />}
           >
-            <Calendar className="mr-2 h-5 w-5" />
-            📅 Mark as Booked
+            Mark as booked
           </Button>
         )}
         {validTransitions.includes("Confirmed") && (
           <Button
             variant="primary"
-            size="lg"
+            size="md"
             onClick={() => setActiveAction("confirm")}
-            className="shadow-md hover:shadow-lg"
+            leftIcon={<CheckCircle className="h-4 w-4" />}
           >
-            <CheckCircle className="mr-2 h-5 w-5" />✓ Confirm Booking
+            Confirm booking
           </Button>
         )}
         {validTransitions.includes("CheckIn") && (
           <Button
             variant="primary"
-            size="lg"
+            size="md"
             onClick={() => setActiveAction("checkIn")}
-            className="shadow-md hover:shadow-lg"
+            leftIcon={<LogIn className="h-4 w-4" />}
           >
-            <LogIn className="mr-2 h-5 w-5" />
-            🚪 Check In Client
+            Check in client
           </Button>
         )}
         {validTransitions.includes("Completed") && (
           <Button
             variant="success"
-            size="lg"
+            size="md"
             onClick={() => setActiveAction("complete")}
-            className="shadow-md hover:shadow-lg"
+            leftIcon={<CheckSquare className="h-4 w-4" />}
           >
-            <CheckSquare className="mr-2 h-5 w-5" />☑ Complete Booking
+            Complete booking
           </Button>
         )}
         {validTransitions.includes("LeftEarly") && (
           <Button
             variant="warning"
-            size="lg"
+            size="md"
             onClick={() => setActiveAction("leftEarly")}
-            className="shadow-md hover:shadow-lg"
+            leftIcon={<LogOut className="h-4 w-4" />}
           >
-            <LogOut className="mr-2 h-5 w-5" />⏰ Left Early
+            Left early
           </Button>
         )}
         {validTransitions.includes("Cancelled") && (
           <Button
             variant="danger"
-            size="lg"
+            size="md"
             onClick={() => setActiveAction("cancel")}
-            className="shadow-md hover:shadow-lg"
+            leftIcon={<XCircle className="h-4 w-4" />}
           >
-            <XCircle className="mr-2 h-5 w-5" />✗ Cancel Booking
+            Cancel booking
           </Button>
         )}
 

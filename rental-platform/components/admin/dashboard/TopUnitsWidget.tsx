@@ -9,7 +9,7 @@ import { UNIT_TYPE_LABELS } from "@/lib/constants/unit-types";
 import { ROUTES } from "@/lib/constants/routes";
 import { formatCurrency } from "@/lib/utils/format";
 import Link from "next/link";
-import { Home } from "lucide-react";
+import { Home, Info } from "lucide-react";
 
 // NOTE: GET /api/internal/units does NOT document a sort parameter.
 // This widget shows active units as a list — NOT ranked by booking count.
@@ -23,7 +23,7 @@ export function TopUnitsWidget() {
   });
 
   if (isLoading) {
-    return <Skeleton height={260} className="rounded-lg" />;
+    return <Skeleton height={260} className="rounded-[4px]" />;
   }
 
   const activeUnits =
@@ -31,8 +31,10 @@ export function TopUnitsWidget() {
 
   if (activeUnits.length === 0) {
     return (
-      <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
-        <h3 className="mb-4 font-medium text-neutral-700">Active Units</h3>
+      <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
+        <h3 className="mb-4 text-sm font-semibold text-neutral-900">
+          Active units
+        </h3>
         <EmptyState
           title="No active units"
           description="No units are currently active."
@@ -43,29 +45,29 @@ export function TopUnitsWidget() {
   }
 
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="font-medium text-neutral-700">Active Units</h3>
+    <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-neutral-900">Active units</h3>
         <Link
           href={ROUTES.admin.units.list}
-          className="text-sm text-primary-600 hover:text-primary-700 hover:underline"
+          className="text-sm font-medium text-primary-600 hover:text-primary-700 hover:underline"
         >
           View all
         </Link>
       </div>
 
-      <div className="space-y-3">
+      <div className="-mx-2 space-y-0.5">
         {activeUnits.map((unit) => (
           <Link
             key={unit.id}
             href={ROUTES.admin.units.detail(unit.id)}
-            className="flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-neutral-50"
+            className="flex items-center justify-between gap-3 rounded-[4px] px-2 py-2 transition-colors hover:bg-neutral-50"
           >
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-neutral-800">
                 {unit.name}
               </p>
-              <p className="text-xs text-neutral-500">
+              <p className="truncate text-xs text-neutral-500">
                 {UNIT_TYPE_LABELS[
                   unit.unitType as keyof typeof UNIT_TYPE_LABELS
                 ] ?? unit.unitType}
@@ -75,8 +77,8 @@ export function TopUnitsWidget() {
                 {unit.bedrooms} bed
               </p>
             </div>
-            <div className="ml-3 text-right">
-              <span className="text-sm font-medium text-neutral-600">
+            <div className="shrink-0 text-end">
+              <span className="text-sm font-medium tabular-nums text-neutral-700">
                 {formatCurrency(unit.basePricePerNight)}
               </span>
               <span className="text-xs text-neutral-400">/night</span>
@@ -85,9 +87,10 @@ export function TopUnitsWidget() {
         ))}
       </div>
 
-      <p className="mt-3 text-xs italic text-neutral-400">
-        ⚠️ Sorting by booking count is not yet available — showing recent active
-        units
+      <p className="mt-3 flex items-center gap-1.5 text-xs text-neutral-400">
+        <Info size={13} className="shrink-0" />
+        Showing recent active units; ranking by booking count needs backend
+        support.
       </p>
     </div>
   );

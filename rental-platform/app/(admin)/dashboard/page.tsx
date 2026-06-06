@@ -18,7 +18,7 @@ const RevenueLineChart = dynamic(
     })),
   {
     ssr: false,
-    loading: () => <Skeleton height={300} className="rounded-lg" />,
+    loading: () => <Skeleton height={300} className="rounded-[4px]" />,
   }
 );
 
@@ -29,7 +29,7 @@ const BookingsBarChart = dynamic(
     })),
   {
     ssr: false,
-    loading: () => <Skeleton height={300} className="rounded-lg" />,
+    loading: () => <Skeleton height={300} className="rounded-[4px]" />,
   }
 );
 
@@ -74,16 +74,16 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Dashboard Overview
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
+          Dashboard
         </h1>
-        <p className="text-muted-foreground">
-          Welcome to the Remal Rental Platform admin portal.
+        <p className="text-sm text-neutral-500">
+          {format(new Date(), "EEEE, d MMMM yyyy")}
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         {canViewUnits && (
           <StatCard
             title="Total Active Units"

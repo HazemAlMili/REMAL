@@ -111,3 +111,63 @@
   ::-webkit-scrollbar-thumb { background: var(--color-neutral-300); border-radius: 9999px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--color-neutral-400); }
 }
+
+/* ============================================================
+   Portal · shared neutral-pro token layer
+   A cool, flat, professional surface for the operational portals.
+   Scoped to .portal-admin (back-office) and .portal-auth (the
+   sign-in / sign-up shell) — it re-maps the warm storefront
+   neutral ramp + elevation to cool greys, so the public
+   storefront stays completely unaffected.
+   ============================================================ */
+.portal-admin,
+.portal-auth {
+  /* Cool neutral ramp (replaces the warm scale inside admin only) */
+  --color-neutral-50:  #F7F8FA;
+  --color-neutral-100: #EEF0F3;
+  --color-neutral-200: #E4E7EB;
+  --color-neutral-300: #CDD2D9;
+  --color-neutral-400: #9BA2AD;
+  --color-neutral-500: #6B7280;
+  --color-neutral-600: #4B5563;
+  --color-neutral-700: #353A42;
+  --color-neutral-800: #22262C;
+  --color-neutral-900: #14171A;
+
+  /* Status — AA on white. Also re-tints charts, badges, the radial gauge. */
+  --color-success:      #15803D;
+  --color-warning:      #B45309;
+  --color-error:        #B91C1C;
+  --color-info:         #1D4ED8;
+  --color-accent-green: #15803D;
+  --color-accent-blue:  #1D4ED8;
+  --color-accent-amber: #B45309;
+  --color-accent-gold:  #B45309;
+
+  /* Flat, cool elevation. Cards sit on hairline borders, not shadows. */
+  --shadow-sm:         0 1px 2px rgba(20, 23, 26, 0.05);
+  --shadow-md:         0 1px 3px rgba(20, 23, 26, 0.06), 0 1px 2px rgba(20, 23, 26, 0.04);
+  --shadow-card:       none;
+  --shadow-card-hover: 0 2px 6px rgba(20, 23, 26, 0.08);
+  --shadow-nav:        none;
+
+  /* Admin surface tokens */
+  --admin-canvas:  var(--color-neutral-50);
+  --admin-surface: #FFFFFF;
+  --admin-radius:  4px;
+
+  background-color: var(--admin-canvas);
+  color: var(--color-neutral-700);
+  /* Drop the storefront serif; one well-tuned sans carries the whole tool. */
+  font-family: var(--font-ui), system-ui, sans-serif;
+  /* Data-dense surface: align every figure. */
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* One consistent, accessible focus treatment across the portal chrome. */
+.portal-admin :is(a, button, input, select, textarea, [tabindex]):focus-visible,
+.portal-auth :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}

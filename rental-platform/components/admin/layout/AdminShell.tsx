@@ -70,20 +70,20 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   if (!isReady) {
     return (
-      <div className="flex h-screen items-center justify-center bg-neutral-50">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
+      <div className="portal-admin content-density-compact flex h-screen items-center justify-center bg-neutral-50">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-500 border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50">
+    <div className="portal-admin content-density-compact flex h-screen overflow-hidden bg-neutral-50 text-neutral-700">
       <AdminSidebar />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <AdminHeader />
 
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto px-6 py-5">{children}</main>
       </div>
     </div>
   );

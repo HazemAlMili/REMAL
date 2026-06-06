@@ -134,11 +134,16 @@ export default function BookingDetailPage() {
         </div>
       </div>
 
-      {/* Lifecycle Actions - Prominent Display */}
-      <div className="space-y-4 rounded-lg border-2 border-blue-200 bg-gradient-to-br from-white to-blue-50 p-6 shadow-sm">
-        <h2 className="text-lg font-bold text-neutral-800">
-          🎯 LIFECYCLE ACTIONS
-        </h2>
+      {/* Lifecycle Actions */}
+      <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
+        <div className="mb-4 border-b border-neutral-200 pb-3.5">
+          <h2 className="text-sm font-semibold tracking-tight text-neutral-900">
+            Lifecycle actions
+          </h2>
+          <p className="mt-1 text-[12.5px] leading-relaxed text-neutral-500">
+            Move this booking to its next valid state.
+          </p>
+        </div>
         <BookingLifecycleActions
           bookingId={booking.id}
           currentStatus={booking.bookingStatus}

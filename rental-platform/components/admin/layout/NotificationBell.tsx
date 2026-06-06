@@ -44,18 +44,18 @@ export function NotificationBell() {
   return (
     <button
       onClick={handleClick}
-      className="relative rounded-lg p-2 transition-colors hover:bg-neutral-100"
+      className="relative grid h-9 w-9 place-items-center rounded-[4px] text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
       aria-label={`Notifications${showBadge ? ` (${unreadCount} unread)` : ""}`}
     >
-      <Bell className="h-5 w-5 text-neutral-600" />
+      <Bell className="h-5 w-5" />
 
       {showBadge && (
         <span
           className={`
-            absolute -right-0.5 -top-0.5
+            absolute -end-0.5 -top-0.5
             flex h-[18px] min-w-[18px] items-center justify-center
-            rounded-full bg-red-500 px-1
-            text-[10px] font-bold text-white
+            rounded-full bg-error px-1
+            text-[10px] font-bold tabular-nums text-white
             ${isPulsing ? "animate-pulse" : ""}
           `}
         >
