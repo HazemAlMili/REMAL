@@ -35,31 +35,39 @@ export default function AccountDashboardPage() {
     <div className="space-y-8">
       {/* Welcome Header */}
       <div>
-        <h1 className="font-display text-2xl font-bold text-neutral-900 lg:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
           Welcome back
         </h1>
         <p className="mt-1 text-neutral-600">{displayName}</p>
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex gap-3">
-        <Link href="/units">
-          <Button variant="primary" size="sm">
-            <Home className="mr-2 h-4 w-4" />
+      {/* Quick Actions — framed toolbar so the cluster reads as deliberate */}
+      <div className="flex flex-wrap gap-2 rounded-lg border border-neutral-200 bg-white p-2 shadow-sm">
+        <Link href="/units" className="grow basis-[180px]">
+          <Button
+            variant="primary"
+            fullWidth
+            className="h-11"
+            leftIcon={<Home className="h-4 w-4" />}
+          >
             Browse Properties
           </Button>
         </Link>
-        <Link href="/account/bookings">
-          <Button variant="secondary" size="sm">
-            <CalendarCheck className="mr-2 h-4 w-4" />
+        <Link href="/account/bookings" className="grow basis-[180px]">
+          <Button
+            variant="outline"
+            fullWidth
+            className="h-11"
+            leftIcon={<CalendarCheck className="h-4 w-4" />}
+          >
             My Bookings
           </Button>
         </Link>
       </div>
 
-      <div className="rounded-2xl border border-neutral-100 bg-white p-6 shadow-card">
+      <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold text-neutral-900">
+          <h2 className="text-lg font-semibold tracking-tight text-neutral-900">
             Recent Bookings
           </h2>
           <Link
@@ -73,7 +81,7 @@ export default function AccountDashboardPage() {
         {bookingsLoading && (
           <div className="space-y-3">
             {[0, 1, 2].map((item) => (
-              <div key={item} className="h-16 animate-pulse rounded-xl bg-neutral-100" />
+              <div key={item} className="h-16 animate-pulse rounded-lg bg-neutral-100" />
             ))}
           </div>
         )}
@@ -88,19 +96,19 @@ export default function AccountDashboardPage() {
         )}
 
         {!bookingsLoading && bookings.length > 0 && (
-          <div className="divide-y divide-neutral-100">
+          <div className="divide-y divide-neutral-200">
             {bookings.map((booking) => (
               <div key={booking.id} className="flex items-center justify-between gap-4 py-3">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-neutral-900">
                     {booking.unitName ?? "Property"}
                   </p>
-                  <p className="mt-1 text-xs text-neutral-500">
+                  <p className="mt-1 text-xs tabular-nums text-neutral-500">
                     {formatDate(booking.checkInDate)} - {formatDate(booking.checkOutDate)}
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">
-                  <span className="hidden text-sm font-semibold text-neutral-900 sm:inline">
+                  <span className="hidden text-sm font-semibold tabular-nums text-neutral-900 sm:inline">
                     {formatCurrency(booking.finalAmount)}
                   </span>
                   <StatusBadge status={booking.bookingStatus} />
@@ -111,9 +119,9 @@ export default function AccountDashboardPage() {
         )}
       </div>
 
-      <div className="rounded-2xl border border-neutral-100 bg-white p-6 shadow-card">
+      <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold text-neutral-900">
+          <h2 className="text-lg font-semibold tracking-tight text-neutral-900">
             Notifications
           </h2>
           <Link
@@ -124,14 +132,19 @@ export default function AccountDashboardPage() {
           </Link>
         </div>
 
-        <div className="mb-4 rounded-xl bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
-          {notificationSummary?.unreadCount ?? 0} unread of {notificationSummary?.totalCount ?? 0} total
+        <div className="mb-4 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
+          <span className="font-semibold tabular-nums text-neutral-900">
+            {notificationSummary?.unreadCount ?? 0}
+          </span>{" "}
+          unread of{" "}
+          <span className="tabular-nums">{notificationSummary?.totalCount ?? 0}</span>{" "}
+          total
         </div>
 
         {notificationsLoading && (
           <div className="space-y-3">
             {[0, 1, 2].map((item) => (
-              <div key={item} className="h-14 animate-pulse rounded-xl bg-neutral-100" />
+              <div key={item} className="h-14 animate-pulse rounded-lg bg-neutral-100" />
             ))}
           </div>
         )}
@@ -146,7 +159,7 @@ export default function AccountDashboardPage() {
         )}
 
         {!notificationsLoading && notifications.length > 0 && (
-          <div className="divide-y divide-neutral-100">
+          <div className="divide-y divide-neutral-200">
             {notifications.map((notification) => (
               <div key={notification.notificationId} className="py-3">
                 <div className="flex items-start justify-between gap-3">
@@ -154,13 +167,13 @@ export default function AccountDashboardPage() {
                     {notification.subject ?? "Notification"}
                   </p>
                   {!notification.readAt && (
-                    <span className="mt-1 h-2 w-2 rounded-full bg-primary-500" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary-500" />
                   )}
                 </div>
                 <p className="mt-1 line-clamp-2 text-sm text-neutral-600">
                   {notification.body}
                 </p>
-                <p className="mt-1 text-xs text-neutral-400">
+                <p className="mt-1 text-xs tabular-nums text-neutral-500">
                   {formatDate(notification.createdAt)}
                 </p>
               </div>

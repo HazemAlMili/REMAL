@@ -10,6 +10,7 @@ import { ReviewForm } from "@/components/public/account/ReviewForm";
 import { useClientBookings, useBookingReview } from "@/lib/hooks/useClient";
 import { useSubmitReview } from "@/lib/hooks/useReviews";
 import { formatCurrency, formatDate } from "@/lib/utils/format";
+import { isBookingStatus, normalizeStatus } from "@/lib/utils/status";
 import { queryKeys } from "@/lib/utils/query-keys";
 import api from "@/lib/api/axios";
 import { endpoints } from "@/lib/api/endpoints";
@@ -28,31 +29,21 @@ function ReviewStatusIndicator({ bookingId }: ReviewStatusIndicatorProps) {
   const { data: review, isLoading } = useBookingReview(bookingId);
 
   if (isLoading) {
-    return <span className="text-xs text-neutral-400">Loading...</span>;
+    return <span className="text-xs text-neutral-500">Loading…</span>;
   }
 
   if (!review) {
     return (
-      <span className="inline-flex items-center rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700 ring-1 ring-inset ring-primary-600/10">
-        Write Review
+      <span className="inline-flex items-center rounded-full bg-primary-50 px-2 py-0.5 text-xs font-semibold text-primary-700 ring-1 ring-inset ring-primary-500/20">
+        Write review
       </span>
     );
   }
 
-  const statusStyles: Record<string, string> = {
-    Pending: "bg-amber-50 text-amber-800 ring-amber-600/20",
-    Published: "bg-green-50 text-green-700 ring-green-600/20",
-    Rejected: "bg-red-50 text-red-700 ring-red-600/20",
-    Hidden: "bg-neutral-50 text-neutral-600 ring-neutral-500/10",
-  };
-
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ${
-        statusStyles[review.reviewStatus] || "bg-neutral-50 text-neutral-600 ring-neutral-500/10"
-      }`}
-    >
-      Review: {review.reviewStatus}
+    <span className="inline-flex items-center gap-1.5 text-xs text-neutral-500">
+      Review
+      <StatusBadge status={review.reviewStatus} />
     </span>
   );
 }
@@ -63,7 +54,6 @@ export default function ClientBookingsPage() {
     pageSize: 20,
   });
   const bookings = data?.items ?? [];
-  console.log("CLIENT BOOKINGS FETCHED:", data);
 
   const [selectedBooking, setSelectedBooking] = useState<BookingListItemResponse | null>(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -76,7 +66,7 @@ export default function ClientBookingsPage() {
   // Query review details for selected booking (only when modal is open and booking is Completed)
   const { data: existingReview, isLoading: reviewLoading } = useBookingReview(
     selectedBooking?.id ?? "",
-    !!selectedBooking && selectedBooking.bookingStatus === "Completed"
+    !!selectedBooking && isBookingStatus(selectedBooking.bookingStatus, "Completed")
   );
 
   const getNightsCount = (checkIn: string, checkOut: string) => {
@@ -144,7 +134,7 @@ export default function ClientBookingsPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold text-neutral-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
           My Bookings
         </h1>
       </div>
@@ -174,112 +164,126 @@ export default function ClientBookingsPage() {
 
       {!isLoading && !isError && bookings.length > 0 && (
         <>
-          <div className="hidden overflow-hidden rounded-2xl border border-neutral-100 bg-white shadow-card md:block">
+          <div className="hidden overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm md:block">
             <table className="w-full text-left text-sm">
-              <thead className="bg-neutral-50 text-neutral-500">
+              <thead className="border-b border-neutral-200 bg-neutral-50 text-xs font-medium uppercase tracking-wide text-neutral-500">
                 <tr>
-                  <th className="p-4 font-medium">Property</th>
-                  <th className="p-4 font-medium">Dates</th>
-                  <th className="p-4 font-medium">Guests</th>
-                  <th className="p-4 font-medium">Total</th>
-                  <th className="p-4 font-medium">Status</th>
-                  <th className="p-4 font-medium">Created</th>
+                  <th className="px-4 py-3 font-medium">Property</th>
+                  <th className="px-4 py-3 font-medium">Dates</th>
+                  <th className="px-4 py-3 font-medium">Guests</th>
+                  <th className="px-4 py-3 text-right font-medium">Total</th>
+                  <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 font-medium">Created</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-100">
-                {bookings.map((booking) => (
-                  <tr
-                    key={booking.id}
-                    className={cn(
-                      "transition-all duration-200",
-                      booking.bookingStatus === "Completed"
-                        ? "cursor-pointer hover:bg-neutral-50 hover:shadow-sm"
-                        : "hover:bg-neutral-50/50"
-                    )}
-                    onClick={() => {
-                      if (booking.bookingStatus === "Completed") {
-                        setSelectedBooking(booking);
-                        setShowReviewForm(false);
-                        setSubmitError(null);
-                      }
-                    }}
-                  >
-                    <td className="p-4 font-medium text-neutral-900">
-                      {booking.unitName ?? "Property"}
-                    </td>
-                    <td className="p-4 text-neutral-600">
-                      {formatDate(booking.checkInDate)} - {formatDate(booking.checkOutDate)}
-                    </td>
-                    <td className="p-4 text-neutral-600">{booking.guestCount}</td>
-                    <td className="p-4 font-medium text-neutral-900">
-                      {formatCurrency(booking.finalAmount)}
-                    </td>
-                    <td className="p-4">
-                      <div className="flex flex-col gap-1 items-start">
-                        <StatusBadge status={booking.bookingStatus} />
-                        {booking.bookingStatus === "Completed" && (
-                          <ReviewStatusIndicator bookingId={booking.id} />
-                        )}
-                      </div>
-                    </td>
-                    <td className="p-4 text-neutral-500">
-                      {formatDate(booking.createdAt)}
-                    </td>
-                  </tr>
-                ))}
+              <tbody className="divide-y divide-neutral-200">
+                {bookings.map((booking) => {
+                  const isCompleted = isBookingStatus(
+                    booking.bookingStatus,
+                    "Completed"
+                  );
+                  return (
+                    <tr
+                      key={booking.id}
+                      className={cn(
+                        "transition-colors",
+                        isCompleted
+                          ? "cursor-pointer hover:bg-neutral-50"
+                          : "hover:bg-neutral-50/60"
+                      )}
+                      onClick={() => {
+                        if (isCompleted) {
+                          setSelectedBooking(booking);
+                          setShowReviewForm(false);
+                          setSubmitError(null);
+                        }
+                      }}
+                    >
+                      <td className="max-w-[16rem] truncate px-4 py-3 font-medium text-neutral-900">
+                        {booking.unitName ?? "Property"}
+                      </td>
+                      <td className="px-4 py-3 tabular-nums text-neutral-600">
+                        {formatDate(booking.checkInDate)} - {formatDate(booking.checkOutDate)}
+                      </td>
+                      <td className="px-4 py-3 tabular-nums text-neutral-600">
+                        {booking.guestCount}
+                      </td>
+                      <td className="px-4 py-3 text-right font-medium tabular-nums text-neutral-900">
+                        {formatCurrency(booking.finalAmount)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-col items-start gap-1">
+                          <StatusBadge status={booking.bookingStatus} />
+                          {isCompleted && (
+                            <ReviewStatusIndicator bookingId={booking.id} />
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 tabular-nums text-neutral-500">
+                        {formatDate(booking.createdAt)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
 
           <div className="space-y-4 md:hidden">
-            {bookings.map((booking) => (
-              <div
-                key={booking.id}
-                className={cn(
-                  "rounded-xl border border-neutral-100 bg-white p-4 shadow-card transition-all duration-200",
-                  booking.bookingStatus === "Completed"
-                    ? "cursor-pointer hover:shadow-md hover:border-neutral-200"
-                    : ""
-                )}
-                onClick={() => {
-                  if (booking.bookingStatus === "Completed") {
-                    setSelectedBooking(booking);
-                    setShowReviewForm(false);
-                    setSubmitError(null);
-                  }
-                }}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-neutral-900">
-                      <Home className="h-4 w-4 shrink-0 text-neutral-400" />
-                      <span className="truncate">{booking.unitName ?? "Property"}</span>
+            {bookings.map((booking) => {
+              const isCompleted = isBookingStatus(
+                booking.bookingStatus,
+                "Completed"
+              );
+              return (
+                <div
+                  key={booking.id}
+                  className={cn(
+                    "rounded-lg border border-neutral-200 bg-white p-4 shadow-sm transition-colors",
+                    isCompleted ? "cursor-pointer hover:border-neutral-300" : ""
+                  )}
+                  onClick={() => {
+                    if (isCompleted) {
+                      setSelectedBooking(booking);
+                      setShowReviewForm(false);
+                      setSubmitError(null);
+                    }
+                  }}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 text-sm font-semibold text-neutral-900">
+                        <Home className="h-4 w-4 shrink-0 text-neutral-400" />
+                        <span className="truncate">{booking.unitName ?? "Property"}</span>
+                      </div>
+                      <p className="mt-2 text-sm tabular-nums text-neutral-600">
+                        {formatDate(booking.checkInDate)} - {formatDate(booking.checkOutDate)}
+                      </p>
                     </div>
-                    <p className="mt-2 text-sm text-neutral-600">
-                      {formatDate(booking.checkInDate)} - {formatDate(booking.checkOutDate)}
-                    </p>
+                    <div className="flex flex-col items-end gap-1.5">
+                      <StatusBadge status={booking.bookingStatus} />
+                      {isCompleted && (
+                        <ReviewStatusIndicator bookingId={booking.id} />
+                      )}
+                    </div>
                   </div>
-                  <div className="flex flex-col items-end gap-1.5">
-                    <StatusBadge status={booking.bookingStatus} />
-                    {booking.bookingStatus === "Completed" && (
-                      <ReviewStatusIndicator bookingId={booking.id} />
-                    )}
+                  <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p className="text-neutral-500">Guests</p>
+                      <p className="font-medium tabular-nums text-neutral-900">
+                        {booking.guestCount}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-neutral-500">Total</p>
+                      <p className="font-medium tabular-nums text-neutral-900">
+                        {formatCurrency(booking.finalAmount)}
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <p className="text-neutral-500">Guests</p>
-                    <p className="font-medium text-neutral-900">{booking.guestCount}</p>
-                  </div>
-                  <div>
-                    <p className="text-neutral-500">Total</p>
-                    <p className="font-medium text-neutral-900">
-                      {formatCurrency(booking.finalAmount)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       )}
@@ -298,13 +302,13 @@ export default function ClientBookingsPage() {
         {selectedBooking && (
           <div className="space-y-6">
             {/* Header info */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-neutral-100 pb-4">
-              <div>
-                <h3 className="font-display text-lg font-bold text-neutral-900 flex items-center gap-2">
-                  <Home className="h-5 w-5 text-neutral-400" />
-                  {selectedBooking.unitName ?? "Property"}
+            <div className="flex flex-col gap-4 border-b border-neutral-200 pb-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <h3 className="flex items-center gap-2 text-lg font-semibold tracking-tight text-neutral-900">
+                  <Home className="h-5 w-5 shrink-0 text-neutral-400" />
+                  <span className="truncate">{selectedBooking.unitName ?? "Property"}</span>
                 </h3>
-                <p className="text-xs text-neutral-500 font-mono mt-1">
+                <p className="mt-1 font-mono text-xs text-neutral-500">
                   ID: {selectedBooking.id}
                 </p>
               </div>
@@ -313,58 +317,58 @@ export default function ClientBookingsPage() {
               </div>
             </div>
 
-            {/* Stay Metrics Grid */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="rounded-xl border border-neutral-100 bg-neutral-50/50 p-4">
-                <div className="flex items-center gap-2 text-neutral-500">
-                  <Calendar className="h-4 w-4" />
-                  <span className="text-xs font-medium uppercase tracking-wider">Check-In</span>
-                </div>
-                <p className="mt-2 text-sm font-semibold text-neutral-900">
+            {/* Stay Metrics — single hairline panel, no nested cards */}
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-5 rounded-lg border border-neutral-200 bg-white p-5 lg:grid-cols-4">
+              <div>
+                <dt className="flex items-center gap-1.5 text-xs font-medium text-neutral-500">
+                  <Calendar className="h-3.5 w-3.5" />
+                  Check-in
+                </dt>
+                <dd className="mt-1.5 text-sm font-semibold tabular-nums text-neutral-900">
                   {formatDate(selectedBooking.checkInDate)}
-                </p>
+                </dd>
               </div>
 
-              <div className="rounded-xl border border-neutral-100 bg-neutral-50/50 p-4">
-                <div className="flex items-center gap-2 text-neutral-500">
-                  <Calendar className="h-4 w-4" />
-                  <span className="text-xs font-medium uppercase tracking-wider">Check-Out</span>
-                </div>
-                <p className="mt-2 text-sm font-semibold text-neutral-900">
+              <div>
+                <dt className="flex items-center gap-1.5 text-xs font-medium text-neutral-500">
+                  <Calendar className="h-3.5 w-3.5" />
+                  Check-out
+                </dt>
+                <dd className="mt-1.5 text-sm font-semibold tabular-nums text-neutral-900">
                   {formatDate(selectedBooking.checkOutDate)}
-                </p>
-                <p className="text-xs text-neutral-500 mt-1">
-                  ({getNightsCount(selectedBooking.checkInDate, selectedBooking.checkOutDate)} nights)
-                </p>
+                </dd>
+                <dd className="mt-0.5 text-xs tabular-nums text-neutral-500">
+                  {getNightsCount(selectedBooking.checkInDate, selectedBooking.checkOutDate)} nights
+                </dd>
               </div>
 
-              <div className="rounded-xl border border-neutral-100 bg-neutral-50/50 p-4">
-                <div className="flex items-center gap-2 text-neutral-500">
-                  <Users className="h-4 w-4" />
-                  <span className="text-xs font-medium uppercase tracking-wider">Guests</span>
-                </div>
-                <p className="mt-2 text-sm font-semibold text-neutral-900">
-                  {selectedBooking.guestCount} guests
-                </p>
+              <div>
+                <dt className="flex items-center gap-1.5 text-xs font-medium text-neutral-500">
+                  <Users className="h-3.5 w-3.5" />
+                  Guests
+                </dt>
+                <dd className="mt-1.5 text-sm font-semibold tabular-nums text-neutral-900">
+                  {selectedBooking.guestCount}
+                </dd>
               </div>
 
-              <div className="rounded-xl border border-neutral-100 bg-neutral-50/50 p-4">
-                <div className="flex items-center gap-2 text-neutral-500">
-                  <CreditCard className="h-4 w-4" />
-                  <span className="text-xs font-medium uppercase tracking-wider">Total Paid</span>
-                </div>
-                <p className="mt-2 text-sm font-semibold text-neutral-900">
+              <div>
+                <dt className="flex items-center gap-1.5 text-xs font-medium text-neutral-500">
+                  <CreditCard className="h-3.5 w-3.5" />
+                  Total paid
+                </dt>
+                <dd className="mt-1.5 text-sm font-semibold tabular-nums text-neutral-900">
                   {formatCurrency(selectedBooking.finalAmount)}
-                </p>
+                </dd>
               </div>
-            </div>
+            </dl>
 
             {/* Review Section */}
-            <div className="border-t border-neutral-100 pt-6">
+            <div className="border-t border-neutral-200 pt-6">
               {reviewLoading ? (
-                <div className="flex flex-col items-center justify-center py-8 gap-3">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-neutral-100 border-t-primary-600" />
-                  <p className="text-sm text-neutral-500 font-medium">Checking review status...</p>
+                <div className="flex flex-col items-center justify-center gap-3 py-8">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-neutral-200 border-t-primary-500" />
+                  <p className="text-sm font-medium text-neutral-500">Checking review status…</p>
                 </div>
               ) : showReviewForm ? (
                 <div className="space-y-4">
@@ -372,88 +376,78 @@ export default function ClientBookingsPage() {
                     <button
                       type="button"
                       onClick={() => setShowReviewForm(false)}
-                      className="text-xs text-neutral-500 hover:text-neutral-800 flex items-center gap-1 font-semibold transition-colors"
+                      className="flex items-center gap-1 text-xs font-semibold text-neutral-500 transition-colors hover:text-neutral-900"
                     >
                       <ArrowLeft className="h-3.5 w-3.5" />
-                      Back to Booking details
+                      Back to booking details
                     </button>
                   </div>
-                  <div className="rounded-xl border border-neutral-100 bg-white p-5 shadow-sm">
-                    <ReviewForm
-                      mode={existingReview ? "edit" : "create"}
-                      existingReview={existingReview}
-                      onSubmit={handleReviewSubmit}
-                      isSubmitting={isSubmitting}
-                      error={submitError}
-                    />
-                  </div>
+                  <ReviewForm
+                    mode={existingReview ? "edit" : "create"}
+                    existingReview={existingReview}
+                    onSubmit={handleReviewSubmit}
+                    isSubmitting={isSubmitting}
+                    error={submitError}
+                  />
                 </div>
               ) : existingReview ? (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-display text-sm font-bold text-neutral-900">Your Review</h4>
-                    <span className={cn(
-                      "rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset",
-                      existingReview.reviewStatus === "Pending" ? "bg-amber-50 text-amber-800 ring-amber-600/20 animate-pulse" :
-                      existingReview.reviewStatus === "Published" ? "bg-green-50 text-green-700 ring-green-600/20" :
-                      existingReview.reviewStatus === "Rejected" ? "bg-red-50 text-red-700 ring-red-600/20" :
-                      "bg-neutral-50 text-neutral-600 ring-neutral-500/10"
-                    )}>
-                      {existingReview.reviewStatus}
-                    </span>
+                    <h4 className="text-sm font-semibold tracking-tight text-neutral-900">
+                      Your review
+                    </h4>
+                    <StatusBadge status={existingReview.reviewStatus} />
                   </div>
 
-                  <div className="rounded-xl border border-neutral-100 bg-white p-5 shadow-sm space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex gap-0.5">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star
-                            key={star}
-                            className={cn(
-                              "h-5 w-5",
-                              existingReview.rating >= star
-                                ? "fill-amber-400 text-amber-400"
-                                : "text-neutral-200"
-                            )}
-                          />
-                        ))}
-                      </div>
-                      <h5 className="font-semibold text-neutral-900 text-base">{existingReview.title}</h5>
-                      {existingReview.comment && (
-                        <p className="text-sm text-neutral-600 whitespace-pre-line leading-relaxed">
-                          {existingReview.comment}
-                        </p>
-                      )}
+                  <div className="space-y-3 rounded-lg border border-neutral-200 bg-white p-5">
+                    <div className="flex gap-0.5">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={cn(
+                            "h-5 w-5",
+                            existingReview.rating >= star
+                              ? "fill-amber-400 text-amber-400"
+                              : "text-neutral-200"
+                          )}
+                        />
+                      ))}
                     </div>
+                    <h5 className="text-base font-semibold text-neutral-900">{existingReview.title}</h5>
+                    {existingReview.comment && (
+                      <p className="whitespace-pre-line text-sm leading-relaxed text-neutral-600">
+                        {existingReview.comment}
+                      </p>
+                    )}
 
-                    {existingReview.reviewStatus === "Pending" && (
+                    {normalizeStatus(existingReview.reviewStatus) === "Pending" && (
                       <Button
                         variant="outline"
-                        size="sm"
-                        className="w-full transition-all duration-150 hover:bg-neutral-50"
+                        size="md"
+                        fullWidth
                         onClick={() => setShowReviewForm(true)}
                       >
-                        Edit Review
+                        Edit review
                       </Button>
                     )}
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center border border-dashed border-neutral-200 rounded-xl p-8 bg-neutral-50/20 text-center">
-                  <div className="rounded-full bg-amber-50 p-3 ring-8 ring-amber-50/50">
-                    <Star className="h-6 w-6 text-amber-400 stroke-[1.5]" />
+                <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-neutral-300 bg-neutral-50/40 p-8 text-center">
+                  <div className="rounded-full bg-amber-50 p-3">
+                    <Star className="h-6 w-6 stroke-[1.5] text-amber-400" />
                   </div>
-                  <h4 className="mt-4 font-display font-bold text-neutral-900">Share your experience</h4>
-                  <p className="mt-1 text-sm text-neutral-500 max-w-sm">
-                    You haven&apos;t reviewed your stay at this property yet. Help other guests by leaving a review!
+                  <h4 className="mt-4 font-semibold text-neutral-900">Share your experience</h4>
+                  <p className="mt-1 max-w-sm text-sm text-neutral-500">
+                    You haven&apos;t reviewed your stay at this property yet. Help other guests by leaving a review.
                   </p>
                   <Button
                     variant="primary"
-                    size="sm"
-                    className="mt-5 px-6 shadow-sm hover:shadow transition-all"
+                    size="md"
+                    className="mt-5 px-6"
                     onClick={() => setShowReviewForm(true)}
                   >
-                    Write a Review
+                    Write a review
                   </Button>
                 </div>
               )}

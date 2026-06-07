@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { StarRatingInput } from "./StarRatingInput";
 import { Star } from "lucide-react";
+import { normalizeStatus } from "@/lib/utils/status";
 import type { ClientReviewByBookingResponse } from "@/lib/types/client.types";
 
 interface ReviewFormProps {
@@ -29,7 +30,7 @@ export function ReviewForm({
   error,
 }: ReviewFormProps) {
   const isReadOnly =
-    existingReview && existingReview.reviewStatus !== "Pending";
+    existingReview && normalizeStatus(existingReview.reviewStatus) !== "Pending";
 
   const {
     control,
@@ -49,7 +50,7 @@ export function ReviewForm({
   if (isReadOnly) {
     return (
       <div className="space-y-6">
-        <div className="rounded-xl bg-blue-50 p-4 text-sm text-blue-700">
+        <div className="rounded-lg border border-info/30 bg-info/5 p-4 text-sm text-info">
           This review has been {existingReview.reviewStatus.toLowerCase()} and
           can no longer be edited.
         </div>
@@ -122,7 +123,7 @@ export function ReviewForm({
       {/* Comment — Optional */}
       <div>
         <label className="mb-1 block text-sm font-medium text-neutral-700">
-          Comment <span className="text-neutral-400">(optional)</span>
+          Comment <span className="text-neutral-500">(optional)</span>
         </label>
         <textarea
           placeholder="Share details about your stay..."
@@ -146,7 +147,7 @@ export function ReviewForm({
 
       {/* API Error */}
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <div className="rounded-lg border border-error/30 bg-error/5 p-3 text-sm text-error">
           {error}
         </div>
       )}

@@ -50,7 +50,7 @@ export default function ClientProfilePage() {
     return (
       <div className="space-y-6">
         <div className="h-8 w-48 animate-pulse rounded-lg bg-neutral-100" />
-        <div className="h-80 animate-pulse rounded-2xl bg-neutral-100" />
+        <div className="h-80 animate-pulse rounded-lg bg-neutral-100" />
       </div>
     );
   }
@@ -68,7 +68,7 @@ export default function ClientProfilePage() {
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <h1 className="font-display text-2xl font-bold text-neutral-900">
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
           Profile
         </h1>
         <p className="mt-1 text-sm text-neutral-500">
@@ -78,7 +78,7 @@ export default function ClientProfilePage() {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-5 rounded-2xl border border-neutral-100 bg-white p-6 shadow-card"
+        className="space-y-5 rounded-lg border border-neutral-200 bg-white p-6 shadow-sm"
       >
         <Input
           label="Full name"
@@ -106,13 +106,13 @@ export default function ClientProfilePage() {
         />
 
         {!profile.isActive && (
-          <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          <p className="rounded-lg border border-warning/30 bg-warning/5 px-4 py-3 text-sm text-warning">
             This profile is inactive. Contact support before making new bookings.
           </p>
         )}
 
         {formError && (
-          <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-error">
+          <p className="rounded-lg border border-error/30 bg-error/5 px-4 py-3 text-sm text-error">
             {formError}
           </p>
         )}

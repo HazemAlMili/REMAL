@@ -31,11 +31,12 @@ export default function ClientNotificationsPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-neutral-900">
+          <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
             Notifications
           </h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {unreadCount} unread of {summary?.totalCount ?? 0} total
+            <span className="tabular-nums">{unreadCount}</span> unread of{" "}
+            <span className="tabular-nums">{summary?.totalCount ?? 0}</span> total
           </p>
         </div>
 
@@ -55,30 +56,32 @@ export default function ClientNotificationsPage() {
       <div className="flex border-b border-neutral-200">
         <button
           onClick={() => setActiveFilter("all")}
-          className={`border-b-2 px-4 pb-3 text-sm font-medium transition-colors ${
+          aria-current={activeFilter === "all" ? "true" : undefined}
+          className={`-mb-px flex h-11 items-center border-b-2 px-4 text-sm transition-colors ${
             activeFilter === "all"
-              ? "border-primary-500 text-primary-500"
-              : "border-transparent text-neutral-500 hover:text-neutral-700"
+              ? "border-primary-500 font-semibold text-neutral-900"
+              : "border-transparent font-medium text-neutral-500 hover:text-neutral-700"
           }`}
         >
           All
         </button>
         <button
           onClick={() => setActiveFilter("unread")}
-          className={`border-b-2 px-4 pb-3 text-sm font-medium transition-colors ${
+          aria-current={activeFilter === "unread" ? "true" : undefined}
+          className={`-mb-px flex h-11 items-center border-b-2 px-4 text-sm transition-colors ${
             activeFilter === "unread"
-              ? "border-primary-500 text-primary-500"
-              : "border-transparent text-neutral-500 hover:text-neutral-700"
+              ? "border-primary-500 font-semibold text-neutral-900"
+              : "border-transparent font-medium text-neutral-500 hover:text-neutral-700"
           }`}
         >
-          Unread {unreadCount > 0 && `(${unreadCount})`}
+          Unread {unreadCount > 0 && <span className="tabular-nums">({unreadCount})</span>}
         </button>
       </div>
 
       {isLoading && (
         <div className="space-y-3">
           {[0, 1, 2, 3].map((item) => (
-            <div key={item} className="h-24 animate-pulse rounded-xl bg-neutral-100" />
+            <div key={item} className="h-24 animate-pulse rounded-lg bg-neutral-100" />
           ))}
         </div>
       )}
@@ -107,12 +110,12 @@ export default function ClientNotificationsPage() {
             return (
               <article
                 key={notification.notificationId}
-                className="rounded-xl border border-neutral-100 bg-white p-5 shadow-card"
+                className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      {isUnread && <span className="h-2 w-2 rounded-full bg-primary-500" />}
+                      {isUnread && <span className="h-2 w-2 shrink-0 rounded-full bg-primary-500" />}
                       <h2 className="text-sm font-semibold text-neutral-900">
                         {notification.subject ?? "Notification"}
                       </h2>
@@ -120,7 +123,7 @@ export default function ClientNotificationsPage() {
                     <p className="mt-2 text-sm leading-6 text-neutral-600">
                       {notification.body}
                     </p>
-                    <p className="mt-3 text-xs text-neutral-400">
+                    <p className="mt-3 text-xs tabular-nums text-neutral-500">
                       {formatDate(notification.createdAt)}
                     </p>
                   </div>

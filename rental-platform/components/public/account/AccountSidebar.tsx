@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════════════════════
 // components/public/account/AccountSidebar.tsx
-// Minimal sidebar for client account — 4 nav items
+// Sidebar for the client account portal — brand lockup, nav,
+// and a bottom-anchored footer (Browse + Log out).
 // ═══════════════════════════════════════════════════════════
 
 "use client";
@@ -36,20 +37,25 @@ export function AccountSidebar() {
   const unreadCount = notificationSummary?.unreadCount ?? 0;
 
   return (
-    <aside className="min-h-[calc(100vh-80px)] w-64 shrink-0 border-r border-neutral-100 bg-white">
-      <div className="p-6">
+    <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+      <div className="flex flex-1 flex-col p-6">
         {/* Client Info */}
-        <div className="mb-8">
-          <p className="font-display text-lg font-semibold text-neutral-900">
-            My Account
-          </p>
-          <p className="mt-1 text-sm text-neutral-500">
-            {user?.identifier || "Client"}
-          </p>
+        <div className="flex items-center gap-2.5">
+          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary-500 text-sm font-bold text-white">
+            R
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold tracking-tight text-neutral-900">
+              My Account
+            </p>
+            <p className="truncate text-xs text-neutral-500">
+              {user?.identifier || "Client"}
+            </p>
+          </div>
         </div>
 
         {/* Navigation */}
-        <nav className="space-y-1">
+        <nav className="mt-6 flex flex-col gap-1">
           {NAV_ITEMS.map((item) => {
             const isActive = item.exact
               ? pathname === item.href
@@ -60,19 +66,28 @@ export function AccountSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 className={`
-                  flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
+                  relative flex h-10 items-center gap-3 rounded-lg px-3 text-sm transition-colors
                   ${
                     isActive
-                      ? "bg-primary-500/10 text-primary-500"
-                      : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
+                      ? "bg-neutral-100 font-semibold text-neutral-900"
+                      : "font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                   }
                 `}
               >
-                <Icon className="h-5 w-5" />
+                {isActive && (
+                  <span
+                    aria-hidden
+                    className="absolute inset-y-2 start-0 w-0.5 rounded-full bg-primary-500"
+                  />
+                )}
+                <Icon
+                  className={`h-5 w-5 ${isActive ? "text-primary-500" : "text-neutral-400"}`}
+                />
                 <span className="flex-1">{item.label}</span>
                 {item.href === "/account/notifications" && unreadCount > 0 && (
-                  <span className="rounded-full bg-primary-500 px-2 py-0.5 text-xs text-white">
+                  <span className="rounded-full bg-primary-500 px-2 py-0.5 text-xs font-medium tabular-nums text-white">
                     {unreadCount}
                   </span>
                 )}
@@ -81,29 +96,27 @@ export function AccountSidebar() {
           })}
         </nav>
 
-        {/* Divider */}
-        <div className="my-6 border-t border-neutral-100" />
+        {/* Footer — pinned to the bottom of the rail */}
+        <div className="mt-auto">
+          <div className="mb-3 border-t border-neutral-200" />
 
-        {/* Browse Properties Link */}
-        <Link
-          href="/units"
-          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-neutral-900"
-        >
-          <Home className="h-5 w-5" />
-          Browse Properties
-        </Link>
-
-        {/* Logout */}
-        <div className="mt-6">
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-neutral-600 hover:text-red-600"
-            onClick={logout}
-            isLoading={isLoggingOut}
+          <Link
+            href="/units"
+            className="flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
           >
-            <LogOut className="mr-3 h-5 w-5" />
-            Log Out
-          </Button>
+            <Home className="h-5 w-5 text-neutral-400" />
+            Browse Properties
+          </Link>
+
+          <button
+            type="button"
+            onClick={logout}
+            disabled={isLoggingOut}
+            className="mt-1 flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-neutral-200 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-50 hover:text-red-600 disabled:opacity-50"
+          >
+            <LogOut className="h-4 w-4 shrink-0" />
+            <span>Log Out</span>
+          </button>
         </div>
       </div>
     </aside>

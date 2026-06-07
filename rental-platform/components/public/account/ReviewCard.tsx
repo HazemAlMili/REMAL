@@ -1,7 +1,9 @@
 "use client";
 import { Star, Edit } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 import { cn } from "@/lib/utils/cn";
+import { normalizeStatus } from "@/lib/utils/status";
 import { formatDate, formatRelativeTime } from "@/lib/utils/format";
 import type { ClientReviewByBookingResponse } from "@/lib/types/client.types";
 
@@ -12,42 +14,27 @@ interface ReviewCardProps {
 }
 
 export function ReviewCard({ review, unitName, onEdit }: ReviewCardProps) {
-  const statusStyles: Record<string, string> = {
-    Pending: "bg-amber-50 text-amber-800 ring-amber-600/20",
-    Published: "bg-green-50 text-green-700 ring-green-600/20",
-    Rejected: "bg-red-50 text-red-700 ring-red-600/20",
-    Hidden: "bg-neutral-50 text-neutral-600 ring-neutral-500/10",
-  };
-
   return (
-    <div className="rounded-2xl border border-neutral-100 bg-white p-5 shadow-card space-y-4">
+    <div className="space-y-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
       {/* Header with Title and Status Chip */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+        <div className="min-w-0">
           {unitName && (
-            <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1">
+            <p className="mb-1 truncate text-xs font-medium text-neutral-500">
               {unitName}
             </p>
           )}
-          <h4 className="font-display text-base font-bold text-neutral-900 leading-tight">
+          <h4 className="text-base font-semibold leading-tight tracking-tight text-neutral-900">
             {review.title}
           </h4>
         </div>
         <div className="self-start">
-          <span
-            className={cn(
-              "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset",
-              statusStyles[review.reviewStatus] ||
-                "bg-neutral-50 text-neutral-600 ring-neutral-500/10"
-            )}
-          >
-            {review.reviewStatus}
-          </span>
+          <StatusBadge status={review.reviewStatus} />
         </div>
       </div>
 
       {/* Star rating and date */}
-      <div className="flex items-center justify-between text-xs text-neutral-400">
+      <div className="flex items-center justify-between text-xs text-neutral-500">
         <div className="flex gap-0.5">
           {[1, 2, 3, 4, 5].map((star) => (
             <Star
@@ -61,7 +48,7 @@ export function ReviewCard({ review, unitName, onEdit }: ReviewCardProps) {
             />
           ))}
         </div>
-        <span>Submitted {formatDate(review.submittedAt)}</span>
+        <span className="tabular-nums">Submitted {formatDate(review.submittedAt)}</span>
       </div>
 
       {/* Comment */}
@@ -73,35 +60,35 @@ export function ReviewCard({ review, unitName, onEdit }: ReviewCardProps) {
 
       {/* Owner Reply Block */}
       {review.ownerReplyText && review.ownerReplyText.trim() && (
-        <div 
-          className="mt-3 mr-6 p-3 bg-neutral-50/70 border-r-2 border-primary-light rounded-l-md break-words" 
+        <div
+          className="break-words rounded-lg border border-neutral-200 bg-neutral-50 p-3"
           dir="rtl"
         >
-          <div className="flex justify-between items-center mb-1 gap-2">
-            <span className="text-xs font-bold text-primary-dark">رد المالك</span>
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <span className="text-xs font-semibold text-neutral-700">رد المالك</span>
             {review.ownerReplyUpdatedAt && (
-              <span className="text-[10px] text-neutral-400 shrink-0">
+              <span className="shrink-0 text-[10px] tabular-nums text-neutral-500">
                 {formatRelativeTime(review.ownerReplyUpdatedAt)}
               </span>
             )}
           </div>
-          <p className="text-sm text-neutral-700 leading-relaxed whitespace-pre-line">
+          <p className="whitespace-pre-line text-sm leading-relaxed text-neutral-700">
             <bdi>{review.ownerReplyText}</bdi>
           </p>
         </div>
       )}
 
       {/* Action Button: ONLY enable edit if Pending status */}
-      {review.reviewStatus === "Pending" && onEdit && (
-        <div className="flex justify-end pt-2 border-t border-neutral-50">
+      {normalizeStatus(review.reviewStatus) === "Pending" && onEdit && (
+        <div className="flex justify-end border-t border-neutral-200 pt-3">
           <Button
             variant="outline"
             size="sm"
             onClick={onEdit}
-            className="flex items-center gap-1.5 text-xs transition-all hover:bg-neutral-50"
+            className="flex items-center gap-1.5 text-xs"
           >
             <Edit className="h-3.5 w-3.5" />
-            Edit Review
+            Edit review
           </Button>
         </div>
       )}

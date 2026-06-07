@@ -12,6 +12,7 @@ import { clientService } from "@/lib/api/services/client.service";
 import { queryKeys } from "@/lib/utils/query-keys";
 import { useReviewsUIStore } from "@/lib/stores";
 import { formatCurrency, formatDate } from "@/lib/utils/format";
+import { isBookingStatus } from "@/lib/utils/status";
 import { toastSuccess } from "@/lib/utils/toast";
 import { cn } from "@/lib/utils/cn";
 import { Star, CalendarCheck, MessageSquare, Calendar, Home } from "lucide-react";
@@ -25,8 +26,10 @@ export default function AccountReviewsPage() {
   });
   const bookings = data?.items ?? [];
 
-  // filter completed bookings
-  const completedBookings = bookings.filter((b) => b.bookingStatus === "Completed");
+  // filter completed bookings (case-insensitive — API enums may be lowercase)
+  const completedBookings = bookings.filter((b) =>
+    isBookingStatus(b.bookingStatus, "Completed")
+  );
 
   // Fetch reviews for completed bookings in parallel using useQueries
   const reviewQueries = useQueries({
@@ -162,7 +165,7 @@ export default function AccountReviewsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="font-display text-2xl font-bold text-neutral-900 lg:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
           Reviews
         </h1>
         <p className="mt-1 text-neutral-600">
@@ -172,38 +175,39 @@ export default function AccountReviewsPage() {
 
       {/* Stats Board */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-neutral-100 bg-white p-5 shadow-card flex items-center gap-4">
-          <div className="rounded-xl bg-primary-50 p-3 text-primary-500">
+        <div className="flex items-center gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+          <div className="rounded-lg bg-primary-50 p-3 text-primary-500">
             <Calendar className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-sm text-neutral-500 font-medium">Completed Stays</p>
-            <p className="text-2xl font-bold text-neutral-900 mt-0.5">
+            <p className="text-sm font-medium text-neutral-500">Completed stays</p>
+            <p className="mt-0.5 text-2xl font-semibold tabular-nums text-neutral-900">
               {completedBookings.length}
             </p>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-neutral-100 bg-white p-5 shadow-card flex items-center gap-4">
-          <div className="rounded-xl bg-green-50 p-3 text-green-500">
+        <div className="flex items-center gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+          <div className="rounded-lg bg-success/10 p-3 text-success">
             <MessageSquare className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-sm text-neutral-500 font-medium">Reviews Written</p>
-            <p className="text-2xl font-bold text-neutral-900 mt-0.5">
+            <p className="text-sm font-medium text-neutral-500">Reviews written</p>
+            <p className="mt-0.5 text-2xl font-semibold tabular-nums text-neutral-900">
               {totalReviews}
             </p>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-neutral-100 bg-white p-5 shadow-card flex items-center gap-4">
-          <div className="rounded-xl bg-amber-50 p-3 text-amber-500 flex items-center justify-center">
+        <div className="flex items-center gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+          <div className="flex items-center justify-center rounded-lg bg-amber-50 p-3">
             <Star className="h-6 w-6 fill-amber-400 text-amber-400" />
           </div>
           <div>
-            <p className="text-sm text-neutral-500 font-medium">Average Rating</p>
-            <p className="text-2xl font-bold text-neutral-900 mt-0.5">
-              {averageRating} <span className="text-sm text-neutral-400 font-medium">/ 5.0</span>
+            <p className="text-sm font-medium text-neutral-500">Average rating</p>
+            <p className="mt-0.5 text-2xl font-semibold tabular-nums text-neutral-900">
+              {averageRating}{" "}
+              <span className="text-sm font-medium text-neutral-500">/ 5.0</span>
             </p>
           </div>
         </div>
@@ -213,25 +217,29 @@ export default function AccountReviewsPage() {
       <div className="flex border-b border-neutral-200">
         <button
           onClick={() => setActiveTab("awaiting")}
+          aria-current={activeTab === "awaiting" ? "true" : undefined}
           className={cn(
-            "px-6 py-3 text-sm font-semibold border-b-2 transition-all duration-200",
+            "-mb-px flex h-11 items-center border-b-2 px-6 text-sm transition-colors",
             activeTab === "awaiting"
-              ? "border-primary-500 text-primary-600"
-              : "border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-200"
+              ? "border-primary-500 font-semibold text-neutral-900"
+              : "border-transparent font-medium text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
           )}
         >
-          Awaiting Review ({awaitingReviewList.length})
+          Awaiting review{" "}
+          <span className="ml-1 tabular-nums">({awaitingReviewList.length})</span>
         </button>
         <button
           onClick={() => setActiveTab("feedback")}
+          aria-current={activeTab === "feedback" ? "true" : undefined}
           className={cn(
-            "px-6 py-3 text-sm font-semibold border-b-2 transition-all duration-200",
+            "-mb-px flex h-11 items-center border-b-2 px-6 text-sm transition-colors",
             activeTab === "feedback"
-              ? "border-primary-500 text-primary-600"
-              : "border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-200"
+              ? "border-primary-500 font-semibold text-neutral-900"
+              : "border-transparent font-medium text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
           )}
         >
-          My Feedback History ({feedbackHistoryList.length})
+          My feedback history{" "}
+          <span className="ml-1 tabular-nums">({feedbackHistoryList.length})</span>
         </button>
       </div>
 
@@ -241,12 +249,12 @@ export default function AccountReviewsPage() {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="animate-pulse rounded-2xl border border-neutral-100 bg-white p-5 shadow-card h-48 space-y-4"
+              className="h-48 animate-pulse space-y-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm"
             >
-              <div className="h-4 bg-neutral-200 rounded w-2/3" />
-              <div className="h-3 bg-neutral-200 rounded w-1/2" />
-              <div className="h-3 bg-neutral-200 rounded w-3/4" />
-              <div className="h-10 bg-neutral-200 rounded w-full mt-4" />
+              <div className="h-4 w-2/3 rounded bg-neutral-200" />
+              <div className="h-3 w-1/2 rounded bg-neutral-200" />
+              <div className="h-3 w-3/4 rounded bg-neutral-200" />
+              <div className="mt-4 h-10 w-full rounded bg-neutral-200" />
             </div>
           ))}
         </div>
@@ -265,23 +273,23 @@ export default function AccountReviewsPage() {
               {awaitingReviewList.map((booking) => (
                 <div
                   key={booking.id}
-                  className="rounded-2xl border border-neutral-100 bg-white p-5 shadow-card flex flex-col justify-between gap-4"
+                  className="flex flex-col justify-between gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm"
                 >
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm font-bold text-neutral-900">
-                      <Home className="h-4 w-4 text-neutral-400" />
-                      {booking.unitName ?? "Property"}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-neutral-900">
+                      <Home className="h-4 w-4 shrink-0 text-neutral-400" />
+                      <span className="truncate">{booking.unitName ?? "Property"}</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs text-neutral-500">
                       <div>
                         <p className="font-medium">Dates</p>
-                        <p className="text-neutral-800 mt-0.5">
+                        <p className="mt-0.5 tabular-nums text-neutral-800">
                           {formatDate(booking.checkInDate)} - {formatDate(booking.checkOutDate)}
                         </p>
                       </div>
                       <div>
                         <p className="font-medium">Nights</p>
-                        <p className="text-neutral-800 mt-0.5">
+                        <p className="mt-0.5 tabular-nums text-neutral-800">
                           {getNightsCount(booking.checkInDate, booking.checkOutDate)} nights
                         </p>
                       </div>
@@ -289,11 +297,11 @@ export default function AccountReviewsPage() {
                     <div className="grid grid-cols-2 gap-2 text-xs text-neutral-500">
                       <div>
                         <p className="font-medium">Guests</p>
-                        <p className="text-neutral-800 mt-0.5">{booking.guestCount} guests</p>
+                        <p className="mt-0.5 tabular-nums text-neutral-800">{booking.guestCount} guests</p>
                       </div>
                       <div>
-                        <p className="font-medium">Total Paid</p>
-                        <p className="text-neutral-800 mt-0.5">
+                        <p className="font-medium">Total paid</p>
+                        <p className="mt-0.5 tabular-nums text-neutral-800">
                           {formatCurrency(booking.finalAmount)}
                         </p>
                       </div>
@@ -302,11 +310,10 @@ export default function AccountReviewsPage() {
 
                   <Button
                     variant="primary"
-                    size="sm"
-                    className="w-full mt-2"
+                    fullWidth
                     onClick={() => openCreateReview(booking)}
                   >
-                    Write Review
+                    Write review
                   </Button>
                 </div>
               ))}
@@ -348,10 +355,12 @@ export default function AccountReviewsPage() {
         {selectedBooking && (
           <div className="space-y-6">
             {/* Header stay summary */}
-            <div className="rounded-xl border border-neutral-100 bg-neutral-50/50 p-4 text-sm text-neutral-600 space-y-1">
-              <p className="font-semibold text-neutral-900">{selectedBooking.unitName}</p>
-              <p>
-                Stay Dates: {formatDate(selectedBooking.checkInDate)} -{" "}
+            <div className="space-y-1 rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-600">
+              <p className="truncate font-semibold text-neutral-900">
+                {selectedBooking.unitName ?? "Property"}
+              </p>
+              <p className="tabular-nums">
+                Stay dates: {formatDate(selectedBooking.checkInDate)} -{" "}
                 {formatDate(selectedBooking.checkOutDate)}
               </p>
             </div>

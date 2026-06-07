@@ -1,0 +1,337 @@
+[    1770ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:38559
+[    1865ms] [LOG] [impeccable] Live variant mode ready. Hover over elements to pick one. @ http://localhost:8400/live.js:10396
+[    2182ms] [LOG] [impeccable] Live mode connected. @ http://localhost:8400/live.js:5512
+[ 1491887ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 1492402ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 1492422ms] [LOG] [Fast Refresh] done in 20ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 1493008ms] [LOG] [Fast Refresh] done in 606ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 1686100ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 1686671ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 1686687ms] [LOG] [Fast Refresh] done in 16ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 1687340ms] [LOG] [Fast Refresh] done in 670ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 1929672ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 1930537ms] [LOG] [Fast Refresh] done in 866ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2001329ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2001758ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2001774ms] [LOG] [Fast Refresh] done in 15ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2002404ms] [LOG] [Fast Refresh] done in 646ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2245260ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2245769ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2245789ms] [LOG] [Fast Refresh] done in 20ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2246628ms] [LOG] [Fast Refresh] done in 859ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2246729ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2247053ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2247065ms] [LOG] [Fast Refresh] done in 13ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2247571ms] [LOG] [Fast Refresh] done in 518ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2248081ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2248405ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2248420ms] [LOG] [Fast Refresh] done in 14ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2248956ms] [LOG] [Fast Refresh] done in 550ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2249512ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2249851ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2249876ms] [LOG] [Fast Refresh] done in 25ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2250802ms] [LOG] [Fast Refresh] done in 951ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2250915ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2251234ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2251247ms] [LOG] [Fast Refresh] done in 13ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2252019ms] [LOG] [Fast Refresh] done in 784ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2252021ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2252408ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2252424ms] [LOG] [Fast Refresh] done in 15ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2253024ms] [LOG] [Fast Refresh] done in 616ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2253268ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2253591ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2253611ms] [LOG] [Fast Refresh] done in 21ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2253957ms] [LOG] [Fast Refresh] done in 367ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2254427ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2254802ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2254818ms] [LOG] [Fast Refresh] done in 15ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2255365ms] [LOG] [Fast Refresh] done in 562ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2520388ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2521078ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2521101ms] [LOG] [Fast Refresh] done in 23ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2522153ms] [LOG] [Fast Refresh] done in 1075ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2543565ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2543965ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/public/account/AccountSidebar.tsx
+./app/account/layout.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[ 2544134ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/public/account/AccountSidebar.tsx
+./app/account/layout.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[ 2566308ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/public/account/AccountSidebar.tsx
+./app/account/layout.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[ 2567412ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/public/account/AccountSidebar.tsx
+./app/account/layout.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[ 2567820ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/public/account/AccountSidebar.tsx
+./app/account/layout.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[ 2568019ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/public/account/AccountSidebar.tsx
+./app/account/layout.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:32
+[ 2568560ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/?_rsc=1p60s:0
+[ 2568625ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/?_rsc=1p60s:0
+[ 2569531ms] [LOG] [impeccable] SSE connection lost. Retry 1/20... @ http://localhost:8400/live.js:5606
+[ 2569535ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3001/:0
+[ 2570012ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///./node_modules/react-dom/cjs/react-dom.development.js:29889
+[ 2570107ms] ModuleBuildError: Module build failed (from ./node_modules/next/dist/build/webpack/loaders/next-swc-loader.js):
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+
+Caused by:
+    Syntax Error
+    at processResult (file://D:\Remal\REMAL\rental-platform\node_modules\next\dist\compiled\webpack\bundle5.js:28:400590)
+    at <unknown> (file://D:\Remal\REMAL\rental-platform\node_modules\next\dist\compiled\webpack\bundle5.js:28:402302)
+    at <unknown> (file://D:\Remal\REMAL\rental-platform\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:8645)
+    at <unknown> (file://D:\Remal\REMAL\rental-platform\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:5019)
+    at r.callback (file://D:\Remal\REMAL\rental-platform\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:4039)
+[ 2570258ms] [LOG] [HMR] connected @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/websocket.js:38
+[ 2570263ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 2570480ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/public/account/AccountSidebar.tsx
+./app/account/layout.tsx @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 2570519ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/public/account/AccountSidebar.tsx
+./app/account/layout.tsx @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 2570874ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:221
+[ 2571144ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/public/account/AccountSidebar.tsx
+./app/account/layout.tsx @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 2608415ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/public/account/AccountSidebar.tsx
+./app/account/layout.tsx @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 2608689ms] [ERROR] ./components/public/account/AccountSidebar.tsx
+Error: 
+  × Unexpected token `aside`. Expected jsx identifier
+    ╭─[D:\Remal\REMAL\rental-platform\components\public\account\AccountSidebar.tsx:37:1]
+ 37 │   const unreadCount = notificationSummary?.unreadCount ?? 0;
+ 38 │ 
+ 39 │   return (
+ 40 │     <aside className="flex min-h-[calc(100vh-80px)] w-64 shrink-0 flex-col rounded-lg border border-neutral-200 bg-white">
+    ·      ─────
+ 41 │       <div className="flex flex-1 flex-col p-6">
+ 42 │         {/* Client Info */}
+ 43 │         <div className="flex items-center gap-2.5">
+    ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/public/account/AccountSidebar.tsx
+./app/account/layout.tsx @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/internal/helpers/hydration-error-info.js:62
+[ 2608698ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:221
+[ 2610775ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3001/_next/static/webpack/a039aee019e8b701.webpack.hot-update.json:0
+[ 2610776ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///./node_modules/next/dist/client/components/react-dev-overlay/pages/hot-reloader-client.js:349
+[ 2611432ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:38559
+[ 2611596ms] [LOG] [impeccable] Live variant mode ready. Hover over elements to pick one. @ http://localhost:8400/live.js:10396
+[ 2611912ms] [LOG] [impeccable] Live mode connected. @ http://localhost:8400/live.js:5512
+[ 2781146ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2781694ms] [LOG] [Fast Refresh] done in 549ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2891739ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2892288ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2892306ms] [LOG] [Fast Refresh] done in 18ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2893028ms] [LOG] [Fast Refresh] done in 740ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 2918474ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 2918843ms] [LOG] [Fast Refresh] done in 368ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 3030763ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 3031292ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[ 3031316ms] [LOG] [Fast Refresh] done in 23ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[ 3032152ms] [LOG] [Fast Refresh] done in 859ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43

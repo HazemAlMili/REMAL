@@ -116,16 +116,19 @@
    Portal · shared neutral-pro token layer
    A cool, flat, professional surface for the operational portals.
    Scoped to .portal-admin (back-office), .portal-auth (the
-   sign-in / sign-up shell), and .portal-owner (the owner workspace)
-   — it re-maps the warm storefront neutral ramp + elevation to cool
-   greys, so the public storefront stays completely unaffected.
+   sign-in / sign-up shell), .portal-owner (the owner workspace),
+   and .portal-client (the customer account) — it re-maps the warm
+   storefront neutral ramp + elevation to cool greys, so the public
+   storefront stays completely unaffected.
    Per-portal tempo (radius, density, elevation) is carried by the
    component utilities, not this base: Admin is sharpest/flattest,
-   Owner is calmer (8px geometry + a subtle card shadow).
+   Owner is calmer (8px geometry + a subtle card shadow), and Client
+   is the most spacious (8px geometry, roomy gutters, >=40px targets).
    ============================================================ */
 .portal-admin,
 .portal-auth,
-.portal-owner {
+.portal-owner,
+.portal-client {
   /* Cool neutral ramp (replaces the warm scale inside admin only) */
   --color-neutral-50:  #F7F8FA;
   --color-neutral-100: #EEF0F3;
@@ -172,7 +175,8 @@
 /* One consistent, accessible focus treatment across the portal chrome. */
 .portal-admin :is(a, button, input, select, textarea, [tabindex]):focus-visible,
 .portal-auth :is(a, button, input, select, textarea, [tabindex]):focus-visible,
-.portal-owner :is(a, button, input, select, textarea, [tabindex]):focus-visible {
+.portal-owner :is(a, button, input, select, textarea, [tabindex]):focus-visible,
+.portal-client :is(a, button, input, select, textarea, [tabindex]):focus-visible {
   outline: 2px solid var(--color-primary-500);
   outline-offset: 2px;
 }

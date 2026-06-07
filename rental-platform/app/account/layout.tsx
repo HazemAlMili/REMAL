@@ -23,7 +23,7 @@ function MobileAccountNav() {
   const pathname = usePathname();
 
   return (
-    <div className="overflow-x-auto border-b border-neutral-100 bg-white">
+    <div className="overflow-x-auto rounded-lg border border-neutral-200 bg-white">
       <div className="flex gap-1 p-2">
         {MOBILE_NAV_ITEMS.map((item) => {
           const isActive =
@@ -36,16 +36,19 @@ function MobileAccountNav() {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={isActive ? "page" : undefined}
               className={`
-                flex shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors
+                flex h-10 shrink-0 items-center gap-2 rounded-lg px-4 text-sm transition-colors
                 ${
                   isActive
-                    ? "bg-primary-500/10 text-primary-500"
-                    : "text-neutral-600 hover:bg-neutral-50"
+                    ? "bg-neutral-100 font-semibold text-neutral-900"
+                    : "font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                 }
               `}
             >
-              <Icon className="h-4 w-4" />
+              <Icon
+                className={`h-4 w-4 ${isActive ? "text-primary-500" : "text-neutral-400"}`}
+              />
               {item.label}
             </Link>
           );
@@ -66,11 +69,11 @@ export default function AccountLayout({
 
   // Authenticating / bootstrapping the account — branded loading handoff.
   if (!showApp) {
-    return <PortalSplash label="Loading your account" />;
+    return <PortalSplash className="portal-client" label="Loading your account" />;
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="portal-client content-density-spacious min-h-screen bg-neutral-50 text-neutral-700">
       <div className="mx-auto max-w-container px-6 py-8">
         <div className="flex gap-8">
           {/* Sidebar — hidden on mobile, shown on desktop */}

@@ -144,7 +144,7 @@ export function ClientRegisterForm() {
       />
 
       {errors.root && (
-        <div className="border-error/20 bg-error/5 rounded-md border p-3 text-sm text-error">
+        <div className="border-error/20 bg-error/5 rounded-lg border p-3 text-sm text-error">
           {errors.root.message}
         </div>
       )}

@@ -31,7 +31,10 @@ export default function RootLayout({
               className: "rounded-lg",
             }}
           />
-        </body>
+        {/* impeccable-live-start */}
+<script src="http://localhost:8400/live.js"></script>
+{/* impeccable-live-end */}
+</body>
       </html>
     </ViewTransitions>
   );
