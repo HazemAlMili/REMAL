@@ -32,11 +32,11 @@ export function BookingsBarChart({ data, isLoading }: BookingsBarChartProps) {
   }));
 
   return (
-    <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
-      <h3 className="mb-4 text-sm font-semibold text-neutral-900">
+    <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-5">
+      <h3 className="mb-3 text-[13px] font-semibold text-neutral-900">
         Bookings, last 30 days
       </h3>
-      <ResponsiveContainer width="100%" height={240}>
+      <ResponsiveContainer width="100%" height={244}>
         <BarChart data={chartData}>
           <CartesianGrid
             strokeDasharray="3 3"
@@ -44,12 +44,14 @@ export function BookingsBarChart({ data, isLoading }: BookingsBarChartProps) {
           />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 11, fill: "var(--color-neutral-400)" }}
+            axisLine={{ stroke: "var(--color-neutral-200)" }}
+            tick={{ fontSize: 11, fill: "var(--color-neutral-500)" }}
             tickLine={false}
             interval="preserveStartEnd"
           />
           <YAxis
-            tick={{ fontSize: 11, fill: "var(--color-neutral-400)" }}
+            axisLine={{ stroke: "var(--color-neutral-200)" }}
+            tick={{ fontSize: 11, fill: "var(--color-neutral-500)" }}
             tickLine={false}
           />
           <Tooltip
@@ -74,11 +76,7 @@ export function BookingsBarChart({ data, isLoading }: BookingsBarChartProps) {
             fill="var(--color-accent-green)"
             name="Completed"
           />
-          <Bar
-            dataKey="cancelled"
-            fill="var(--color-error)"
-            name="Cancelled"
-          />
+          <Bar dataKey="cancelled" fill="var(--color-error)" name="Cancelled" />
         </BarChart>
       </ResponsiveContainer>
     </div>

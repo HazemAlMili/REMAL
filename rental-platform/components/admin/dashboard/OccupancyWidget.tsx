@@ -33,11 +33,11 @@ export function OccupancyWidget() {
 
   if (!bookingsSummary || !unitsData?.items) {
     return (
-      <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
+      <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-5">
         <h3 className="mb-2 text-sm font-semibold text-neutral-900">
           Occupancy rate
         </h3>
-        <p className="text-sm text-neutral-400">Data unavailable</p>
+        <p className="text-sm text-neutral-500">Data unavailable</p>
       </div>
     );
   }
@@ -66,11 +66,11 @@ export function OccupancyWidget() {
         : { color: "var(--color-error)", label: "Low" };
 
   return (
-    <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
-      <h3 className="mb-1 text-sm font-semibold text-neutral-900">
+    <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-5">
+      <h3 className="mb-1 text-[13px] font-semibold text-neutral-900">
         Occupancy rate
       </h3>
-      <p className="mb-4 text-xs text-neutral-400">
+      <p className="mb-4 text-xs text-neutral-500">
         Current month (approximate)
       </p>
 
@@ -113,7 +113,7 @@ export function OccupancyWidget() {
         </div>
       </div>
 
-      <div className="mt-4 text-center text-xs text-neutral-400">
+      <div className="mt-4 text-center text-xs text-neutral-500">
         {activeBookings} active bookings / {totalActiveDays} unit-days
       </div>
     </div>

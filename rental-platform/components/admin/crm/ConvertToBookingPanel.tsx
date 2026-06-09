@@ -30,7 +30,11 @@ const convertSchema = z.object({
 const newClientSchema = z.object({
   name: z.string().min(1, "Please enter the client name"),
   phone: z.string().min(1, "Please enter the phone number"),
-  email: z.string().email("Enter a valid email address").optional().or(z.literal("")),
+  email: z
+    .string()
+    .email("Enter a valid email address")
+    .optional()
+    .or(z.literal("")),
 });
 
 interface ConvertToBookingPanelProps {
@@ -107,18 +111,20 @@ export function ConvertToBookingPanel({
   // Only show convert panel if lead is Qualified
   if (lead.leadStatus !== "Qualified") {
     return (
-      <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-4">
+      <div className="grid gap-3 rounded-[var(--portal-radius-card)] border border-warning-bg bg-warning-bg p-4 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
         <h3 className="text-sm font-semibold text-amber-800">
           Convert to booking
         </h3>
-        <p className="text-sm text-amber-700">
-          This lead must be moved to <strong>Qualified</strong> status before it
-          can be converted to a booking.
-        </p>
-        <p className="text-xs text-amber-600">
-          Sales funnel: <strong>New</strong> to <strong>Contacted</strong> to{" "}
-          <strong>Qualified</strong> to <strong>Convert to booking</strong>
-        </p>
+        <div className="space-y-1">
+          <p className="text-sm text-amber-700">
+            This lead must be moved to <strong>Qualified</strong> status before
+            it can be converted to a booking.
+          </p>
+          <p className="text-xs text-amber-600">
+            Sales funnel: <strong>New</strong> to <strong>Contacted</strong> to{" "}
+            <strong>Qualified</strong> to <strong>Convert to booking</strong>
+          </p>
+        </div>
       </div>
     );
   }

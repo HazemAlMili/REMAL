@@ -5,11 +5,19 @@ import { AlertCircle, Building2 } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useOwnerUnits } from "@/lib/hooks/useOwners";
+import type { OwnerUnitResponse } from "@/lib/types/owner.types";
 import { cn } from "@/lib/utils/cn";
 
 export function OwnerUnitsList() {
   const { id } = useParams();
   const { data: units, isLoading, isError } = useOwnerUnits(id as string);
+
+  // The shared response interceptor unwraps paginated payloads to
+  // `{ items, pagination }`, so this endpoint may hand back either a bare
+  // array or a paginated wrapper. Normalize to an array before rendering.
+  const unitList: OwnerUnitResponse[] = Array.isArray(units)
+    ? units
+    : (units as { items?: OwnerUnitResponse[] } | undefined)?.items ?? [];
 
   if (isLoading) {
     return (
@@ -31,7 +39,7 @@ export function OwnerUnitsList() {
     );
   }
 
-  if (!units || units.length === 0) {
+  if (unitList.length === 0) {
     return (
       <EmptyState
         icon={<Building2 className="h-10 w-10 text-neutral-400" />}
@@ -43,7 +51,7 @@ export function OwnerUnitsList() {
 
   return (
     <div className="space-y-3">
-      {units.map((unit) => (
+      {unitList.map((unit) => (
         <div
           key={unit.id}
           className="flex items-start justify-between rounded-lg border border-neutral-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"

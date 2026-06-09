@@ -122,16 +122,19 @@ function UnitsPageContent() {
     <div className="space-y-6">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-neutral-900">
+          <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
             Units
           </h1>
           <p className="text-sm text-neutral-500">
             Manage rentable units, active status, availability, images, and amenities.
           </p>
         </div>
+
         {canManageUnits && (
-          <Button onClick={() => router.push(ROUTES.admin.units.create)}>
-            <Plus className="mr-2 h-4 w-4" />
+          <Button
+            onClick={() => router.push(ROUTES.admin.units.create)}
+            leftIcon={<Plus className="h-4 w-4" />}
+          >
             Create unit
           </Button>
         )}

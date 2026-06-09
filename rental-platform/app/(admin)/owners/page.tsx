@@ -137,8 +137,10 @@ function OwnersPageContent() {
           </p>
         </div>
         {canManageOwners && (
-          <Button onClick={() => router.push(ROUTES.admin.owners.create)}>
-            <Plus className="mr-2 h-4 w-4" />
+          <Button
+            onClick={() => router.push(ROUTES.admin.owners.create)}
+            leftIcon={<Plus className="h-4 w-4" />}
+          >
             Create owner
           </Button>
         )}

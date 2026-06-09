@@ -60,20 +60,22 @@ export function LeadStatusTransition({
   };
 
   return (
-    <div className="flex flex-col gap-4 rounded-lg border border-neutral-100 bg-white p-6 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-neutral-600">
-            Current Status:
+    <div className="flex flex-col gap-4 rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-1">
+          <span className="text-xs font-medium text-neutral-500">
+            Current status
           </span>
-          <StatusBadge status={currentStatus} />
+          <div>
+            <StatusBadge status={currentStatus} />
+          </div>
         </div>
       </div>
 
       {allowedTransitions.length > 0 ? (
-        <div className="space-y-3 border-t border-neutral-50 pt-4">
-          <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
-            Move to:
+        <div className="space-y-2 border-t border-neutral-200 pt-3">
+          <span className="text-xs font-medium text-neutral-500">
+            Move lead to
           </span>
           <div className="flex flex-wrap gap-2">
             {allowedTransitions.map((status) => (
@@ -89,7 +91,7 @@ export function LeadStatusTransition({
           </div>
         </div>
       ) : (
-        <div className="border-t border-neutral-50 pt-4">
+        <div className="border-t border-neutral-200 pt-3">
           <span className="text-sm italic text-neutral-400">
             No further actions available
           </span>

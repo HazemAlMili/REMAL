@@ -64,13 +64,13 @@ export function LeadAssignment({ leadId }: LeadAssignmentProps) {
 
   // Treat assignment missing (404) as unassigned, meaning assignment may be undefined
   return (
-    <div className="space-y-4 rounded-lg border border-neutral-100 bg-white p-6 shadow-sm">
-      <h3 className="mb-4 border-b border-neutral-100 pb-2 text-sm font-semibold uppercase tracking-wider text-neutral-800">
+    <div className="space-y-4 rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-4">
+      <h3 className="border-b border-neutral-200 pb-2 text-sm font-semibold text-neutral-900">
         Assignment
       </h3>
 
       {assignment?.assignedAdminUserId ? (
-        <div className="flex items-center justify-between rounded-lg bg-neutral-50 p-3">
+        <div className="flex items-center justify-between rounded-[var(--portal-radius-control)] border border-neutral-200 bg-neutral-50 p-3">
           <div>
             <p className="text-sm font-medium text-neutral-800">
               {getAdminName(assignment.assignedAdminUserId)}
@@ -90,7 +90,7 @@ export function LeadAssignment({ leadId }: LeadAssignmentProps) {
           )}
         </div>
       ) : (
-        <div className="rounded-lg bg-neutral-50 p-3">
+        <div className="rounded-[var(--portal-radius-control)] border border-neutral-200 bg-neutral-50 p-3">
           <p className="text-sm italic text-neutral-500">
             No sales owner assigned
           </p>
@@ -98,7 +98,7 @@ export function LeadAssignment({ leadId }: LeadAssignmentProps) {
       )}
 
       {canAssignLeads && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-stretch gap-2">
           <Select
             value={selectedUserId}
             onChange={(val) => setSelectedUserId(val as string)}

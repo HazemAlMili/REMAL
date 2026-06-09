@@ -39,9 +39,9 @@ export function LeadDetailHeader({ lead }: LeadDetailHeaderProps) {
   };
 
   return (
-    <div className="flex flex-col justify-between gap-4 rounded-lg border border-neutral-100 bg-white p-6 shadow-sm md:flex-row md:items-center">
+    <div className="flex flex-col justify-between gap-4 rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-5 md:flex-row md:items-center">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold text-neutral-900">
+        <h1 className="text-[21px] font-semibold leading-tight text-neutral-900">
           {lead.contactName}
         </h1>
         <div className="flex items-center gap-4 text-sm text-neutral-500">

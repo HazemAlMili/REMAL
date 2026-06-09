@@ -29,11 +29,11 @@ export function RevenueLineChart({ data, isLoading }: RevenueLineChartProps) {
   }));
 
   return (
-    <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
-      <h3 className="mb-4 text-sm font-semibold text-neutral-900">
+    <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-5">
+      <h3 className="mb-3 text-[13px] font-semibold text-neutral-900">
         Revenue, last 30 days
       </h3>
-      <ResponsiveContainer width="100%" height={240}>
+      <ResponsiveContainer width="100%" height={244}>
         <LineChart data={chartData}>
           <CartesianGrid
             strokeDasharray="3 3"
@@ -41,12 +41,14 @@ export function RevenueLineChart({ data, isLoading }: RevenueLineChartProps) {
           />
           <XAxis
             dataKey="date"
-            tick={{ fontSize: 11, fill: "var(--color-neutral-400)" }}
+            axisLine={{ stroke: "var(--color-neutral-200)" }}
+            tick={{ fontSize: 11, fill: "var(--color-neutral-500)" }}
             tickLine={false}
             interval="preserveStartEnd"
           />
           <YAxis
-            tick={{ fontSize: 11, fill: "var(--color-neutral-400)" }}
+            axisLine={{ stroke: "var(--color-neutral-200)" }}
+            tick={{ fontSize: 11, fill: "var(--color-neutral-500)" }}
             tickLine={false}
             tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
           />
@@ -64,7 +66,7 @@ export function RevenueLineChart({ data, isLoading }: RevenueLineChartProps) {
             type="monotone"
             dataKey="revenue"
             stroke="var(--color-primary-500)"
-            strokeWidth={2}
+            strokeWidth={2.5}
             dot={false}
             activeDot={{ r: 4 }}
           />

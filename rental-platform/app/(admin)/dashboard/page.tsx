@@ -73,21 +73,21 @@ export default function AdminDashboardPage() {
   const totalRevenue = financeSummary?.totalPaidAmount || 0;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-1">
+    <div className="space-y-5">
+      <div className="grid gap-1 pb-1">
         <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
           Operations dashboard
         </h1>
-        <p className="text-sm text-neutral-500">
+        <p className="max-w-[72ch] text-sm text-neutral-600">
           {format(new Date(), "EEEE, d MMMM yyyy")} · Inventory, bookings,
           revenue, and occupancy at a glance.
         </p>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
         {canViewUnits && (
-            <StatCard
-              title="Active units"
+          <StatCard
+            title="Active units"
             value={unitsCount ?? 0}
             icon={Building2}
             isLoading={unitsLoading}
@@ -112,7 +112,7 @@ export default function AdminDashboardPage() {
         )}
 
         {canViewFinance && (
-            <StatCard
+          <StatCard
             title="Paid revenue"
             value={formatCurrency(totalRevenue)}
             icon={DollarSign}
@@ -122,7 +122,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Analytics Charts */}
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
         {canViewFinance && (
           <RevenueLineChart
             data={financeDaily ?? []}
@@ -138,7 +138,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Occupancy + Top Units Widgets */}
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(280px,0.72fr)_minmax(360px,1.28fr)]">
         {canViewBookings && <OccupancyWidget />}
         {canViewUnits && <TopUnitsWidget />}
       </div>

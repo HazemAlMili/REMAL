@@ -106,7 +106,7 @@ export default function UnitDetailPage({ params }: UnitDetailPageProps) {
       </Button>
 
       {/* Header */}
-      <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+      <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-6 shadow-sm">
         <UnitDetailHeader
           unit={unit}
           onEdit={() => router.push(ROUTES.admin.units.edit(id))}
@@ -116,7 +116,7 @@ export default function UnitDetailPage({ params }: UnitDetailPageProps) {
       </div>
 
       {/* Tabs */}
-      <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+      <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-6 shadow-sm">
         <UnitDetailTabs
           unitId={id}
           activeTab={activeTab}

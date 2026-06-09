@@ -1,94 +1,92 @@
 "use client";
 
-import { StatCard } from "@/components/admin/dashboard/StatCard";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { formatCurrency } from "@/lib/utils/format";
 import type { FinanceAnalyticsSummaryResponse } from "@/lib/types/finance.types";
-import {
-  FileText,
-  DollarSign,
-  CreditCard,
-  Hourglass,
-  Calendar,
-  CheckCircle,
-  FileSpreadsheet,
-} from "lucide-react";
 
 interface FinanceSummaryCardsProps {
   data?: FinanceAnalyticsSummaryResponse;
   isLoading: boolean;
 }
 
+interface SummaryCell {
+  label: string;
+  value: string;
+}
+
+function SummaryGroup({
+  title,
+  cells,
+  columns,
+  isLoading,
+}: {
+  title: string;
+  cells: SummaryCell[];
+  columns: string;
+  isLoading: boolean;
+}) {
+  return (
+    <section className="overflow-hidden rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white">
+      <h2 className="border-b border-neutral-200 bg-neutral-50 px-4 py-2 text-[12px] font-semibold uppercase tracking-wide text-neutral-600">
+        {title}
+      </h2>
+      <dl className={`grid divide-x divide-neutral-200 ${columns}`}>
+        {cells.map((cell) => (
+          <div key={cell.label} className="px-5 py-4">
+            <dt className="text-[12px] font-medium text-neutral-600">
+              {cell.label}
+            </dt>
+            {isLoading ? (
+              <Skeleton className="mt-2 h-7 w-24" />
+            ) : (
+              <dd className="mt-1 text-[30px] font-semibold tabular-nums leading-none text-neutral-900">
+                {cell.value}
+              </dd>
+            )}
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
 export function FinanceSummaryCards({
   data,
   isLoading,
 }: FinanceSummaryCardsProps) {
-  const cards = [
+  const money = (amount?: number | null) =>
+    amount ? formatCurrency(amount) : "—";
+
+  const invoicing: SummaryCell[] = [
+    { label: "Total invoiced", value: money(data?.totalInvoicedAmount) },
+    { label: "Total paid", value: money(data?.totalPaidAmount) },
+    { label: "Outstanding balance", value: money(data?.totalRemainingAmount) },
     {
-      title: "Total Invoiced Amount",
-      value:
-        data && data.totalInvoicedAmount
-          ? formatCurrency(data.totalInvoicedAmount)
-          : "—",
-      icon: FileText,
-    },
-    {
-      title: "Total Paid Amount",
-      value:
-        data && data.totalPaidAmount
-          ? formatCurrency(data.totalPaidAmount)
-          : "—",
-      icon: DollarSign,
-    },
-    {
-      title: "Total Remaining Amount",
-      value:
-        data && data.totalRemainingAmount
-          ? formatCurrency(data.totalRemainingAmount)
-          : "—",
-      icon: CreditCard,
-    },
-    {
-      title: "Total Pending Payout Amount",
-      value:
-        data && data.totalPendingPayoutAmount
-          ? formatCurrency(data.totalPendingPayoutAmount)
-          : "—",
-      icon: Hourglass,
-    },
-    {
-      title: "Total Scheduled Payout Amount",
-      value:
-        data && data.totalScheduledPayoutAmount
-          ? formatCurrency(data.totalScheduledPayoutAmount)
-          : "—",
-      icon: Calendar,
-    },
-    {
-      title: "Total Paid Payout Amount",
-      value:
-        data && data.totalPaidPayoutAmount
-          ? formatCurrency(data.totalPaidPayoutAmount)
-          : "—",
-      icon: CheckCircle,
-    },
-    {
-      title: "Bookings With Invoice",
+      label: "Bookings with invoice",
       value: data ? data.totalBookingsWithInvoiceCount.toString() : "—",
-      icon: FileSpreadsheet,
     },
   ];
 
+  const payouts: SummaryCell[] = [
+    { label: "Pending", value: money(data?.totalPendingPayoutAmount) },
+    { label: "Scheduled", value: money(data?.totalScheduledPayoutAmount) },
+    { label: "Paid out", value: money(data?.totalPaidPayoutAmount) },
+  ];
+
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {cards.map((card) => (
-        <StatCard
-          key={card.title}
-          title={card.title}
-          value={card.value}
-          icon={card.icon}
-          isLoading={isLoading}
-        />
-      ))}
+    <div className="space-y-4">
+      <SummaryGroup
+        title="Invoicing"
+        cells={invoicing}
+        columns="grid-cols-2 md:grid-cols-4"
+        isLoading={isLoading}
+      />
+      <SummaryGroup
+        title="Owner payouts"
+        cells={payouts}
+        columns="grid-cols-3"
+        isLoading={isLoading}
+      />
     </div>
   );
 }

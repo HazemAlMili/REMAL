@@ -31,7 +31,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     // Token already present (e.g. navigated client-side after login)
     if (accessToken) {
       if (subjectType !== "Admin") {
-        const target = subjectType === "Owner" ? ROUTES.owner.dashboard : ROUTES.client.account;
+        const target =
+          subjectType === "Owner"
+            ? ROUTES.owner.dashboard
+            : ROUTES.client.account;
         router.replace(target);
         return;
       }
@@ -58,7 +61,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         });
 
         if (auth.subjectType !== "Admin") {
-          const target = auth.subjectType === "Owner" ? ROUTES.owner.dashboard : ROUTES.client.account;
+          const target =
+            auth.subjectType === "Owner"
+              ? ROUTES.owner.dashboard
+              : ROUTES.client.account;
           router.replace(target);
           return;
         }
@@ -68,12 +74,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       .catch(() => {
         clearAuth();
         router.replace(ROUTES.auth.adminLogin);
-      })
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken, subjectType, router, setAuth, clearAuth]);
 
   if (!showApp) {
-    return <PortalSplash className="portal-admin" label="Loading your workspace" />;
+    return (
+      <PortalSplash className="portal-admin" label="Loading your workspace" />
+    );
   }
 
   return (

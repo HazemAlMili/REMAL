@@ -26,12 +26,13 @@ export function TopUnitsWidget() {
     return <Skeleton height={260} className="rounded-[4px]" />;
   }
 
-  const activeUnits =
-    (unitsData?.items ?? []).filter((u) => u.isActive).slice(0, 5);
+  const activeUnits = (unitsData?.items ?? [])
+    .filter((u) => u.isActive)
+    .slice(0, 5);
 
   if (activeUnits.length === 0) {
     return (
-      <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
+      <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-5">
         <h3 className="mb-4 text-sm font-semibold text-neutral-900">
           Active units
         </h3>
@@ -45,9 +46,11 @@ export function TopUnitsWidget() {
   }
 
   return (
-    <div className="rounded-[4px] border border-neutral-200 bg-white p-5">
+    <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-5">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900">Active units</h3>
+        <h3 className="text-[13px] font-semibold text-neutral-900">
+          Active units
+        </h3>
         <Link
           href={ROUTES.admin.units.list}
           className="text-sm font-medium text-primary-600 hover:text-primary-700 hover:underline"
@@ -61,7 +64,7 @@ export function TopUnitsWidget() {
           <Link
             key={unit.id}
             href={ROUTES.admin.units.detail(unit.id)}
-            className="flex items-center justify-between gap-3 rounded-[4px] px-2 py-2 transition-colors hover:bg-neutral-50"
+            className="flex items-center justify-between gap-3 rounded-[4px] px-2 py-2.5 transition-colors hover:bg-neutral-50"
           >
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-neutral-800">
@@ -87,7 +90,7 @@ export function TopUnitsWidget() {
         ))}
       </div>
 
-      <p className="mt-3 flex items-center gap-1.5 text-xs text-neutral-400">
+      <p className="mt-3 flex items-center gap-1.5 text-xs text-neutral-500">
         <Info size={13} className="shrink-0" />
         Showing recent active units; ranking by booking count needs backend
         support.

@@ -10,15 +10,13 @@ export function LeadUnitInfo({ lead }: LeadUnitInfoProps) {
   const hasDates = lead.desiredCheckInDate && lead.desiredCheckOutDate;
 
   return (
-    <div className="mt-4 rounded-lg border border-neutral-100 bg-white p-6 shadow-sm">
-      <h2 className="mb-4 border-b border-neutral-100 pb-2 text-sm font-semibold uppercase tracking-wider text-neutral-800">
-        Unit Inquiry
+    <div className="mt-4 rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-4">
+      <h2 className="mb-3 border-b border-neutral-200 pb-2 text-sm font-semibold text-neutral-900">
+        Unit inquiry
       </h2>
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-medium uppercase text-neutral-400">
-            Unit
-          </span>
+          <span className="text-xs font-medium text-neutral-500">Unit</span>
           <div className="flex items-center gap-2">
             <Home className="h-4 w-4 text-neutral-400" />
             {lead.targetUnitId ? (
@@ -34,9 +32,7 @@ export function LeadUnitInfo({ lead }: LeadUnitInfoProps) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-medium uppercase text-neutral-400">
-            Dates
-          </span>
+          <span className="text-xs font-medium text-neutral-500">Dates</span>
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-neutral-400" />
             {hasDates ? (
@@ -56,13 +52,11 @@ export function LeadUnitInfo({ lead }: LeadUnitInfoProps) {
 
         {lead.guestCount !== null && (
           <div className="flex flex-col gap-1">
-            <span className="text-xs font-medium uppercase text-neutral-400">
-              Guests
-            </span>
+            <span className="text-xs font-medium text-neutral-500">Guests</span>
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-neutral-400" />
               <span className="text-sm font-medium text-neutral-800">
-                {lead.guestCount} {lead.guestCount === 1 ? "Guest" : "Guests"}
+                {lead.guestCount} {lead.guestCount === 1 ? "guest" : "guests"}
               </span>
             </div>
           </div>

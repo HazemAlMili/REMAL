@@ -46,17 +46,29 @@ export function UnitTable({
       {
         accessorKey: "areaId",
         header: "Area ID",
+        cell: ({ row }) => (
+          <span className="font-mono text-xs text-neutral-500">
+            {row.getValue("areaId")}
+          </span>
+        ),
       },
       {
         accessorKey: "ownerId",
         header: "Owner ID",
+        cell: ({ row }) => (
+          <span className="font-mono text-xs text-neutral-500">
+            {row.getValue("ownerId")}
+          </span>
+        ),
       },
       {
         accessorKey: "unitType",
         header: "Type",
         cell: ({ row }) => {
           const t: UnitType = row.getValue("unitType");
-          return UNIT_TYPE_LABELS[t] || t;
+          return (
+            UNIT_TYPE_LABELS[t] || `${String(t).charAt(0).toUpperCase()}${String(t).slice(1)}`
+          );
         },
       },
       {
@@ -73,10 +85,14 @@ export function UnitTable({
       },
       {
         accessorKey: "basePricePerNight",
-        header: "Price/night",
+        header: () => <div className="w-full text-end">Price/night</div>,
         cell: ({ row }) => {
           const price: number = row.getValue("basePricePerNight");
-          return <span className="font-medium">{formatCurrency(price)}</span>;
+          return (
+            <span className="block text-end font-medium tabular-nums">
+              {formatCurrency(price)}
+            </span>
+          );
         },
       },
       {
@@ -137,13 +153,15 @@ export function UnitTable({
   }, [canManageUnits, onToggleStatus, router]);
 
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      isLoading={isLoading}
-      pagination={pagination}
-      onPageChange={onPageChange}
-      emptyMessage="No matching units. Adjust the filters or clear the search."
-    />
+    <div className="[--portal-row-height:47px]">
+      <DataTable
+        columns={columns}
+        data={data}
+        isLoading={isLoading}
+        pagination={pagination}
+        onPageChange={onPageChange}
+        emptyMessage="No matching units. Adjust the filters or clear the search."
+      />
+    </div>
   );
 }
