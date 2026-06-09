@@ -22,8 +22,8 @@ export default function EditOwnerPage({ params }: EditOwnerPageProps) {
       <div className="p-6">
         <EmptyState
           icon={<AlertCircle className="h-10 w-10 text-red-500" />}
-          title="Access Denied"
-          description="You do not have permission to edit owners. This feature is restricted to SuperAdmin users."
+          title="Owner editing access required"
+          description="Only super admins can edit owner profiles."
         />
       </div>
     );
@@ -54,7 +54,7 @@ export default function EditOwnerPage({ params }: EditOwnerPageProps) {
         <EmptyState
           icon={<AlertCircle className="h-10 w-10 text-red-500" />}
           title="Owner not found"
-          description="The owner you are looking for does not exist or has been removed."
+          description="This owner may have been removed, or the link may use an incorrect ID."
         />
       </div>
     );
@@ -74,10 +74,10 @@ export default function EditOwnerPage({ params }: EditOwnerPageProps) {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="font-display text-2xl font-bold tracking-tight text-neutral-900">
-          Edit Owner
+          Edit owner
         </h1>
         <p className="text-sm text-neutral-500">
-          Update owner information and settings.
+          Update contact details, commission rate, status, and internal notes.
         </p>
       </div>
 

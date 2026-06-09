@@ -64,7 +64,7 @@ export function ReviewDetailDrawer({
       setPublishDialog(false);
     },
     onError: () => {
-      toastError("Failed to publish review");
+      toastError("Could not publish review");
     },
   });
 
@@ -82,7 +82,7 @@ export function ReviewDetailDrawer({
       setRejectDialog(false);
     },
     onError: () => {
-      toastError("Failed to reject review");
+      toastError("Could not reject review");
     },
   });
 
@@ -100,7 +100,7 @@ export function ReviewDetailDrawer({
       setHideDialog(false);
     },
     onError: () => {
-      toastError("Failed to hide review");
+      toastError("Could not hide review");
     },
   });
 

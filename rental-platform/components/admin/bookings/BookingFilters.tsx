@@ -50,7 +50,7 @@ export function BookingFilters({ filters, onChange }: BookingFiltersProps) {
   };
 
   const statusOptions = [
-    { value: "", label: "All Statuses" },
+    { value: "", label: "All statuses" },
     ...BOOKING_STATUS_OPTIONS,
   ];
 

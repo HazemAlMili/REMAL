@@ -58,7 +58,7 @@ export function SchedulePayoutDialog({
         onError: (error: unknown) => {
           const err = error as { response?: { data?: { message?: string } } };
           toast.error(
-            err.response?.data?.message || "Failed to schedule payout"
+            err.response?.data?.message || "Could not schedule payout"
           );
         },
       }
@@ -69,10 +69,10 @@ export function SchedulePayoutDialog({
     <ConfirmDialog
       isOpen={isOpen}
       onClose={onClose}
-      title="Schedule Payout"
+      title="Schedule payout"
       onConfirm={handleSubmit(onSubmit)}
       isLoading={scheduleMutation.isPending}
-      confirmLabel="Schedule"
+      confirmLabel="Schedule payout"
     >
       <form
         id="schedule-form"
@@ -80,11 +80,11 @@ export function SchedulePayoutDialog({
         className="space-y-3"
       >
         <p className="text-sm text-neutral-600">
-          Schedule this payout for future processing.
+          Schedule this payout for a future finance batch.
         </p>
         <Textarea
-          label="Notes (optional)"
-          placeholder="e.g. Scheduled for end of month batch"
+          label="Internal note (optional)"
+          placeholder="Add scheduling context"
           error={errors.notes?.message}
           {...register("notes")}
         />

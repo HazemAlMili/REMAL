@@ -49,7 +49,15 @@ function BookingsListContent() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-h2 font-display text-neutral-800">Bookings</h1>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-neutral-800">
+            Bookings
+          </h1>
+          <p className="mt-1 text-sm text-neutral-500">
+            Filter reservations, update lifecycle status, and review booking
+            payment records.
+          </p>
+        </div>
       </div>
       <BookingFilters filters={filters} onChange={handleFilterChange} />
       <BookingTable 
@@ -64,7 +72,7 @@ function BookingsListContent() {
 
 export default function BookingsPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-neutral-500">Loading bookings...</div>}>
+    <Suspense fallback={<div className="p-8 text-neutral-500">Loading booking list...</div>}>
       <BookingsListContent />
     </Suspense>
   );

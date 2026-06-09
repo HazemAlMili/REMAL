@@ -33,19 +33,19 @@ export function PublishReviewDialog({
     <ConfirmDialog
       isOpen={isOpen}
       onClose={handleClose}
-      title="Publish Review"
+      title="Publish review"
       onConfirm={handleConfirm}
       isLoading={isLoading}
-      confirmLabel="Publish"
+      confirmLabel="Publish review"
       variant="primary"
     >
       <div className="space-y-3">
         <p className="text-sm text-neutral-600">
-          This review will become publicly visible on the unit page.
+          Publish this review? It will become visible on the public unit page.
         </p>
         <Textarea
-          label="Notes (optional)"
-          placeholder="Internal moderation notes..."
+          label="Internal note (optional)"
+          placeholder="Add moderation context"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}

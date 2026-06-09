@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { Badge } from "@/components/ui/Badge";
+import { Badge, BadgeVariant } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { AdminUserResponse, AdminRole } from "@/lib/types";
 import { useAuthStore } from "@/lib/stores/auth.store";
@@ -30,67 +30,69 @@ export function AdminUserTable({
   if (!users?.length) {
     return (
       <EmptyState
-        title="No admin users found"
+        title="No matching admin users"
         description="There are no admin users matching your search criteria."
       />
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-md border">
+    <div className="overflow-hidden rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white">
       <table className="w-full text-sm">
-        <thead className="bg-neutral-50/50 border-b">
+        <thead className="border-b border-neutral-200 bg-neutral-50">
           <tr>
-            <th className="h-10 px-4 text-left font-medium text-neutral-500">
+            <th className="h-9 px-3 text-start text-xs font-semibold uppercase tracking-wide text-neutral-600">
               Name
             </th>
-            <th className="h-10 px-4 text-left font-medium text-neutral-500">
+            <th className="h-9 px-3 text-start text-xs font-semibold uppercase tracking-wide text-neutral-600">
               Email
             </th>
-            <th className="h-10 px-4 text-left font-medium text-neutral-500">
+            <th className="h-9 px-3 text-start text-xs font-semibold uppercase tracking-wide text-neutral-600">
               Role
             </th>
-            <th className="h-10 px-4 text-left font-medium text-neutral-500">
+            <th className="h-9 px-3 text-start text-xs font-semibold uppercase tracking-wide text-neutral-600">
               Status
             </th>
-            <th className="h-10 px-4 text-left font-medium text-neutral-500">
+            <th className="h-9 px-3 text-start text-xs font-semibold uppercase tracking-wide text-neutral-600">
               Created
             </th>
-            <th className="h-10 px-4 text-right font-medium text-neutral-500">
+            <th className="h-9 px-3 text-end text-xs font-semibold uppercase tracking-wide text-neutral-600">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y bg-white">
+        <tbody className="divide-y divide-neutral-100 bg-white">
           {users.map((adminUser) => {
             const isSelf = currentUser?.userId === adminUser.id;
 
             return (
               <tr
                 key={adminUser.id}
-                className={`hover:bg-neutral-50 ${!adminUser.isActive ? "bg-neutral-50 opacity-60" : ""}`}
+                className={`transition-colors hover:bg-neutral-50 ${!adminUser.isActive ? "bg-neutral-50 text-neutral-500" : ""}`}
               >
-                <td className="p-4 align-middle font-medium">
+                <td className="h-[var(--portal-row-height)] px-3 py-2 align-middle font-medium text-neutral-900">
                   {adminUser.name}
                   {isSelf && (
-                    <span className="ml-2 text-xs text-blue-600">(you)</span>
+                    <span className="ms-2 text-xs font-medium text-info">
+                      (you)
+                    </span>
                   )}
                 </td>
-                <td className="p-4 align-middle text-neutral-500">
+                <td className="h-[var(--portal-row-height)] px-3 py-2 align-middle text-neutral-500">
                   {adminUser.email}
                 </td>
-                <td className="p-4 align-middle">
+                <td className="h-[var(--portal-row-height)] px-3 py-2 align-middle">
                   <RoleBadge role={adminUser.role} />
                 </td>
-                <td className="p-4 align-middle">
+                <td className="h-[var(--portal-row-height)] px-3 py-2 align-middle">
                   <Badge variant={adminUser.isActive ? "success" : "neutral"}>
                     {adminUser.isActive ? "Active" : "Inactive"}
                   </Badge>
                 </td>
-                <td className="p-4 align-middle text-neutral-500">
+                <td className="h-[var(--portal-row-height)] px-3 py-2 align-middle text-neutral-500">
                   {format(new Date(adminUser.createdAt), "MMM d, yyyy")}
                 </td>
-                <td className="p-4 text-right">
+                <td className="h-[var(--portal-row-height)] px-3 py-2 text-end">
                   <div className="flex items-center justify-end gap-2">
                     <Button
                       size="sm"
@@ -101,7 +103,7 @@ export function AdminUserTable({
                         isSelf ? "Cannot change your own role" : "Change role"
                       }
                     >
-                      Change Role
+                      Change role
                     </Button>
                     <Button
                       size="sm"
@@ -132,11 +134,11 @@ export function AdminUserTable({
 }
 
 function RoleBadge({ role }: { role: AdminRole }) {
-  const roleColors = {
-    SuperAdmin: "bg-purple-100 text-purple-700",
-    Sales: "bg-blue-100 text-blue-700",
-    Finance: "bg-green-100 text-green-700",
-    Tech: "bg-orange-100 text-orange-700",
+  const roleVariants: Record<AdminRole, BadgeVariant> = {
+    SuperAdmin: "danger",
+    Sales: "info",
+    Finance: "success",
+    Tech: "warning",
   };
 
   const roleLabels = {
@@ -146,11 +148,5 @@ function RoleBadge({ role }: { role: AdminRole }) {
     Tech: "Tech",
   };
 
-  return (
-    <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${roleColors[role]}`}
-    >
-      {roleLabels[role]}
-    </span>
-  );
+  return <Badge variant={roleVariants[role]}>{roleLabels[role]}</Badge>;
 }

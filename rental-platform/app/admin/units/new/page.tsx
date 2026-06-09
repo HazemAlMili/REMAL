@@ -56,10 +56,10 @@ export default function CreateUnitPage() {
         ...values,
         // The numbers from Zod are confirmed safe, just passing along to the service layer.
       });
-      toastSuccess("Unit created successfully");
+      toastSuccess("Unit created");
       router.push(ROUTES.admin.units.detail(result.id));
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to create unit");
+      toastError((e as Error)?.message || "Could not create unit");
     }
   };
 
@@ -73,16 +73,16 @@ export default function CreateUnitPage() {
           onClick={() => router.push(ROUTES.admin.units.list)}
           disabled={isCreating}
         >
-          <ChevronLeft className="mr-1 h-4 w-4" />
-          Back to Units
+        <ChevronLeft className="mr-1 h-4 w-4" />
+          Back to units
         </Button>
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight text-neutral-900">
-            Create New Unit
+            Create unit
           </h1>
           <p className="text-sm text-neutral-500">
-            Add a new property to the inventory. You will be able to add images
-            and amenities after creation.
+            Add the core unit details first. Images, amenities, pricing, and
+            availability can be added after creation.
           </p>
         </div>
       </div>

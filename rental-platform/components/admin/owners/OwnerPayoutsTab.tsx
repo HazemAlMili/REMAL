@@ -143,7 +143,7 @@ export function OwnerPayoutsTab({ ownerId }: OwnerPayoutsTabProps) {
 
             <div className="mt-8">
               <EmptyState
-                title="No payouts yet"
+                title="No owner payouts"
                 description="Create a payout record when a booking is completed."
                 action={
                   canManageFinance && (

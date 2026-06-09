@@ -79,7 +79,7 @@ export function UnitDateBlocksTab({ unitId }: UnitDateBlocksTabProps) {
             notes: values.notes || undefined,
           },
         });
-        toastSuccess("Date block updated successfully");
+        toastSuccess("Date block updated");
       } else {
         await createBlock({
           unitId,
@@ -90,11 +90,11 @@ export function UnitDateBlocksTab({ unitId }: UnitDateBlocksTabProps) {
             notes: values.notes || undefined,
           },
         });
-        toastSuccess("Date block created successfully");
+        toastSuccess("Date block created");
       }
       handleCloseModal();
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to save date block");
+      toastError((e as Error)?.message || "Could not save date block");
     }
   };
 
@@ -102,9 +102,9 @@ export function UnitDateBlocksTab({ unitId }: UnitDateBlocksTabProps) {
     if (!deletingBlockId) return;
     try {
       await deleteBlock({ id: deletingBlockId, unitId });
-      toastSuccess("Date block deleted successfully");
+      toastSuccess("Date block deleted");
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to delete date block");
+      toastError((e as Error)?.message || "Could not delete date block");
     } finally {
       setDeletingBlockId(undefined);
     }
@@ -114,12 +114,12 @@ export function UnitDateBlocksTab({ unitId }: UnitDateBlocksTabProps) {
     () => [
       {
         accessorKey: "startDate",
-        header: "Start Date",
+        header: "Start date",
         cell: ({ row }) => formatDate(row.original.startDate),
       },
       {
         accessorKey: "endDate",
-        header: "End Date",
+        header: "End date",
         cell: ({ row }) => formatDate(row.original.endDate),
       },
       {
@@ -137,7 +137,7 @@ export function UnitDateBlocksTab({ unitId }: UnitDateBlocksTabProps) {
       },
       {
         accessorKey: "createdAt",
-        header: "Created At",
+        header: "Created",
         cell: ({ row }) => formatDate(row.original.createdAt),
       },
       {
@@ -172,10 +172,10 @@ export function UnitDateBlocksTab({ unitId }: UnitDateBlocksTabProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-neutral-800">Date Blocks</h2>
+        <h2 className="text-lg font-semibold text-neutral-800">Date blocks</h2>
         <Button onClick={handleOpenCreate}>
           <Plus className="mr-2 h-4 w-4" />
-          Add Date Block
+          Add date block
         </Button>
       </div>
 
@@ -183,14 +183,14 @@ export function UnitDateBlocksTab({ unitId }: UnitDateBlocksTabProps) {
         columns={columns}
         data={blocks}
         isLoading={isLoading}
-        emptyMessage="No date blocks yet. Click above to block dates."
+        emptyMessage="Date block list is empty. Add a block to keep this unit unavailable for owner use, maintenance, or other holds."
       />
 
       {/* Create/Edit Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title={editingBlock ? "Edit Date Block" : "Add Date Block"}
+        title={editingBlock ? "Edit date block" : "Add date block"}
       >
         <DateBlockForm
           defaultValues={editingBlock}
@@ -202,8 +202,10 @@ export function UnitDateBlocksTab({ unitId }: UnitDateBlocksTabProps) {
       {/* Delete Confirmation */}
       <ConfirmDialog
         isOpen={!!deletingBlockId}
-        title="Delete Date Block"
-        description="Are you sure you want to delete this date block? This unit will become available for booking during these dates."
+        title="Delete date block"
+        description="Delete this date block? The unit will become available for booking during these dates."
+        confirmLabel="Delete date block"
+        variant="danger"
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeletingBlockId(undefined)}
       />

@@ -134,8 +134,10 @@ function NoteRow({ note, bookingId, authorName, canEdit, canDelete }: NoteRowPro
           isOpen={showDeleteConfirm}
           onCancel={() => setShowDeleteConfirm(false)}
           onConfirm={handleDelete}
-          title="Delete Note"
-          description="Are you sure you want to delete this note? This action cannot be undone."
+          title="Delete booking note"
+          description="Delete this note? This cannot be undone."
+          confirmLabel="Delete note"
+          variant="danger"
         />
       )}
     </div>
@@ -184,8 +186,8 @@ export function BookingNotes({ bookingId }: BookingNotesProps) {
       {!notes || notes.length === 0 ? (
         <EmptyState
           icon={<MessageSquare className="h-8 w-8" />}
-          title="No notes yet"
-          description="Add a note to track operational details for this booking"
+          title="No internal notes"
+          description="Add the first internal note so the next operator understands the booking context."
           className="min-h-[120px] py-6"
         />
       ) : (
@@ -207,7 +209,7 @@ export function BookingNotes({ bookingId }: BookingNotesProps) {
         <Textarea
           value={newNoteText}
           onChange={(e) => setNewNoteText(e.target.value)}
-          placeholder="Add a note..."
+          placeholder="Add an internal booking note"
           className="h-10 min-h-[40px] flex-1 resize-none"
           disabled={addNoteMutation.isPending}
         />
@@ -217,7 +219,7 @@ export function BookingNotes({ bookingId }: BookingNotesProps) {
           disabled={!newNoteText.trim() || newNoteText.length > 2000}
           className="h-10 shrink-0"
         >
-          Add
+          Add note
         </Button>
       </div>
     </div>

@@ -9,9 +9,9 @@ export interface SkeletonTableProps {
 
 export function SkeletonTable({ rows = 5, columns = 4 }: SkeletonTableProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
+    <div className="overflow-hidden rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white">
       <div
-        className="grid gap-3 border-b border-neutral-200 px-4 py-3"
+        className="grid gap-3 border-b border-neutral-200 px-3 py-2.5"
         style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
       >
         {Array.from({ length: columns }).map((_, index) => (
@@ -23,7 +23,7 @@ export function SkeletonTable({ rows = 5, columns = 4 }: SkeletonTableProps) {
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <div
             key={rowIndex}
-            className="grid gap-3 border-b border-neutral-100 px-4 py-3 last:border-b-0"
+            className="grid min-h-[var(--portal-row-height)] gap-3 border-b border-neutral-100 px-3 py-2 last:border-b-0"
             style={{
               gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
             }}

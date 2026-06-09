@@ -25,7 +25,7 @@ export function OwnerUnitsList() {
     return (
       <EmptyState
         icon={<AlertCircle className="h-10 w-10 text-red-400" />}
-        title="Failed to load units"
+        title="Could not load owner units"
         description="An error occurred while fetching the owner's units."
       />
     );

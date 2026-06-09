@@ -88,9 +88,9 @@ export function UnitAmenitiesTab({ unitId }: UnitAmenitiesTabProps) {
         unitId,
         amenityIds: Array.from(selectedIds),
       });
-      toastSuccess("Unit amenities updated successfully");
+      toastSuccess("Unit amenities updated");
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to update amenities");
+      toastError((e as Error)?.message || "Could not update unit amenities");
     }
   };
 
@@ -110,7 +110,7 @@ export function UnitAmenitiesTab({ unitId }: UnitAmenitiesTabProps) {
       <section>
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-neutral-700">
-            Assigned Amenities
+            Assigned amenities
           </h3>
           <span className="text-xs text-neutral-500">
             {isLoading ? "…" : `${assignedInCatalog.length} selected`}
@@ -125,8 +125,7 @@ export function UnitAmenitiesTab({ unitId }: UnitAmenitiesTabProps) {
           </div>
         ) : assignedInCatalog.length === 0 ? (
           <p className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-6 text-center text-sm text-neutral-400">
-            No amenities assigned yet. Click an available amenity below to add
-            it.
+            Amenities are not assigned to this unit. Select amenities below to add them.
           </p>
         ) : (
           <div className="flex flex-wrap gap-2">
@@ -147,10 +146,10 @@ export function UnitAmenitiesTab({ unitId }: UnitAmenitiesTabProps) {
       <section>
         <div className="mb-3">
           <h3 className="text-sm font-semibold text-neutral-700">
-            Available Amenities
+            Available amenities
           </h3>
           <p className="mt-0.5 text-xs text-neutral-500">
-            Click to add to the unit.
+            Select amenities to add them to this unit.
           </p>
         </div>
 
@@ -163,7 +162,7 @@ export function UnitAmenitiesTab({ unitId }: UnitAmenitiesTabProps) {
         ) : availableInCatalog.length === 0 ? (
           <p className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-6 text-center text-sm text-neutral-400">
             {activeCatalog.length === 0
-              ? "No available amenities in the catalog."
+              ? "No active amenities are available in the catalog."
               : "All catalog amenities are assigned to this unit."}
           </p>
         ) : (
@@ -188,7 +187,7 @@ export function UnitAmenitiesTab({ unitId }: UnitAmenitiesTabProps) {
           onClick={handleSave}
           disabled={isSaving || isLoading}
         >
-          {isSaving ? "Saving..." : "Save Changes"}
+          {isSaving ? "Saving amenities..." : "Save amenity changes"}
         </Button>
       </div>
     </div>

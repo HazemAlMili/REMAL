@@ -11,6 +11,7 @@ import { UnitListItemResponse, UnitType } from "@/lib/types";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { PaginationMeta } from "@/lib/api/types";
 import { ROUTES } from "@/lib/constants/routes";
+import { formatCurrency } from "@/lib/utils/format";
 
 interface UnitTableProps {
   data: UnitListItemResponse[];
@@ -72,23 +73,19 @@ export function UnitTable({
       },
       {
         accessorKey: "basePricePerNight",
-        header: "Price/Night",
+        header: "Price/night",
         cell: ({ row }) => {
           const price: number = row.getValue("basePricePerNight");
-          return (
-            <span className="font-medium">
-              SAR {new Intl.NumberFormat("en-US").format(price)}
-            </span>
-          );
+          return <span className="font-medium">{formatCurrency(price)}</span>;
         },
       },
       {
         id: "actions",
-        header: () => <div className="text-right">Actions</div>,
+        header: () => <div className="text-end">Actions</div>,
         cell: ({ row }) => {
           const unit = row.original;
           return (
-            <div className="flex items-center justify-end gap-2 text-right">
+            <div className="flex items-center justify-end gap-2 text-end">
               {/* Detail view is viewable by all who can reach this page */}
               <Button
                 variant="ghost"
@@ -122,11 +119,11 @@ export function UnitTable({
                     title={unit.isActive ? "Deactivate" : "Activate"}
                   >
                     {unit.isActive ? (
-                      <PowerOff className="h-4 w-4 text-red-500" />
+                      <PowerOff className="h-4 w-4 text-error" />
                     ) : (
-                      <Power className="h-4 w-4 text-green-500" />
+                      <Power className="h-4 w-4 text-success" />
                     )}
-                    <span className="sr-only">Toggle Status</span>
+                    <span className="sr-only">Toggle status</span>
                   </Button>
                 </>
               )}
@@ -146,7 +143,7 @@ export function UnitTable({
       isLoading={isLoading}
       pagination={pagination}
       onPageChange={onPageChange}
-      emptyMessage="No units found. Try adjusting your filters."
+      emptyMessage="No matching units. Adjust the filters or clear the search."
     />
   );
 }

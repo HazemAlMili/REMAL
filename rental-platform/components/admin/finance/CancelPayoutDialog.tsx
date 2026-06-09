@@ -57,7 +57,7 @@ export function CancelPayoutDialog({
         },
         onError: (error: unknown) => {
           const err = error as { response?: { data?: { message?: string } } };
-          toast.error(err.response?.data?.message || "Failed to cancel payout");
+          toast.error(err.response?.data?.message || "Could not cancel payout");
         },
       }
     );
@@ -67,10 +67,10 @@ export function CancelPayoutDialog({
     <ConfirmDialog
       isOpen={isOpen}
       onClose={onClose}
-      title="Cancel Payout"
+      title="Cancel payout"
       onConfirm={handleSubmit(onSubmit)}
       isLoading={cancelMutation.isPending}
-      confirmLabel="Confirm Cancel"
+      confirmLabel="Cancel payout"
       variant="danger"
     >
       <form
@@ -79,11 +79,11 @@ export function CancelPayoutDialog({
         className="space-y-3"
       >
         <p className="text-sm text-neutral-600">
-          Cancel this payout. This action cannot be undone.
+          Cancel this payout? It will no longer appear as pending or scheduled. This cannot be undone.
         </p>
         <Textarea
-          label="Notes (optional)"
-          placeholder="Reason for cancellation..."
+          label="Internal note (optional)"
+          placeholder="Add the cancellation reason"
           error={errors.notes?.message}
           {...register("notes")}
         />

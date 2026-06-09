@@ -20,14 +20,14 @@ const BOOKING_SOURCE_OPTIONS = Object.entries(BOOKING_SOURCE_LABELS).map(
 );
 
 const createLeadSchema = z.object({
-  contactName: z.string().min(1, "Contact name is required"),
-  contactPhone: z.string().min(1, "Phone is required"),
-  contactEmail: z.string().email("Invalid email").optional().or(z.literal("")),
+  contactName: z.string().min(1, "Please enter the contact name"),
+  contactPhone: z.string().min(1, "Please enter the phone number"),
+  contactEmail: z.string().email("Enter a valid email address").optional().or(z.literal("")),
   targetUnitId: z.string().optional(),
   desiredCheckInDate: z.date().optional(),
   desiredCheckOutDate: z.date().optional(),
   guestCount: z
-    .union([z.number().int().min(1, "Must be at least 1"), z.nan()])
+    .union([z.number().int().min(1, "Guest count must be at least 1"), z.nan()])
     .optional(),
   source: z.enum(["website", "direct", "whatsapp", "phone", "admin"]),
   notes: z.string().optional(),
@@ -111,14 +111,14 @@ export function CreateLeadForm({
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <Input
-          label="Contact Name"
+          label="Contact name"
           {...register("contactName")}
           error={errors.contactName?.message}
           required
           disabled={isLoading}
         />
         <Input
-          label="Phone"
+          label="Phone number"
           type="tel"
           {...register("contactPhone")}
           error={errors.contactPhone?.message}
@@ -152,7 +152,7 @@ export function CreateLeadForm({
           )}
         />
         <Input
-          label="Guest Count"
+          label="Guest count"
           type="number"
           {...register("guestCount", { valueAsNumber: true })}
           error={errors.guestCount?.message}
@@ -162,7 +162,7 @@ export function CreateLeadForm({
 
       <div className="w-full">
         <label className="mb-1.5 block text-sm font-medium text-neutral-700">
-          Target Unit (optional)
+          Target unit (optional)
         </label>
         <Controller
           name="targetUnitId"
@@ -173,7 +173,7 @@ export function CreateLeadForm({
               value={field.value || null}
               onChange={(val) => field.onChange(val || undefined)}
               placeholder={
-                isLoadingUnits ? "Loading units..." : "Search units..."
+                isLoadingUnits ? "Loading units..." : "Search unit name"
               }
               disabled={isLoading || isLoadingUnits}
             />
@@ -182,7 +182,7 @@ export function CreateLeadForm({
       </div>
 
       <DateRangePicker
-        label="Desired Dates (optional)"
+        label="Desired dates (optional)"
         value={{
           from: watch("desiredCheckInDate") || null,
           to: watch("desiredCheckOutDate") || null,
@@ -195,11 +195,11 @@ export function CreateLeadForm({
 
       <div className="w-full">
         <label className="mb-1.5 block text-sm font-medium text-neutral-700">
-          Notes (optional)
+          Internal note (optional)
         </label>
         <textarea
           {...register("notes")}
-          placeholder="Notes..."
+          placeholder="Add source details, client preferences, or follow-up context"
           className="h-24 w-full resize-none rounded-lg border border-neutral-300 p-3 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
           disabled={isLoading}
         />
@@ -215,7 +215,7 @@ export function CreateLeadForm({
           Cancel
         </Button>
         <Button type="submit" isLoading={isLoading}>
-          Create Lead
+          Create lead
         </Button>
       </div>
     </form>

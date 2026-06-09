@@ -40,11 +40,11 @@ export default function UnitDetailPage({ params }: UnitDetailPageProps) {
       await updateStatus({ id, isActive: !unit.isActive });
       toastSuccess(
         unit.isActive
-          ? "Unit deactivated successfully"
-          : "Unit activated successfully"
+          ? "Unit deactivated"
+          : "Unit activated"
       );
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to update unit status");
+      toastError((e as Error)?.message || "Could not update unit status");
     } finally {
       setStatusConfirmOpen(false);
     }
@@ -76,15 +76,15 @@ export default function UnitDetailPage({ params }: UnitDetailPageProps) {
           onClick={() => router.push(ROUTES.admin.units.list)}
         >
           <ChevronLeft className="mr-1 h-4 w-4" />
-          Back to Units
+          Back to units
         </Button>
         <EmptyState
           icon={<AlertCircle className="h-10 w-10 text-red-400" />}
           title="Unit not found"
-          description="The unit you are looking for does not exist or has been removed."
+          description="This unit may have been removed, or the link may use an incorrect ID."
           action={
             <Button onClick={() => router.push(ROUTES.admin.units.list)}>
-              Back to Units
+              Back to units
             </Button>
           }
         />
@@ -102,7 +102,7 @@ export default function UnitDetailPage({ params }: UnitDetailPageProps) {
         onClick={() => router.push(ROUTES.admin.units.list)}
       >
         <ChevronLeft className="mr-1 h-4 w-4" />
-        Back to Units
+        Back to units
       </Button>
 
       {/* Header */}
@@ -129,13 +129,13 @@ export default function UnitDetailPage({ params }: UnitDetailPageProps) {
       <ConfirmDialog
         isOpen={statusConfirmOpen}
         title={unit.isActive ? "Deactivate Unit" : "Activate Unit"}
-        description={`Are you sure you want to ${
-          unit.isActive ? "deactivate" : "activate"
-        } "${unit.name}"? ${
+        description={
           unit.isActive
-            ? "The unit will no longer be visible to guests."
-            : "The unit will become visible to guests."
-        }`}
+            ? `Deactivate "${unit.name}"? Guests will no longer see it in the storefront.`
+            : `Activate "${unit.name}"? Guests can see it again when it is otherwise available.`
+        }
+        confirmLabel={unit.isActive ? "Deactivate unit" : "Activate unit"}
+        variant={unit.isActive ? "danger" : "primary"}
         onConfirm={handleConfirmStatusChange}
         onCancel={() => setStatusConfirmOpen(false)}
       />

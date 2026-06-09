@@ -36,20 +36,20 @@ export function HideReviewDialog({
     <ConfirmDialog
       isOpen={isOpen}
       onClose={handleClose}
-      title="Hide Review"
+      title="Hide review"
       onConfirm={handleConfirm}
       isLoading={isLoading}
-      confirmLabel="Hide"
+      confirmLabel="Hide review"
       variant="danger"
     >
       <div className="space-y-3">
         <p className="text-sm text-neutral-600">
-          This review will be hidden from public view. It can be republished
-          later.
+          Hide this review? It will leave the public storefront, but you can
+          publish it again later.
         </p>
         <Textarea
-          label="Notes (optional)"
-          placeholder="Reason for hiding..."
+          label="Internal note (optional)"
+          placeholder="Add the hiding reason"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}

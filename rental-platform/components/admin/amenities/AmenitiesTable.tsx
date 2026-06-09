@@ -22,8 +22,8 @@ export function AmenitiesTable({
   if (!data?.length) {
     return (
       <EmptyState
-        title="No amenities found"
-        description="There are no amenities matching your search criteria."
+        title="No matching amenities"
+        description="No amenities match this search. Clear the search or create a new amenity."
       />
     );
   }
@@ -43,7 +43,7 @@ export function AmenitiesTable({
               Status
             </th>
             <th className="h-10 px-4 text-left font-medium text-neutral-500">
-              Created At
+              Created
             </th>
             {canManageAmenities && (
               <th className="h-10 w-[100px] px-4 text-right font-medium text-neutral-500">
@@ -77,6 +77,7 @@ export function AmenitiesTable({
                       className="h-8 w-8 px-0"
                       onClick={() => onEdit(amenity)}
                       title="Edit amenity"
+                      aria-label={`Edit ${amenity.name}`}
                     >
                       <Pencil className="h-4 w-4" />
                       <span className="sr-only">Edit</span>
@@ -86,14 +87,26 @@ export function AmenitiesTable({
                       size="sm"
                       className="h-8 w-8 px-0"
                       onClick={() => onToggleStatus(amenity)}
-                      title={amenity.isActive ? "Deactivate" : "Activate"}
+                      title={
+                        amenity.isActive
+                          ? `Deactivate ${amenity.name}`
+                          : `Activate ${amenity.name}`
+                      }
+                      aria-label={
+                        amenity.isActive
+                          ? `Deactivate ${amenity.name}`
+                          : `Activate ${amenity.name}`
+                      }
                     >
                       {amenity.isActive ? (
                         <PowerOff className="h-4 w-4 text-red-500" />
                       ) : (
                         <Power className="h-4 w-4 text-green-500" />
                       )}
-                      <span className="sr-only">Toggle Status</span>
+                      <span className="sr-only">
+                        {amenity.isActive ? "Deactivate" : "Activate"}{" "}
+                        {amenity.name}
+                      </span>
                     </Button>
                   </div>
                 </td>

@@ -146,7 +146,7 @@ export function BookingTable({
       columns={columns}
       data={bookings}
       isLoading={isLoading}
-      emptyMessage="No bookings match current filters"
+      emptyMessage="No bookings match these filters. Adjust the status, date range, or search term."
       pagination={pagination || undefined}
       onPageChange={onPageChange}
     />

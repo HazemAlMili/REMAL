@@ -36,19 +36,19 @@ export function RejectReviewDialog({
     <ConfirmDialog
       isOpen={isOpen}
       onClose={handleClose}
-      title="Reject Review"
+      title="Reject review"
       onConfirm={handleConfirm}
       isLoading={isLoading}
-      confirmLabel="Reject"
+      confirmLabel="Reject review"
       variant="danger"
     >
       <div className="space-y-3">
         <p className="text-sm text-neutral-600">
-          This review will be marked as rejected and will not appear publicly.
+          Reject this review? It will stay out of the public storefront.
         </p>
         <Textarea
-          label="Notes (optional)"
-          placeholder="Reason for rejection..."
+          label="Internal note (optional)"
+          placeholder="Add the rejection reason"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}

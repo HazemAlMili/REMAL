@@ -53,10 +53,10 @@ export function RecordPaymentModal({ isOpen, onClose, bookingId }: RecordPayment
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Record Payment" size="md">
+    <Modal isOpen={isOpen} onClose={onClose} title="Record payment" size="md">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
         <Input
-          label="Amount (EGP)"
+          label="Payment amount (EGP)"
           type="number"
           step="0.01"
           {...register("amount", { valueAsNumber: true })}
@@ -69,7 +69,7 @@ export function RecordPaymentModal({ isOpen, onClose, bookingId }: RecordPayment
           control={control}
           render={({ field }) => (
             <Select
-              label="Payment Method"
+              label="Payment method"
               options={PAYMENT_METHOD_OPTIONS}
               value={field.value}
               onChange={field.onChange}
@@ -80,17 +80,17 @@ export function RecordPaymentModal({ isOpen, onClose, bookingId }: RecordPayment
         />
 
         <Input
-          label="Reference Number (optional)"
+          label="Receipt reference (optional)"
           {...register("referenceNumber")}
           error={errors.referenceNumber?.message}
           placeholder="InstaPay ref, transfer ID, etc."
         />
 
         <div className="grid gap-1">
-          <label className="text-sm font-medium text-neutral-700">Notes (optional)</label>
+          <label className="text-sm font-medium text-neutral-700">Internal note (optional)</label>
           <textarea
             {...register("notes")}
-            placeholder="Notes..."
+            placeholder="Add payment context for the finance team"
             className="w-full border border-neutral-200 rounded-md p-2 text-sm resize-none h-20 focus:ring-1 focus:ring-neutral-900 focus:border-neutral-900 outline-none"
           />
         </div>
@@ -100,7 +100,7 @@ export function RecordPaymentModal({ isOpen, onClose, bookingId }: RecordPayment
             Cancel
           </Button>
           <Button type="submit" isLoading={createMutation.isPending}>
-            Record Payment
+            Record payment
           </Button>
         </div>
       </form>

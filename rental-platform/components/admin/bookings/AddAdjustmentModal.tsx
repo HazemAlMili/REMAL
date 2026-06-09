@@ -43,10 +43,10 @@ export function AddAdjustmentModal({ isOpen, onClose, invoiceId, bookingId }: Ad
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add Manual Adjustment" size="sm">
+    <Modal isOpen={isOpen} onClose={onClose} title="Add invoice adjustment" size="sm">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
         <Input
-          label="Description"
+          label="Adjustment description"
           {...register("description")}
           error={errors.description?.message}
           placeholder="e.g., Early bird discount, Extra cleaning fee"
@@ -62,7 +62,7 @@ export function AddAdjustmentModal({ isOpen, onClose, invoiceId, bookingId }: Ad
             required
           />
           <Input
-            label="Unit Amount (EGP)"
+            label="Unit amount (EGP)"
             type="number"
             step="0.01"
             {...register("unitAmount", { valueAsNumber: true })}
@@ -73,8 +73,7 @@ export function AddAdjustmentModal({ isOpen, onClose, invoiceId, bookingId }: Ad
         </div>
 
         <p className="text-xs text-neutral-500">
-          Use a negative amount for discounts (e.g., -200.00 for a 200 EGP discount).
-          Use a positive amount for extra fees.
+          Use a negative amount for a discount and a positive amount for an extra fee.
         </p>
 
         <ModalFooter>
@@ -83,7 +82,7 @@ export function AddAdjustmentModal({ isOpen, onClose, invoiceId, bookingId }: Ad
               Cancel
             </Button>
             <Button type="submit" isLoading={addAdjustmentMutation.isPending}>
-              Add Adjustment
+              Add adjustment
             </Button>
           </div>
         </ModalFooter>

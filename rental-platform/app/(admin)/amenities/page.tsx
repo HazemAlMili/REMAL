@@ -58,14 +58,14 @@ export default function AmenitiesPage() {
     try {
       if (selectedAmenity) {
         await updateAmenity({ id: selectedAmenity.id, data });
-        toastSuccess("Amenity updated successfully");
+        toastSuccess("Amenity updated");
       } else {
         await createAmenity(data);
-        toastSuccess("Amenity created successfully");
+        toastSuccess("Amenity created");
       }
       setIsModalOpen(false);
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to save amenity");
+      toastError((e as Error)?.message || "Could not save amenity");
     }
   };
 
@@ -83,7 +83,7 @@ export default function AmenitiesPage() {
       });
       toastSuccess(newStatus ? "Amenity activated" : "Amenity deactivated");
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to update status");
+      toastError((e as Error)?.message || "Could not update amenity status");
     } finally {
       setStatusConfirmAmenity(undefined);
     }
@@ -94,8 +94,8 @@ export default function AmenitiesPage() {
       <div className="p-6">
         <EmptyState
           icon={<AlertCircle className="h-10 w-10" />}
-          title="Failed to load amenities"
-          description="There was an error loading the amenities list. Please try again."
+          title="Could not load amenities"
+          description="We could not load the amenity catalog. Retry before editing unit amenities."
         />
       </div>
     );
@@ -106,16 +106,16 @@ export default function AmenitiesPage() {
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight text-neutral-900">
-            Amenities
+            Amenities catalog
           </h1>
           <p className="text-sm text-neutral-500">
-            Manage the list of available amenities for units.
+            Manage the amenity options operators can attach to units.
           </p>
         </div>
         {canManageAmenities && (
           <Button onClick={handleAdd}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Amenity
+            Create amenity
           </Button>
         )}
       </div>
@@ -124,7 +124,7 @@ export default function AmenitiesPage() {
         <div className="relative flex-1 sm:max-w-xs">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-neutral-500" />
           <Input
-            placeholder="Search amenities..."
+            placeholder="Search amenity name"
             className="pl-9"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -161,9 +161,17 @@ export default function AmenitiesPage() {
                 ? "Deactivate Amenity"
                 : "Activate Amenity"
             }
-            description={`Are you sure you want to ${
-              statusConfirmAmenity?.isActive ? "deactivate" : "activate"
-            } the amenity "${statusConfirmAmenity?.name}"?`}
+            description={
+              statusConfirmAmenity?.isActive
+                ? `Deactivate "${statusConfirmAmenity?.name}"? Operators will not be able to use it for new unit setup.`
+                : `Activate "${statusConfirmAmenity?.name}"? Operators can use it for unit setup again.`
+            }
+            confirmLabel={
+              statusConfirmAmenity?.isActive
+                ? "Deactivate amenity"
+                : "Activate amenity"
+            }
+            variant={statusConfirmAmenity?.isActive ? "danger" : "primary"}
           />
         </>
       )}

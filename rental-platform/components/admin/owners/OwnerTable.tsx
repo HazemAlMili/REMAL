@@ -157,7 +157,7 @@ export function OwnerTable({
       isLoading={isLoading}
       pagination={pagination}
       onPageChange={onPageChange}
-      emptyMessage="No owners found. Try adjusting your filters."
+      emptyMessage="No matching owners. Adjust the filters or clear the search."
     />
   );
 }

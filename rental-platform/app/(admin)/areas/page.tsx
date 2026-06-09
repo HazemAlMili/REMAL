@@ -51,7 +51,7 @@ export default function AreasPage() {
       });
       toastSuccess(newStatus ? "Area activated" : "Area deactivated");
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to toggle status");
+      toastError((e as Error)?.message || "Could not update area status");
     } finally {
       setStatusConfirmArea(undefined);
     }
@@ -62,8 +62,8 @@ export default function AreasPage() {
       <div className="p-6">
         <EmptyState
           icon={<AlertCircle className="h-10 w-10" />}
-          title="Failed to load areas"
-          description="There was an error loading the areas list. Please try again."
+          title="Could not load resort areas"
+          description="We could not load resort areas. Retry the page before editing area setup."
         />
       </div>
     );
@@ -73,16 +73,16 @@ export default function AreasPage() {
     <div className="space-y-6">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Areas</h1>
-          <p className="text-muted-foreground">
-            Manage geographical zones for rental units.
+          <h1 className="text-3xl font-bold tracking-tight">Resort areas</h1>
+          <p className="text-sm text-neutral-500">
+            Manage the North Coast areas used for unit setup and client search.
           </p>
         </div>
 
         {canManageAreas && (
           <Button onClick={handleCreate} className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
-            New Area
+            Create area
           </Button>
         )}
       </div>
@@ -99,12 +99,12 @@ export default function AreasPage() {
         ) : (
           <EmptyState
             icon={<MapPin className="h-10 w-10" />}
-            title="No areas yet"
-            description="Create your first area to start adding units."
+            title="Resort area catalog is empty"
+            description="Create an area before assigning units to a resort or zone."
             action={
               canManageAreas ? (
                 <Button onClick={handleCreate}>
-                  <Plus className="mr-2 h-4 w-4" /> Create Area
+                  <Plus className="mr-2 h-4 w-4" /> Create area
                 </Button>
               ) : undefined
             }
@@ -129,9 +129,13 @@ export default function AreasPage() {
           }
           description={
             statusConfirmArea.isActive
-              ? `Are you sure you want to deactivate "${statusConfirmArea.name}"? This may affect unit creation.`
-              : `Are you sure you want to activate "${statusConfirmArea.name}"? This allows new units to use it.`
+              ? `Deactivate "${statusConfirmArea.name}"? Operators will not be able to assign new units to this area.`
+              : `Activate "${statusConfirmArea.name}"? Operators can assign new units to this area again.`
           }
+          confirmLabel={
+            statusConfirmArea.isActive ? "Deactivate area" : "Activate area"
+          }
+          variant={statusConfirmArea.isActive ? "danger" : "primary"}
           onConfirm={handleConfirmToggle}
         />
       )}

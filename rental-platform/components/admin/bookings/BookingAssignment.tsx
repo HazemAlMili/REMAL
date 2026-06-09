@@ -35,7 +35,7 @@ export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
 
   const getAdminName = (userId: string) => {
     const user = adminUsers?.items?.find((u) => u.id === userId);
-    return user?.name ?? "Unknown Admin";
+    return user?.name ?? "Unknown admin";
   };
 
   const handleAssign = () => {
@@ -76,13 +76,15 @@ export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
               size="sm"
               onClick={() => setShowUnassignConfirm(true)}
             >
-              Unassign
+              Remove assignment
             </Button>
           )}
         </div>
       ) : (
         <div className="rounded-lg bg-neutral-50 p-3">
-          <p className="text-sm italic text-neutral-500">Unassigned</p>
+          <p className="text-sm italic text-neutral-500">
+            No sales owner assigned
+          </p>
         </div>
       )}
 
@@ -95,7 +97,7 @@ export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
               value: u.id,
               label: `${u.name} (${u.role})`,
             }))}
-            placeholder="Select sales person..."
+            placeholder="Choose a sales owner"
           />
           <Button
             onClick={handleAssign}
@@ -103,7 +105,7 @@ export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
             disabled={!selectedUserId}
             size="sm"
           >
-            Assign
+            Assign booking
           </Button>
         </div>
       )}
@@ -113,8 +115,9 @@ export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
           isOpen={showUnassignConfirm}
           onCancel={() => setShowUnassignConfirm(false)}
           onConfirm={handleUnassign}
-          title="Unassign Booking"
-          description="Are you sure you want to remove the current assignment?"
+          title="Remove booking assignment"
+          description="Remove the current sales owner from this booking? It will remain visible in the booking list."
+          confirmLabel="Remove assignment"
         />
       )}
     </div>

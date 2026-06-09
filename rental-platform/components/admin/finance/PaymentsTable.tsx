@@ -40,63 +40,85 @@ export function PaymentsTable({
 
   return (
     <div className="space-y-4">
-      <div className="overflow-x-auto rounded-xl border border-neutral-200 bg-white">
+      <div className="overflow-x-auto rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white">
         <table className="w-full text-sm">
-          <thead className="bg-neutral-50 text-left text-neutral-500">
+          <thead className="border-b border-neutral-200 bg-neutral-50 text-start text-neutral-600">
             <tr>
-              <th className="p-4 font-medium">Booking</th>
-              <th className="p-4 font-medium">Invoice</th>
-              <th className="p-4 font-medium">Amount</th>
-              <th className="p-4 font-medium">Method</th>
-              <th className="p-4 font-medium">Reference</th>
-              <th className="p-4 font-medium">Status</th>
-              <th className="p-4 font-medium">Paid At</th>
-              <th className="p-4 font-medium">Created</th>
-              <th className="p-4 text-right font-medium">Actions</th>
+              <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+                Booking
+              </th>
+              <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+                Invoice
+              </th>
+              <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+                Amount
+              </th>
+              <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+                Method
+              </th>
+              <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+                Reference
+              </th>
+              <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+                Status
+              </th>
+              <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+                Paid at
+              </th>
+              <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+                Created
+              </th>
+              <th className="px-3 py-2 text-end text-xs font-semibold uppercase tracking-wide">
+                Actions
+              </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-neutral-200">
+          <tbody className="divide-y divide-neutral-100">
             {payments.map((payment) => (
-              <tr key={payment.id} className="hover:bg-neutral-50">
-                <td className="p-4">
+              <tr
+                key={payment.id}
+                className="transition-colors hover:bg-neutral-50"
+              >
+                <td className="h-[var(--portal-row-height)] px-3 py-2">
                   <Link
                     href={ROUTES.admin.bookings.detail(payment.bookingId)}
-                    className="font-mono text-blue-600 hover:underline"
+                    className="font-mono text-info hover:underline"
                   >
-                    {payment.bookingId.slice(0, 8)}â€¦
+                    {payment.bookingId.slice(0, 8)}...
                   </Link>
                 </td>
-                <td className="p-4 font-mono text-neutral-500">
+                <td className="h-[var(--portal-row-height)] px-3 py-2 font-mono text-neutral-500">
                   {payment.invoiceId
-                    ? payment.invoiceId.slice(0, 8) + "â€¦"
-                    : "â€”"}
+                    ? payment.invoiceId.slice(0, 8) + "..."
+                    : "-"}
                 </td>
-                <td className="p-4 font-medium">
+                <td className="h-[var(--portal-row-height)] px-3 py-2 font-medium">
                   {formatCurrency(payment.amount)}
                 </td>
-                <td className="p-4">
+                <td className="h-[var(--portal-row-height)] px-3 py-2">
                   {PAYMENT_METHOD_LABELS[
                     payment.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS
                   ] ?? payment.paymentMethod}
                 </td>
-                <td className="p-4 font-mono text-neutral-500">
+                <td className="h-[var(--portal-row-height)] px-3 py-2 font-mono text-neutral-500">
                   {payment.referenceNumber ?? "-"}
                 </td>
-                <td className="p-4">
+                <td className="h-[var(--portal-row-height)] px-3 py-2">
                   <StatusBadge
                     status={payment.paymentStatus}
                     colorMap={PAYMENT_STATUS_COLORS}
                     labelMap={PAYMENT_STATUS_LABELS}
                   />
                 </td>
-                <td className="p-4 text-neutral-500">
-                  {payment.paidAt ? formatDate(payment.paidAt) : "â€”"}
+                <td className="h-[var(--portal-row-height)] px-3 py-2 text-neutral-500">
+                  {payment.paidAt ? formatDate(payment.paidAt) : "-"}
                 </td>
-                <td className="p-4 text-neutral-500">
+                <td className="h-[var(--portal-row-height)] px-3 py-2 text-neutral-500">
                   {formatDate(payment.createdAt)}
                 </td>
-                <td className="p-4 text-right">
-                  {payment.paymentStatus?.trim().toLowerCase() === "pending" && (
+                <td className="h-[var(--portal-row-height)] px-3 py-2 text-end">
+                  {payment.paymentStatus?.trim().toLowerCase() ===
+                    "pending" && (
                     <PaymentActions
                       payment={payment}
                       onMarkPaid={onMarkPaid}
@@ -130,14 +152,14 @@ function PaymentActions({
   return (
     <div className="flex justify-end gap-2">
       <Button size="sm" onClick={() => onMarkPaid(payment)}>
-        Mark Paid
+        Mark paid
       </Button>
       <Button
         size="sm"
         variant="danger"
         onClick={() => onMarkFailed(payment.id)}
       >
-        Mark Failed
+        Mark failed
       </Button>
       <Button size="sm" variant="ghost" onClick={() => onCancel(payment.id)}>
         Cancel

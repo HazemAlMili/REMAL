@@ -58,7 +58,9 @@ export default function AdminNotificationsPage() {
         `Marked ${unreadNotifications.length} notification${unreadNotifications.length > 1 ? "s" : ""} as read`
       );
     } else {
-      toast.error(`Failed to mark ${failedCount} notification(s) as read`);
+      toast.error(
+        `Could not mark ${failedCount} notification${failedCount > 1 ? "s" : ""} as read`
+      );
     }
   };
 
@@ -81,7 +83,7 @@ export default function AdminNotificationsPage() {
               size="sm"
               onClick={() => setDispatchModal(true)}
             >
-              Send Notification
+              Send notification
             </Button>
           )}
           {hasUnread && (
@@ -111,7 +113,7 @@ export default function AdminNotificationsPage() {
       {error && (
         <EmptyState
           title="Could not load notifications"
-          description="There was a problem fetching your notifications."
+          description="We could not reach the notification inbox. Retry to refresh the list."
           action={
             <Button variant="outline" onClick={() => window.location.reload()}>
               Retry
@@ -123,8 +125,8 @@ export default function AdminNotificationsPage() {
       {/* Empty state */}
       {!isLoading && !error && notifications?.length === 0 && (
         <EmptyState
-          title="No notifications yet"
-          description="When you receive notifications, they'll appear here."
+          title="Notification history is empty"
+          description="Admin alerts and system messages will appear here."
         />
       )}
 

@@ -127,7 +127,7 @@ export function BookingLifecycleActions({
         return {
           title: "Mark as Relevant",
           description:
-            "Mark this booking as relevant. This indicates the lead is worth pursuing.",
+            "Keep this lead active in the sales workflow because the client is a realistic fit.",
           actionLabel: "Mark as Relevant",
           isPending: relevantMutation.isPending,
         };
@@ -135,7 +135,7 @@ export function BookingLifecycleActions({
         return {
           title: "Mark as No Answer",
           description:
-            "Mark this booking as no answer. This indicates the client is not responding to contact attempts.",
+            "Use this when the client has not responded after contact attempts. The lead can move back to Relevant later.",
           actionLabel: "Mark as No Answer",
           isPending: noAnswerMutation.isPending,
         };
@@ -143,7 +143,7 @@ export function BookingLifecycleActions({
         return {
           title: "Mark as Not Relevant",
           description:
-            "Mark this booking as not relevant. This indicates the lead is not worth pursuing further.",
+            "Close this lead because it should not be pursued further.",
           actionLabel: "Mark as Not Relevant",
           isPending: notRelevantMutation.isPending,
         };
@@ -151,7 +151,7 @@ export function BookingLifecycleActions({
         return {
           title: "Mark as Booked",
           description:
-            "Mark this booking as booked. This indicates the client has committed to the booking and you're ready to confirm it.",
+            "Use this when the client has committed and the booking is ready for final confirmation.",
           actionLabel: "Mark as Booked",
           isPending: bookedMutation.isPending,
         };
@@ -159,7 +159,7 @@ export function BookingLifecycleActions({
         return {
           title: "Confirm Booking",
           description:
-            "Are you sure you want to confirm this booking? This will generate the invoice and send a confirmation to the client.",
+            "Confirm this booking? The system will generate an invoice and send the client a confirmation.",
           actionLabel: "Confirm Booking",
           isPending: confirmMutation.isPending,
         };
@@ -192,7 +192,7 @@ export function BookingLifecycleActions({
         return {
           title: "Cancel Booking",
           description:
-            "Are you sure you want to cancel this booking? This action is permanent. The unit will be freed up for these dates.",
+            "Cancel this booking? This cannot be undone, and the unit will become available for these dates.",
           actionLabel: "Cancel Booking",
           isPending: cancelMutation.isPending,
           requireNotes: true,
@@ -317,7 +317,7 @@ export function BookingLifecycleActions({
         <div className="rounded-md bg-neutral-100 p-4 text-center text-sm text-neutral-600">
           <p className="font-semibold">No actions available</p>
           <p className="mt-1 text-xs">
-            This booking is in a terminal state ({currentStatus})
+            This booking is already in a final state: {currentStatus}.
           </p>
         </div>
       )}

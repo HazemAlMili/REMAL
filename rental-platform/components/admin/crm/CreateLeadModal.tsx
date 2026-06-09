@@ -22,7 +22,7 @@ export function CreateLeadModal({ isOpen, onClose }: CreateLeadModalProps) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="New Lead" size="lg">
+    <Modal isOpen={isOpen} onClose={onClose} title="Create lead" size="lg">
       <CreateLeadForm
         onSubmit={handleSubmit}
         onCancel={onClose}

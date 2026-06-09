@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { AlertCircle, Search, X } from "lucide-react";
+import { AlertCircle, Search, User, X } from "lucide-react";
 import { SkeletonTable } from "@/components/ui/SkeletonTable";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
@@ -113,8 +113,8 @@ function ClientsListPageContent() {
       <div className="p-6">
         <EmptyState
           icon={<AlertCircle className="h-10 w-10 text-red-500" />}
-          title="Failed to load clients"
-          description="There was an error loading the clients list. Please try again."
+          title="Could not load client records"
+          description="We could not load client records. Retry the page or narrow your filters."
         />
       </div>
     );
@@ -131,7 +131,7 @@ function ClientsListPageContent() {
             Clients
           </h1>
           <p className="text-sm text-neutral-500">
-            Browse all registered clients.
+            Search registered clients and open their booking history.
           </p>
         </div>
       </div>
@@ -194,9 +194,9 @@ function ClientsListPageContent() {
         <SkeletonTable columns={6} rows={8} />
       ) : noClientsFound ? (
         <EmptyState
-          icon={<div className="h-10 w-10 text-neutral-400">👤</div>}
-          title="No clients found"
-          description="No clients match the current filters."
+          icon={<User className="h-10 w-10 text-neutral-400" />}
+          title="No matching clients"
+          description="No client records match these filters. Clear the search or include inactive clients."
         />
       ) : (
         <ClientTable

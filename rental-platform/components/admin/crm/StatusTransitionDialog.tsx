@@ -42,7 +42,7 @@ export function StatusTransitionDialog({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Confirm Status Change"
+      title="Move lead stage"
       size="sm"
     >
       <div className="space-y-4">
@@ -56,15 +56,15 @@ export function StatusTransitionDialog({
 
         {isDestructive && (
           <p className="text-danger text-xs font-medium">
-            Note: Moving to {CRM_STATUS_LABELS[targetStatus]} will release any
-            holds on the requested unit dates.
+            Moving this lead to {CRM_STATUS_LABELS[targetStatus]} will release
+            any holds on the requested unit dates.
           </p>
         )}
 
         {targetStatus === "Converted" && (
           <p className="text-xs font-medium text-accent-blue">
-            Note: Moving to Converted will create a hold on the requested unit
-            dates.
+            Moving this lead to Converted will create a hold on the requested
+            unit dates.
           </p>
         )}
 
@@ -75,7 +75,7 @@ export function StatusTransitionDialog({
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Add a reason or note for this change..."
+            placeholder="Add context for this stage change"
             className="h-20 w-full resize-none rounded-md border border-neutral-200 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             disabled={isLoading}
           />
@@ -90,7 +90,7 @@ export function StatusTransitionDialog({
             onClick={handleConfirm}
             isLoading={isLoading}
           >
-            Confirm
+            Move lead
           </Button>
         </div>
       </div>

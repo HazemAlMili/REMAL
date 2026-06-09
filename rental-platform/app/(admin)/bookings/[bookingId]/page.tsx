@@ -58,7 +58,7 @@ export default function BookingDetailPage() {
         <EmptyState
           icon={<FileQuestion className="h-12 w-12" />}
           title="Booking not found"
-          description="This booking may have been removed or the ID is incorrect"
+          description="This booking may have been removed, or the link may use an incorrect ID."
           action={
             <Link
               href={ROUTES.admin.bookings.list}
@@ -68,7 +68,7 @@ export default function BookingDetailPage() {
                 "h-10 px-4 py-2"
               )}
             >
-              Back to Bookings
+              Back to bookings
             </Link>
           }
         />
@@ -78,7 +78,7 @@ export default function BookingDetailPage() {
       <EmptyState
         icon={<AlertCircle className="h-12 w-12" />}
         title="Could not load booking"
-        description="An error occurred while fetching booking details"
+        description="We could not reach the booking record. Refresh the page or return to the bookings list."
       />
     );
   }
@@ -89,20 +89,20 @@ export default function BookingDetailPage() {
     <div className="space-y-6">
       <BookingHeader booking={booking} />
 
-      {/* Booking Details Card - Prominent Display */}
-      <div className="rounded-lg border-2 border-primary-200 bg-gradient-to-br from-white to-primary-50 p-6 shadow-sm">
+      {/* Booking summary */}
+      <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-bold text-neutral-800">
-          📋 Booking Details
+          Booking summary
         </h2>
         <div className="grid gap-3 text-sm">
           <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-            <span className="font-medium text-neutral-600">Status:</span>
+            <span className="font-medium text-neutral-600">Status</span>
             <span className="rounded-full bg-primary-100 px-3 py-1 text-sm font-semibold text-primary-700">
               {booking.bookingStatus}
             </span>
           </div>
           <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-            <span className="font-medium text-neutral-600">Unit:</span>
+            <span className="font-medium text-neutral-600">Unit</span>
             {isUnitLoading ? (
               <Skeleton className="h-5 w-32" />
             ) : unit ? (
@@ -110,23 +110,23 @@ export default function BookingDetailPage() {
                 {unit.name} ({unit.unitType})
               </span>
             ) : (
-              <span className="text-neutral-400">Loading...</span>
+              <span className="text-neutral-400">Loading unit...</span>
             )}
           </div>
           <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-            <span className="font-medium text-neutral-600">Check-in:</span>
+            <span className="font-medium text-neutral-600">Check-in</span>
             <span className="font-semibold text-neutral-800">
               {new Date(booking.checkInDate).toLocaleDateString()}
             </span>
           </div>
           <div className="flex items-center justify-between border-b border-neutral-200 pb-2">
-            <span className="font-medium text-neutral-600">Check-out:</span>
+            <span className="font-medium text-neutral-600">Check-out</span>
             <span className="font-semibold text-neutral-800">
               {new Date(booking.checkOutDate).toLocaleDateString()}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="font-medium text-neutral-600">Amount:</span>
+            <span className="font-medium text-neutral-600">Booking total</span>
             <span className="text-lg font-bold text-primary-600">
               {booking.finalAmount?.toLocaleString() || "0"} EGP
             </span>
@@ -155,7 +155,7 @@ export default function BookingDetailPage() {
         {snapshotLoading ? (
           <div className="space-y-3 rounded-lg border border-neutral-200 bg-white p-4">
             <h3 className="text-sm font-semibold text-neutral-700">
-              Financial Summary
+              Finance snapshot
             </h3>
             <Skeleton className="h-32 w-full" />
           </div>
@@ -163,7 +163,7 @@ export default function BookingDetailPage() {
           <BookingFinancialSummary snapshot={snapshot} />
         ) : (
           <div className="flex items-center justify-center rounded-lg border border-neutral-200 bg-white p-4 text-sm text-red-500">
-            Financial data unavailable
+            Finance data is not available for this booking yet.
           </div>
         )}
       </div>

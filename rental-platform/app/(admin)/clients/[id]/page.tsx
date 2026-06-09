@@ -41,13 +41,13 @@ export default function ClientDetailPage({
       <div className="p-6">
         <EmptyState
           title="Client not found"
-          description="The client you're looking for doesn't exist or has been deleted."
+          description="This client may have been deleted, or the link may use an incorrect ID."
         />
         <button
           onClick={() => router.push("/admin/clients")}
           className="mt-4 inline-flex items-center justify-center rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
         >
-          Back to Clients
+          Back to clients
         </button>
       </div>
     );
@@ -58,7 +58,7 @@ export default function ClientDetailPage({
       <ClientDetailHeader client={client} />
 
       <div className="space-y-2">
-        <h2 className="text-lg font-semibold">Booking History</h2>
+        <h2 className="text-lg font-semibold">Booking history</h2>
         <ClientBookingHistory clientId={client.id} />
       </div>
     </div>

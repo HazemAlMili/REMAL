@@ -21,7 +21,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             className="mb-1.5 block text-sm font-medium text-neutral-700"
           >
             {label}
-            {props.required && <span className="ml-1 text-error">*</span>}
+            {props.required && <span className="ms-1 text-error">*</span>}
           </label>
         )}
 
@@ -30,7 +30,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={id}
           rows={rows}
           className={cn(
-            "w-full rounded-lg border bg-white text-sm text-neutral-800",
+            "w-full rounded-[var(--portal-radius-control)] border bg-white text-sm text-neutral-800",
             "px-3.5 py-2.5",
             "placeholder:text-neutral-400",
             "transition-colors duration-150",

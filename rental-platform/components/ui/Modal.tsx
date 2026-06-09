@@ -3,6 +3,7 @@
 import * as React from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 export interface ModalProps {
@@ -39,7 +40,7 @@ const modalVariants = {
 
 export function ModalFooter({ children }: ModalFooterProps) {
   return (
-    <div className="mt-6 flex items-center justify-end gap-3 border-t border-neutral-200 pt-4">
+    <div className="mt-5 flex items-center justify-end gap-2 border-t border-neutral-200 pt-4">
       {children}
     </div>
   );
@@ -112,7 +113,7 @@ export function Modal({
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center px-4">
           {/* Backdrop */}
           <motion.div
             aria-hidden="true"
@@ -121,7 +122,7 @@ export function Modal({
             animate="visible"
             exit="exit"
             transition={transitionConfig}
-            className="bg-neutral-900/60 absolute inset-0 backdrop-blur-[2px]"
+            className="bg-neutral-900/45 absolute inset-0"
             onClick={onClose}
           />
 
@@ -136,7 +137,7 @@ export function Modal({
             exit="exit"
             transition={transitionConfig}
             className={cn(
-              "relative z-10 w-full rounded-2xl bg-white shadow-2xl",
+              "relative z-10 w-full rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white shadow-lg",
               "max-h-[90vh] overflow-hidden",
               sizeClasses[size]
             )}
@@ -144,11 +145,11 @@ export function Modal({
             tabIndex={-1}
           >
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
+            <div className="flex items-center justify-between border-b border-neutral-200 px-5 py-3.5">
               {title ? (
                 <h2
                   id="modal-title"
-                  className="text-base font-semibold text-neutral-800"
+                  className="text-sm font-semibold text-neutral-900"
                 >
                   {title}
                 </h2>
@@ -159,15 +160,15 @@ export function Modal({
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-md px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="grid h-8 w-8 place-items-center rounded-[var(--portal-radius-control)] text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-800 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 aria-label="Close modal"
               >
-                <span aria-hidden="true">×</span>
+                <X aria-hidden="true" size={16} />
               </button>
             </div>
 
             {/* Body */}
-            <div className="max-h-[calc(90vh-64px)] overflow-y-auto px-6 py-5">
+            <div className="max-h-[calc(90vh-56px)] overflow-y-auto px-5 py-4">
               {children}
             </div>
           </motion.div>

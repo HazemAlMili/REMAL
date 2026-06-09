@@ -25,13 +25,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             className="mb-1.5 block text-sm font-medium text-neutral-700"
           >
             {label}
-            {props.required && <span className="ml-1 text-error">*</span>}
+            {props.required && <span className="ms-1 text-error">*</span>}
           </label>
         )}
 
         <div className="relative flex items-center">
           {leftAddon && (
-            <div className="pointer-events-none absolute left-3 text-neutral-400">
+            <div className="pointer-events-none absolute start-3 text-neutral-400">
               {leftAddon}
             </div>
           )}
@@ -40,24 +40,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={id}
             className={cn(
-              "w-full rounded-lg border bg-white text-sm text-neutral-800",
-              "h-10 px-3.5",
+              "w-full rounded-[var(--portal-radius-control)] border bg-white text-sm text-neutral-800",
+              "h-[var(--portal-control-height)] px-3.5",
               "placeholder:text-neutral-400",
               "transition-colors duration-150",
               "focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500",
               "disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:text-neutral-400",
               error ? "border-error focus:ring-error" : "border-neutral-300",
-              leftAddon && "pl-10",
-              rightAddon && "pr-10",
+              leftAddon && "ps-10",
+              rightAddon && "pe-10",
               className
             )}
             {...props}
           />
 
           {rightAddon && (
-            <div className="absolute right-3 text-neutral-400">
-              {rightAddon}
-            </div>
+            <div className="absolute end-3 text-neutral-400">{rightAddon}</div>
           )}
         </div>
 

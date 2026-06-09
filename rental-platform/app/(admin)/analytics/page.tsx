@@ -79,10 +79,11 @@ export default function AnalyticsPage() {
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-neutral-800">
-            Access Denied
+            Analytics access required
           </h2>
           <p className="mt-2 text-sm text-neutral-500">
-            You don&apos;t have permission to view analytics.
+            Your role cannot view performance reports. Ask a super admin if
+            you need this access.
           </p>
         </div>
       </div>
@@ -94,9 +95,12 @@ export default function AnalyticsPage() {
       {/* Header with date range picker */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-neutral-800">Analytics</h1>
+          <h1 className="text-2xl font-bold text-neutral-800">
+            Performance analytics
+          </h1>
           <p className="mt-1 text-sm text-neutral-500">
-            Detailed insights and performance metrics
+            Track revenue, booking movement, and payout totals for the selected
+            period.
           </p>
         </div>
 
@@ -124,7 +128,7 @@ export default function AnalyticsPage() {
                   {formatCurrency(financeSummary.totalInvoicedAmount)}
                 </span>
               </div>
-              <p className="mt-3 text-sm text-neutral-500">Total Invoiced</p>
+              <p className="mt-3 text-sm text-neutral-500">Invoiced amount</p>
             </div>
 
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
@@ -134,7 +138,7 @@ export default function AnalyticsPage() {
                   {formatCurrency(financeSummary.totalPaidAmount)}
                 </span>
               </div>
-              <p className="mt-3 text-sm text-neutral-500">Total Paid</p>
+              <p className="mt-3 text-sm text-neutral-500">Paid amount</p>
             </div>
 
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
@@ -144,7 +148,7 @@ export default function AnalyticsPage() {
                   {formatCurrency(financeSummary.totalRemainingAmount)}
                 </span>
               </div>
-              <p className="mt-3 text-sm text-neutral-500">Total Remaining</p>
+              <p className="mt-3 text-sm text-neutral-500">Unpaid balance</p>
             </div>
 
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
@@ -154,7 +158,7 @@ export default function AnalyticsPage() {
                   {formatCurrency(financeSummary.totalPendingPayoutAmount)}
                 </span>
               </div>
-              <p className="mt-3 text-sm text-neutral-500">Pending Payout</p>
+              <p className="mt-3 text-sm text-neutral-500">Pending payouts</p>
             </div>
 
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
@@ -164,7 +168,7 @@ export default function AnalyticsPage() {
                   {formatCurrency(financeSummary.totalScheduledPayoutAmount)}
                 </span>
               </div>
-              <p className="mt-3 text-sm text-neutral-500">Scheduled Payout</p>
+              <p className="mt-3 text-sm text-neutral-500">Scheduled payouts</p>
             </div>
 
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
@@ -174,7 +178,7 @@ export default function AnalyticsPage() {
                   {formatCurrency(financeSummary.totalPaidPayoutAmount)}
                 </span>
               </div>
-              <p className="mt-3 text-sm text-neutral-500">Paid Payout</p>
+              <p className="mt-3 text-sm text-neutral-500">Paid payouts</p>
             </div>
 
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
@@ -185,7 +189,7 @@ export default function AnalyticsPage() {
                 </span>
               </div>
               <p className="mt-3 text-sm text-neutral-500">
-                Bookings With Invoice
+                Bookings with invoices
               </p>
             </div>
           </>
@@ -207,7 +211,7 @@ export default function AnalyticsPage() {
       {/* Daily Revenue Table */}
       <div className="space-y-2">
         <h2 className="text-lg font-semibold text-neutral-800">
-          Daily Revenue Breakdown
+          Daily revenue
         </h2>
         <DailyRevenueTable
           data={financeDaily ?? []}
@@ -218,7 +222,7 @@ export default function AnalyticsPage() {
       {/* Daily Bookings Table */}
       <div className="space-y-2">
         <h2 className="text-lg font-semibold text-neutral-800">
-          Daily Bookings Breakdown
+          Daily bookings
         </h2>
         <DailyBookingsTable
           data={bookingsDaily ?? []}

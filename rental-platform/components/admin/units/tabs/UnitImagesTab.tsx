@@ -22,7 +22,7 @@ import {
 import type { UnitImageResponse } from "@/lib/types";
 
 const addImageSchema = z.object({
-  fileKey: z.string().min(1, "fileKey is required"),
+  fileKey: z.string().min(1, "Please enter the image file key"),
   isCover: z.boolean().optional(),
 });
 type AddImageValues = z.infer<typeof addImageSchema>;
@@ -68,10 +68,10 @@ export function UnitImagesTab({ unitId }: UnitImagesTabProps) {
         unitId,
         data: { fileKey: values.fileKey, isCover: values.isCover },
       });
-      toastSuccess("Image added successfully");
+      toastSuccess("Image reference added");
       reset();
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to add image");
+      toastError((e as Error)?.message || "Could not add image reference");
     }
   };
 
@@ -80,7 +80,7 @@ export function UnitImagesTab({ unitId }: UnitImagesTabProps) {
       await setCover({ unitId, imageId });
       toastSuccess("Cover image updated");
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to set cover image");
+      toastError((e as Error)?.message || "Could not set cover image");
     }
   };
 
@@ -99,7 +99,7 @@ export function UnitImagesTab({ unitId }: UnitImagesTabProps) {
       await reorderImages({ unitId, data: { items } });
       toastSuccess("Images reordered");
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to reorder images");
+      toastError((e as Error)?.message || "Could not reorder images");
     }
   };
 
@@ -109,7 +109,7 @@ export function UnitImagesTab({ unitId }: UnitImagesTabProps) {
       await deleteImage({ unitId, imageId: deleteTarget.id });
       toastSuccess("Image removed");
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to remove image");
+      toastError((e as Error)?.message || "Could not remove image");
     } finally {
       setDeleteTarget(null);
     }
@@ -120,11 +120,10 @@ export function UnitImagesTab({ unitId }: UnitImagesTabProps) {
       {/* Add image form */}
       <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
         <h3 className="mb-3 text-sm font-semibold text-neutral-700">
-          Add Image Reference
+          Add image reference
         </h3>
         <p className="mb-4 text-xs text-neutral-500">
-          Enter the storage key for the image. File upload is handled separately
-          outside this interface.
+          Enter the storage key for an already uploaded image.
         </p>
         <form
           onSubmit={handleSubmit(handleAdd)}
@@ -132,8 +131,8 @@ export function UnitImagesTab({ unitId }: UnitImagesTabProps) {
         >
           <div className="flex-1">
             <Input
-              label="File Key"
-              placeholder="e.g. units/abc123/photo-1.jpg"
+              label="File key"
+              placeholder="Example: units/abc123/photo-1.jpg"
               {...register("fileKey")}
               error={errors.fileKey?.message}
               disabled={isAdding}
@@ -155,7 +154,7 @@ export function UnitImagesTab({ unitId }: UnitImagesTabProps) {
               size="sm"
               className="mb-0.5 shrink-0"
             >
-              {isAdding ? "Adding..." : "Add Image"}
+              {isAdding ? "Adding image..." : "Add image"}
             </Button>
           </div>
         </form>
@@ -173,8 +172,8 @@ export function UnitImagesTab({ unitId }: UnitImagesTabProps) {
         </div>
       ) : sorted.length === 0 ? (
         <EmptyState
-          title="No images yet"
-          description="Add the first image reference above."
+          title="No unit images"
+          description="Add the first image reference above so operators can manage the unit gallery."
         />
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -263,8 +262,10 @@ export function UnitImagesTab({ unitId }: UnitImagesTabProps) {
       {/* Delete confirmation */}
       <ConfirmDialog
         isOpen={!!deleteTarget}
-        title="Remove Image"
-        description={`Are you sure you want to remove this image (${deleteTarget?.fileKey ?? ""})? This cannot be undone.`}
+        title="Remove image"
+        description={`Remove this image reference (${deleteTarget?.fileKey ?? ""})? This cannot be undone.`}
+        confirmLabel="Remove image"
+        variant="danger"
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}
       />

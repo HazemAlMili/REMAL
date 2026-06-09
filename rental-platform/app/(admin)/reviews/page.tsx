@@ -95,7 +95,7 @@ export default function ReviewsModerationPage() {
       }
     },
     onError: () => {
-      toastError("Failed to publish review");
+      toastError("Could not publish review");
     },
   });
 
@@ -119,7 +119,7 @@ export default function ReviewsModerationPage() {
       }
     },
     onError: () => {
-      toastError("Failed to reject review");
+      toastError("Could not reject review");
     },
   });
 
@@ -143,7 +143,7 @@ export default function ReviewsModerationPage() {
       }
     },
     onError: () => {
-      toastError("Failed to hide review");
+      toastError("Could not hide review");
     },
   });
 
@@ -180,10 +180,10 @@ export default function ReviewsModerationPage() {
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-neutral-800">
-            Access Denied
+            Review moderation access required
           </h2>
           <p className="mt-2 text-sm text-neutral-500">
-            You don&apos;t have permission to moderate reviews.
+            Your role cannot publish, reject, or hide client reviews.
           </p>
         </div>
       </div>
@@ -191,7 +191,7 @@ export default function ReviewsModerationPage() {
   }
 
   const unitOptions = [
-    { value: "", label: unitsLoading ? "Loading..." : "Filter by unit (All)..." },
+    { value: "", label: unitsLoading ? "Loading units..." : "All units" },
     ...(unitsData?.items ?? []).map((u) => ({ value: u.id, label: u.name })),
   ];
 
@@ -202,17 +202,17 @@ export default function ReviewsModerationPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-neutral-800">
-            Reviews Moderation
+            Review moderation
           </h1>
           <p className="mt-1 text-sm text-neutral-500">
-            Monitor, approve, reject, or hide client reviews across all properties
+            Review client feedback before it appears on the storefront.
           </p>
         </div>
 
         {/* Unit Selector filter */}
         <div className="w-full max-w-xs sm:w-72">
           <Select
-            label="Filter Property"
+            label="Unit"
             options={unitOptions}
             value={selectedUnitId}
             onChange={(value) => handleUnitFilterChange(value as string)}

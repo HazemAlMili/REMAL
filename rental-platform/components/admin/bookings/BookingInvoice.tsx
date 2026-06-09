@@ -66,13 +66,13 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
     }
 
     if (hasFailedPayments) {
-      return "There are failed payments for this invoice. You may want to re-issue or create a new invoice.";
+      return "This invoice has failed payments. Re-issue it or create a new invoice before continuing.";
     }
     if (hasCancelledPayments) {
-      return "There are cancelled payments for this invoice. Consider re-issuing or creating a new invoice.";
+      return "This invoice has cancelled payments. Re-issue it or create a new invoice before continuing.";
     }
     if (hasPendingPayments) {
-      return "There are pending payments. Re-issuing may help synchronize the invoice with current payment status.";
+      return "This invoice has pending payments. Re-issue it if the invoice should match the current payment status.";
     }
 
     return null;
@@ -112,7 +112,7 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
           setShowInvoiceActionDialog(false);
         },
         onError: () => {
-          toastError("Failed to re-issue invoice");
+          toastError("Could not re-issue invoice");
         },
       }
     );
@@ -148,7 +148,7 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
                 setShowInvoiceActionDialog(false);
               },
               onError: () => {
-                toastError("Failed to create new invoice");
+                toastError("Could not create replacement invoice");
               },
             }
           );
@@ -185,8 +185,8 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
       <div className="space-y-4">
         <EmptyState
           icon={<FileText className="h-12 w-12" />}
-          title="No invoice yet"
-          description="Create an invoice draft for this booking to proceed with billing"
+          title="Invoice not issued"
+          description="Create a draft invoice before issuing billing for this booking."
         />
         {canManageFinance && (
           <div className="space-y-2">
@@ -211,18 +211,18 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
                 isLoading={createDraftMutation.isPending}
                 leftIcon={<Plus className="h-4 w-4" />}
               >
-                Create Invoice Draft
+                Create invoice draft
               </Button>
             </div>
             {createDraftMutation.isError && (
               <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
-                <p className="font-semibold">Failed to create invoice</p>
+                <p className="font-semibold">Could not create invoice</p>
                 <p className="mt-1 text-xs">
                   {(createDraftMutation.error as Error)?.message ||
-                    "Unknown error occurred"}
+                    "The invoice service did not return a detailed error."}
                 </p>
                 <p className="mt-1 text-xs text-red-600">
-                  Check browser console for details
+                  Retry after checking booking and payment details.
                 </p>
               </div>
             )}
@@ -261,7 +261,7 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
       <div className="space-y-3 rounded-lg bg-neutral-50 p-4">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <p className="text-xs text-neutral-500">Invoice Number</p>
+            <p className="text-xs text-neutral-500">Invoice number</p>
             <p className="text-sm font-medium text-neutral-800">
               {invoice.invoiceNumber}
             </p>
@@ -298,7 +298,7 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
           )}
           {invoice.issuedAt && (
             <div>
-              <p className="text-xs text-neutral-500">Issued At</p>
+              <p className="text-xs text-neutral-500">Issued</p>
               <p className="text-sm text-neutral-800">
                 {formatDate(invoice.issuedAt)}
               </p>
@@ -306,7 +306,7 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
           )}
           {invoice.dueDate && (
             <div>
-              <p className="text-xs text-neutral-500">Due Date</p>
+              <p className="text-xs text-neutral-500">Due date</p>
               <p className="text-sm text-neutral-800">
                 {formatDate(invoice.dueDate)}
               </p>
@@ -317,7 +317,7 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
         {invoice.items && invoice.items.length > 0 && (
           <div className="mt-3 border-t border-neutral-200 pt-3">
             <p className="mb-2 text-xs font-medium text-neutral-500">
-              Line Items
+              Line items
             </p>
             <div className="space-y-1">
               {invoice.items.map((item) => (
@@ -350,7 +350,7 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
               variant="secondary"
               onClick={() => setShowInvoiceActionDialog(true)}
             >
-              Re-issue Invoice
+              Re-issue invoice
             </Button>
           </div>
         )}
@@ -362,16 +362,16 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
             onClick={handleIssueInvoiceClick}
             isLoading={issueMutation.isPending}
           >
-            Issue Invoice
+            Issue invoice
           </Button>
           <Button
             variant="secondary"
             onClick={() => setShowAdjustmentModal(true)}
           >
-            Add Adjustment
+            Add adjustment
           </Button>
           <Button variant="danger" onClick={() => setShowCancelConfirm(true)}>
-            Cancel Invoice
+            Cancel invoice
           </Button>
         </div>
       )}
@@ -379,7 +379,7 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
       {isIssued && (
         <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-xs text-green-700">
           This invoice has been issued and is read-only. No further
-          modifications allowed.
+          changes are allowed.
         </div>
       )}
 
@@ -431,17 +431,17 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
       <Modal
         isOpen={showCancelConfirm}
         onClose={() => setShowCancelConfirm(false)}
-        title="Cancel Invoice"
+        title="Cancel invoice"
       >
         <div className="space-y-4 py-4">
           <p className="text-sm text-neutral-600">
-            Are you sure you want to cancel this invoice? This action cannot be
-            undone.
+            Cancel this invoice? This cannot be undone, and the invoice will no
+            longer be used for payment tracking.
           </p>
           <textarea
             value={cancelNotes}
             onChange={(e) => setCancelNotes(e.target.value)}
-            placeholder="Cancellation reason (optional)"
+            placeholder="Add the cancellation reason"
             className="h-16 w-full resize-none rounded-md border border-neutral-200 p-2 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
             disabled={cancelMutation.isPending}
           />
@@ -465,7 +465,7 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
               }}
               isLoading={cancelMutation.isPending}
             >
-              Cancel Invoice
+              Cancel invoice
             </Button>
           </div>
         </ModalFooter>

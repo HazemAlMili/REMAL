@@ -34,7 +34,7 @@ interface DispatchNotificationModalProps {
 }
 
 const RECIPIENT_TYPE_OPTIONS = [
-  { value: "Admin", label: "Admin User" },
+  { value: "Admin", label: "Admin user" },
   { value: "Client", label: "Client" },
   { value: "Owner", label: "Owner" },
 ];
@@ -157,7 +157,7 @@ export function DispatchNotificationModal({
 
     const mutationConfig = {
       onSuccess: () => {
-        toast.success("Notification sent successfully");
+        toast.success("Notification sent");
         handleClose();
       },
     };
@@ -194,14 +194,14 @@ export function DispatchNotificationModal({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Send Notification"
+      title="Send notification"
       size="lg"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* Recipient Type */}
         <div>
           <label className="mb-1.5 block text-sm font-medium text-neutral-700">
-            Recipient Type
+            Recipient type
           </label>
           <select
             {...register("recipientType")}
@@ -229,7 +229,7 @@ export function DispatchNotificationModal({
             {...register("recipientId")}
             className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           >
-            <option value="">Select a {recipientType.toLowerCase()}...</option>
+            <option value="">Choose a {recipientType.toLowerCase()}</option>
             {recipientOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -246,11 +246,11 @@ export function DispatchNotificationModal({
         {/* Template Code */}
         <div>
           <label className="mb-1.5 block text-sm font-medium text-neutral-700">
-            Template Code
+            Template code
           </label>
           <input
             type="text"
-            placeholder="e.g., BOOKING_CONFIRMED"
+            placeholder="Example: BOOKING_CONFIRMED"
             {...register("templateCode")}
             className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
@@ -285,7 +285,7 @@ export function DispatchNotificationModal({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium text-neutral-700">
-              Template Variables (optional)
+              Template variables (optional)
             </label>
             <button
               type="button"
@@ -293,21 +293,21 @@ export function DispatchNotificationModal({
               className="flex items-center gap-1 rounded-md px-2 py-1 text-sm text-primary-600 hover:bg-primary-50"
             >
               <Plus className="h-4 w-4" />
-              Add Variable
+              Add variable
             </button>
           </div>
           {variableEntries.map((entry, index) => (
             <div key={index} className="flex items-center gap-2">
               <input
                 type="text"
-                placeholder="Key (e.g., clientName)"
+                placeholder="Variable name, e.g. clientName"
                 value={entry.key}
                 onChange={(e) => updateVariable(index, "key", e.target.value)}
                 className="flex-1 rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
               <input
                 type="text"
-                placeholder="Value (e.g., Ahmed)"
+                placeholder="Value, e.g. Ahmed"
                 value={entry.value}
                 onChange={(e) => updateVariable(index, "value", e.target.value)}
                 className="flex-1 rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
@@ -326,7 +326,7 @@ export function DispatchNotificationModal({
         {/* Scheduled At */}
         <div>
           <label className="mb-1.5 block text-sm font-medium text-neutral-700">
-            Schedule (optional)
+            Send later (optional)
           </label>
           <input
             type="datetime-local"
@@ -356,7 +356,7 @@ export function DispatchNotificationModal({
             isLoading={isSending}
             disabled={isSending}
           >
-            Send Notification
+            Send notification
           </Button>
         </div>
       </form>

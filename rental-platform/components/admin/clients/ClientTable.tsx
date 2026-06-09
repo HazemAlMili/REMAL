@@ -114,7 +114,7 @@ export function ClientTable({
       isLoading={isLoading}
       pagination={pagination}
       onPageChange={onPageChange}
-      emptyMessage="No clients found. Try adjusting your filters."
+      emptyMessage="No matching clients. Adjust the filters or clear the search."
     />
   );
 }

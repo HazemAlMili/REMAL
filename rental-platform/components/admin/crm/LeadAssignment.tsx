@@ -35,7 +35,7 @@ export function LeadAssignment({ leadId }: LeadAssignmentProps) {
 
   const getAdminName = (userId: string) => {
     const user = adminUsers?.items?.find((u) => u.id === userId);
-    return user?.name ?? "Unknown Admin";
+    return user?.name ?? "Unknown admin";
   };
 
   const handleAssign = () => {
@@ -64,8 +64,10 @@ export function LeadAssignment({ leadId }: LeadAssignmentProps) {
 
   // Treat assignment missing (404) as unassigned, meaning assignment may be undefined
   return (
-    <div className="space-y-4 rounded-xl border border-neutral-100 bg-white p-6 shadow-sm">
-      <h3 className="text-sm font-semibold text-neutral-800">Assignment</h3>
+    <div className="space-y-4 rounded-lg border border-neutral-100 bg-white p-6 shadow-sm">
+      <h3 className="mb-4 border-b border-neutral-100 pb-2 text-sm font-semibold uppercase tracking-wider text-neutral-800">
+        Assignment
+      </h3>
 
       {assignment?.assignedAdminUserId ? (
         <div className="flex items-center justify-between rounded-lg bg-neutral-50 p-3">
@@ -83,18 +85,20 @@ export function LeadAssignment({ leadId }: LeadAssignmentProps) {
               size="sm"
               onClick={() => setShowUnassignConfirm(true)}
             >
-              Unassign
+              Remove assignment
             </Button>
           )}
         </div>
       ) : (
         <div className="rounded-lg bg-neutral-50 p-3">
-          <p className="text-sm italic text-neutral-500">Unassigned</p>
+          <p className="text-sm italic text-neutral-500">
+            No sales owner assigned
+          </p>
         </div>
       )}
 
       {canAssignLeads && (
-        <div className="flex items-end gap-2">
+        <div className="flex items-center gap-2">
           <Select
             value={selectedUserId}
             onChange={(val) => setSelectedUserId(val as string)}
@@ -102,15 +106,15 @@ export function LeadAssignment({ leadId }: LeadAssignmentProps) {
               value: u.id,
               label: `${u.name} (${u.role})`,
             }))}
-            placeholder="Select sales person..."
+            placeholder="Choose a sales owner"
           />
           <Button
             onClick={handleAssign}
             isLoading={assignMutation.isPending}
             disabled={!selectedUserId}
-            size="sm"
+            className="!h-[var(--portal-control-height)] shrink-0"
           >
-            Assign
+            Assign lead
           </Button>
         </div>
       )}
@@ -120,8 +124,9 @@ export function LeadAssignment({ leadId }: LeadAssignmentProps) {
           isOpen={showUnassignConfirm}
           onCancel={() => setShowUnassignConfirm(false)}
           onConfirm={handleUnassign}
-          title="Unassign Lead"
-          description="Are you sure you want to remove the current assignment?"
+          title="Remove lead assignment"
+          description="Remove the current sales owner from this lead? It will remain visible in the pipeline."
+          confirmLabel="Remove assignment"
         />
       )}
     </div>

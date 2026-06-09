@@ -27,7 +27,7 @@ export function LeadUnitInfo({ lead }: LeadUnitInfoProps) {
               </span>
             ) : (
               <span className="text-sm italic text-neutral-400">
-                No unit selected yet
+                Unit not selected
               </span>
             )}
           </div>

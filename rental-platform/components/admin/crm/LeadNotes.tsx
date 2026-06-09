@@ -49,7 +49,7 @@ export function LeadNotes({ leadId }: LeadNotesProps) {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <h3 className="mb-4 border-b border-neutral-100 pb-2 text-sm font-semibold uppercase tracking-wider text-neutral-700">
+        <h3 className="mb-4 border-b border-neutral-100 pb-2 text-sm font-semibold uppercase tracking-wider text-neutral-800">
           Notes
         </h3>
         <Skeleton className="h-16 w-full" rounded="md" />
@@ -61,7 +61,7 @@ export function LeadNotes({ leadId }: LeadNotesProps) {
 
   return (
     <div className="space-y-4 rounded-lg border border-neutral-100 bg-white p-6 shadow-sm">
-      <h3 className="mb-4 border-b border-neutral-100 pb-2 text-sm font-semibold uppercase tracking-wider text-neutral-700">
+      <h3 className="mb-4 border-b border-neutral-100 pb-2 text-sm font-semibold uppercase tracking-wider text-neutral-800">
         Notes
       </h3>
 
@@ -69,8 +69,8 @@ export function LeadNotes({ leadId }: LeadNotesProps) {
       {!notes || notes.length === 0 ? (
         <EmptyState
           icon={<MessageSquare className="h-8 w-8" />}
-          title="No notes yet"
-          description="Add a note to track conversations with this lead"
+          title="No internal notes"
+          description="Add the first internal note so sales can track the next client follow-up."
           className="min-h-[160px] py-8"
         />
       ) : (
@@ -92,21 +92,21 @@ export function LeadNotes({ leadId }: LeadNotesProps) {
       )}
 
       {/* Add note */}
-      <div className="mt-4 flex gap-2 border-t border-neutral-50 pt-2">
+      <div className="mt-4 flex items-start gap-2 border-t border-neutral-100 pt-4">
         <Textarea
           value={newNoteText}
           onChange={(e) => setNewNoteText(e.target.value)}
-          placeholder="Add a note..."
-          className="h-10 min-h-[40px] w-full flex-1 resize-none"
+          placeholder="Add an internal lead note"
+          className="min-h-[80px] w-full flex-1 resize-none"
           disabled={addNoteMutation.isPending}
         />
         <Button
           onClick={handleAddNote}
           isLoading={addNoteMutation.isPending}
           disabled={!newNoteText.trim() || newNoteText.length > 2000}
-          className="h-10 shrink-0"
+          className="shrink-0"
         >
-          Add
+          Add note
         </Button>
       </div>
     </div>

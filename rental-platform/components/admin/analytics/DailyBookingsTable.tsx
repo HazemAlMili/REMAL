@@ -28,7 +28,7 @@ export function DailyBookingsTable({
   if (!data || data.length === 0) {
     return (
       <EmptyState
-        title="No data"
+        title="Daily booking data is not available"
         description="No bookings data for the selected period."
       />
     );

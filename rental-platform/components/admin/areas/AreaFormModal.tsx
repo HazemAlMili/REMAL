@@ -31,7 +31,7 @@ export function AreaFormModal({ isOpen, onClose, area }: AreaFormModalProps) {
       }
       onClose();
     } catch (e: unknown) {
-      const msg = (e as Error)?.message || "Failed to save area";
+      const msg = (e as Error)?.message || "Could not save area";
       toastError(msg);
     }
   };

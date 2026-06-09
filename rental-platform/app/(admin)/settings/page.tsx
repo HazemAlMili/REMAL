@@ -6,10 +6,11 @@ export default function SettingsPage() {
     <div className="space-y-6 p-6">
       <div>
         <h1 className="font-display text-2xl font-bold tracking-tight text-neutral-900">
-          Settings
+          Admin settings
         </h1>
         <p className="text-sm text-neutral-500">
-          Manage your account settings and preferences.
+          Manage admin users, role access, active status, and your notification
+          preferences.
         </p>
       </div>
 

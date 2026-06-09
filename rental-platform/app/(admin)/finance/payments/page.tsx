@@ -85,7 +85,7 @@ export default function PaymentsListPage() {
         },
         onError: (error: unknown) => {
           const err = error as { response?: { data?: { message?: string } } };
-          toast.error(err.response?.data?.message || "Failed to mark as paid");
+          toast.error(err.response?.data?.message || "Could not mark payment as paid");
         },
       }
     );
@@ -110,7 +110,7 @@ export default function PaymentsListPage() {
         onError: (error: unknown) => {
           const err = error as { response?: { data?: { message?: string } } };
           toast.error(
-            err.response?.data?.message || "Failed to mark as failed"
+            err.response?.data?.message || "Could not mark payment as failed"
           );
         },
       }
@@ -129,7 +129,7 @@ export default function PaymentsListPage() {
         onError: (error: unknown) => {
           const err = error as { response?: { data?: { message?: string } } };
           toast.error(
-            err.response?.data?.message || "Failed to cancel payment"
+            err.response?.data?.message || "Could not cancel payment"
           );
         },
       }
@@ -139,8 +139,8 @@ export default function PaymentsListPage() {
   if (!canViewFinance) {
     return (
       <EmptyState
-        title="Access Denied"
-        description="You do not have permission to view this page."
+        title="Finance access required"
+        description="Your role cannot view payment records. Ask a super admin if you need this access."
       />
     );
   }
@@ -148,7 +148,13 @@ export default function PaymentsListPage() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold">All Payments</h1>
+        <div>
+          <h1 className="text-2xl font-bold">Payments ledger</h1>
+          <p className="mt-1 text-sm text-neutral-500">
+            Verify receipts, close paid payments, and flag failed or cancelled
+            records.
+          </p>
+        </div>
       </div>
 
       {/* Filter bar */}
@@ -156,7 +162,7 @@ export default function PaymentsListPage() {
         <Select
           label="Status"
           options={[
-            { value: "", label: "All Statuses" },
+            { value: "", label: "All statuses" },
             { value: "pending", label: "Pending" },
             { value: "paid", label: "Paid" },
             { value: "failed", label: "Failed" },
@@ -177,7 +183,7 @@ export default function PaymentsListPage() {
         />
         <Input
           label="Booking ID"
-          placeholder="Filter by booking..."
+          placeholder="Paste a booking ID"
           value={filters.bookingId ?? ""}
           onChange={(e) =>
             setFilters({
@@ -189,7 +195,7 @@ export default function PaymentsListPage() {
         />
         <Input
           label="Invoice ID"
-          placeholder="Filter by invoice..."
+          placeholder="Paste an invoice ID"
           value={filters.invoiceId ?? ""}
           onChange={(e) =>
             setFilters({
@@ -204,8 +210,8 @@ export default function PaymentsListPage() {
       {/* Payments table */}
       {data?.items.length === 0 ? (
         <EmptyState
-          title="No payments found"
-          description="Try adjusting your filters to find what you're looking for."
+          title="No matching payments"
+          description="No payment records match these filters. Clear a filter or search another booking."
         />
       ) : (
         <PaymentsTable
@@ -232,10 +238,10 @@ export default function PaymentsListPage() {
       <ConfirmDialog
         isOpen={markPaidDialog.isOpen}
         onClose={closeMarkPaidDialog}
-        title="Mark Payment as Paid"
+        title="Mark payment as paid"
         onConfirm={handleMarkPaid}
         isLoading={markPaidMutation.isPending}
-        confirmLabel="Mark Paid"
+        confirmLabel="Mark payment paid"
         variant="primary"
       >
         <div className="space-y-4 py-2">
@@ -243,14 +249,14 @@ export default function PaymentsListPage() {
             Add the verified receipt reference before closing this payment.
           </p>
           <Input
-            label="Reference Number"
+            label="Receipt reference"
             placeholder="INSTAPAY-202608-001"
             value={paidReferenceNumber}
             onChange={(e) => setPaidReferenceNumber(e.target.value)}
           />
           <Textarea
-            label="Notes (optional)"
-            placeholder="Payment verification notes..."
+            label="Internal note (optional)"
+            placeholder="Add payment verification context"
             value={paidNotes}
             onChange={(e) => setPaidNotes(e.target.value)}
           />
@@ -264,20 +270,19 @@ export default function PaymentsListPage() {
           setMarkFailedDialog({ isOpen: false, paymentId: "" });
           setDialogNotes("");
         }}
-        title="Mark Payment as Failed"
+        title="Mark payment as failed"
         onConfirm={handleMarkFailed}
         isLoading={markFailedMutation.isPending}
-        confirmLabel="Mark Failed"
+        confirmLabel="Mark payment failed"
         variant="danger"
       >
         <div className="space-y-4 py-2">
           <p className="text-sm text-neutral-600">
-            Confirm this payment has failed. This will update the invoice
-            balance.
+            Mark this payment as failed? The invoice balance will stay open.
           </p>
           <Textarea
-            label="Notes (optional)"
-            placeholder="Reason for failure..."
+            label="Internal note (optional)"
+            placeholder="Add the failure reason"
             value={dialogNotes}
             onChange={(e) => setDialogNotes(e.target.value)}
           />
@@ -291,20 +296,20 @@ export default function PaymentsListPage() {
           setCancelDialog({ isOpen: false, paymentId: "" });
           setDialogNotes("");
         }}
-        title="Cancel Payment"
+        title="Cancel payment"
         onConfirm={handleCancel}
         isLoading={cancelMutation.isPending}
-        confirmLabel="Cancel Payment"
+        confirmLabel="Cancel payment"
         variant="danger"
       >
         <div className="space-y-4 py-2">
           <p className="text-sm text-neutral-600">
-            Are you sure you want to cancel this payment? This action cannot be
-            undone.
+            Cancel this payment? This cannot be undone, and it will no longer
+            count toward the booking balance.
           </p>
           <Textarea
-            label="Notes (optional)"
-            placeholder="Reason for cancellation..."
+            label="Internal note (optional)"
+            placeholder="Add the cancellation reason"
             value={dialogNotes}
             onChange={(e) => setDialogNotes(e.target.value)}
           />

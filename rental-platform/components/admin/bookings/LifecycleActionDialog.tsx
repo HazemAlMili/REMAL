@@ -54,7 +54,7 @@ export function LifecycleActionDialog({
             htmlFor="notes"
             className="text-sm font-medium text-neutral-700"
           >
-            Notes {requireNotes ? "(Required)" : "(Optional)"}
+            Internal note {requireNotes ? "(required)" : "(optional)"}
           </label>
           <Textarea
             id="notes"
@@ -62,7 +62,7 @@ export function LifecycleActionDialog({
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               setNotes(e.target.value)
             }
-            placeholder="Add any internal notes about this status change..."
+            placeholder="Add context for this status change"
             className="resize-none"
             rows={3}
             disabled={isPending}
@@ -78,7 +78,7 @@ export function LifecycleActionDialog({
             onClick={handleConfirm}
             disabled={isPending || (requireNotes && !notes.trim())}
           >
-            {isPending ? "Processing..." : actionLabel}
+            {isPending ? "Saving status..." : actionLabel}
           </Button>
         </div>
       </ModalFooter>

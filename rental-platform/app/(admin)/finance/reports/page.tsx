@@ -47,16 +47,18 @@ export default function FinanceReportsPage() {
     <div className="space-y-6">
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Finance Reports</h1>
-          <p className="text-muted-foreground">
-            Daily breakdowns of revenue and booking performance.
+          <h1 className="text-2xl font-bold tracking-tight">
+            Finance reports
+          </h1>
+          <p className="text-sm text-neutral-500">
+            Compare daily revenue and booking volume for the selected period.
           </p>
         </div>
         <div className="w-full max-w-xs">
           <DateRangePicker
             value={dateRange}
             onChange={setDateRange}
-            placeholder="Select period"
+            placeholder="Choose reporting period"
           />
         </div>
       </div>

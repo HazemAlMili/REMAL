@@ -54,14 +54,14 @@ export default function EditUnitPage({ params }: EditUnitPageProps) {
           onClick={() => router.push(ROUTES.admin.units.list)}
         >
           <ChevronLeft className="mr-1 h-4 w-4" />
-          Back to Units
+          Back to units
         </Button>
         <EmptyState
           title="Unit not found"
-          description="This unit could not be loaded for editing."
+          description="This unit may have been removed, or the link may use an incorrect ID."
           action={
             <Button onClick={() => router.push(ROUTES.admin.units.list)}>
-              Back to Units
+              Back to units
             </Button>
           }
         />
@@ -86,10 +86,10 @@ export default function EditUnitPage({ params }: EditUnitPageProps) {
   const handleSubmit = async (values: UnitFormValues) => {
     try {
       await updateUnit({ id, data: values });
-      toastSuccess("Unit updated successfully");
+      toastSuccess("Unit updated");
       router.push(ROUTES.admin.units.detail(id));
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to update unit");
+      toastError((e as Error)?.message || "Could not update unit");
     }
   };
 
@@ -103,15 +103,15 @@ export default function EditUnitPage({ params }: EditUnitPageProps) {
           onClick={() => router.push(ROUTES.admin.units.detail(id))}
           disabled={isUpdating}
         >
-          <ChevronLeft className="mr-1 h-4 w-4" />
-          Back to Unit
+        <ChevronLeft className="mr-1 h-4 w-4" />
+          Back to unit
         </Button>
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight text-neutral-900">
-            Edit Unit
+            Edit unit
           </h1>
           <p className="text-sm text-neutral-500">
-            Update the core details for{" "}
+            Update core details for{" "}
             <span className="font-medium text-neutral-700">{unit.name}</span>.
             Owner and area assignment cannot be changed here.
           </p>

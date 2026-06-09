@@ -4,6 +4,7 @@ import { Pencil, Power, PowerOff } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { usePermissions } from "@/lib/hooks/usePermissions";
+import { formatCurrency } from "@/lib/utils/format";
 import type { UnitDetailsResponse, UnitType } from "@/lib/types";
 
 const UNIT_TYPE_LABELS: Record<UnitType, string> = {
@@ -46,7 +47,9 @@ export function UnitDetailHeader({
         <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-neutral-500">
           <span>
             Unit ID:{" "}
-            <span className="font-mono text-xs font-medium text-neutral-700 select-all">{unit.id}</span>
+            <span className="select-all font-mono text-xs font-medium text-neutral-700">
+              {unit.id}
+            </span>
           </span>
           <span>
             Owner ID:{" "}
@@ -57,9 +60,8 @@ export function UnitDetailHeader({
             <span className="font-medium text-neutral-700">{unit.areaId}</span>
           </span>
           <span>
-            SAR{" "}
             <span className="font-medium text-neutral-700">
-              {new Intl.NumberFormat("en-US").format(unit.basePricePerNight)}
+              {formatCurrency(unit.basePricePerNight)}
             </span>{" "}
             / night
           </span>
@@ -79,8 +81,8 @@ export function UnitDetailHeader({
             onClick={onEdit}
             disabled={isLoading}
           >
-            <Pencil className="mr-1.5 h-4 w-4" />
-            Edit Unit
+            <Pencil className="me-1.5 h-4 w-4" />
+            Edit unit
           </Button>
 
           <Button
@@ -91,12 +93,12 @@ export function UnitDetailHeader({
           >
             {unit.isActive ? (
               <>
-                <PowerOff className="mr-1.5 h-4 w-4" />
+                <PowerOff className="me-1.5 h-4 w-4" />
                 Deactivate
               </>
             ) : (
               <>
-                <Power className="mr-1.5 h-4 w-4" />
+                <Power className="me-1.5 h-4 w-4" />
                 Activate
               </>
             )}

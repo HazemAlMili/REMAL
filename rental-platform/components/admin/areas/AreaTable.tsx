@@ -31,7 +31,7 @@ export function AreaTable({ areas, onEdit, onToggleStatus }: AreaTableProps) {
               Status
             </th>
             <th className="h-10 px-4 text-left font-medium text-neutral-500">
-              Created At
+              Created
             </th>
             {canManageAreas && (
               <th className="h-10 w-[100px] px-4 text-right font-medium text-neutral-500">
@@ -69,7 +69,7 @@ export function AreaTable({ areas, onEdit, onToggleStatus }: AreaTableProps) {
                     variant="ghost"
                     size="sm"
                     onClick={() => onEdit(area)}
-                    aria-label="Edit Area"
+                    aria-label={`Edit ${area.name}`}
                     className="h-8 w-8 p-0"
                   >
                     <Pencil className="h-4 w-4" />
@@ -79,7 +79,9 @@ export function AreaTable({ areas, onEdit, onToggleStatus }: AreaTableProps) {
                     size="sm"
                     onClick={() => onToggleStatus(area)}
                     aria-label={
-                      area.isActive ? "Deactivate Area" : "Activate Area"
+                      area.isActive
+                        ? `Deactivate ${area.name}`
+                        : `Activate ${area.name}`
                     }
                     className="h-8 w-8 p-0"
                   >

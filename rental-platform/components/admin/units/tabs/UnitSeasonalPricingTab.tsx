@@ -76,7 +76,7 @@ export function UnitSeasonalPricingTab({
             pricePerNight: values.pricePerNight,
           },
         });
-        toastSuccess("Seasonal pricing updated successfully");
+        toastSuccess("Seasonal pricing updated");
       } else {
         await createPricing({
           unitId,
@@ -86,11 +86,11 @@ export function UnitSeasonalPricingTab({
             pricePerNight: values.pricePerNight,
           },
         });
-        toastSuccess("Seasonal pricing created successfully");
+        toastSuccess("Seasonal pricing created");
       }
       handleCloseModal();
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to save seasonal pricing");
+      toastError((e as Error)?.message || "Could not save seasonal pricing");
     }
   };
 
@@ -98,9 +98,9 @@ export function UnitSeasonalPricingTab({
     if (!deletingPricingId) return;
     try {
       await deletePricing({ id: deletingPricingId, unitId });
-      toastSuccess("Seasonal pricing deleted successfully");
+      toastSuccess("Seasonal pricing deleted");
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to delete seasonal pricing");
+      toastError((e as Error)?.message || "Could not delete seasonal pricing");
     } finally {
       setDeletingPricingId(undefined);
     }
@@ -157,10 +157,10 @@ export function UnitSeasonalPricingTab({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-neutral-800">
-            Seasonal Pricing
+            Seasonal pricing
           </h2>
           <p className="mt-1 text-sm text-neutral-500">
-            Base Unit Price:{" "}
+            Base unit price:{" "}
             <strong className="text-neutral-700">
               {formatCurrency(basePricePerNight)}/night
             </strong>
@@ -168,7 +168,7 @@ export function UnitSeasonalPricingTab({
         </div>
         <Button onClick={handleOpenCreate}>
           <Plus className="mr-2 h-4 w-4" />
-          Add Seasonal Pricing
+          Add seasonal price
         </Button>
       </div>
 
@@ -176,7 +176,7 @@ export function UnitSeasonalPricingTab({
         columns={columns}
         data={pricingRules}
         isLoading={isLoading}
-        emptyMessage="No seasonal pricing rules yet. Click above to add overrides."
+        emptyMessage="Seasonal pricing is empty. Add a seasonal price to override the base nightly rate for a date range."
       />
 
       {/* Create/Edit Modal */}
@@ -184,7 +184,7 @@ export function UnitSeasonalPricingTab({
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         title={
-          editingPricing ? "Edit Seasonal Pricing" : "Add Seasonal Pricing"
+          editingPricing ? "Edit seasonal price" : "Add seasonal price"
         }
       >
         <SeasonalPricingForm
@@ -197,8 +197,10 @@ export function UnitSeasonalPricingTab({
       {/* Delete Confirmation */}
       <ConfirmDialog
         isOpen={!!deletingPricingId}
-        title="Delete Seasonal Pricing"
-        description="Are you sure you want to delete this seasonal pricing rule? Dates within this range will revert to the base price."
+        title="Delete seasonal price"
+        description="Delete this seasonal price? Dates in this range will use the base nightly rate again."
+        confirmLabel="Delete seasonal price"
+        variant="danger"
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeletingPricingId(undefined)}
       />

@@ -152,7 +152,7 @@ export function RecordPayoutModal({
         { ...data, proofOfPaymentUrl },
         {
           onSuccess: () => {
-            toast.success("Payout record created successfully");
+            toast.success("Payout record created");
             if (ownerId) {
               queryClient.invalidateQueries({
                 queryKey: payoutQueryKeys.byOwner(ownerId),
@@ -170,13 +170,13 @@ export function RecordPayoutModal({
           onError: (error: unknown) => {
             const err = error as { response?: { data?: { message?: string } } };
             toast.error(
-              err.response?.data?.message || "Failed to create payout"
+              err.response?.data?.message || "Could not create payout"
             );
           },
         }
       );
     } catch {
-      toast.error("Failed to upload proof of payment");
+      toast.error("Could not upload proof of payment");
       setUploadingImage(false);
     }
   };
@@ -190,7 +190,7 @@ export function RecordPayoutModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Record Owner Payout"
+      title="Create owner payout"
       size="lg"
     >
       {!ownerId ? (
@@ -211,11 +211,10 @@ export function RecordPayoutModal({
             </svg>
           </div>
           <h3 className="mb-2 text-lg font-semibold text-neutral-900">
-            Owner Not Selected
+            Owner not selected
           </h3>
           <p className="text-sm text-neutral-600">
-            Please select an owner from the dropdown first, then try creating a
-            payout.
+            Choose an owner before creating a payout.
           </p>
           <div className="mt-6">
             <Button onClick={onClose}>Close</Button>
@@ -239,11 +238,10 @@ export function RecordPayoutModal({
             </svg>
           </div>
           <h3 className="mb-2 text-lg font-semibold text-neutral-900">
-            Failed to Load Bookings
+            Could not load bookings
           </h3>
           <p className="text-sm text-neutral-600">
-            Unable to fetch bookings for this owner. Please try again or contact
-            support if the problem persists.
+            We could not load confirmed bookings for this owner. Close and try again.
           </p>
           <div className="mt-6">
             <Button onClick={onClose}>Close</Button>
@@ -254,7 +252,7 @@ export function RecordPayoutModal({
           {/* Booking Selection */}
           <div>
             <label className="mb-2 block text-sm font-medium text-neutral-700">
-              Select Booking <span className="text-red-500">*</span>
+              Booking <span className="text-red-500">*</span>
             </label>
             <Controller
               name="bookingId"
@@ -268,7 +266,7 @@ export function RecordPayoutModal({
                   <option value="">
                     {bookingsLoading
                       ? "Loading bookings..."
-                      : "Select a confirmed booking..."}
+                      : "Choose a confirmed booking"}
                   </option>
                   {bookingsData?.items.map((booking) => (
                     <option key={booking.id} value={booking.id}>
@@ -291,35 +289,35 @@ export function RecordPayoutModal({
           {selectedBooking && (
             <div className="rounded-lg bg-neutral-50 p-4">
               <h4 className="mb-2 text-sm font-semibold text-neutral-700">
-                Booking Details
+                Booking summary
               </h4>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <span className="text-neutral-500">Unit:</span>
+                  <span className="text-neutral-500">Unit</span>
                   <span className="ml-2 font-medium text-neutral-900">
                     {selectedBooking.unitName}
                   </span>
                 </div>
                 <div>
-                  <span className="text-neutral-500">Client:</span>
+                  <span className="text-neutral-500">Client</span>
                   <span className="ml-2 font-medium text-neutral-900">
                     {selectedBooking.clientName}
                   </span>
                 </div>
                 <div>
-                  <span className="text-neutral-500">Check-in:</span>
+                  <span className="text-neutral-500">Check-in</span>
                   <span className="ml-2 font-medium text-neutral-900">
                     {selectedBooking.checkInDate}
                   </span>
                 </div>
                 <div>
-                  <span className="text-neutral-500">Check-out:</span>
+                  <span className="text-neutral-500">Check-out</span>
                   <span className="ml-2 font-medium text-neutral-900">
                     {selectedBooking.checkOutDate}
                   </span>
                 </div>
                 <div>
-                  <span className="text-neutral-500">Gross Amount:</span>
+                  <span className="text-neutral-500">Gross booking amount</span>
                   <span className="ml-2 font-medium text-neutral-900">
                     {formatCurrency(selectedBooking.finalAmount)}
                   </span>
@@ -330,12 +328,12 @@ export function RecordPayoutModal({
 
           {/* Commission Rate */}
           <Input
-            label="Commission Rate (%)"
+            label="Commission rate (%)"
             type="number"
             step="0.01"
             placeholder="e.g. 20 for 20%"
             error={errors.commissionRate?.message}
-            helperText="Auto-filled from owner profile. Adjust if needed."
+            helperText="Auto-filled from the owner profile. Adjust only when this payout needs an exception."
             {...register("commissionRate", { valueAsNumber: true })}
           />
 
@@ -343,12 +341,12 @@ export function RecordPayoutModal({
           {selectedBooking && watch("commissionRate") !== undefined && (
             <div className="rounded-lg border border-neutral-200 bg-white p-4">
               <h4 className="mb-3 text-sm font-semibold text-neutral-700">
-                Payout Calculation
+                Payout calculation
               </h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-neutral-600">
-                    Gross Booking Amount:
+                    Gross booking amount
                   </span>
                   <span className="font-medium text-neutral-900">
                     {formatCurrency(selectedBooking.finalAmount)}
@@ -368,7 +366,7 @@ export function RecordPayoutModal({
                 </div>
                 <div className="flex justify-between border-t border-neutral-200 pt-2">
                   <span className="font-semibold text-neutral-900">
-                    Owner Payout Amount:
+                    Owner payout amount
                   </span>
                   <span className="text-lg font-bold text-green-600">
                     {formatCurrency(
@@ -386,9 +384,9 @@ export function RecordPayoutModal({
           {/* Proof of Payment Upload */}
           <div>
             <label className="mb-2 block text-sm font-medium text-neutral-700">
-              Proof of Payment
+              Proof of payment
               <span className="ml-1 text-xs text-neutral-500">
-                (Instapay/Vodafone Cash screenshot)
+                (Instapay or Vodafone Cash screenshot)
               </span>
             </label>
 
@@ -411,7 +409,7 @@ export function RecordPayoutModal({
                     </svg>
                   </div>
                   <span className="text-sm text-neutral-600">
-                    Click to upload proof of payment
+                    Upload proof of payment
                   </span>
                   <p className="mt-1 text-xs text-neutral-400">
                     PNG, JPG up to 5MB
@@ -459,8 +457,8 @@ export function RecordPayoutModal({
 
           {/* Notes */}
           <Textarea
-            label="Notes"
-            placeholder="Optional notes (e.g., transfer reference number, payment method details)..."
+            label="Internal note (optional)"
+            placeholder="Add transfer reference, payment method, or finance context"
             error={errors.notes?.message}
             rows={3}
             {...register("notes")}
@@ -476,7 +474,7 @@ export function RecordPayoutModal({
               isLoading={createMutation.isPending || uploadingImage}
               disabled={!watchedBookingId}
             >
-              {uploadingImage ? "Uploading..." : "Create Payout Record"}
+              {uploadingImage ? "Uploading proof..." : "Create payout"}
             </Button>
           </div>
         </form>

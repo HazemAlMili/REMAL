@@ -64,7 +64,7 @@ export default function OwnerPayoutsPage() {
         },
         onError: (error: unknown) => {
           const err = error as { response?: { data?: { message?: string } } };
-          toast.error(err.response?.data?.message || "Failed to cancel payout");
+          toast.error(err.response?.data?.message || "Could not cancel payout");
         },
       }
     );
@@ -78,28 +78,33 @@ export default function OwnerPayoutsPage() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Owner Payouts</h1>
+        <div>
+          <h1 className="text-2xl font-bold">Owner payouts</h1>
+          <p className="mt-1 text-sm text-neutral-500">
+            Select an owner to schedule, mark paid, or cancel payout records.
+          </p>
+        </div>
         {canManageFinance && (
           <Button
             onClick={() => {
               if (!selectedOwnerId) {
-                toast.error("Please select an owner first");
+                toast.error("Choose an owner before creating a payout");
                 return;
               }
               setCreateModalOpen(true);
             }}
             disabled={!selectedOwnerId}
           >
-            New Payout
+            Create payout
           </Button>
         )}
       </div>
 
       <div className="max-w-md">
         <Select
-          label="Select Owner"
+          label="Owner"
           placeholder={
-            isLoadingOwners ? "Loading owners..." : "Choose an owner..."
+            isLoadingOwners ? "Loading owners..." : "Choose an owner"
           }
           options={ownerOptions}
           value={selectedOwnerId}
@@ -110,14 +115,14 @@ export default function OwnerPayoutsPage() {
       {!selectedOwnerId ? (
         <EmptyState
           title="Select an owner"
-          description="Select an owner from the list above to view and manage their payouts."
+          description="Choose an owner to review pending, scheduled, and paid payouts."
         />
       ) : (
         <div className="space-y-4">
           {payouts?.length === 0 ? (
             <EmptyState
-              title="No payouts found"
-              description="This owner does not have any payout records yet."
+              title="No matching payouts"
+              description="This owner has no payout records yet. Create a payout when a completed booking is ready to settle."
             />
           ) : (
             <PayoutsTable
@@ -159,15 +164,15 @@ export default function OwnerPayoutsPage() {
       <ConfirmDialog
         isOpen={cancelDialog.isOpen}
         onClose={() => setCancelDialog({ isOpen: false, payoutId: "" })}
-        title="Cancel Payout"
+        title="Cancel owner payout"
         onConfirm={handleCancelPayout}
         isLoading={cancelMutation.isPending}
-        confirmLabel="Cancel Payout"
+        confirmLabel="Cancel payout"
         variant="danger"
       >
         <p className="text-sm text-neutral-600">
-          Are you sure you want to cancel this payout? This action cannot be
-          undone.
+          Cancel this payout? Finance will stop tracking it as pending or
+          scheduled. This cannot be undone.
         </p>
       </ConfirmDialog>
     </div>

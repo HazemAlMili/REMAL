@@ -76,17 +76,18 @@ export default function AdminDashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight text-neutral-900">
-          Dashboard
+          Operations dashboard
         </h1>
         <p className="text-sm text-neutral-500">
-          {format(new Date(), "EEEE, d MMMM yyyy")}
+          {format(new Date(), "EEEE, d MMMM yyyy")} · Inventory, bookings,
+          revenue, and occupancy at a glance.
         </p>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         {canViewUnits && (
-          <StatCard
-            title="Total Active Units"
+            <StatCard
+              title="Active units"
             value={unitsCount ?? 0}
             icon={Building2}
             isLoading={unitsLoading}
@@ -96,13 +97,13 @@ export default function AdminDashboardPage() {
         {canViewBookings && (
           <>
             <StatCard
-              title="Open Leads"
+              title="Open leads"
               value={openLeadsCount}
               icon={Users}
               isLoading={bookingsLoading}
             />
             <StatCard
-              title="Active Bookings"
+              title="Active bookings"
               value={activeBookingsCount}
               icon={CalendarCheck}
               isLoading={bookingsLoading}
@@ -111,8 +112,8 @@ export default function AdminDashboardPage() {
         )}
 
         {canViewFinance && (
-          <StatCard
-            title="Total Revenue"
+            <StatCard
+            title="Paid revenue"
             value={formatCurrency(totalRevenue)}
             icon={DollarSign}
             isLoading={financeLoading}

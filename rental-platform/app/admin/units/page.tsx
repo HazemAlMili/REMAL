@@ -95,7 +95,7 @@ function UnitsPageContent() {
       });
       toastSuccess(newStatus ? "Unit activated" : "Unit deactivated");
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to update status");
+      toastError((e as Error)?.message || "Could not update unit status");
     } finally {
       setStatusConfirmUnit(undefined);
     }
@@ -106,8 +106,8 @@ function UnitsPageContent() {
       <div className="p-6">
         <EmptyState
           icon={<AlertCircle className="h-10 w-10 text-red-500" />}
-          title="Failed to load units"
-          description="There was an error loading the units inventory. Please try again."
+          title="Could not load units"
+          description="We could not load unit inventory. Retry the page or check your filters."
         />
       </div>
     );
@@ -126,13 +126,13 @@ function UnitsPageContent() {
             Units
           </h1>
           <p className="text-sm text-neutral-500">
-            Manage your property inventory and operations.
+            Manage rentable units, active status, availability, images, and amenities.
           </p>
         </div>
         {canManageUnits && (
           <Button onClick={() => router.push(ROUTES.admin.units.create)}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Unit
+            Create unit
           </Button>
         )}
       </div>
@@ -148,12 +148,12 @@ function UnitsPageContent() {
       ) : noUnitsAtAll ? (
         <EmptyState
           icon={<Building2 className="h-10 w-10 text-neutral-400" />}
-          title="No units yet"
-          description="You haven't added any units to your inventory."
+          title="Unit inventory is empty"
+          description="Create the first unit before adding images, amenities, seasonal pricing, or availability blocks."
           action={
             canManageUnits ? (
               <Button onClick={() => router.push(ROUTES.admin.units.create)}>
-                Add Unit
+                Create unit
               </Button>
             ) : undefined
           }
@@ -183,9 +183,15 @@ function UnitsPageContent() {
           title={
             statusConfirmUnit?.isActive ? "Deactivate Unit" : "Activate Unit"
           }
-          description={`Are you sure you want to ${
-            statusConfirmUnit?.isActive ? "deactivate" : "activate"
-          } the unit "${statusConfirmUnit?.name}"?`}
+          description={
+            statusConfirmUnit?.isActive
+              ? `Deactivate "${statusConfirmUnit?.name}"? Guests will no longer see it in the storefront.`
+              : `Activate "${statusConfirmUnit?.name}"? Guests can see it again when it is otherwise available.`
+          }
+          confirmLabel={
+            statusConfirmUnit?.isActive ? "Deactivate unit" : "Activate unit"
+          }
+          variant={statusConfirmUnit?.isActive ? "danger" : "primary"}
         />
       )}
     </div>

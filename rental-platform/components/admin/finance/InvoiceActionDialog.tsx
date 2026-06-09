@@ -35,24 +35,24 @@ export function InvoiceActionDialog({
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-neutral-900">
-              Invoice Action Required
+              Invoice needs attention
             </h3>
             <p className="mt-1 text-sm text-neutral-600">
-              Invoice <span className="font-medium">{invoiceNumber}</span> may
-              need attention.
+              Invoice <span className="font-medium">{invoiceNumber}</span> is
+              out of sync with the booking payment state.
             </p>
           </div>
         </div>
 
         <div className="mb-6 rounded-md bg-amber-50 p-3">
           <p className="text-sm text-amber-800">
-            <strong>Reason:</strong> {reason}
+            <strong>Why this matters:</strong> {reason}
           </p>
         </div>
 
         <div className="space-y-3">
           <p className="text-sm font-medium text-neutral-700">
-            What would you like to do?
+            Choose how to sync this invoice.
           </p>
 
           <div className="space-y-2">
@@ -63,9 +63,9 @@ export function InvoiceActionDialog({
               disabled={isLoading}
               isLoading={isLoading}
             >
-              Re-issue Current Invoice
+              Re-issue invoice
               <span className="ml-auto text-xs opacity-75">
-                Keep payments, new number
+                Keep payments, generate a new number
               </span>
             </Button>
 
@@ -75,9 +75,9 @@ export function InvoiceActionDialog({
               onClick={onCreateNew}
               disabled={isLoading}
             >
-              Cancel & Create New
+              Cancel and create replacement
               <span className="ml-auto text-xs opacity-75">
-                Cancel old, fresh start
+                Close this invoice, start fresh
               </span>
             </Button>
 
@@ -87,7 +87,7 @@ export function InvoiceActionDialog({
               onClick={onSkip}
               disabled={isLoading}
             >
-              Skip for Now
+              Handle later
               <span className="ml-auto text-xs opacity-75">Handle later</span>
             </Button>
           </div>
@@ -101,7 +101,7 @@ export function InvoiceActionDialog({
             disabled={isLoading}
             className="w-full"
           >
-            Cancel
+            Keep invoice unchanged
           </Button>
         </div>
       </div>

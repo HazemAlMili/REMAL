@@ -53,7 +53,7 @@ export function ClientBookingHistory({ clientId }: ClientBookingHistoryProps) {
     return (
       <div className="p-6">
         <EmptyState
-          title="No bookings yet"
+          title="No booking history"
           description="This client has no bookings."
         />
       </div>

@@ -119,13 +119,13 @@ export function MarkPayoutPaidDialog({
               response?: { data?: { message?: string } };
             };
             toast.error(
-              err.response?.data?.message || "Failed to mark as paid"
+              err.response?.data?.message || "Could not mark payout as paid"
             );
           },
         }
       );
     } catch {
-      toast.error("Failed to upload proof of payment");
+      toast.error("Could not upload proof of payment");
       setUploadingImage(false);
     }
   };
@@ -134,10 +134,10 @@ export function MarkPayoutPaidDialog({
     <ConfirmDialog
       isOpen={isOpen}
       onClose={onClose}
-      title="Mark Payout as Paid"
+      title="Mark payout as paid"
       onConfirm={handleSubmit(onSubmit)}
       isLoading={markPaidMutation.isPending || uploadingImage}
-      confirmLabel={uploadingImage ? "Uploading..." : "Confirm Paid"}
+      confirmLabel={uploadingImage ? "Uploading proof..." : "Mark payout paid"}
     >
       <form
         id="mark-paid-form"
@@ -145,15 +145,15 @@ export function MarkPayoutPaidDialog({
         className="space-y-4"
       >
         <p className="text-sm text-neutral-600">
-          Confirm that this payout has been transferred to the owner.
+          Confirm the transfer to the owner and attach proof if available.
         </p>
 
         {/* Proof of Payment Upload */}
         <div>
           <label className="mb-2 block text-sm font-medium text-neutral-700">
-            Proof of Payment
+            Proof of payment
             <span className="ml-1 text-xs text-neutral-500">
-              (Instapay/Vodafone Cash screenshot)
+              (Instapay or Vodafone Cash screenshot)
             </span>
           </label>
 
@@ -176,7 +176,7 @@ export function MarkPayoutPaidDialog({
                   </svg>
                 </div>
                 <span className="text-sm text-neutral-600">
-                  Click to upload proof
+                  Upload proof of payment
                 </span>
                 <p className="mt-1 text-xs text-neutral-400">
                   PNG, JPG up to 5MB
@@ -223,8 +223,8 @@ export function MarkPayoutPaidDialog({
         </div>
 
         <Textarea
-          label="Notes (optional)"
-          placeholder="e.g. Transferred via InstaPay ref #12345"
+          label="Internal note (optional)"
+          placeholder="Add transfer reference or payment method details"
           error={errors.notes?.message}
           rows={2}
           {...register("notes")}

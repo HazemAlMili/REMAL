@@ -39,9 +39,9 @@ export function LeadCard({ lead, className }: LeadCardProps) {
         e.dataTransfer.effectAllowed = "move";
       }}
       className={cn(
-        "bg-white rounded-lg p-3.5 shadow-sm hover:shadow-card-hover cursor-pointer",
-        "border border-neutral-100 transition-shadow duration-150 active:scale-95 active:rotate-1 opacity-100",
-        isNoAnswer && "border-l-2 border-l-warning",
+        "bg-white rounded-md p-3 cursor-pointer",
+        "border border-neutral-200 transition-colors duration-150 hover:border-neutral-300 hover:bg-neutral-50",
+        isNoAnswer && "border-warning/50",
         className
       )}
     >
@@ -73,7 +73,7 @@ export function LeadCard({ lead, className }: LeadCardProps) {
         </p>
       )}
 
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-neutral-50">
+      <div className="flex items-center justify-between mt-2 pt-2 border-t border-neutral-100">
         <Badge variant="info" size="sm">
           {BOOKING_SOURCE_LABELS[
             lead.source as keyof typeof BOOKING_SOURCE_LABELS

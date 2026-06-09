@@ -11,19 +11,19 @@ import { NotificationBell } from "./NotificationBell";
 // Map the first path segment to a section title. Read-only: derives a label
 // from the current route, it does not change any routing.
 const SECTION_TITLES: Record<string, string> = {
-  dashboard: "Dashboard",
+  dashboard: "Operations dashboard",
   analytics: "Analytics",
-  crm: "CRM",
+  crm: "Leads pipeline",
   bookings: "Bookings",
-  finance: "Finance",
+  finance: "Finance hub",
   units: "Units",
   owners: "Owners",
   clients: "Clients",
-  reviews: "Reviews",
+  reviews: "Review moderation",
   notifications: "Notifications",
-  areas: "Areas",
+  areas: "Resort areas",
   amenities: "Amenities",
-  settings: "Settings",
+  settings: "Admin settings",
 };
 
 function deriveSectionTitle(pathname: string): string {

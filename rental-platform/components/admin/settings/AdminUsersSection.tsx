@@ -42,8 +42,8 @@ export function AdminUsersSection() {
   if (isError) {
     return (
       <EmptyState
-        title="Failed to load admin users"
-        description="There was an error loading the admin users list. Please try again."
+        title="Could not load admin users"
+        description="We could not load admin users. Retry before changing access."
       />
     );
   }
@@ -61,11 +61,11 @@ export function AdminUsersSection() {
       { id: roleDialog.userId, role: newRole },
       {
         onSuccess: () => {
-          toastSuccess("Role updated successfully");
+          toastSuccess("Admin role updated");
           handleCloseRoleDialog();
         },
         onError: (error: Error) => {
-          toastError(error.message || "Failed to update role");
+          toastError(error.message || "Could not update admin role");
         },
       }
     );
@@ -88,7 +88,7 @@ export function AdminUsersSection() {
           handleCloseStatusDialog();
         },
         onError: (error: Error) => {
-          toastError(error.message || "Failed to update status");
+          toastError(error.message || "Could not update admin status");
         },
       }
     );
@@ -97,8 +97,8 @@ export function AdminUsersSection() {
   if (!canManageAdminUsers) {
     return (
       <EmptyState
-        title="Access Denied"
-        description="You do not have permission to manage admin users."
+        title="Admin user access required"
+        description="Only super admins can manage admin users and role access."
       />
     );
   }
@@ -106,10 +106,16 @@ export function AdminUsersSection() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Admin Users</h2>
+        <div>
+          <h2 className="text-lg font-semibold">Admin users</h2>
+          <p className="mt-1 text-sm text-neutral-500">
+            Create operator accounts, assign roles, and deactivate access when
+            needed.
+          </p>
+        </div>
         <Button onClick={() => setCreateModalOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
-          Create Admin User
+          Create admin user
         </Button>
       </div>
 
@@ -124,8 +130,8 @@ export function AdminUsersSection() {
         />
       ) : (
         <EmptyState
-          title="No admin users found"
-          description="There are no admin users matching your search criteria."
+          title="No admin users created"
+          description="Create the first admin user to grant portal access."
         />
       )}
 
@@ -146,17 +152,23 @@ export function AdminUsersSection() {
         isOpen={statusDialog.isOpen}
         onClose={handleCloseStatusDialog}
         title={
-          statusDialog.currentIsActive ? "Deactivate Admin" : "Activate Admin"
+          statusDialog.currentIsActive
+            ? "Deactivate admin user"
+            : "Activate admin user"
         }
         onConfirm={handleStatusConfirm}
         isLoading={toggleStatusMutation.isPending}
-        confirmLabel={statusDialog.currentIsActive ? "Deactivate" : "Activate"}
+        confirmLabel={
+          statusDialog.currentIsActive
+            ? "Deactivate admin user"
+            : "Activate admin user"
+        }
         variant={statusDialog.currentIsActive ? "danger" : "primary"}
       >
         <p className="text-sm text-neutral-600">
           {statusDialog.currentIsActive
-            ? "Are you sure you want to deactivate this admin user? They will no longer be able to log in."
-            : "Are you sure you want to activate this admin user?"}
+            ? "Deactivate this admin user? They will no longer be able to sign in."
+            : "Activate this admin user? They will be able to sign in again."}
         </p>
       </ConfirmDialog>
     </div>

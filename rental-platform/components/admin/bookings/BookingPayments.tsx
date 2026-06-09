@@ -59,12 +59,12 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
               isLoading={linkPaymentsMutation.isPending}
               leftIcon={<Link className="h-4 w-4" />}
             >
-              Fix Unlinked Payments
+              Link paid payments
             </Button>
           )}
           {canRecordPayment && (
             <Button size="sm" onClick={() => setShowRecordModal(true)}>
-              Record Payment
+              Record payment
             </Button>
           )}
         </div>
@@ -72,8 +72,8 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
 
       {hasUnlinkedPaidPayments && (
         <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3 text-xs text-yellow-700">
-          ⚠️ Some paid payments are not linked to an invoice. Click Fix Unlinked
-          Payments to resolve this issue.
+          Some paid payments are not linked to an invoice. Link paid payments
+          to keep invoice balances accurate.
         </div>
       )}
 
@@ -81,7 +81,7 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
         <EmptyState
           icon={<CreditCard className="h-12 w-12" />}
           title="No payments recorded"
-          description="Record the first payment for this booking"
+          description="Record the first payment when finance verifies a receipt for this booking."
         />
       ) : (
         <div className="space-y-2">
@@ -122,7 +122,7 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
                         markPaidMutation.variables === payment.id
                       }
                     >
-                      Mark Paid
+                      Mark paid
                     </Button>
                     <Button
                       variant="danger"
@@ -132,7 +132,7 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
                         setFailedNotes("");
                       }}
                     >
-                      Mark Failed
+                      Mark failed
                     </Button>
                     <Button
                       variant="ghost"
@@ -161,19 +161,19 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
       <Modal
         isOpen={!!failedPaymentId}
         onClose={() => setFailedPaymentId(null)}
-        title="Mark Payment as Failed"
+        title="Mark payment as failed"
         size="sm"
       >
         <div className="space-y-4 py-4">
           <p className="text-sm text-neutral-600">
-            Are you sure you want to mark this payment as failed?
+            Mark this payment as failed? The booking balance will remain open.
           </p>
           <textarea
             value={failedNotes}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               setFailedNotes(e.target.value)
             }
-            placeholder="Reason for failure (optional)"
+            placeholder="Add the failure reason"
             className="mt-2 h-16 w-full resize-none rounded-md border border-neutral-200 p-2 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
             disabled={markFailedMutation.isPending}
           />
@@ -201,7 +201,7 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
               }}
               isLoading={markFailedMutation.isPending}
             >
-              Mark Failed
+              Mark payment failed
             </Button>
           </div>
         </ModalFooter>
@@ -211,19 +211,19 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
       <Modal
         isOpen={!!cancelPaymentId}
         onClose={() => setCancelPaymentId(null)}
-        title="Cancel Payment"
+        title="Cancel payment"
         size="sm"
       >
         <div className="space-y-4 py-4">
           <p className="text-sm text-neutral-600">
-            Are you sure you want to cancel this payment?
+            Cancel this payment? It will no longer count toward the booking balance.
           </p>
           <textarea
             value={cancelNotes}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               setCancelNotes(e.target.value)
             }
-            placeholder="Cancellation reason (optional)"
+            placeholder="Add the cancellation reason"
             className="mt-2 h-16 w-full resize-none rounded-md border border-neutral-200 p-2 text-sm outline-none focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
             disabled={cancelMutation.isPending}
           />
@@ -251,7 +251,7 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
               }}
               isLoading={cancelMutation.isPending}
             >
-              Cancel Payment
+              Cancel payment
             </Button>
           </div>
         </ModalFooter>

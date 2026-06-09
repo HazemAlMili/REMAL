@@ -45,10 +45,11 @@ export default function FinanceOverviewPage() {
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Finance Overview
+            Finance hub
           </h1>
-          <p className="text-muted-foreground">
-            Financial summary and quick access to payments and owner payouts.
+          <p className="text-sm text-neutral-500">
+            Review paid amounts, open balances, invoices, and owner payout
+            activity.
           </p>
         </div>
         <DateRangePicker
@@ -60,7 +61,7 @@ export default function FinanceOverviewPage() {
 
       {isError && (
         <div className="bg-destructive/10 text-destructive flex items-center justify-between rounded-md p-4">
-          <p>Failed to load finance summary.</p>
+          <p>We could not load the finance summary. Retry to refresh the numbers.</p>
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             Retry
           </Button>
@@ -71,10 +72,10 @@ export default function FinanceOverviewPage() {
 
       <div className="mt-4 flex flex-wrap gap-4">
         <Link href={ROUTES.admin.financePayments}>
-          <Button variant="secondary">View All Payments</Button>
+          <Button variant="secondary">Open payments ledger</Button>
         </Link>
         <Link href={ROUTES.admin.financePayouts}>
-          <Button variant="secondary">Manage Owner Payouts</Button>
+          <Button variant="secondary">Manage owner payouts</Button>
         </Link>
       </div>
     </div>

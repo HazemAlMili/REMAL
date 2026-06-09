@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Plus, AlertCircle } from "lucide-react";
+import { Building2, Plus, AlertCircle } from "lucide-react";
 import { toastSuccess, toastError } from "@/lib/utils/toast";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -102,7 +102,7 @@ function OwnersPageContent() {
         newStatus === "active" ? "Owner activated" : "Owner deactivated"
       );
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to update status");
+      toastError((e as Error)?.message || "Could not update owner status");
     } finally {
       setStatusConfirmOwner(undefined);
     }
@@ -113,8 +113,8 @@ function OwnersPageContent() {
       <div className="p-6">
         <EmptyState
           icon={<AlertCircle className="h-10 w-10 text-red-500" />}
-          title="Failed to load owners"
-          description="There was an error loading the owners list. Please try again."
+          title="Could not load owners"
+          description="We could not load owner records. Retry the page or adjust your filters."
         />
       </div>
     );
@@ -133,13 +133,13 @@ function OwnersPageContent() {
             Owners
           </h1>
           <p className="text-sm text-neutral-500">
-            Manage property owners and their commission rates.
+            Manage owner profiles, commission rates, units, and payout records.
           </p>
         </div>
         {canManageOwners && (
           <Button onClick={() => router.push(ROUTES.admin.owners.create)}>
             <Plus className="mr-2 h-4 w-4" />
-            New Owner
+            Create owner
           </Button>
         )}
       </div>
@@ -154,13 +154,13 @@ function OwnersPageContent() {
         <SkeletonTable columns={6} rows={8} />
       ) : noOwnersAtAll ? (
         <EmptyState
-          icon={<div className="h-10 w-10 text-neutral-400">🏠</div>}
-          title="No owners yet"
-          description="You haven't added any owners to your inventory."
+          icon={<Building2 className="h-10 w-10 text-neutral-400" />}
+          title="Owner list is empty"
+          description="Create the first owner before assigning units or tracking payouts."
           action={
             canManageOwners ? (
               <Button onClick={() => router.push(ROUTES.admin.owners.create)}>
-                Add Owner
+                Create owner
               </Button>
             ) : undefined
           }
@@ -192,9 +192,19 @@ function OwnersPageContent() {
               ? "Deactivate Owner"
               : "Activate Owner"
           }
-          description={`Are you sure you want to ${
-            statusConfirmOwner?.status === "active" ? "deactivate" : "activate"
-          } the owner "${statusConfirmOwner?.name}"?`}
+          description={
+            statusConfirmOwner?.status === "active"
+              ? `Deactivate "${statusConfirmOwner?.name}"? They will no longer be treated as an active owner.`
+              : `Activate "${statusConfirmOwner?.name}"? They will be available for active unit and payout workflows.`
+          }
+          confirmLabel={
+            statusConfirmOwner?.status === "active"
+              ? "Deactivate owner"
+              : "Activate owner"
+          }
+          variant={
+            statusConfirmOwner?.status === "active" ? "danger" : "primary"
+          }
         />
       )}
     </div>

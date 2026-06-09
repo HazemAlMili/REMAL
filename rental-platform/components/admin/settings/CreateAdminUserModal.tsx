@@ -17,8 +17,8 @@ import type { CreateAdminUserRequest } from "@/lib/types/admin-user.types";
 import type { AxiosError } from "axios";
 
 const createAdminUserSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Valid email required"),
+  name: z.string().min(1, "Please enter the admin user's full name"),
+  email: z.string().email("Enter a valid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   role: z.enum(["SuperAdmin", "Sales", "Finance", "Tech"]),
 });
@@ -58,7 +58,7 @@ export function CreateAdminUserModal({
   const createMutation = useMutation({
     mutationFn: adminUsersService.create,
     onSuccess: () => {
-      toastSuccess("Admin user created successfully");
+      toastSuccess("Admin user created");
       queryClient.invalidateQueries({ queryKey: queryKeys.adminUsers.list() });
       reset();
       onClose();
@@ -70,13 +70,13 @@ export function CreateAdminUserModal({
         if (errorMessages.some((msg) => msg.toLowerCase().includes("email"))) {
           setError("email", {
             type: "server",
-            message: "Email already in use",
+            message: "This email is already used by another admin user",
           });
         } else {
-          setServerError(errorMessages[0] || "Failed to create admin user");
+          setServerError(errorMessages[0] || "Could not create admin user");
         }
       } else {
-        setServerError(error.message || "Failed to create admin user");
+        setServerError(error.message || "Could not create admin user");
       }
     },
   });
@@ -101,7 +101,7 @@ export function CreateAdminUserModal({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Create Admin User"
+      title="Create admin user"
       size="md"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -112,7 +112,7 @@ export function CreateAdminUserModal({
         )}
 
         <Input
-          label="Name"
+          label="Full name"
           placeholder="Full name"
           required
           error={errors.name?.message}
@@ -122,7 +122,7 @@ export function CreateAdminUserModal({
         <Input
           label="Email"
           type="email"
-          placeholder="admin@rentalplatform.com"
+          placeholder="name@remal.com"
           required
           error={errors.email?.message}
           {...register("email")}
@@ -142,7 +142,7 @@ export function CreateAdminUserModal({
           control={control}
           render={({ field }) => (
             <Select
-              label="Role"
+          label="Admin role"
               required
               error={errors.role?.message}
               options={roleOptions}
@@ -157,7 +157,7 @@ export function CreateAdminUserModal({
             Cancel
           </Button>
           <Button type="submit" isLoading={createMutation.isPending}>
-            Create Admin User
+            Create admin user
           </Button>
         </div>
       </form>

@@ -52,14 +52,14 @@ export function DataTable<T>({
     return (
       <EmptyState
         title={emptyMessage}
-        description="There is nothing to display yet."
+        description="No records to show for this view."
       />
     );
   }
 
   return (
     <div className="space-y-4">
-      <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white">
         <table className="w-full border-collapse">
           <thead className="border-b border-neutral-200 bg-neutral-50">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -72,7 +72,7 @@ export function DataTable<T>({
                     <th
                       key={header.id}
                       className={cn(
-                        "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-neutral-600",
+                        "group h-9 px-3 py-2 text-start text-xs font-semibold uppercase tracking-wide text-neutral-600",
                         isSortable &&
                           "cursor-pointer select-none transition-colors hover:bg-neutral-100"
                       )}
@@ -126,7 +126,7 @@ export function DataTable<T>({
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="px-4 py-3 text-sm text-neutral-700"
+                    className="h-[var(--portal-row-height)] px-3 py-2 text-sm text-neutral-700"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>

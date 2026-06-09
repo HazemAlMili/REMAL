@@ -30,7 +30,7 @@ export function ReviewStatusHistory({ reviewId }: ReviewStatusHistoryProps) {
   if (!history || history.length === 0) {
     return (
       <EmptyState
-        title="No status changes yet"
+        title="Status history is empty"
         icon={<Clock size={32} />}
         className="min-h-[150px]"
       />

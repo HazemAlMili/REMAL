@@ -48,11 +48,11 @@ export default function OwnerDetailPage({ params }: OwnerDetailPageProps) {
       await updateStatus({ id, status: newStatus });
       toastSuccess(
         newStatus === "active"
-          ? "Owner activated successfully"
-          : "Owner deactivated successfully"
+          ? "Owner activated"
+          : "Owner deactivated"
       );
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Failed to update owner status");
+      toastError((e as Error)?.message || "Could not update owner status");
     } finally {
       setStatusConfirmOpen(false);
     }
@@ -91,15 +91,15 @@ export default function OwnerDetailPage({ params }: OwnerDetailPageProps) {
           onClick={() => router.push(ROUTES.admin.owners.list)}
         >
           <ChevronLeft className="mr-1 h-4 w-4" />
-          Back to Owners
+          Back to owners
         </Button>
         <EmptyState
           icon={<AlertCircle className="h-10 w-10 text-red-400" />}
           title="Owner not found"
-          description="The owner you are looking for does not exist or has been removed."
+          description="This owner may have been removed, or the link may use an incorrect ID."
           action={
             <Button onClick={() => router.push(ROUTES.admin.owners.list)}>
-              Back to Owners
+              Back to owners
             </Button>
           }
         />
@@ -117,7 +117,7 @@ export default function OwnerDetailPage({ params }: OwnerDetailPageProps) {
         onClick={() => router.push(ROUTES.admin.owners.list)}
       >
         <ChevronLeft className="mr-1 h-4 w-4" />
-        Back to Owners
+        Back to owners
       </Button>
 
       {/* Header */}
@@ -134,7 +134,7 @@ export default function OwnerDetailPage({ params }: OwnerDetailPageProps) {
       {canViewFinance && (
         <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold text-neutral-700">
-            Financial Summary
+            Payout summary
           </h2>
           <OwnerFinancialSummary
             summary={
@@ -189,7 +189,7 @@ export default function OwnerDetailPage({ params }: OwnerDetailPageProps) {
               {/* Units Section (Backend Gap) */}
               <div className="mb-6">
                 <h2 className="mb-3 text-sm font-semibold text-neutral-700">
-                  Units
+                  Assigned units
                 </h2>
                 <OwnerUnitsList />
               </div>
@@ -218,9 +218,15 @@ export default function OwnerDetailPage({ params }: OwnerDetailPageProps) {
         title={
           owner.status === "active" ? "Deactivate Owner" : "Activate Owner"
         }
-        description={`Are you sure you want to ${
-          owner.status === "active" ? "deactivate" : "activate"
-        } "${owner.name}"?`}
+        description={
+          owner.status === "active"
+            ? `Deactivate "${owner.name}"? They will no longer be treated as an active owner.`
+            : `Activate "${owner.name}"? They will be available for active unit and payout workflows.`
+        }
+        confirmLabel={
+          owner.status === "active" ? "Deactivate owner" : "Activate owner"
+        }
+        variant={owner.status === "active" ? "danger" : "primary"}
         onConfirm={handleConfirmStatusChange}
         onCancel={() => setStatusConfirmOpen(false)}
       />

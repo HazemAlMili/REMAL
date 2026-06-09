@@ -17,20 +17,20 @@ import type {
 import type { CreateClientRequest } from "@/lib/types";
 
 const convertSchema = z.object({
-  clientId: z.string().min(1, "Client is required"),
-  unitId: z.string().min(1, "Unit is required"),
-  checkInDate: z.string().min(1, "Check-in date is required"),
-  checkOutDate: z.string().min(1, "Check-out date is required"),
+  clientId: z.string().min(1, "Please select a client"),
+  unitId: z.string().min(1, "Please select a unit"),
+  checkInDate: z.string().min(1, "Please enter the check-in date"),
+  checkOutDate: z.string().min(1, "Please enter the check-out date"),
   guestCount: z
-    .number({ invalid_type_error: "Guest count is required" })
-    .min(1),
+    .number({ invalid_type_error: "Please enter the guest count" })
+    .min(1, "Guest count must be at least 1"),
   internalNotes: z.string().optional(),
 });
 
 const newClientSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  phone: z.string().min(1, "Phone is required"),
-  email: z.string().email("Invalid email").optional().or(z.literal("")),
+  name: z.string().min(1, "Please enter the client name"),
+  phone: z.string().min(1, "Please enter the phone number"),
+  email: z.string().email("Enter a valid email address").optional().or(z.literal("")),
 });
 
 interface ConvertToBookingPanelProps {
@@ -109,15 +109,15 @@ export function ConvertToBookingPanel({
     return (
       <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-4">
         <h3 className="text-sm font-semibold text-amber-800">
-          Convert to Booking
+          Convert to booking
         </h3>
         <p className="text-sm text-amber-700">
           This lead must be moved to <strong>Qualified</strong> status before it
           can be converted to a booking.
         </p>
         <p className="text-xs text-amber-600">
-          Sales funnel: <strong>New</strong> → <strong>Contacted</strong> →{" "}
-          <strong>Qualified</strong> → <strong>Convert to Booking</strong>
+          Sales funnel: <strong>New</strong> to <strong>Contacted</strong> to{" "}
+          <strong>Qualified</strong> to <strong>Convert to booking</strong>
         </p>
       </div>
     );
@@ -126,7 +126,7 @@ export function ConvertToBookingPanel({
   return (
     <div className="bg-primary-50/30 space-y-4 rounded-lg border border-primary-200 p-4">
       <h3 className="text-sm font-semibold text-primary-800">
-        Convert to Booking
+        Convert to booking
       </h3>
 
       {/* Summary */}
@@ -164,8 +164,8 @@ export function ConvertToBookingPanel({
             onClick={() => setShowNewClientForm((v) => !v)}
           >
             {showNewClientForm
-              ? "▲ Hide new client form"
-              : "▼ Lead isn't a client yet? Create one"}
+              ? "Hide new client form"
+              : "Lead is not a client yet? Create one"}
           </button>
         </div>
 
@@ -173,17 +173,17 @@ export function ConvertToBookingPanel({
         {showNewClientForm && (
           <div className="space-y-3 rounded-md border border-neutral-200 bg-white p-3">
             <p className="text-xs font-medium text-neutral-600">
-              Create client — the ID will be filled in automatically
+              Create a client and fill the client ID automatically.
             </p>
             <Input
-              label="Full Name"
+              label="Full name"
               {...registerClient("name")}
               error={clientErrors.name?.message}
               required
               disabled={createClientMutation.isPending}
             />
             <Input
-              label="Phone"
+              label="Phone number"
               {...registerClient("phone")}
               error={clientErrors.phone?.message}
               required
@@ -204,7 +204,7 @@ export function ConvertToBookingPanel({
               disabled={createClientMutation.isPending}
               onClick={handleClientSubmit(onCreateClient)}
             >
-              Create Client
+              Create client
             </Button>
           </div>
         )}
@@ -218,7 +218,7 @@ export function ConvertToBookingPanel({
         />
         <div className="grid grid-cols-2 gap-3">
           <Input
-            label="Check-in Date"
+            label="Check-in date"
             type="date"
             {...register("checkInDate")}
             error={errors.checkInDate?.message}
@@ -226,7 +226,7 @@ export function ConvertToBookingPanel({
             disabled={convertMutation.isPending}
           />
           <Input
-            label="Check-out Date"
+            label="Check-out date"
             type="date"
             {...register("checkOutDate")}
             error={errors.checkOutDate?.message}
@@ -235,7 +235,7 @@ export function ConvertToBookingPanel({
           />
         </div>
         <Input
-          label="Guest Count"
+          label="Guest count"
           type="number"
           {...register("guestCount", { valueAsNumber: true })}
           error={errors.guestCount?.message}
@@ -245,7 +245,7 @@ export function ConvertToBookingPanel({
         <div className="w-full">
           <textarea
             {...register("internalNotes")}
-            placeholder="Internal notes (optional)"
+            placeholder="Add booking context for operations or finance"
             className="h-20 w-full resize-none rounded-md border border-neutral-200 p-2 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:text-neutral-400"
             disabled={convertMutation.isPending}
           />
@@ -258,7 +258,7 @@ export function ConvertToBookingPanel({
             disabled={convertMutation.isPending}
             className="w-full"
           >
-            Convert to Booking
+            Convert lead to booking
           </Button>
         )}
       </form>

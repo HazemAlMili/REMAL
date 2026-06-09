@@ -34,50 +34,69 @@ export function PayoutsTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border bg-white">
+    <div className="overflow-x-auto rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white">
       <table className="w-full text-sm">
-        <thead className="bg-neutral-50 text-left text-neutral-500">
+        <thead className="border-b border-neutral-200 bg-neutral-50 text-start text-neutral-600">
           <tr>
-            <th className="p-3 font-medium">Booking</th>
-            <th className="p-3 font-medium">Gross Amount</th>
-            <th className="p-3 font-medium">Commission</th>
-            <th className="p-3 font-medium">Payout Amount</th>
-            <th className="p-3 font-medium">Status</th>
-            <th className="p-3 font-medium">Scheduled</th>
-            <th className="p-3 font-medium">Paid At</th>
-            <th className="p-3 font-medium">Actions</th>
+            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+              Booking
+            </th>
+            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+              Gross amount
+            </th>
+            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+              Commission
+            </th>
+            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+              Payout amount
+            </th>
+            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+              Status
+            </th>
+            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+              Scheduled
+            </th>
+            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+              Paid at
+            </th>
+            <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+              Actions
+            </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-neutral-200">
+        <tbody className="divide-y divide-neutral-100">
           {payouts.map((payout) => (
-            <tr key={payout.id} className="hover:bg-neutral-50">
-              <td className="p-3 font-mono text-neutral-600">
-                {payout.bookingId.slice(0, 8)}â€¦
+            <tr
+              key={payout.id}
+              className="transition-colors hover:bg-neutral-50"
+            >
+              <td className="h-[var(--portal-row-height)] px-3 py-2 font-mono text-neutral-600">
+                {payout.bookingId.slice(0, 8)}...
               </td>
-              <td className="p-3">
+              <td className="h-[var(--portal-row-height)] px-3 py-2">
                 {formatCurrency(payout.grossBookingAmount)}
               </td>
-              <td className="p-3 text-neutral-600">
+              <td className="h-[var(--portal-row-height)] px-3 py-2 text-neutral-600">
                 {Math.round(payout.commissionRate)}% (
                 {formatCurrency(payout.commissionAmount)})
               </td>
-              <td className="p-3 font-medium text-neutral-900">
+              <td className="h-[var(--portal-row-height)] px-3 py-2 font-medium text-neutral-900">
                 {formatCurrency(payout.payoutAmount)}
               </td>
-              <td className="p-3">
+              <td className="h-[var(--portal-row-height)] px-3 py-2">
                 <StatusBadge
                   status={payout.payoutStatus}
                   colorMap={PAYOUT_STATUS_COLORS}
                   labelMap={PAYOUT_STATUS_LABELS}
                 />
               </td>
-              <td className="p-3 text-neutral-500">
-                {payout.scheduledAt ? formatDate(payout.scheduledAt) : "â€”"}
+              <td className="h-[var(--portal-row-height)] px-3 py-2 text-neutral-500">
+                {payout.scheduledAt ? formatDate(payout.scheduledAt) : "-"}
               </td>
-              <td className="p-3 text-neutral-500">
-                {payout.paidAt ? formatDate(payout.paidAt) : "â€”"}
+              <td className="h-[var(--portal-row-height)] px-3 py-2 text-neutral-500">
+                {payout.paidAt ? formatDate(payout.paidAt) : "-"}
               </td>
-              <td className="p-3">
+              <td className="h-[var(--portal-row-height)] px-3 py-2">
                 <PayoutActions
                   payout={payout}
                   onSchedule={onSchedule}
@@ -120,7 +139,7 @@ function PayoutActions({
             variant="primary"
             onClick={() => onMarkPaid(payout.id)}
           >
-            Mark Paid
+            Mark paid
           </Button>
           <Button
             size="sm"
@@ -139,7 +158,7 @@ function PayoutActions({
             variant="primary"
             onClick={() => onMarkPaid(payout.id)}
           >
-            Mark Paid
+            Mark paid
           </Button>
           <Button
             size="sm"
@@ -153,7 +172,7 @@ function PayoutActions({
     case "Paid":
       return <span className="text-xs text-neutral-400">Completed</span>;
     case "Cancelled":
-      return <span className="text-xs text-neutral-400">â€”</span>;
+      return <span className="text-xs text-neutral-400">-</span>;
     default:
       return null;
   }

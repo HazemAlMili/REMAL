@@ -63,16 +63,18 @@ export function NoteItem({
   };
 
   return (
-    <div className="rounded-lg border border-neutral-100 bg-neutral-50 p-4">
+    <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-neutral-50 p-3">
       {/* Header: author + timestamp + actions */}
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold uppercase text-neutral-600">
             {avatarInitial}
           </div>
-          <span className="text-xs font-medium text-neutral-700">{displayName}</span>
+          <span className="text-xs font-medium text-neutral-700">
+            {displayName}
+          </span>
           <span className="text-[11px] text-neutral-400">
-            â€¢ {formatRelativeTime(note.createdAt)}
+            - {formatRelativeTime(note.createdAt)}
           </span>
         </div>
         <div className="flex gap-1">
@@ -81,7 +83,7 @@ export function NoteItem({
               variant="ghost"
               size="sm"
               onClick={onEditClick}
-              className="h-6 px-2 text-[11px]"
+              className="h-7 px-2 text-[11px]"
             >
               Edit
             </Button>
@@ -91,7 +93,7 @@ export function NoteItem({
               variant="ghost"
               size="sm"
               onClick={() => setShowDeleteConfirm(true)}
-              className="hover:bg-error/10 h-6 px-2 text-[11px] text-error hover:text-error"
+              className="h-7 px-2 text-[11px] text-error hover:bg-error-bg hover:text-error"
             >
               Delete
             </Button>
@@ -139,8 +141,10 @@ export function NoteItem({
           isOpen={showDeleteConfirm}
           onCancel={() => setShowDeleteConfirm(false)}
           onConfirm={handleDelete}
-          title="Delete Note"
-          description="Are you sure you want to delete this note? This action cannot be undone."
+          title="Delete lead note"
+          description="Delete this note? This cannot be undone."
+          confirmLabel="Delete note"
+          variant="danger"
         />
       )}
     </div>

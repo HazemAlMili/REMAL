@@ -18,7 +18,7 @@ export function RevenueTable({ data, isLoading }: RevenueTableProps) {
   if (!data || data.length === 0) {
     return (
       <EmptyState
-        title="No data"
+        title="Revenue rows are not available"
         description="No revenue data for the selected period."
       />
     );

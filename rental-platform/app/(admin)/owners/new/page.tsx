@@ -14,8 +14,8 @@ export default function CreateOwnerPage() {
       <div className="p-6">
         <EmptyState
           icon={<AlertCircle className="h-10 w-10 text-red-500" />}
-          title="Access Denied"
-          description="You do not have permission to create owners. This feature is restricted to SuperAdmin users."
+          title="Owner creation access required"
+          description="Only super admins can create owner profiles."
         />
       </div>
     );
@@ -25,10 +25,10 @@ export default function CreateOwnerPage() {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="font-display text-2xl font-bold tracking-tight text-neutral-900">
-          Create Owner
+          Create owner
         </h1>
         <p className="text-sm text-neutral-500">
-          Add a new property owner to the system.
+          Add an owner profile before assigning units, commission rates, or payouts.
         </p>
       </div>
 

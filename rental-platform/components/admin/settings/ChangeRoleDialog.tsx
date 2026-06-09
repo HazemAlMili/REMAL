@@ -40,17 +40,17 @@ export function ChangeRoleDialog({
     <ConfirmDialog
       isOpen={isOpen}
       onClose={onClose}
-      title="Change Admin Role"
+      title="Change admin role"
       onConfirm={() => onConfirm(selectedRole)}
       isLoading={isLoading}
-      confirmLabel="Change Role"
+      confirmLabel="Change role"
     >
       <div className="space-y-3">
         <p className="text-sm text-neutral-600">
           Current role: <strong>{roleLabels[currentRole]}</strong>
         </p>
         <Select
-          label="New Role"
+          label="New role"
           options={ROLE_OPTIONS}
           value={selectedRole}
           onChange={(value) => setSelectedRole(value as AdminRole)}

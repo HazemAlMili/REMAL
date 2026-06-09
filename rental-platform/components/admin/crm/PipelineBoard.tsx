@@ -34,8 +34,8 @@ export default function PipelineBoard() {
     return (
       <EmptyState
         icon={<AlertCircle className="h-8 w-8 text-red-500" />}
-        title="Could not load pipeline"
-        description="There was a problem retrieving the CRM leads."
+        title="Could not load leads"
+        description="We could not reach the leads pipeline. Retry to refresh the board."
         action={
           <Button onClick={() => refetch()} variant="outline">
             Retry
@@ -49,8 +49,8 @@ export default function PipelineBoard() {
     return (
       <EmptyState
         icon={<Users className="h-8 w-8 text-neutral-400" />}
-        title="No leads yet"
-        description="Leads appear here when clients submit booking requests"
+        title="Pipeline is empty"
+        description="New client enquiries will appear here when they submit a booking request."
       />
     );
   }
@@ -97,7 +97,7 @@ export default function PipelineBoard() {
             ) : (
               <ChevronDown className="h-4 w-4" />
             )}
-            Show Closed ({closedLeadsCount})
+            {isClosedSectionOpen ? "Hide closed leads" : "Show closed leads"} ({closedLeadsCount})
           </button>
 
           {isClosedSectionOpen && (

@@ -1,6 +1,7 @@
 "use client";
 
 import { UnitDetailsResponse, UnitType } from "@/lib/types";
+import { formatCurrency } from "@/lib/utils/format";
 
 const UNIT_TYPE_LABELS: Record<UnitType, string> = {
   villa: "Villa",
@@ -34,12 +35,12 @@ export function UnitOverviewTab({ unit }: UnitOverviewTabProps) {
       {/* Core identity */}
       <section>
         <h2 className="mb-4 text-sm font-semibold text-neutral-700">
-          Core Details
+          Core details
         </h2>
         <dl className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
-          <OverviewField label="Unit Name" value={unit.name} />
+          <OverviewField label="Unit name" value={unit.name} />
           <OverviewField
-            label="Unit Type"
+            label="Unit type"
             value={UNIT_TYPE_LABELS[unit.unitType] ?? unit.unitType}
           />
           <OverviewField
@@ -49,10 +50,8 @@ export function UnitOverviewTab({ unit }: UnitOverviewTabProps) {
           <OverviewField label="Owner ID" value={unit.ownerId} />
           <OverviewField label="Area ID" value={unit.areaId} />
           <OverviewField
-            label="Base Price / Night"
-            value={`SAR ${new Intl.NumberFormat("en-US").format(
-              unit.basePricePerNight
-            )}`}
+            label="Base price/night"
+            value={formatCurrency(unit.basePricePerNight)}
           />
         </dl>
       </section>
@@ -65,7 +64,7 @@ export function UnitOverviewTab({ unit }: UnitOverviewTabProps) {
         <dl className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-3">
           <OverviewField label="Bedrooms" value={unit.bedrooms} />
           <OverviewField label="Bathrooms" value={unit.bathrooms} />
-          <OverviewField label="Max Guests" value={unit.maxGuests} />
+          <OverviewField label="Max guests" value={unit.maxGuests} />
         </dl>
       </section>
 
@@ -96,15 +95,15 @@ export function UnitOverviewTab({ unit }: UnitOverviewTabProps) {
       {/* Timestamps */}
       <section>
         <h2 className="mb-4 text-sm font-semibold text-neutral-700">
-          Record Info
+          Record info
         </h2>
         <dl className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
           <OverviewField
-            label="Created At"
+            label="Created at"
             value={new Date(unit.createdAt).toLocaleString()}
           />
           <OverviewField
-            label="Last Updated"
+            label="Last updated"
             value={new Date(unit.updatedAt).toLocaleString()}
           />
         </dl>

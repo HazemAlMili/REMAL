@@ -22,7 +22,7 @@ export function BookingsAnalyticsTable({
   if (!data || data.length === 0) {
     return (
       <EmptyState
-        title="No data"
+        title="Booking rows are not available"
         description="No bookings data for the selected period."
       />
     );

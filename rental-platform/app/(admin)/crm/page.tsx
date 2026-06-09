@@ -34,11 +34,20 @@ export default function CrmPage() {
   return (
     <div className="flex h-full flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-neutral-800">CRM Pipeline</h1>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
+            Leads pipeline
+          </h1>
+          <p className="mt-1 text-sm text-neutral-500">
+            Move client enquiries through sales stages and capture the next
+            action for each lead.
+          </p>
+        </div>
         {canManageCRM && (
-          <Button onClick={() => setIsModalOpen(true)}>New Lead</Button>
+          <Button onClick={() => setIsModalOpen(true)}>Create lead</Button>
         )}
       </div>
+
       <PipelineBoard />
 
       <CreateLeadModal

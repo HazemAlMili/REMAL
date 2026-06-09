@@ -138,7 +138,7 @@ export function UnitForm({
           )}
 
           <Input
-            label="Unit Name"
+            label="Unit name"
             {...register("name")}
             error={errors.name?.message}
             disabled={isLoading}
@@ -150,7 +150,7 @@ export function UnitForm({
             name="unitType"
             render={({ field }) => (
               <Select
-                label="Unit Type"
+                label="Unit type"
                 options={[
                   { label: "Villa", value: "villa" },
                   { label: "Chalet", value: "chalet" },
@@ -187,7 +187,7 @@ export function UnitForm({
           />
 
           <Input
-            label="Max Guests"
+            label="Max guests"
             type="number"
             {...register("maxGuests")}
             error={errors.maxGuests?.message}
@@ -196,7 +196,7 @@ export function UnitForm({
           />
 
           <Input
-            label="Base Price / Night (SAR)"
+            label="Base price/night (EGP)"
             type="number"
             {...register("basePricePerNight")}
             error={errors.basePricePerNight?.message}
@@ -208,7 +208,7 @@ export function UnitForm({
 
       <div className="space-y-4">
         <Input
-          label="Address (Optional)"
+          label="Address (optional)"
           {...register("address")}
           error={errors.address?.message}
           disabled={isLoading}
@@ -216,7 +216,7 @@ export function UnitForm({
         />
 
         <Textarea
-          label="Description (Optional)"
+          label="Description (optional)"
           {...register("description")}
           error={errors.description?.message}
           disabled={isLoading}
@@ -236,7 +236,7 @@ export function UnitForm({
             htmlFor="isActive"
             className="text-sm font-medium text-neutral-700"
           >
-            Active Status (Visible to users)
+            Active status (visible to users)
           </label>
         </div>
       </div>
@@ -246,10 +246,10 @@ export function UnitForm({
           {isLoading
             ? mode === "edit"
               ? "Saving..."
-              : "Creating Unit..."
+              : "Creating unit..."
             : mode === "edit"
-              ? "Save Changes"
-              : "Create Unit"}
+              ? "Save changes"
+              : "Create unit"}
         </Button>
       </div>
     </form>

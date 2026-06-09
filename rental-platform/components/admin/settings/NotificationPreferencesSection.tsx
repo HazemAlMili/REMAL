@@ -78,11 +78,11 @@ export function NotificationPreferencesSection() {
       {
         onSuccess: () => {
           setTogglingKey(null);
-          toast.success("Preference updated");
+          toast.success("Notification preference updated");
         },
         onError: () => {
           setTogglingKey(null);
-          toast.error("Could not update preference");
+          toast.error("Could not update notification preference");
           // Query invalidation will refetch and revert the UI to the correct state
         },
       }
@@ -94,9 +94,12 @@ export function NotificationPreferencesSection() {
     return (
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-neutral-800">
-          Notification Preferences
+          Notification preferences
         </h2>
-        <Skeleton height={200} className="rounded-lg" />
+        <Skeleton
+          height={200}
+          className="rounded-[var(--portal-radius-card)]"
+        />
       </div>
     );
   }
@@ -106,11 +109,11 @@ export function NotificationPreferencesSection() {
     return (
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-neutral-800">
-          Notification Preferences
+          Notification preferences
         </h2>
         <EmptyState
           title="Could not load notification preferences"
-          description="There was a problem fetching your preferences."
+          description="We could not load your notification preferences. Retry before changing channels."
           action={
             <Button variant="outline" onClick={() => window.location.reload()}>
               Retry
@@ -126,11 +129,11 @@ export function NotificationPreferencesSection() {
     return (
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-neutral-800">
-          Notification Preferences
+          Notification preferences
         </h2>
         <EmptyState
           title="No notification preferences available"
-          description="Notification preferences will appear here when configured."
+          description="Preference options will appear here when the backend provides them."
         />
       </div>
     );
@@ -140,24 +143,25 @@ export function NotificationPreferencesSection() {
     <div className="space-y-4">
       <div>
         <h2 className="text-lg font-semibold text-neutral-800">
-          Notification Preferences
+          Notification preferences
         </h2>
         <p className="mt-1 text-sm text-neutral-500">
-          Control which notifications you receive and via which channel.
+          Choose which admin notifications you receive and which channels they
+          use.
         </p>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b border-neutral-200">
-              <th className="px-4 py-3 text-left text-sm font-medium text-neutral-600">
-                Notification Type
+            <tr className="border-b border-neutral-200 bg-neutral-50">
+              <th className="px-3 py-2 text-start text-xs font-semibold uppercase tracking-wide text-neutral-600">
+                Notification type
               </th>
               {CHANNELS.map((channel) => (
                 <th
                   key={channel}
-                  className="px-4 py-3 text-center text-sm font-medium text-neutral-600"
+                  className="px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-neutral-600"
                 >
                   {NOTIFICATION_CHANNEL_LABELS[channel]}
                 </th>
@@ -168,9 +172,9 @@ export function NotificationPreferencesSection() {
             {preferenceKeys.map((key) => (
               <tr
                 key={key}
-                className="border-b border-neutral-100 hover:bg-neutral-50"
+                className="border-b border-neutral-100 transition-colors last:border-b-0 hover:bg-neutral-50"
               >
-                <td className="px-4 py-3 text-sm text-neutral-700">
+                <td className="h-[var(--portal-row-height)] px-3 py-2 text-sm text-neutral-700">
                   {formatPreferenceKey(key)}
                 </td>
                 {CHANNELS.map((channel) => {
@@ -179,8 +183,12 @@ export function NotificationPreferencesSection() {
                   const isToggling = togglingKey === toggleId;
 
                   return (
-                    <td key={channel} className="px-4 py-3 text-center">
+                    <td
+                      key={channel}
+                      className="h-[var(--portal-row-height)] px-3 py-2 text-center"
+                    >
                       <button
+                        type="button"
                         onClick={() => handleToggle(key, channel, isEnabled)}
                         disabled={isToggling}
                         className={`
@@ -193,7 +201,7 @@ export function NotificationPreferencesSection() {
                         <span
                           className={`
                             inline-block h-4 w-4 transform rounded-full bg-white transition-transform
-                            ${isEnabled ? "translate-x-6" : "translate-x-1"}
+                            ${isEnabled ? "translate-x-6 rtl:-translate-x-6" : "translate-x-1 rtl:-translate-x-1"}
                           `}
                         />
                       </button>

@@ -42,7 +42,7 @@ export const Select = forwardRef<
             className="mb-1.5 block text-sm font-medium text-neutral-700"
           >
             {label}
-            {props.required && <span className="ml-1 text-error">*</span>}
+            {props.required && <span className="ms-1 text-error">*</span>}
           </label>
         )}
 
@@ -51,8 +51,7 @@ export const Select = forwardRef<
           id={id}
           onChange={handleChange}
           className={cn(
-            "w-full rounded-lg border bg-white text-sm text-neutral-800",
-            "h-10 px-3.5",
+            "h-[var(--portal-control-height)] w-full rounded-[var(--portal-radius-control)] border bg-white px-3.5 text-sm text-neutral-800",
             "transition-colors duration-150",
             "focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500",
             "disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:text-neutral-400",

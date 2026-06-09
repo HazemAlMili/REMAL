@@ -42,7 +42,7 @@ const variantClasses: Record<ButtonVariant, string> = {
 
 const sizeClasses: Record<ButtonSize, string> = {
   sm: "h-8  px-3  text-xs  gap-1.5",
-  md: "h-10 px-4  text-sm  gap-2",
+  md: "h-[var(--portal-control-height)] px-4  text-sm  gap-2",
   lg: "h-12 px-6  text-base gap-2.5",
 };
 
@@ -67,10 +67,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          "inline-flex items-center justify-center rounded-lg font-medium",
+          "inline-flex items-center justify-center rounded-[var(--portal-radius-control)] font-medium",
           "transition-colors duration-150 ease-out-quart",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2",
-          "disabled:cursor-not-allowed",
+          "disabled:cursor-not-allowed disabled:opacity-60",
           variantClasses[variant],
           sizeClasses[size],
           fullWidth && "w-full",
