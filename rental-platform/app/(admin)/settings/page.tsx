@@ -5,12 +5,12 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1 className="font-display text-2xl font-bold tracking-tight text-neutral-900">
+        <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
           Admin settings
         </h1>
         <p className="text-sm text-neutral-500">
-          Manage admin users, role access, active status, and your notification
-          preferences.
+          Manage who runs Remal: operator accounts, role access, and how you
+          hear about activity.
         </p>
       </div>
 

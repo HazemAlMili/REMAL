@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Plus, AlertCircle, Building2 } from "lucide-react";
+import { Plus, AlertCircle, Building2, ShieldAlert } from "lucide-react";
 import { toastSuccess, toastError } from "@/lib/utils/toast";
+import { ApiError } from "@/lib/api/api-error";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { SkeletonTable } from "@/components/ui/SkeletonTable";
@@ -57,6 +58,7 @@ function UnitsPageContent() {
     data: paginatedUnits,
     isLoading,
     isError,
+    error,
   } = useInternalUnitsList(filters);
   const { mutateAsync: updateStatus } = useUpdateUnitStatus();
 
@@ -102,12 +104,23 @@ function UnitsPageContent() {
   };
 
   if (isError) {
+    const isForbidden = error instanceof ApiError && error.status === 403;
     return (
       <div className="p-6">
         <EmptyState
-          icon={<AlertCircle className="h-10 w-10 text-red-500" />}
-          title="Could not load units"
-          description="We could not load unit inventory. Retry the page or check your filters."
+          icon={
+            isForbidden ? (
+              <ShieldAlert className="h-10 w-10 text-neutral-400" />
+            ) : (
+              <AlertCircle className="h-10 w-10 text-red-500" />
+            )
+          }
+          title={isForbidden ? "Access restricted" : "Could not load units"}
+          description={
+            isForbidden
+              ? "Your signed-in account does not have access to unit inventory. Switch to an account with unit access, or ask a super admin to grant it."
+              : "We could not load unit inventory. Retry the page or check your filters."
+          }
         />
       </div>
     );

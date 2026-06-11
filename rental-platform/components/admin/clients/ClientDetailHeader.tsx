@@ -20,9 +20,12 @@ export function ClientDetailHeader({ client }: ClientDetailHeaderProps) {
     <div className="space-y-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold">{client.name}</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-neutral-900">
+            {client.name}
+          </h1>
           <StatusBadge
             status={client.isActive ? "active" : "inactive"}
+            label={client.isActive ? "Active" : "Inactive"}
             colorMap={{ active: "success", inactive: "neutral" }}
           />
         </div>

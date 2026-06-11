@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useState } from 'react'
+import { ApiError } from '@/lib/api/api-error'
 
 interface Props {
   children: React.ReactNode
@@ -16,7 +17,18 @@ export default function QueryProvider({ children }: Props) {
           queries: {
             staleTime: 1000 * 60 * 2,    // 2 minutes
             gcTime: 1000 * 60 * 10,      // 10 minutes
-            retry: 1,
+            // 4xx responses (403 forbidden, 404 not found, …) are deterministic;
+            // retrying them just duplicates the failed request and console noise.
+            retry: (failureCount, error) => {
+              if (
+                error instanceof ApiError &&
+                error.status >= 400 &&
+                error.status < 500
+              ) {
+                return false
+              }
+              return failureCount < 1
+            },
             refetchOnWindowFocus: false,
             refetchOnReconnect: true,
           },

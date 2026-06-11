@@ -70,13 +70,17 @@ export function ClientBookingHistory({ clientId }: ClientBookingHistoryProps) {
     <div className="space-y-4">
       {/* Summary stats */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-lg bg-neutral-50 p-4">
+        <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-4">
           <span className="text-sm text-neutral-500">Total Bookings</span>
-          <p className="text-2xl font-bold">{bookings.length}</p>
+          <p className="text-[22px] font-semibold tabular-nums text-neutral-900">
+            {bookings.length}
+          </p>
         </div>
-        <div className="rounded-lg bg-neutral-50 p-4">
+        <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-4">
           <span className="text-sm text-neutral-500">Total Spent</span>
-          <p className="text-2xl font-bold">{formatCurrency(totalSpent)}</p>
+          <p className="text-[22px] font-semibold tabular-nums text-neutral-900">
+            {formatCurrency(totalSpent)}
+          </p>
         </div>
       </div>
 
@@ -84,43 +88,46 @@ export function ClientBookingHistory({ clientId }: ClientBookingHistoryProps) {
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b text-left text-sm text-neutral-500">
-              <th className="p-3">Unit</th>
-              <th className="p-3">Check-in</th>
-              <th className="p-3">Check-out</th>
-              <th className="p-3">Nights</th>
-              <th className="p-3">Total</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Booked On</th>
+            <tr className="border-b border-neutral-200">
+              <th className="px-3 py-2 text-start text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Unit</th>
+              <th className="px-3 py-2 text-start text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Check-in</th>
+              <th className="px-3 py-2 text-start text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Check-out</th>
+              <th className="px-3 py-2 text-start text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Nights</th>
+              <th className="px-3 py-2 text-start text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Total</th>
+              <th className="px-3 py-2 text-start text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Status</th>
+              <th className="px-3 py-2 text-start text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Booked On</th>
             </tr>
           </thead>
           <tbody>
             {bookings.map((booking) => (
-              <tr key={booking.id} className="border-b hover:bg-neutral-50">
-                <td className="p-3 text-sm">
+              <tr
+                key={booking.id}
+                className="border-b border-neutral-100 hover:bg-neutral-50"
+              >
+                <td className="px-3 py-2.5 text-sm">
                   <Link
                     href={`${ROUTES.admin.bookings.detail(booking.id)}`}
-                    className="font-medium text-blue-600 hover:underline"
+                    className="font-medium text-neutral-700 hover:text-primary-600 hover:underline"
                   >
                     {booking.unitName ?? `${booking.unitId.slice(0, 8)}...`}
                   </Link>
                 </td>
-                <td className="p-3 text-sm">
+                <td className="px-3 py-2.5 text-sm tabular-nums">
                   {formatDate(booking.checkInDate)}
                 </td>
-                <td className="p-3 text-sm">
+                <td className="px-3 py-2.5 text-sm tabular-nums">
                   {formatDate(booking.checkOutDate)}
                 </td>
-                <td className="p-3 text-sm">
+                <td className="px-3 py-2.5 text-sm tabular-nums">
                   {getNights(booking.checkInDate, booking.checkOutDate)}
                 </td>
-                <td className="p-3 text-sm font-medium">
+                <td className="px-3 py-2.5 text-sm font-medium tabular-nums">
                   {formatCurrency(booking.finalAmount)}
                 </td>
-                <td className="p-3">
+                <td className="px-3 py-2.5">
                   <StatusBadge status={booking.bookingStatus} />
                 </td>
-                <td className="p-3 text-sm text-neutral-500">
+                <td className="px-3 py-2.5 text-sm tabular-nums text-neutral-500">
                   {formatDate(booking.createdAt)}
                 </td>
               </tr>

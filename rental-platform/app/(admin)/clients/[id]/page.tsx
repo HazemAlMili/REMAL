@@ -55,12 +55,16 @@ export default function ClientDetailPage({
 
   return (
     <div className="space-y-6">
-      <ClientDetailHeader client={client} />
+      <section className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-6">
+        <ClientDetailHeader client={client} />
+      </section>
 
-      <div className="space-y-2">
-        <h2 className="text-lg font-semibold">Booking history</h2>
+      <section className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-6">
+        <h2 className="mb-4 text-base font-semibold tracking-tight text-neutral-900">
+          Booking history
+        </h2>
         <ClientBookingHistory clientId={client.id} />
-      </div>
+      </section>
     </div>
   );
 }

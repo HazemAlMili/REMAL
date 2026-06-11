@@ -73,21 +73,26 @@ export default function AreasPage() {
     <div className="space-y-6">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Resort areas</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
+            Resort areas
+          </h1>
           <p className="text-sm text-neutral-500">
             Manage the North Coast areas used for unit setup and client search.
           </p>
         </div>
 
         {canManageAreas && (
-          <Button onClick={handleCreate} className="w-full sm:w-auto">
-            <Plus className="mr-2 h-4 w-4" />
+          <Button
+            onClick={handleCreate}
+            className="w-full sm:w-auto"
+            leftIcon={<Plus className="h-4 w-4" />}
+          >
             Create area
           </Button>
         )}
       </div>
 
-      <div className="mt-8">
+      <div>
         {isLoading ? (
           <SkeletonTable rows={5} columns={5} />
         ) : areas && areas.length > 0 ? (
@@ -103,8 +108,11 @@ export default function AreasPage() {
             description="Create an area before assigning units to a resort or zone."
             action={
               canManageAreas ? (
-                <Button onClick={handleCreate}>
-                  <Plus className="mr-2 h-4 w-4" /> Create area
+                <Button
+                  onClick={handleCreate}
+                  leftIcon={<Plus className="h-4 w-4" />}
+                >
+                  Create area
                 </Button>
               ) : undefined
             }

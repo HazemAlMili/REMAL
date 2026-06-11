@@ -113,8 +113,10 @@ export function AdminUsersSection() {
             needed.
           </p>
         </div>
-        <Button onClick={() => setCreateModalOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
+        <Button
+          onClick={() => setCreateModalOpen(true)}
+          leftIcon={<Plus className="h-4 w-4" />}
+        >
           Create admin user
         </Button>
       </div>

@@ -68,12 +68,12 @@ export function AdminUserTable({
             return (
               <tr
                 key={adminUser.id}
-                className={`transition-colors hover:bg-neutral-50 ${!adminUser.isActive ? "bg-neutral-50 text-neutral-500" : ""}`}
+                className={`transition-colors hover:bg-neutral-50 ${!adminUser.isActive ? "bg-neutral-50 text-neutral-500" : ""} ${isSelf ? "bg-primary-500/10" : ""}`}
               >
                 <td className="h-[var(--portal-row-height)] px-3 py-2 align-middle font-medium text-neutral-900">
                   {adminUser.name}
                   {isSelf && (
-                    <span className="ms-2 text-xs font-medium text-info">
+                    <span className="ms-2 inline-flex items-center rounded-full bg-primary-100 px-2 py-px text-xs font-semibold text-primary-700">
                       (you)
                     </span>
                   )}
