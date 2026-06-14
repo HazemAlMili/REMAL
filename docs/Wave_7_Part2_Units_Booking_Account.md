@@ -617,7 +617,7 @@ The client's booking history at `/account/bookings` — all their past and upcom
 
 - [ ] `app/(public)/account/bookings/page.tsx`
 - [ ] List of client's bookings
-  - **Backend gap:** No documented `GET /api/client/bookings` (or equivalent client-scoped bookings list) in `REMAL_API_Reference.md`.
+  - **Backend gap:** No documented `GET /api/client/bookings` (or equivalent client-scoped bookings list) in `KAZA_BOOKING_API_Reference.md`.
   - Do NOT use internal admin endpoints as a fallback in the client account.
   - Keep booking-history integration blocked until backend provides a documented client endpoint.
 - [ ] Columns: Unit, Check-in, Check-out, Nights, Total Amount, Status badge, Actions

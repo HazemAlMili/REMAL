@@ -26,51 +26,51 @@ Compacted conversation
 
 Starting: *Read entities & configurations* (2/5)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Entities/Payment.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Entities/Payment.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Entities/InvoiceItem.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Entities/InvoiceItem.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Entities/Invoice.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Entities/Invoice.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Entities/OwnerPayout.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Entities/OwnerPayout.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Configurations/InvoiceConfiguration.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Configurations/InvoiceConfiguration.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Configurations/InvoiceItemConfiguration.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Configurations/InvoiceItemConfiguration.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Configurations/PaymentConfiguration.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Configurations/PaymentConfiguration.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Configurations/OwnerPayoutConfiguration.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Configurations/OwnerPayoutConfiguration.cs)
 
 Starting: *Read AppDbContext & UnitOfWork* (3/5)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/IUnitOfWork.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/IUnitOfWork.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/AppDbContext.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/AppDbContext.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/UnitOfWork.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/UnitOfWork.cs)
 
 Starting: *Read DB migrations (Tier 1 contracts)* (4/5)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0022_create_payments.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0022_create_payments.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0023_create_invoices.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0023_create_invoices.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0024_create_invoice_items.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0024_create_invoice_items.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0025_create_owner_payouts.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0025_create_owner_payouts.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Shared/Enums/PaymentStatus.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Shared/Enums/PaymentStatus.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0026_payments_finance_integrity_cleanup.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0026_payments_finance_integrity_cleanup.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Shared/Enums/InvoiceStatus.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Shared/Enums/InvoiceStatus.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Shared/Enums/InvoiceItemType.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Shared/Enums/InvoiceItemType.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Shared/Enums/PaymentMethod.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Shared/Enums/PaymentMethod.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Shared/Enums/OwnerPayoutStatus.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Shared/Enums/OwnerPayoutStatus.cs)
 
 Searched for regex `payment|invoice|payout|finance` (`**/business_req.md`), 20 results
 
@@ -496,63 +496,63 @@ The only blocking issue (m22) is a pre-existing infrastructure gap carried forwa
 
 ط
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Validators)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Validators)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests/Payments)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests/Payments)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests/Invoices)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests/Invoices)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests/OwnerPayouts)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests/OwnerPayouts)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/Payments)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/Payments)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/Invoices)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/Invoices)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/OwnerPayouts)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/OwnerPayouts)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/Finance)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/Finance)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests/Payments/PaymentRequests.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests/Payments/PaymentRequests.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests/Invoices/InvoiceRequests.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests/Invoices/InvoiceRequests.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests/OwnerPayouts/OwnerPayoutRequests.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests/OwnerPayouts/OwnerPayoutRequests.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/Payments/PaymentResponse.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/Payments/PaymentResponse.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/Invoices/InvoiceResponses.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/Invoices/InvoiceResponses.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/OwnerPayouts/OwnerPayoutResponse.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/OwnerPayouts/OwnerPayoutResponse.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/Finance/FinanceSummaryResponses.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/Finance/FinanceSummaryResponses.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/PaymentsController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/PaymentsController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/InvoicesController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/InvoicesController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/OwnerPayoutsController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/OwnerPayoutsController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/FinanceSummaryController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/FinanceSummaryController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Validators/PaymentValidators.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Validators/PaymentValidators.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Validators/InvoiceValidators.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Validators/InvoiceValidators.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Validators/OwnerPayoutValidators.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Validators/OwnerPayoutValidators.cs)
 
 Searched for text `FinanceOrSuperAdmin|InternalAdminRead|AddValidators|PaymentService|InvoiceService|OwnerPayoutService|FinanceSummaryService` (`**/Program.cs`), 13 results
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Program.cs#138-138), lines 138 to 175
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Program.cs#138-138), lines 138 to 175
 
 Searched for text `ValidationActionFilter` (`**/RentalPlatform.API\\Filters\\**`), 1 result
 
@@ -973,21 +973,21 @@ None required. The following should be tracked in the backlog:
 - [PASS] READY FOR NEXT PHASE = YES
 - [PASS] PM can safely choose GO WITH MINOR FOLLOW-UPS
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/docs/decisions/0009_owner_portal_db_scope.md#1-1), lines 1 to 80
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/docs/decisions/0009_owner_portal_db_scope.md#1-1), lines 1 to 80
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0027_create_owner_portal_units_overview_view.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0027_create_owner_portal_units_overview_view.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0028_create_owner_portal_bookings_overview_view.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0028_create_owner_portal_bookings_overview_view.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0029_create_owner_portal_finance_overview_view.sql#1-1), lines 1 to 100
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0029_create_owner_portal_finance_overview_view.sql#1-1), lines 1 to 100
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0030_owner_portal_integrity_cleanup.sql#1-1), lines 1 to 40
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0030_owner_portal_integrity_cleanup.sql#1-1), lines 1 to 40
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0027_create_owner_portal_units_overview_view_verify.sql#1-1), lines 1 to 30
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0027_create_owner_portal_units_overview_view_verify.sql#1-1), lines 1 to 30
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0030_owner_portal_integrity_cleanup_verify.sql#1-1), lines 1 to 60
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0030_owner_portal_integrity_cleanup_verify.sql#1-1), lines 1 to 60
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0030_owner_portal_integrity_cleanup_verify.sql#60-60), lines 60 to 160
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0030_owner_portal_integrity_cleanup_verify.sql#60-60), lines 60 to 160
 
 I have full context. Writing the complete QA review + PM sign-off.
 
@@ -1358,17 +1358,17 @@ None required before Data Access. Track in backlog:
 - [PASS] READY FOR OWNER PORTAL TIER 2 = YES
 - [PASS] PM can safely choose GO
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/IUnitOfWork.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/IUnitOfWork.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/UnitOfWork.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/UnitOfWork.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/AppDbContext.cs#1-1), lines 1 to 50
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/AppDbContext.cs#1-1), lines 1 to 50
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/ReadModels/OwnerPortalUnitOverview.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/ReadModels/OwnerPortalUnitOverview.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/ReadModels/OwnerPortalBookingOverview.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/ReadModels/OwnerPortalBookingOverview.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/ReadModels/OwnerPortalFinanceOverview.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/ReadModels/OwnerPortalFinanceOverview.cs)
 
 Full context confirmed. Writing the complete review.
 
@@ -1716,13 +1716,13 @@ None required before Business tier. Track in backlog:
 - [PASS] READY FOR OWNER PORTAL TIER 3 = YES
 - [PASS] PM can safely choose GO
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/OwnerPortalUnitService.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/OwnerPortalUnitService.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/OwnerPortalBookingService.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/OwnerPortalBookingService.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/OwnerPortalFinanceService.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/OwnerPortalFinanceService.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/OwnerPortalDashboardService.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/OwnerPortalDashboardService.cs)
 
 Full context confirmed. Writing the complete review.
 
@@ -2133,19 +2133,19 @@ Track in backlog:
 - [PASS] READY FOR OWNER PORTAL TIER 4 = YES (after M1 fix)
 - [PASS] PM can safely choose GO WITH MINOR FOLLOW-UPS
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/OwnerPortalUnitsController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/OwnerPortalUnitsController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/OwnerPortalBookingsController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/OwnerPortalBookingsController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/OwnerPortalFinanceController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/OwnerPortalFinanceController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/OwnerPortalDashboardController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/OwnerPortalDashboardController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests/OwnerPortal/OwnerPortalRequests.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests/OwnerPortal/OwnerPortalRequests.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/OwnerPortal/OwnerPortalResponses.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/OwnerPortal/OwnerPortalResponses.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Validators/OwnerPortal/OwnerPortalValidators.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Validators/OwnerPortal/OwnerPortalValidators.cs)
 
 Searched for regex `OwnerOnly|OwnerPortal|AddValidators` (`**/Program.cs`), 11 results
 
@@ -2462,15 +2462,15 @@ The tier satisfies every hard acceptance criterion: all endpoints exist, owner s
 
 **OWNER PORTAL TIER 4 PM DECISION: GO**You've used 95% of your session rate limit. Your session rate limit will reset on April 21 at 7:07 PM. [Learn More](https://aka.ms/github-copilot-rate-limit-error)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0031_create_reviews.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0031_create_reviews.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0032_create_review_status_history.sql#1-1), lines 1 to 70
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0032_create_review_status_history.sql#1-1), lines 1 to 70
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0033_create_unit_review_summaries.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0033_create_unit_review_summaries.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0034_create_review_replies.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0034_create_review_replies.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0035_reviews_ratings_integrity_cleanup.sql#1-1), lines 1 to 75
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0035_reviews_ratings_integrity_cleanup.sql#1-1), lines 1 to 75
 
 ---
 
@@ -2796,15 +2796,15 @@ Every hard acceptance criterion is met: all required tables and constraints are 
 
 **REVIEWS & RATINGS TIER 1 PM DECISION: GO**
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0031_create_reviews.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0031_create_reviews.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0032_create_review_status_history.sql#1-1), lines 1 to 70
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0032_create_review_status_history.sql#1-1), lines 1 to 70
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0033_create_unit_review_summaries.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0033_create_unit_review_summaries.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0034_create_review_replies.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0034_create_review_replies.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0035_reviews_ratings_integrity_cleanup.sql#1-1), lines 1 to 75
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0035_reviews_ratings_integrity_cleanup.sql#1-1), lines 1 to 75
 
 ---
 
@@ -3147,13 +3147,13 @@ DA-RR-01 and DA-RR-02 are already fully implemented from the previous session. N
 
 The entire Reviews & Ratings Tier 2 Data Access is complete and was signed off GO in the previous session.
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReviewService.cs#1-1), lines 1 to 160
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReviewService.cs#1-1), lines 1 to 160
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReviewModerationService.cs#1-1), lines 1 to 180
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReviewModerationService.cs#1-1), lines 1 to 180
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReviewReplyService.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReviewReplyService.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReviewSummaryService.cs#1-1), lines 1 to 130
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReviewSummaryService.cs#1-1), lines 1 to 130
 
 ---
 
@@ -3458,41 +3458,41 @@ None blocking. Register the 4 new services in Program.cs DI as part of standard 
 
 Reviewing Tier 4 API now with strict QA/PM criteria; I’ll quickly re-check DTOs, validators, controller routes/auth, and service wiring to produce a precise pass/fail report with any blockers.
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Program.cs#70-70), lines 70 to 220
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Program.cs#70-70), lines 70 to 220
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/ClientReviewsController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/ClientReviewsController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/ReviewModerationController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/ReviewModerationController.cs)
 
 I’ve confirmed policy and DI wiring; next I’m checking the remaining two controllers plus DTO/validator coverage to identify any contract gaps before final verdict.
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/ReviewRepliesController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/ReviewRepliesController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/PublicReviewsController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/PublicReviewsController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Validators/Reviews/ReviewValidators.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Validators/Reviews/ReviewValidators.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests/ReviewModeration/ReviewModerationRequests.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests/ReviewModeration/ReviewModerationRequests.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests/ReviewReplies/ReviewReplyRequests.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests/ReviewReplies/ReviewReplyRequests.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests/Reviews/ReviewRequests.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests/Reviews/ReviewRequests.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Requests/PublicReviews/GetPublishedReviewsByUnitRequest.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Requests/PublicReviews/GetPublishedReviewsByUnitRequest.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/Reviews/ReviewResponse.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/Reviews/ReviewResponse.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/PublicReviews/PublicReviewResponses.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/PublicReviews/PublicReviewResponses.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/ReviewReplies/ReviewReplyResponse.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/ReviewReplies/ReviewReplyResponse.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/DTOs/Responses/ReviewModeration/ReviewStatusHistoryResponse.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/DTOs/Responses/ReviewModeration/ReviewStatusHistoryResponse.cs)
 
 I’ve validated DTO and validator presence; I’m now pulling the specific business-layer visibility logic to confirm public endpoints cannot leak unpublished reviews or hidden replies.
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReviewSummaryService.cs#40-40), lines 40 to 138
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReviewSummaryService.cs#40-40), lines 40 to 138
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReviewReplyService.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReviewReplyService.cs)
 
 Execution complete: Confirm latest build health for review
 
@@ -3716,43 +3716,43 @@ H. Final Decision
 - [PASS] READY FOR NEXT PHASE = YES
 - [PASS] PM can safely choose GO or GO WITH MINOR FOLLOW-UPS
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/business_req.md#1-1), lines 1 to 80
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/business_req.md#1-1), lines 1 to 80
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/technical_req.md#1-1), lines 1 to 80
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/technical_req.md#1-1), lines 1 to 80
 
 Searched for text `notification|Notification` (`**/technical_req.md`), 15 results
 
 Searched for text `notification|Notification` (`**/business_req.md`), 8 results
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/technical_req.md#480-480), lines 480 to 520
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/technical_req.md#480-480), lines 480 to 520
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/business_req.md#570-570), lines 570 to 620
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/business_req.md#570-570), lines 570 to 620
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/technical_req.md#750-750), lines 750 to 800
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/technical_req.md#750-750), lines 750 to 800
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/technical_req.md#560-560), lines 560 to 570
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/technical_req.md#560-560), lines 560 to 570
 
 Now reading all six migration files for DB-NA-01 through DB-NA-05:  
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0036_create_notification_templates.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0036_create_notification_templates.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0037_create_notifications.sql#1-1), lines 1 to 120
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0037_create_notifications.sql#1-1), lines 1 to 120
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0038_create_notification_delivery_logs.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0038_create_notification_delivery_logs.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0039_create_notification_preferences.sql#1-1), lines 1 to 100
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0039_create_notification_preferences.sql#1-1), lines 1 to 100
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0040_notifications_alerts_integrity_cleanup.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0040_notifications_alerts_integrity_cleanup.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0036_create_notification_templates_rollback.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0036_create_notification_templates_rollback.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0037_create_notifications_rollback.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0037_create_notifications_rollback.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0038_create_notification_delivery_logs_rollback.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0038_create_notification_delivery_logs_rollback.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0039_create_notification_preferences_rollback.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0039_create_notification_preferences_rollback.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0040_notifications_alerts_integrity_cleanup_rollback.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0040_notifications_alerts_integrity_cleanup_rollback.sql)
 
 ---
 
@@ -4077,59 +4077,59 @@ Reviewer verdict: **PASS WITH MINOR NOTES**. No blockers. No major issues. Three
 
 Created 5 todos
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/business_req.md#1-1), lines 1 to 80
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/business_req.md#1-1), lines 1 to 80
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/technical_req.md#1-1), lines 1 to 80
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/technical_req.md#1-1), lines 1 to 80
 
 Searched for text `Notifications & Alerts` (`**/business_req.md`), no results
 
 Searched for text `notification` (`**/technical_req.md`), 15 results
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/technical_req.md#60-60), lines 60 to 480
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/technical_req.md#60-60), lines 60 to 480
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/technical_req.md#750-750), lines 750 to 800
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/technical_req.md#750-750), lines 750 to 800
 
 Starting: *Read DB tier migrations (0036-0040)* (2/5)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0036_create_notification_templates.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0036_create_notification_templates.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0037_create_notifications.sql#1-1), lines 1 to 100
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0037_create_notifications.sql#1-1), lines 1 to 100
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0038_create_notification_delivery_logs.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0038_create_notification_delivery_logs.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0039_create_notification_preferences.sql#1-1), lines 1 to 100
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0039_create_notification_preferences.sql#1-1), lines 1 to 100
 
 Starting: *Read all entities & configurations* (3/5)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Entities/NotificationTemplate.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Entities/NotificationTemplate.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Entities/Notification.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Entities/Notification.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Entities/NotificationDeliveryLog.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Entities/NotificationDeliveryLog.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Configurations/NotificationTemplateConfiguration.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Configurations/NotificationTemplateConfiguration.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Configurations/NotificationConfiguration.cs#1-1), lines 1 to 90
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Configurations/NotificationConfiguration.cs#1-1), lines 1 to 90
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Configurations/NotificationConfiguration.cs#90-90), lines 90 to 105
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Configurations/NotificationConfiguration.cs#90-90), lines 90 to 105
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Configurations/NotificationDeliveryLogConfiguration.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Configurations/NotificationDeliveryLogConfiguration.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/Configurations/NotificationPreferenceConfiguration.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/Configurations/NotificationPreferenceConfiguration.cs)
 
 Starting: *Read AppDbContext, IUnitOfWork, UnitOfWork* (4/5)
 
 Searched for text `NotificationTemplate` (`**/RentalPlatform.Data/AppDbContext.cs`), 2 results
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/IUnitOfWork.cs#1-1), lines 1 to 50
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/IUnitOfWork.cs#1-1), lines 1 to 50
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/UnitOfWork.cs#1-1), lines 1 to 85
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/UnitOfWork.cs#1-1), lines 1 to 85
 
 Searched for text `Notification` (`**/RentalPlatform.Data/AppDbContext.cs`), 9 results
 
 Searched for text `ApplyConfigurationsFromAssembly` (`**/RentalPlatform.Data/AppDbContext.cs`), 1 result
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/AppDbContext.cs#1-1), lines 1 to 100
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/AppDbContext.cs#1-1), lines 1 to 100
 
 Starting: *Produce QA report + PM decision + checklist* (5/5)
 
@@ -4629,9 +4629,9 @@ The two minor notes are informational and carry zero implementation risk. The ti
 ---
 Created 3 todos
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Models/NotificationListItemResult.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Models/NotificationListItemResult.cs)
 
-Created [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/NotificationInboxService.cs)
+Created [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/NotificationInboxService.cs)
 
 Execution complete: Build solution to verify NotificationInboxService compiles
 
@@ -4641,13 +4641,13 @@ Starting: *Read all services for QA review* (2/3)
 
 Now reading all services for the QA review:  
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/NotificationService.cs#1-1), lines 1 to 100
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/NotificationService.cs#1-1), lines 1 to 100
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/NotificationDispatchService.cs#1-1), lines 1 to 100
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/NotificationDispatchService.cs#1-1), lines 1 to 100
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/NotificationService.cs#100-100), lines 100 to 290
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/NotificationService.cs#100-100), lines 100 to 290
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/NotificationDispatchService.cs#100-100), lines 100 to 228
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/NotificationDispatchService.cs#100-100), lines 100 to 228
 
 Starting: *Produce QA + PM + checklist report* (3/3)
 
@@ -5124,19 +5124,19 @@ Nothing is missing from Business tier scope. Three informational notes:
 
 ---
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/InternalNotificationsController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/InternalNotificationsController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/NotificationDispatchController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/NotificationDispatchController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/NotificationPreferencesController.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/NotificationPreferencesController.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Controllers/NotificationInboxController.cs#1-1), lines 1 to 220
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Controllers/NotificationInboxController.cs#1-1), lines 1 to 220
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Validators/Notifications/NotificationValidators.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Validators/Notifications/NotificationValidators.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Validators/Notifications/NotificationPreferenceValidators.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Validators/Notifications/NotificationPreferenceValidators.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.API/Validators/Notifications/NotificationInboxValidators.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.API/Validators/Notifications/NotificationInboxValidators.cs)
 
 All files fully read. Producing the complete review output:
 
@@ -5658,29 +5658,29 @@ Nothing is missing from the API tier scope. Three informational notes on record:
 
 Created 5 todos
 
-Created [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0045_reports_analytics_integrity_cleanup.sql)
+Created [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0045_reports_analytics_integrity_cleanup.sql)
 
-Created [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0045_reports_analytics_integrity_cleanup_rollback.sql)
+Created [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0045_reports_analytics_integrity_cleanup_rollback.sql)
 
-Created [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0045_reports_analytics_integrity_cleanup_verify.sql)
+Created [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0045_reports_analytics_integrity_cleanup_verify.sql)
 
 Starting: *Inspect all 4 reporting views for QA* (2/5)
 
 Now read all artefacts in parallel for the QA review:     
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/docs/decisions/0013_reports_analytics_db_scope.md#1-1), lines 1 to 50
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/docs/decisions/0013_reports_analytics_db_scope.md#1-1), lines 1 to 50
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0041_create_reporting_booking_daily_summary_view.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0041_create_reporting_booking_daily_summary_view.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0042_create_reporting_finance_daily_summary_view.sql#1-1), lines 1 to 120
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0042_create_reporting_finance_daily_summary_view.sql#1-1), lines 1 to 120
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0043_create_reporting_reviews_daily_summary_view.sql#1-1), lines 1 to 70
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0043_create_reporting_reviews_daily_summary_view.sql#1-1), lines 1 to 70
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/db/migrations/0044_create_reporting_notifications_daily_summary_view.sql)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/db/migrations/0044_create_reporting_notifications_daily_summary_view.sql)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/docs/decisions/0013_reports_analytics_db_scope.md#50-50), lines 50 to 100
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/docs/decisions/0013_reports_analytics_db_scope.md#50-50), lines 50 to 100
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/docs/decisions/0013_reports_analytics_db_scope.md#100-100), lines 100 to 130
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/docs/decisions/0013_reports_analytics_db_scope.md#100-100), lines 100 to 130
 
 Starting: *Write Tier 1 QA review* (4/5)
 
@@ -6032,13 +6032,13 @@ Nothing is missing. The only observations are:
 - [PASS] READY FOR REPORTS & ANALYTICS TIER 2: YES
 - [PASS] PM can safely choose GO
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/IUnitOfWork.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/IUnitOfWork.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/UnitOfWork.cs#1-1), lines 1 to 60
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/UnitOfWork.cs#1-1), lines 1 to 60
 
 The convention is clear: **Option A** — `IQueryable<T>` exposures via `IUnitOfWork` / `UnitOfWork` for keyless views. Applying the same pattern now for all 4 reporting read models: 
 
-Replacing 13 lines with 29 lines in [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/IUnitOfWork.cs), [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Data/UnitOfWork.cs)
+Replacing 13 lines with 29 lines in [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/IUnitOfWork.cs), [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Data/UnitOfWork.cs)
 
 
 ```
@@ -6378,11 +6378,11 @@ Reports & Analytics Tier 2 (Data Access) delivered all four reporting read model
 Made changes.
 Created 4 todos
 
-Created [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReportingReviewsAnalyticsService.cs)
+Created [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReportingReviewsAnalyticsService.cs)
 
 Starting: *Create ReportingNotificationsAnalyticsService* (2/4)
 
-Created [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReportingNotificationsAnalyticsService.cs)
+Created [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReportingNotificationsAnalyticsService.cs)
 
 Starting: *Build and verify* (3/4)
 
@@ -6394,13 +6394,13 @@ Starting: *Tier 3 QA/PM review* (4/4)
 
 Now reading all Tier 3 artefacts for the QA review:    
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReportingBookingAnalyticsService.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReportingBookingAnalyticsService.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReportingFinanceAnalyticsService.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReportingFinanceAnalyticsService.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReportingReviewsAnalyticsService.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReportingReviewsAnalyticsService.cs)
 
-Read [](file:///c%3A/Users/DELL/Desktop/protfolio/REMAL/RentalPlatform.Business/Services/ReportingNotificationsAnalyticsService.cs)
+Read [](file:///c%3A/Users/DELL/Desktop/protfolio/Kaza Booking/RentalPlatform.Business/Services/ReportingNotificationsAnalyticsService.cs)
 
 All four service implementations confirmed correct. Now producing the QA/PM review: 
 

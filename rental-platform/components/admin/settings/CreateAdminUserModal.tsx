@@ -122,7 +122,7 @@ export function CreateAdminUserModal({
         <Input
           label="Email"
           type="email"
-          placeholder="name@remal.com"
+          placeholder="name@kazabooking.com"
           required
           error={errors.email?.message}
           {...register("email")}

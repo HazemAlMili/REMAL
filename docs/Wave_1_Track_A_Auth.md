@@ -19,7 +19,7 @@ Three separate login flows (Admin / Owner / Client), client registration, middle
 **Track B — UI Component Library (FE-1-UI-01 → 10):**
 The shared component library used by Waves 2–7 across all three apps. Button, Input, Select, Modal, Skeleton, Table, Badge, DatePicker, Toast notifications, EmptyState, ConfirmDialog, and the `usePermissions` hook. After Wave 1-B, every feature wave has a complete design-system-aligned toolkit.
 
-**API Source:** All contracts in this wave are derived directly from `REMAL_API_Reference.md`.
+**API Source:** All contracts in this wave are derived directly from `KAZA_BOOKING_API_Reference.md`.
 
 ---
 
@@ -239,7 +239,7 @@ useAuthStore.getState().setAuth({ ... })
 |---|---|---|---|---|
 | POST | `/api/auth/admin/login` | `AdminLoginRequest` | `AuthResponse` | on form submit |
 
-**Full API Contract (from REMAL_API_Reference.md):**
+**Full API Contract (from KAZA_BOOKING_API_Reference.md):**
 
 ```typescript
 // lib/types/auth.types.ts
@@ -362,7 +362,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="w-full max-w-md">
         {/* Platform logo/name */}
         <div className="text-center mb-8">
-          <h1 className="font-display text-3xl text-neutral-800">Remal</h1>
+          <h1 className="font-display text-3xl text-neutral-800">Kaza Booking</h1>
           <p className="text-neutral-500 text-sm mt-1">Property Management Platform</p>
         </div>
         {/* Auth card */}
@@ -379,7 +379,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
 ```typescript
 // All auth-related TypeScript types
-// Derived from REMAL_API_Reference.md Section 1 — Auth
+// Derived from KAZA_BOOKING_API_Reference.md Section 1 — Auth
 
 export type SubjectType = 'Admin' | 'Owner' | 'Client'
 export type AdminRole   = 'SuperAdmin' | 'Sales' | 'Finance' | 'Tech'
@@ -473,7 +473,7 @@ app/(auth)/client/          ← FE-1-AUTH-03
 **Setup:**
 1. Wave 0 must be fully merged
 2. Backend running at `NEXT_PUBLIC_API_URL`
-3. Have a valid admin seed account: `email: admin@remal.com`, `password: Admin@1234` (or whatever the dev seed provides)
+3. Have a valid admin seed account: `email: admin@kazabooking.com`, `password: Admin@1234` (or whatever the dev seed provides)
 4. Navigate to `http://localhost:3000/auth/admin/login`
 
 **Happy path:**
@@ -572,7 +572,7 @@ N/A — this IS the authentication page.
 - The `(auth)/layout.tsx` must NOT include the admin sidebar/header — those are in the admin layout (Wave 2). Auth layout is a standalone centered layout.
 
 **REFERENCES:**
-- REMAL_API_Reference.md Section 1 (Auth) — `POST /api/auth/admin/login` request/response
+- KAZA_BOOKING_API_Reference.md Section 1 (Auth) — `POST /api/auth/admin/login` request/response
 - lib/types/auth.types.ts (created in this ticket) — all type definitions
 - FE-0-INFRA-05 — auth store `setAuth()` signature (after corrections applied)
 - FE-1-AUTH-05 — will wire the access token into Axios request interceptor
@@ -716,7 +716,7 @@ ROUTES.auth.adminLogin         // '/auth/admin/login' (for "admin? sign in here"
 |---|---|---|---|---|
 | POST | `/api/auth/owner/login` | `PhoneLoginRequest` | `AuthResponse` | on form submit |
 
-**Full API Contract (from REMAL_API_Reference.md):**
+**Full API Contract (from KAZA_BOOKING_API_Reference.md):**
 
 ```typescript
 // Owner login — PHONE not email
@@ -832,7 +832,7 @@ N/A.
 - The redirect for already-authenticated users must check `subjectType` — an admin visiting owner login should go to admin dashboard, an owner should go to owner dashboard.
 
 **REFERENCES:**
-- REMAL_API_Reference.md Section 1 — `POST /api/auth/owner/login`
+- KAZA_BOOKING_API_Reference.md Section 1 — `POST /api/auth/owner/login`
 - FE-1-AUTH-01 — auth service, types, hooks created there
 
 ---
@@ -939,7 +939,7 @@ ROUTES.auth.register           // '/auth/client/register'
 | POST | `/api/auth/client/login` | `PhoneLoginRequest` | `AuthResponse` | on form submit |
 
 ```typescript
-// From REMAL_API_Reference.md:
+// From KAZA_BOOKING_API_Reference.md:
 // subjectType = 'Client', adminRole = null
 // user.identifier = the phone number used to login
 ```
@@ -983,7 +983,7 @@ State in Zustand, no localStorage, loading/error/success states as per global ru
 - Do NOT forget the "Register" link — clients often land here looking for registration
 
 **REFERENCES:**
-- REMAL_API_Reference.md Section 1 — `POST /api/auth/client/login`
+- KAZA_BOOKING_API_Reference.md Section 1 — `POST /api/auth/client/login`
 - FE-1-AUTH-04 — client registration (completes the register link target)
 
 ---
@@ -1145,7 +1145,7 @@ ROUTES.client.account          // '/account'
 | POST | `/api/auth/client/register` | `ClientRegisterRequest` | `ClientProfileResponse` | on form submit |
 | POST | `/api/auth/client/login` | `PhoneLoginRequest` | `AuthResponse` | immediately after register success |
 
-**CRITICAL API NOTE from REMAL_API_Reference.md:**
+**CRITICAL API NOTE from KAZA_BOOKING_API_Reference.md:**
 ```
 POST /api/auth/client/register
 → Returns ClientProfileResponse (the client's profile object)
@@ -1249,8 +1249,8 @@ lib/hooks/useAuth.ts                     ← add useClientRegister()
 - `ClientProfileResponse` has `id` (not `userId`) — it's a different shape from `AuthResponse.user`. Don't confuse them.
 
 **REFERENCES:**
-- REMAL_API_Reference.md Section 1 — `POST /api/auth/client/register` (returns profile, not token)
-- REMAL_API_Reference.md Section 1 — `POST /api/auth/client/login` (called after register)
+- KAZA_BOOKING_API_Reference.md Section 1 — `POST /api/auth/client/register` (returns profile, not token)
+- KAZA_BOOKING_API_Reference.md Section 1 — `POST /api/auth/client/login` (called after register)
 - FE-7-PUB-12 — will build a SEPARATE inline version of this form inside the booking flow
 
 ---
@@ -1563,7 +1563,7 @@ N/A at middleware level — middleware only checks logged-in status. Role checks
 - After resolving the TODO in the refresh failure handler, the `window.location.href` redirect is a hard navigation — this clears all React state cleanly, which is the desired behavior after session expiry.
 
 **REFERENCES:**
-- REMAL_API_Reference.md Section 1 — `POST /api/auth/refresh` (the endpoint the interceptor calls)
+- KAZA_BOOKING_API_Reference.md Section 1 — `POST /api/auth/refresh` (the endpoint the interceptor calls)
 - FE-0-INFRA-03 — the TODO markers this ticket resolves
 - FE-0-INFRA-05 — `setAccessToken()`, `clearAuth()` actions used here
 - FE-1-AUTH-06 — logout flow (separate from session expiry handling here)
@@ -1707,7 +1707,7 @@ ROUTES.auth.clientLogin         // redirect after client logout
 |---|---|---|---|---|
 | POST | `/api/auth/logout` | (no body) | `string` | on logout button click |
 
-**Full API Contract (from REMAL_API_Reference.md):**
+**Full API Contract (from KAZA_BOOKING_API_Reference.md):**
 
 ```typescript
 // POST /api/auth/logout
@@ -1863,7 +1863,7 @@ export const authService = {
 - The `LogoutButton` must have `'use client'` directive because it uses a hook.
 
 **REFERENCES:**
-- REMAL_API_Reference.md Section 1 — `POST /api/auth/logout`
+- KAZA_BOOKING_API_Reference.md Section 1 — `POST /api/auth/logout`
 - Validation Report v2 — Security Gap: logout must call the server endpoint
 - FE-1-AUTH-05 — `clearAuth()` (the action this calls)
 - Wave 2 (FE-2-ADMIN-01) — will import `<LogoutButton>` into the admin sidebar
@@ -1913,7 +1913,7 @@ Must return zero results.
 
 ### 1. Auth API Contract Verification (CRITICAL)
 
-Per `REMAL_API_Reference.md` Section 1:
+Per `KAZA_BOOKING_API_Reference.md` Section 1:
 
 **AuthResponse shape (returned by ALL login + refresh endpoints):**
 ```json

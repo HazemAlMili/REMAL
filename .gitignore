@@ -59,3 +59,6 @@ mono_crash.*
 **/obj/
 node_modules/
 .claude/
+# Test / browser-automation artifacts
+.playwright-mcp/
+test-results/

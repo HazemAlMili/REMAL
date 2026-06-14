@@ -52,8 +52,8 @@ Base Route: `/api/amenities`
 
 ## 🛠️ How to Test
 1. **Interactive Docs**: Run the project and visit `/swagger`.
-2. **Automated Testing**: Use the [api_tests.http](file:///d:/Clinets/Remal/REMAL/RentalPlatform.API/api_tests.http) file in VS/VS Code.
-3. **Setup Guide**: Refer to the [Testing Guide](file:///d:/Clinets/Remal/REMAL/docs/setup/testing_guide.md) for step-by-step instructions.
+2. **Automated Testing**: Use the [api_tests.http](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.API/api_tests.http) file in VS/VS Code.
+3. **Setup Guide**: Refer to the [Testing Guide](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/setup/testing_guide.md) for step-by-step instructions.
 
 > [!TIP]
 > All administrative and write operations require an `Authorization: Bearer <token>` header. Use the login endpoints to generate this token.

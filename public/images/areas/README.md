@@ -34,7 +34,7 @@ a1b2c3d4-e5f6-7890-abcd-ef1234567890.jpg
 - **Aspect Ratio**: 4:3 (matches card `aspect-[4/3]`)
 - **Quality**: Medium-high (80%)
 - **Subject**: Representative image of the area (coastal view, resort entrance, landmark)
-- **Style**: Premium, aspirational, consistent with REMAL brand
+- **Style**: Premium, aspirational, consistent with Kaza Booking brand
 
 ### default-area.jpg (Fallback)
 

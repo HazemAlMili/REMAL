@@ -1,9 +1,9 @@
-# REMAL Design System
+# Kaza Booking Design System
 
 **Version:** 1.0.0  
 **Last Updated:** May 2026  
 **Source:** Extracted from `demo/src/` codebase  
-**API Reference:** `../../docs/api/REMAL_API_Reference.md`
+**API Reference:** `../../docs/api/KAZA_BOOKING_API_Reference.md`
 
 ---
 
@@ -129,7 +129,7 @@ The source code implements a 4-state UI pattern for handling API responses.
 
 ### API Response Envelope
 
-**Source:** `../../docs/api/REMAL_API_Reference.md`
+**Source:** `../../docs/api/KAZA_BOOKING_API_Reference.md`
 
 All API responses follow this unified envelope structure:
 
@@ -504,7 +504,7 @@ export function mapIsActiveToStatus(isActive: boolean): UnitStatus {
 
 ### Entity Types (API Keys)
 
-**Source:** `../../docs/api/REMAL_API_Reference.md`
+**Source:** `../../docs/api/KAZA_BOOKING_API_Reference.md`
 
 ```typescript
 // Unit Entity - Maps to GET /api/units/{id} response
@@ -2206,7 +2206,7 @@ demo/
 │   ├── 02_STATUS_ENUMS_COLOR_TOKENS.md
 │   ├── 03_CORE_COMPONENT_PROPS.md
 │   ├── 04_LAYOUT_ACCESS_CONTROL.md
-│   └── REMAL_Design_System.md  # This file
+│   └── KAZA_BOOKING_Design_System.md  # This file
 └── tailwind.config.ts        # Tailwind configuration
 ```
 
@@ -2221,4 +2221,4 @@ demo/
 ---
 
 **Document Status:** Production Ready  
-**Maintained By:** REMAL Frontend Team
+**Maintained By:** Kaza Booking Frontend Team

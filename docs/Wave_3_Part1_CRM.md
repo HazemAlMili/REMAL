@@ -124,7 +124,7 @@ Create `lib/types/crm.types.ts`, `lib/api/services/crm.service.ts`, and `lib/hoo
 
 ```typescript
 // lib/types/crm.types.ts
-// All contracts from REMAL_API_Reference.md
+// All contracts from KAZA_BOOKING_API_Reference.md
 
 // ── Status Types ──
 // CRM Lead uses the FULL 10-status pipeline:

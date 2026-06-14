@@ -50,7 +50,7 @@ export function BrandStorySection() {
               ref={paragraphRef}
               className="mt-6 max-w-lg text-base leading-relaxed text-neutral-600 motion-safe:opacity-0 lg:text-lg"
             >
-              REMAL connects discerning travelers with handpicked vacation
+              Kaza Booking connects discerning travelers with handpicked vacation
               properties across Egypt&apos;s most sought-after coastal and
               resort destinations. Every villa, chalet, and studio in our
               collection is personally vetted for quality, comfort, and that

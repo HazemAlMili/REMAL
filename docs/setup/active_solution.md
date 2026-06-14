@@ -21,8 +21,8 @@ This solution contains the 4-project architecture as defined in the technical re
 ## Stale Entrypoints (Removed/Archived)
 
 Any of the following files, if previously encountered, are considered **stale and obsolete**:
-- `REMAL.sln`
-- `REMAL.csproj`
+- `Kaza Booking.sln`
+- `Kaza Booking.csproj`
 - A single root-level `Program.cs` 
 
 These legacy artifacts from the initial repository scaffold have been removed to prevent confusion. Do not attempt to build, run, or review using them.

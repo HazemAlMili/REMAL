@@ -1,5 +1,5 @@
 -- ============================================
--- REMAL Platform — Combined DB Init Script
+-- Kaza Booking Platform — Combined DB Init Script
 -- Runs all migrations in order on first start
 -- ============================================
 

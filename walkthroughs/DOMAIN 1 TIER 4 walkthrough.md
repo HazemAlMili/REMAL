@@ -8,14 +8,14 @@ This document provides a comprehensive technical breakdown of the Tier 4 impleme
 **Goal:** Establish the unified response envelope, exception handling, and dependency wiring.
 
 ### Key Deliverables:
-- **Unified Response Envelope**: Created `ApiResponse<T>` and `ApiResponse` in [Models/ApiResponse.cs](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\Models\ApiResponse.cs) to ensure every response has a consistent `{ success, data, message, errors, pagination }` structure.
-- **Global Error Handling**: Implemented `ExceptionHandlingMiddleware` in [Middleware/ExceptionHandlingMiddleware.cs](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\Middleware\ExceptionHandlingMiddleware.cs). It automatically maps:
+- **Unified Response Envelope**: Created `ApiResponse<T>` and `ApiResponse` in [Models/ApiResponse.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Models\ApiResponse.cs) to ensure every response has a consistent `{ success, data, message, errors, pagination }` structure.
+- **Global Error Handling**: Implemented `ExceptionHandlingMiddleware` in [Middleware/ExceptionHandlingMiddleware.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Middleware\ExceptionHandlingMiddleware.cs). It automatically maps:
     - `BusinessValidationException` → **400 Bad Request**
     - `UnauthorizedBusinessException` → **401 Unauthorized**
     - `NotFoundException` → **404 Not Found**
     - `ConflictException` → **409 Conflict**
     - `Unhandled Exceptions` → **500 Internal Server Error** (Sanitized for security)
-- **Validation Pipeline**: Added `ValidationActionFilter` in [Filters/ValidationActionFilter.cs](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\Filters\ValidationActionFilter.cs) to automatically intercept invalid `ModelState` and return a standard `ApiResponse` failure before hitting Controller logic.
+- **Validation Pipeline**: Added `ValidationActionFilter` in [Filters/ValidationActionFilter.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Filters\ValidationActionFilter.cs) to automatically intercept invalid `ModelState` and return a standard `ApiResponse` failure before hitting Controller logic.
 
 ---
 
@@ -23,10 +23,10 @@ This document provides a comprehensive technical breakdown of the Tier 4 impleme
 **Goal:** Define explicit request/response DTOs and auto-validation logic.
 
 ### Key Deliverables:
-- **Separation of Concerns**: Created 20+ DTOs in [RentalPlatform.API/DTOs/](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\DTOs\).
+- **Separation of Concerns**: Created 20+ DTOs in [RentalPlatform.API/DTOs/](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\DTOs\).
     - **Requests**: Validated via `FluentValidation` (Email formats, string lengths, numeric ranges).
     - **Responses**: Strictly excluded sensitive fields like `PasswordHash` and internal DB metadata like `DeletedAt`.
-- **Validation Registration**: All validators from both API and Business assemblies are registered in [Program.cs](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\Program.cs) via `AddValidatorsFromAssembly`.
+- **Validation Registration**: All validators from both API and Business assemblies are registered in [Program.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Program.cs) via `AddValidatorsFromAssembly`.
 
 ---
 
@@ -34,12 +34,12 @@ This document provides a comprehensive technical breakdown of the Tier 4 impleme
 **Goal:** Implement API-layer authentication flow with access/refresh tokens.
 
 ### Key Deliverables:
-- **JwtTokenService**: Implemented in [Services/JwtTokenService.cs](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\Services\JwtTokenService.cs). It generates signed HS256 JWTs.
+- **JwtTokenService**: Implemented in [Services/JwtTokenService.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Services\JwtTokenService.cs). It generates signed HS256 JWTs.
 - **Auth Flow**:
     - **Access Token**: Short-lived (15m), sent in JSON body.
     - **Refresh Token**: Long-lived (7d), sent in an **HttpOnly, SameSite=Strict** cookie for protection against XSS.
 - **Role Mapping**: Tokens include `subjectType` (client, owner, admin) and `role` (SuperAdmin, Sales, Finance) claims used for declarative authorization.
-- **Controller**: [AuthController.cs](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\Controllers\AuthController.cs) provides `/client/register`, `/client/login`, `/admin/login`, `/owner/login`, and `/refresh`.
+- **Controller**: [AuthController.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Controllers\AuthController.cs) provides `/client/register`, `/client/login`, `/admin/login`, `/owner/login`, and `/refresh`.
 
 ---
 
@@ -47,8 +47,8 @@ This document provides a comprehensive technical breakdown of the Tier 4 impleme
 **Goal:** Implement public read and super-admin management endpoints.
 
 ### Key Deliverables:
-- **Amenities**: [AmenitiesController.cs](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\Controllers\AmenitiesController.cs) allows public `GET` and SuperAdmin-only `POST`.
-- **Areas (Resolved Semantics)**: [AreasController.cs](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\Controllers\AreasController.cs) implements the "No Delete" policy.
+- **Amenities**: [AmenitiesController.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Controllers\AmenitiesController.cs) allows public `GET` and SuperAdmin-only `POST`.
+- **Areas (Resolved Semantics)**: [AreasController.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Controllers\AreasController.cs) implements the "No Delete" policy.
     - **Privacy**: Public `GET` returns only `IsActive = true` areas.
     - **Management**: SuperAdmins use `PATCH /status` to activate/deactivate areas.
 
@@ -58,7 +58,7 @@ This document provides a comprehensive technical breakdown of the Tier 4 impleme
 **Goal:** Implement internal read-only access for management roles.
 
 ### Key Deliverables:
-- **Security**: [ClientsController.cs](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\Controllers\ClientsController.cs) is restricted to `Sales` and `SuperAdmin` roles.
+- **Security**: [ClientsController.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Controllers\ClientsController.cs) is restricted to `Sales` and `SuperAdmin` roles.
 - **PII Protection**: Detailed view excludes sensitive internal state and only shows contact info needed for management.
 - **Pagination**: Implemented metadata mapping (`TotalCount`, `PageSize`, `TotalPages`) at the controller level for audit listing.
 
@@ -68,7 +68,7 @@ This document provides a comprehensive technical breakdown of the Tier 4 impleme
 **Goal:** Implement full management lifecycle for Owners with strict security.
 
 ### Key Deliverables:
-- **Management API**: [OwnersController.cs](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\Controllers\OwnersController.cs) handles list, detail, create, and update for Owner profiles.
+- **Management API**: [OwnersController.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Controllers\OwnersController.cs) handles list, detail, create, and update for Owner profiles.
 - **Status Toggle**: Specialized `PATCH /status` endpoint allows the team to "Block" an owner without deleting their history/referential integrity.
 - **Role Scoping**: Read endpoints are open to `Finance` but mutations are locked to `SuperAdmin`.
 
@@ -78,7 +78,7 @@ This document provides a comprehensive technical breakdown of the Tier 4 impleme
 **Goal:** Implement Super-Admin-only management of administrative personnel.
 
 ### Key Deliverables:
-- **Internal Control**: [AdminUsersController.cs](file:///d:/Clinets\Remal\REMAL\RentalPlatform.API\Controllers\AdminUsersController.cs) is strictly locked behind the `SuperAdminOnly` policy.
+- **Internal Control**: [AdminUsersController.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Controllers\AdminUsersController.cs) is strictly locked behind the `SuperAdminOnly` policy.
 - **Team Ops**: Supports creating employees, changing their roles (e.g., promoting Sales to SuperAdmin), and account deactivation.
 - **Zero-Leakage**: Explicitly verified that `PasswordHash` is never echoed back upon creation or update.
 

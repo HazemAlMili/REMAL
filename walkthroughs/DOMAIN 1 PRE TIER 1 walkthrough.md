@@ -2,7 +2,7 @@
 
 ## What Was Done
 
-Created the architecture decision note [0002_api_response_boundary.md](file:///d:/Clinets/Remal/REMAL/docs/architecture/0002_api_response_boundary.md) as a mandatory pre-Tier 4 policy document.
+Created the architecture decision note [0002_api_response_boundary.md](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/architecture/0002_api_response_boundary.md) as a mandatory pre-Tier 4 policy document.
 
 ## Document Contents
 
@@ -51,7 +51,7 @@ Based on analysis of all 5 current entities (`AdminUser`, `Client`, `Owner`, `Ar
 
 | File | Action |
 |------|--------|
-| [0002_api_response_boundary.md](file:///d:/Clinets/Remal/REMAL/docs/architecture/0002_api_response_boundary.md) | **Created** — 227 lines |
+| [0002_api_response_boundary.md](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/architecture/0002_api_response_boundary.md) | **Created** — 227 lines |
 
 ---
 
@@ -59,7 +59,7 @@ Based on analysis of all 5 current entities (`AdminUser`, `Client`, `Owner`, `Ar
 
 ## What Was Done
 
-Created the architecture decision note [0003_area_lifecycle_semantics.md](file:///d:/Clinets/Remal/REMAL/docs/architecture/0003_area_lifecycle_semantics.md) to resolve the ambiguity between the tech spec's `DELETE /api/areas/{id} → Soft delete` line and the actual implementation which uses `IsActive` toggling with no `DeletedAt` column.
+Created the architecture decision note [0003_area_lifecycle_semantics.md](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/architecture/0003_area_lifecycle_semantics.md) to resolve the ambiguity between the tech spec's `DELETE /api/areas/{id} → Soft delete` line and the actual implementation which uses `IsActive` toggling with no `DeletedAt` column.
 
 ## Key Decision
 
@@ -100,7 +100,7 @@ All layers confirmed no soft-delete support for Area:
 
 | File | Action |
 |------|--------|
-| [0003_area_lifecycle_semantics.md](file:///d:/Clinets/Remal/REMAL/docs/architecture/0003_area_lifecycle_semantics.md) | **Created** — 147 lines |
+| [0003_area_lifecycle_semantics.md](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/architecture/0003_area_lifecycle_semantics.md) | **Created** — 147 lines |
 
 ---
 
@@ -113,19 +113,19 @@ Introduced a minimal `IUnitOfWork` interface and updated all 6 Business services
 ## Changes
 
 ### New File
-- [IUnitOfWork.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/IUnitOfWork.cs) — Interface exposing 5 repository properties + `SaveChanges`/`SaveChangesAsync`
+- [IUnitOfWork.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/IUnitOfWork.cs) — Interface exposing 5 repository properties + `SaveChanges`/`SaveChangesAsync`
 
 ### Modified Files (1 Data + 6 Business)
 
 | File | Change |
 |------|--------|
-| [UnitOfWork.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/UnitOfWork.cs) | Now implements `IUnitOfWork` |
-| [AmenityService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/AmenityService.cs) | `UnitOfWork` → `IUnitOfWork` |
-| [AreaService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/AreaService.cs) | `UnitOfWork` → `IUnitOfWork` |
-| [AdminUserService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/AdminUserService.cs) | `UnitOfWork` → `IUnitOfWork` |
-| [AuthService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/AuthService.cs) | `UnitOfWork` → `IUnitOfWork` |
-| [ClientService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/ClientService.cs) | `UnitOfWork` → `IUnitOfWork` |
-| [OwnerService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/OwnerService.cs) | `UnitOfWork` → `IUnitOfWork` |
+| [UnitOfWork.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/UnitOfWork.cs) | Now implements `IUnitOfWork` |
+| [AmenityService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/AmenityService.cs) | `UnitOfWork` → `IUnitOfWork` |
+| [AreaService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/AreaService.cs) | `UnitOfWork` → `IUnitOfWork` |
+| [AdminUserService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/AdminUserService.cs) | `UnitOfWork` → `IUnitOfWork` |
+| [AuthService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/AuthService.cs) | `UnitOfWork` → `IUnitOfWork` |
+| [ClientService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/ClientService.cs) | `UnitOfWork` → `IUnitOfWork` |
+| [OwnerService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/OwnerService.cs) | `UnitOfWork` → `IUnitOfWork` |
 
 ## Verification
 
@@ -144,7 +144,7 @@ Introduced a minimal `IUnitOfWork` interface and updated all 6 Business services
 
 ## What Was Done
 
-Cleaned up stale repository entrypoints to remove ambiguity and designated a single, official active solution document. Verified that legacy configurations (`REMAL.csproj`, `REMAL.sln`, a root `Program.cs`) do not exist or interfere with the current state.
+Cleaned up stale repository entrypoints to remove ambiguity and designated a single, official active solution document. Verified that legacy configurations (`Kaza Booking.csproj`, `Kaza Booking.sln`, a root `Program.cs`) do not exist or interfere with the current state.
 
 ## Key Actions
 
@@ -167,7 +167,7 @@ Cleaned up stale repository entrypoints to remove ambiguity and designated a sin
 
 ## What Was Done
 
-Created the architecture decision note [0004_index_ownership_strategy.md](file:///d:/Clinets/Remal/REMAL/docs/architecture/0004_index_ownership_strategy.md) establishing clear rules regarding functional and partial unique indexes, eliminating future mismatches between source-of-truth SQL migrations and Entity Framework Core metadata.
+Created the architecture decision note [0004_index_ownership_strategy.md](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/architecture/0004_index_ownership_strategy.md) establishing clear rules regarding functional and partial unique indexes, eliminating future mismatches between source-of-truth SQL migrations and Entity Framework Core metadata.
 
 ## Key Actions
 

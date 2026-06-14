@@ -1,11 +1,11 @@
-# 🔴 API Validation Report — Cross-Check Against REMAL_API_Reference.md
+# 🔴 API Validation Report — Cross-Check Against KAZA_BOOKING_API_Reference.md
 ## تقرير التصحيح الكامل لجميع الـ Waves
 
 ---
 
 ## ⚡ Executive Summary
 
-بعد قراءة `REMAL_API_Reference.md` كاملاً وتقاطعه مع كل الـ tickets:
+بعد قراءة `KAZA_BOOKING_API_Reference.md` كاملاً وتقاطعه مع كل الـ tickets:
 **15 تصحيح حرج** يجب تطبيقها قبل أي تنفيذ.
 الأخطاء تتركز في: أسماء الـ fields، الـ request bodies، وشكل الـ responses.
 
@@ -795,5 +795,5 @@ GET /api/internal/bookings:
 
 ---
 
-*هذا التقرير مبني على قراءة كاملة لـ REMAL_API_Reference.md*
+*هذا التقرير مبني على قراءة كاملة لـ KAZA_BOOKING_API_Reference.md*
 *كل تصحيح مصحوب بالـ JSON الفعلي من الـ API Reference*

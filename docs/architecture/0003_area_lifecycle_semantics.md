@@ -140,9 +140,9 @@ Master-data entities (Area, Amenity) use activation. User-facing entities with l
 - [ADR-0002: API Response Boundary](./0002_api_response_boundary.md) — Response DTO rules for Area endpoints
 - [Tier 1 Follow-Ups](../review-followups/tier1_followups.md) — Project alignment tracking
 - DB Migration: `0003_create_areas.sql` — Area table schema (no `deleted_at`)
-- Entity: [Area.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Entities/Area.cs) — `IsActive` field, no `DeletedAt`
-- Service: [AreaService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/AreaService.cs) — `SetActiveAsync` method
-- Interface: [IAreaService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Interfaces/IAreaService.cs) — No delete method in contract
+- Entity: [Area.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Area.cs) — `IsActive` field, no `DeletedAt`
+- Service: [AreaService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/AreaService.cs) — `SetActiveAsync` method
+- Interface: [IAreaService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/IAreaService.cs) — No delete method in contract
 - Technical Spec: `technical_req.md` §4 — Original endpoint table (superseded for Area DELETE)
 
 ---

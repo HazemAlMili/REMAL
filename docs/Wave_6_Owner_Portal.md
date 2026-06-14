@@ -111,7 +111,7 @@ All 12 Owner Portal tickets depend on typed API contracts for the `/api/owner/*`
 
 ```typescript
 // lib/types/owner-portal.types.ts
-// All from REMAL_API_Reference.md /api/owner/* endpoints
+// All from KAZA_BOOKING_API_Reference.md /api/owner/* endpoints
 
 // ── Dashboard Summary ──
 interface OwnerPortalDashboardSummaryResponse {

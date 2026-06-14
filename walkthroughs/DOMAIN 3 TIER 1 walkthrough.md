@@ -5,7 +5,7 @@ The Database Tier setup for the Booking & CRM Domain is now complete. We rigorou
 
 ## Overview of Tasks Completed
 
-### [PRE-BOOK-01: Booking Date Semantics](file:///d:/Clinets/Remal/REMAL/docs/decisions/0006_booking_date_semantics.md)
+### [PRE-BOOK-01: Booking Date Semantics](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/decisions/0006_booking_date_semantics.md)
 > [!IMPORTANT]
 > **Decision Reached:** Formally blocked the "inclusive pricing range semantics" from impacting the booking flow layer directly. `check_out_date` is not a charged night. Date calculations will deduct 1 day upon reaching operational pricing checks, isolating API assumptions securely beforehand.
 

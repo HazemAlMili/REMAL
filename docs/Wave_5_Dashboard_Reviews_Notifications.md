@@ -400,7 +400,7 @@ All Review moderation tickets depend on typed contracts for reviews and moderati
 
 ```typescript
 // lib/types/review.types.ts
-// From REMAL_API_Reference.md
+// From KAZA_BOOKING_API_Reference.md
 
 type ReviewStatus = 'Pending' | 'Published' | 'Rejected' | 'Hidden'
 
@@ -840,7 +840,7 @@ The notification system covers 3 audiences (admin, owner, client), each with the
 
 ```typescript
 // lib/types/notification.types.ts
-// From REMAL_API_Reference.md
+// From KAZA_BOOKING_API_Reference.md
 
 type NotificationChannel = 'Email' | 'SMS' | 'InApp'   // PascalCase — 'InApp' not 'in_app'
 

@@ -1,4 +1,4 @@
-# REMAL Platform — API Reference Documentation
+# Kaza Booking Platform — API Reference Documentation
 **Version:** v1 | **Base URL:** `https://{your-domain}`
 **Auth:** Bearer Token (JWT) via `Authorization: Bearer {token}` header
 **All responses follow the envelope:** `{ success, data, message, errors, pagination }`
@@ -189,14 +189,6 @@ Every endpoint returns this wrapper:
 |---|---|---|---|
 | `page` | integer | 1 | Page number |
 | `pageSize` | integer | 20 | Items per page |
-| `areaId` | uuid | null | Filter by area |
-| `unitType` | string | null | Filter by unit type (`apartment`, `villa`, `chalet`, `studio`) |
-| `minGuests` | integer | null | Include units with at least this guest capacity |
-| `minPrice` | decimal | null | Minimum base price per night |
-| `maxPrice` | decimal | null | Maximum base price per night |
-| `search` | string | null | Search unit name, address, or description |
-| `sortBy` | string | `newest` | Safe sort key: `newest`, `price_asc`, `price_desc`; compatibility aliases include `price-asc`, `price-desc`, `cheapest`, `newest_arrivals` |
-| `amenityIds` | uuid[] | empty | Repeated or comma-separated amenity IDs. Returned units must contain every selected amenity. |
 | `includeInactive` | boolean | true | Include deactivated admins |
 
 **Response `data`:** Array of:
@@ -418,17 +410,7 @@ Every endpoint returns this wrapper:
   "maxGuests": 0,
   "basePricePerNight": 0,
   "isActive": true,
-  "createdAt": "2026-04-26T00:00:00Z",
-  "images": [
-    {
-      "id": "uuid",
-      "unitId": "uuid",
-      "fileKey": "uploads/units/example.jpg",
-      "isCover": true,
-      "displayOrder": 0,
-      "createdAt": "2026-04-26T00:00:00Z"
-    }
-  ]
+  "createdAt": "2026-04-26T00:00:00Z"
 }
 ```
 

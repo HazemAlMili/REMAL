@@ -27,7 +27,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "REMAL Platform API - Domain 1 & 2",
+        Title = "Kaza Booking Platform API - Domain 1 & 2",
         Version = "v1",
         Description = "Master Data (Amenities, Areas, Clients, Owners, AdminUsers) + Inventory (Units, Images, Seasonal Pricing, Date Blocks, Availability)"
     });
@@ -248,7 +248,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "REMAL API v1");
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Kaza Booking API v1");
     options.RoutePrefix = "swagger";
 });
 

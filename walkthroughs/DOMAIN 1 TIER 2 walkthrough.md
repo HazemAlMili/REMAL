@@ -19,13 +19,13 @@ Tests successfully validated that:
 
 ## Project File Modifcations
 
-#### [NEW] [Amenity.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Entities/Amenity.cs)
-#### [NEW] [Area.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Entities/Area.cs)
-#### [NEW] [AdminUser.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Entities/AdminUser.cs)
-#### [NEW] [Client.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Entities/Client.cs)
-#### [NEW] [Owner.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Entities/Owner.cs)
-#### [NEW] [AppDbContext.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/AppDbContext.cs)
-#### [MODIFY] [Program.cs](file:///d:/Clinets/Remal/REMAL/Program.cs) (for manual testing of EF context operations)
+#### [NEW] [Amenity.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Amenity.cs)
+#### [NEW] [Area.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Area.cs)
+#### [NEW] [AdminUser.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/AdminUser.cs)
+#### [NEW] [Client.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Client.cs)
+#### [NEW] [Owner.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Owner.cs)
+#### [NEW] [AppDbContext.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/AppDbContext.cs)
+#### [MODIFY] [Program.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/Program.cs) (for manual testing of EF context operations)
 
 The project now cleanly references the `Microsoft.EntityFrameworkCore` & `Relational` packages and is ready to establish the `UnitOfWork` and Repositories in subsequent steps.
 
@@ -62,8 +62,8 @@ Tests successfully validated using the `SQLite` EF provider strictly validating 
 
 ## Project File Modifcations
 
-#### [MODIFY] [AmenityConfiguration.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Configurations/AmenityConfiguration.cs)
-#### [MODIFY] [Program.cs](file:///d:/Clinets/Remal/REMAL/Program.cs) (for manual constraint testing)
+#### [MODIFY] [AmenityConfiguration.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Configurations/AmenityConfiguration.cs)
+#### [MODIFY] [Program.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/Program.cs) (for manual constraint testing)
 
 ---
 
@@ -98,8 +98,8 @@ A successful compilation translated into the execution of test harnesses executi
 
 ## Project File Modifcations
 
-#### [MODIFY] [AreaConfiguration.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Configurations/AreaConfiguration.cs)
-#### [MODIFY] [Program.cs](file:///d:/Clinets/Remal/REMAL/Program.cs) (for manual constraint testing)
+#### [MODIFY] [AreaConfiguration.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Configurations/AreaConfiguration.cs)
+#### [MODIFY] [Program.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/Program.cs) (for manual constraint testing)
 
 ---
 
@@ -137,10 +137,10 @@ Tests successfully validated dynamically against `SQLite` EF provider strictly v
 
 ## Project File Modifcations
 
-#### [NEW] [AdminRole.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Shared/Enums/AdminRole.cs)
-#### [MODIFY] [AdminUser.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Entities/AdminUser.cs)
-#### [MODIFY] [AdminUserConfiguration.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Configurations/AdminUserConfiguration.cs)
-#### [MODIFY] [Program.cs](file:///d:/Clinets/Remal/REMAL/Program.cs) (for manual constraint testing)
+#### [NEW] [AdminRole.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Shared/Enums/AdminRole.cs)
+#### [MODIFY] [AdminUser.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/AdminUser.cs)
+#### [MODIFY] [AdminUserConfiguration.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Configurations/AdminUserConfiguration.cs)
+#### [MODIFY] [Program.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/Program.cs) (for manual constraint testing)
 
 ---
 
@@ -169,9 +169,9 @@ Tests successfully validated programmatically utilizing EF operations against SQ
 
 ## Project File Modifcations
 
-#### [MODIFY] [Client.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Entities/Client.cs)
-#### [MODIFY] [ClientConfiguration.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Configurations/ClientConfiguration.cs)
-#### [MODIFY] [Program.cs](file:///d:/Clinets/Remal/REMAL/Program.cs) (for manual constraint testing)
+#### [MODIFY] [Client.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Client.cs)
+#### [MODIFY] [ClientConfiguration.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Configurations/ClientConfiguration.cs)
+#### [MODIFY] [Program.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/Program.cs) (for manual constraint testing)
 
 ---
 
@@ -200,9 +200,9 @@ Executing local validations proved robust implementation bounds protecting opera
 
 ## Project File Modifcations
 
-#### [MODIFY] [Owner.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Entities/Owner.cs)
-#### [MODIFY] [OwnerConfiguration.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Configurations/OwnerConfiguration.cs)
-#### [MODIFY] [Program.cs](file:///d:/Clinets/Remal/REMAL/Program.cs) (for manual constraint testing)
+#### [MODIFY] [Owner.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Owner.cs)
+#### [MODIFY] [OwnerConfiguration.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Configurations/OwnerConfiguration.cs)
+#### [MODIFY] [Program.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/Program.cs) (for manual constraint testing)
 
 ---
 
@@ -233,9 +233,9 @@ A robust execution script fired testing validations matching `Amenities` nativel
 
 ## Project File Modifcations
 
-#### [NEW] [IRepository.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Repositories/IRepository.cs)
-#### [NEW] [Repository.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/Repositories/Repository.cs)
-#### [MODIFY] [Program.cs](file:///d:/Clinets/Remal/REMAL/Program.cs) (for manual constraint testing)
+#### [NEW] [IRepository.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Repositories/IRepository.cs)
+#### [NEW] [Repository.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Repositories/Repository.cs)
+#### [MODIFY] [Program.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/Program.cs) (for manual constraint testing)
 
 ---
 
@@ -261,5 +261,5 @@ Simulated advanced transactional executions executing concurrent `Amenities` / `
 
 ## Project File Modifcations
 
-#### [NEW] [UnitOfWork.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Data/UnitOfWork.cs)
-#### [MODIFY] [Program.cs](file:///d:/Clinets/Remal/REMAL/Program.cs) (for manual constraint testing)
+#### [NEW] [UnitOfWork.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/UnitOfWork.cs)
+#### [MODIFY] [Program.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/Program.cs) (for manual constraint testing)

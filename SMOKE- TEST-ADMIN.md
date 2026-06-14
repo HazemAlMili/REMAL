@@ -16,7 +16,7 @@ Integrated Test Engineering / QA Architecture
 Scope
 =====
 
-Full End-to-End (E2E) automated verification of the REMAL Admin Dashboard Portal, covering all 8 functional segments (Dashboard Overview, Areas, Units, CRM Pipeline, Owners Profiles, Clients Profiles, Finance Ledger, and System Settings), role authorization boundaries, contract schema compliance, and cross-portal operational state sync loops.
+Full End-to-End (E2E) automated verification of the Kaza Booking Admin Dashboard Portal, covering all 8 functional segments (Dashboard Overview, Areas, Units, CRM Pipeline, Owners Profiles, Clients Profiles, Finance Ledger, and System Settings), role authorization boundaries, contract schema compliance, and cross-portal operational state sync loops.
 
 Objective
 =========
@@ -26,7 +26,7 @@ Design, construct, and execute an ironclad, hyper-detailed automated integrated 
 Part I: Deep Analysis of the Admin Portal Component Architecture
 ================================================================
 
-The REMAL Admin Dashboard handles critical cross-module dependencies where a state shift in one workflow instantly causes structural transformations across the system schema. Below is a deep component breakdown mapping the functional states, backend integrations, and operations under validation:
+The Kaza Booking Admin Dashboard handles critical cross-module dependencies where a state shift in one workflow instantly causes structural transformations across the system schema. Below is a deep component breakdown mapping the functional states, backend integrations, and operations under validation:
 
 Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML                  `+---------------------------------------+                    |         Admin Auth Controller         |                    +---------------------------------------+                                        |         +------------------------------+------------------------------+         | (SuperAdmin)                 | (Sales)                      | (Finance)         v                              v                              v  +-----------------------+      +-----------------------+      +-----------------------+  |  Settings & Matrix    |      |  CRM Pipeline View    |      |  Finance Module       |  |  - System Config      |      |  - Lead Tracking      |      |  - Revenue Dashboard  |  |  - Role Management    |      |  - Stage Transitions  |      |  - Transaction Log    |  |  - Admin Registration |      |  - Booking Conversion |      |  - Owner Payout batch |  +-----------------------+      +-----------------------+      +-----------------------+         |                              |                              |         +------------------------------+------------------------------+                                        |                                        v                         +------------------------------+                         |  Units Inventory & Calendar  |                         |  - Base & Seasonal Pricing   |                         |  - Dynamic Date Blocks       |                         |  - Image Meta Sync           |                         +------------------------------+`
 
@@ -207,7 +207,7 @@ Part IV: Technical Specifications & Execution Paths
 
 ### 1\. Required Investigation
 
-*   Trace out all route constants matching the administrative schemas inside REMAL\_API\_Reference.md to ensure zero endpoint path mutations occurred during recent deployment cycles.
+*   Trace out all route constants matching the administrative schemas inside Kaza Booking\_API\_Reference.md to ensure zero endpoint path mutations occurred during recent deployment cycles.
     
 *   Audit the application's global state provider profiles (Zustand configuration targets) to map which client-side variables require isolation resets between individual test execution blocks.
     

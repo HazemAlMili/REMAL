@@ -9,7 +9,7 @@ export default function SettingsPage() {
           Admin settings
         </h1>
         <p className="text-sm text-neutral-500">
-          Manage who runs Remal: operator accounts, role access, and how you
+          Manage who runs Kaza Booking: operator accounts, role access, and how you
           hear about activity.
         </p>
       </div>

@@ -1,6 +1,6 @@
 // ──────────────────────────────────────────────────────────────────────────────
 // Owner Portal Types
-// From REMAL_API_Reference.md Sections 34-39
+// From KAZA_BOOKING_API_Reference.md Sections 34-39
 // Owner Portal uses /api/owner/* endpoints (NOT /api/internal/*)
 // ──────────────────────────────────────────────────────────────────────────────
 

@@ -100,7 +100,7 @@ This meant any EF Core query or insert touching `Owner` would fail at runtime wi
 
 ### Problem
 
-During early Tier 2 development, the root `Program.cs` (at `d:\Clinets\Remal\REMAL\Program.cs`) was used as a verification harness for smoke-testing entity mappings, soft-delete behavior, and repository operations. After the solution was restructured into the 4-project layout (`RentalPlatform.API`, `.Business`, `.Data`, `.Shared`), this root file became orphaned — it does not belong to any `.csproj`.
+During early Tier 2 development, the root `Program.cs` (at `d:\Clinets\Kaza Booking\Kaza Booking\Program.cs`) was used as a verification harness for smoke-testing entity mappings, soft-delete behavior, and repository operations. After the solution was restructured into the 4-project layout (`RentalPlatform.API`, `.Business`, `.Data`, `.Shared`), this root file became orphaned — it does not belong to any `.csproj`.
 
 ### Current State
 

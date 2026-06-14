@@ -2,7 +2,7 @@ services:
   # ── PostgreSQL 16 ──
   db:
     image: postgres:16-alpine
-    container_name: remal-db
+    container_name: kaza-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: RentalPlatform
@@ -11,7 +11,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - remal_pgdata:/var/lib/postgresql/data
+      - kaza_pgdata:/var/lib/postgresql/data
       - ./db/migrations:/docker-entrypoint-initdb.d/migrations:ro
       - ./db/init.sql:/docker-entrypoint-initdb.d/00_init.sql:ro
     healthcheck:
@@ -25,7 +25,7 @@ services:
     build:
       context: .
       dockerfile: RentalPlatform.API/Dockerfile
-    container_name: remal-api
+    container_name: kaza-api
     restart: unless-stopped
     ports:
       - "5001:8080"
@@ -44,4 +44,4 @@ services:
         condition: service_healthy
 
 volumes:
-  remal_pgdata:
+  kaza_pgdata:

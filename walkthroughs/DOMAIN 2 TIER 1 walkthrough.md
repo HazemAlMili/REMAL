@@ -5,20 +5,20 @@ Created the `units` table as the **inventory anchor** for Domain 2 (Units & Avai
 
 ## Files Created / Modified
 
-### [NEW] [0010_create_units.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0010_create_units.sql)
+### [NEW] [0010_create_units.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0010_create_units.sql)
 Up migration creating the `units` table with:
 - 15 columns matching the exact schema contract
 - 2 foreign keys (`fk_units_owner_id`, `fk_units_area_id`) with `ON DELETE RESTRICT`
 - 5 check constraints (unit_type, bedrooms, bathrooms, max_guests, base_price)
 - 2 indexes (`ix_units_owner_id`, `ix_units_area_id`)
 
-### [NEW] [0010_create_units_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0010_create_units_rollback.sql)
+### [NEW] [0010_create_units_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0010_create_units_rollback.sql)
 Rollback drops indexes first, then the table.
 
-### [NEW] [0010_create_units_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0010_create_units_verify.sql)
+### [NEW] [0010_create_units_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0010_create_units_verify.sql)
 Comprehensive verification with 19 checks covering both static and runtime validation.
 
-### [MODIFY] [init.sql](file:///d:/Clinets/Remal/REMAL/db/init.sql)
+### [MODIFY] [init.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/init.sql)
 Added migration 0010 entry for fresh DB provisioning.
 
 ---
@@ -103,20 +103,20 @@ Created the `unit_images` table to store ordered media references for units. Sup
 
 ## Files Created / Modified
 
-### [NEW] [0011_create_unit_images.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0011_create_unit_images.sql)
+### [NEW] [0011_create_unit_images.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0011_create_unit_images.sql)
 Up migration creating the `unit_images` table with:
 - 7 columns matching the exact schema contract
 - 1 foreign key (`fk_unit_images_unit_id`) with `ON DELETE CASCADE`
 - 1 check constraint (`ck_unit_images_display_order_non_negative`)
 - 2 indexes (`ix_unit_images_unit_id`, `ix_unit_images_unit_id_display_order`)
 
-### [NEW] [0011_create_unit_images_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0011_create_unit_images_rollback.sql)
+### [NEW] [0011_create_unit_images_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0011_create_unit_images_rollback.sql)
 Rollback drops indexes then table.
 
-### [NEW] [0011_create_unit_images_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0011_create_unit_images_verify.sql)
+### [NEW] [0011_create_unit_images_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0011_create_unit_images_verify.sql)
 12 verification checks covering static schema, speculative column guard, runtime constraints, defaults, and CASCADE behavior.
 
-### [MODIFY] [init.sql](file:///d:/Clinets/Remal/REMAL/db/init.sql)
+### [MODIFY] [init.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/init.sql)
 Added migration 0011 entry.
 
 ---
@@ -186,16 +186,16 @@ Created the `unit_amenities` join table linking units and amenities through a **
 
 ## Files Created / Modified
 
-### [NEW] [0012_create_unit_amenities.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0012_create_unit_amenities.sql)
+### [NEW] [0012_create_unit_amenities.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0012_create_unit_amenities.sql)
 Up migration with composite PK, dual CASCADE FKs, and reverse-lookup index.
 
-### [NEW] [0012_create_unit_amenities_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0012_create_unit_amenities_rollback.sql)
+### [NEW] [0012_create_unit_amenities_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0012_create_unit_amenities_rollback.sql)
 Rollback drops index then table.
 
-### [NEW] [0012_create_unit_amenities_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0012_create_unit_amenities_verify.sql)
+### [NEW] [0012_create_unit_amenities_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0012_create_unit_amenities_verify.sql)
 13 verification checks covering static schema, no-surrogate-id guard, composite PK, FK validation, duplicate rejection, and CASCADE on both sides.
 
-### [MODIFY] [init.sql](file:///d:/Clinets/Remal/REMAL/db/init.sql)
+### [MODIFY] [init.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/init.sql)
 Added migration 0012 entry.
 
 ---
@@ -261,16 +261,16 @@ Created the `seasonal_pricing` table for per-unit nightly price overrides over b
 
 ## Files Created / Modified
 
-### [NEW] [0013_create_seasonal_pricing.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0013_create_seasonal_pricing.sql)
+### [NEW] [0013_create_seasonal_pricing.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0013_create_seasonal_pricing.sql)
 Up migration with FK, 2 indexes, and 2 check constraints (date range validity, non-negative price).
 
-### [NEW] [0013_create_seasonal_pricing_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0013_create_seasonal_pricing_rollback.sql)
+### [NEW] [0013_create_seasonal_pricing_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0013_create_seasonal_pricing_rollback.sql)
 Rollback drops indexes then table.
 
-### [NEW] [0013_create_seasonal_pricing_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0013_create_seasonal_pricing_verify.sql)
+### [NEW] [0013_create_seasonal_pricing_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0013_create_seasonal_pricing_verify.sql)
 13 verification checks: static schema, no-derived-columns guard, no-exclusion-constraint guard, runtime date/price/FK validation, and CASCADE test.
 
-### [MODIFY] [init.sql](file:///d:/Clinets/Remal/REMAL/db/init.sql)
+### [MODIFY] [init.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/init.sql)
 Added migration 0013 entry.
 
 ---
@@ -339,16 +339,16 @@ Created the `date_blocks` table as the **non-booking availability blocker source
 
 ## Files Created / Modified
 
-### [NEW] [0014_create_date_blocks.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0014_create_date_blocks.sql)
+### [NEW] [0014_create_date_blocks.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0014_create_date_blocks.sql)
 Up migration with FK, 2 indexes, and date-range check constraint.
 
-### [NEW] [0014_create_date_blocks_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0014_create_date_blocks_rollback.sql)
+### [NEW] [0014_create_date_blocks_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0014_create_date_blocks_rollback.sql)
 Rollback drops indexes then table.
 
-### [NEW] [0014_create_date_blocks_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0014_create_date_blocks_verify.sql)
+### [NEW] [0014_create_date_blocks_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0014_create_date_blocks_verify.sql)
 11 verification checks: static schema, no-speculative-columns guard, runtime date-range/FK tests, NULL reason, single-day block, and CASCADE.
 
-### [MODIFY] [init.sql](file:///d:/Clinets/Remal/REMAL/db/init.sql)
+### [MODIFY] [init.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/init.sql)
 Added migration 0014 entry.
 
 ---
@@ -416,16 +416,16 @@ A final checkpoint pass over the newly created `Units & Availability` tables to 
 
 ## Files Created / Modified
 
-### [NEW] [0015_units_availability_integrity_cleanup.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0015_units_availability_integrity_cleanup.sql)
+### [NEW] [0015_units_availability_integrity_cleanup.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0015_units_availability_integrity_cleanup.sql)
 Creates table-level documentation comments and refreshes table statistics. Does not modify structural schema since the initial migrations were clean.
 
-### [NEW] [0015_units_availability_integrity_cleanup_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0015_units_availability_integrity_cleanup_rollback.sql)
+### [NEW] [0015_units_availability_integrity_cleanup_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0015_units_availability_integrity_cleanup_rollback.sql)
 Removes the table comments.
 
-### [NEW] [0015_units_availability_integrity_cleanup_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0015_units_availability_integrity_cleanup_verify.sql)
+### [NEW] [0015_units_availability_integrity_cleanup_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0015_units_availability_integrity_cleanup_verify.sql)
 Cross-table domain script. Executes 6 categories of checks ensuring exact constraint/column matching while explicitly failing if ANY table has an `availability_status`, `booking_id`, or floating-point price column.
 
-### [MODIFY] [init.sql](file:///d:/Clinets/Remal/REMAL/db/init.sql)
+### [MODIFY] [init.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/init.sql)
 Added migration 0015 entry.
 
 ---

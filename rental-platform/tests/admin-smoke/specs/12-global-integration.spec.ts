@@ -80,7 +80,7 @@ test.describe("Global Portal Integration & Edge Cases", () => {
       targetUnitId: unit.id,
       contactName: "Midnight Guest",
       contactPhone: "+201099998888",
-      contactEmail: "midnight.guest@remal.dev",
+      contactEmail: "midnight.guest@kazabooking.dev",
       source: "website",
       desiredCheckInDate: checkIn,
       desiredCheckOutDate: checkOut,

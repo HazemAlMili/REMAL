@@ -42,7 +42,7 @@ export const useAuthStore = create<AuthState>()(
         set({ accessToken: null, expiresInSeconds: null, subjectType: null, user: null, role: null, permissions: [] }),
     }),
     {
-      name: 'remal-auth',
+      name: 'kaza-auth',
       // Only persist non-sensitive identity data — access token stays in memory
       partialize: (state) => ({
         subjectType: state.subjectType,

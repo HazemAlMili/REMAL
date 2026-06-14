@@ -20,7 +20,7 @@ This document tracks all follow-up items identified during the completion of the
 
 ### Problem
 
-As identified in the Tier 1 follow-ups, the original execution framework consisted of a monolithic single-project setup (`REMAL.csproj`). If we mapped API endpoints without resolving this, future API domains, UI components, and business validations would inevitably tangle, destroying the `4-project layout` mandate.
+As identified in the Tier 1 follow-ups, the original execution framework consisted of a monolithic single-project setup (`Kaza Booking.csproj`). If we mapped API endpoints without resolving this, future API domains, UI components, and business validations would inevitably tangle, destroying the `4-project layout` mandate.
 
 ### Resolution
 
@@ -29,7 +29,7 @@ As identified in the Tier 1 follow-ups, the original execution framework consist
 | Migration | Extracted localized folders into formal `C#` library modules. |
 | Projects Created | `RentalPlatform.API` (Web SDK), `RentalPlatform.Business`, `RentalPlatform.Data`, `RentalPlatform.Shared` |
 | Solution Binding | Established a native `.slnx` hierarchy securely compiling outputs without cyclic boundaries |
-| Legacy Deletion | Obliterated the original `REMAL.csproj`, fully cleaning the root monolith. |
+| Legacy Deletion | Obliterated the original `Kaza Booking.csproj`, fully cleaning the root monolith. |
 
 > [!IMPORTANT]
 > All subsequent feature development going forward must utilize the targeted projects directly. Do not route backend operations inside the `.API` folder randomly. 

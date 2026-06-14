@@ -6,7 +6,7 @@ product
 
 ## Users
 
-Remal is a commission-based vacation-rental brokerage for Egyptian North-Coast resorts (Palm Hills, Abraj Al Alamein). Three audiences use the operational portals this document governs:
+Kaza Booking is a commission-based vacation-rental brokerage for Egyptian North-Coast resorts (Palm Hills, Abraj Al Alamein). Three audiences use the operational portals this document governs:
 
 - **Operators (Admin portal)** — four scoped roles:
   - *Super Admin* — full control over the platform.
@@ -19,13 +19,13 @@ Remal is a commission-based vacation-rental brokerage for Egyptian North-Coast r
 
 ## Product Purpose
 
-Remal turns a previously informal brokerage into an organized operating system. The platform connects property owners with clients and runs the entire booking lifecycle — discovery, CRM pipeline, manual payment recording, auto-invoicing, commission accounting, owner payouts, and reviews — taking a per-owner commission. The portals are the back-office and self-service surfaces where operators, owners, and clients interact with that system. Success: operators move leads and money through the pipeline quickly and without mistakes; owners trust what they see; clients self-serve without contacting support.
+Kaza Booking turns a previously informal brokerage into an organized operating system. The platform connects property owners with clients and runs the entire booking lifecycle — discovery, CRM pipeline, manual payment recording, auto-invoicing, commission accounting, owner payouts, and reviews — taking a per-owner commission. The portals are the back-office and self-service surfaces where operators, owners, and clients interact with that system. Success: operators move leads and money through the pipeline quickly and without mistakes; owners trust what they see; clients self-serve without contacting support.
 
 > **Scope note.** This document governs the three **operational portals** — Admin (`app/(admin)/`), Owner (`app/(owner)/owner/`), Client (`app/account/` + `app/(auth)/`). The **public marketing/booking storefront** (`app/(public)/`, `app/page.tsx`, `app/units/`) is a separate surface that keeps its warm-terracotta hospitality theme and is out of scope here.
 
 ## Brand Personality
 
-**Trustworthy · Efficient · Quietly warm.** Remal ("رمال" — *sands*) is the calm, organized system behind the brokerage. The portals should feel like a precise, financial-grade tool that still carries a thread of the brand's hospitality warmth — competence first, personality second. Emotional goals: **confidence and control** for operators; **transparency and trust** for owners; **clarity and reassurance** for clients. Never flashy, never sterile.
+**Trustworthy · Efficient · Quietly warm.** Kaza Booking is the calm, organized system behind the brokerage. The portals should feel like a precise, financial-grade tool that still carries a thread of the brand's hospitality warmth — competence first, personality second. Emotional goals: **confidence and control** for operators; **transparency and trust** for owners; **clarity and reassurance** for clients. Never flashy, never sterile.
 
 ## Anti-references
 

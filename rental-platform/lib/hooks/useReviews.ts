@@ -1,6 +1,6 @@
 // ──────────────────────────────────────────────────────────────────────────────
 // Reviews Hooks
-// From REMAL_API_Reference.md Sections 22-24
+// From KAZA_BOOKING_API_Reference.md Sections 22-24
 // ──────────────────────────────────────────────────────────────────────────────
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";

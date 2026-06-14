@@ -34,7 +34,7 @@ test.describe("Cross-Module CRM-to-Finance Pipeline Loop", () => {
       targetUnitId: unit.id,
       contactName: "Sara El-Sayed",
       contactPhone: "+201111111111",
-      contactEmail: "sara.guest@remal.dev",
+      contactEmail: "sara.guest@kazabooking.dev",
       source: "Website",
       desiredCheckInDate: "2026-08-10",
       desiredCheckOutDate: "2026-08-15",

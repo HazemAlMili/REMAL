@@ -52,7 +52,7 @@ export function AdminLoginForm() {
         label="Email address"
         type="email"
         autoComplete="email"
-        placeholder="admin@remal.com"
+        placeholder="admin@kazabooking.com"
         disabled={isPending}
         error={errors.email?.message}
         {...register("email")}

@@ -1,7 +1,7 @@
 # 🔬 API Reference Analysis — Pre-Wave 1 Report
 ## الملاحظات الحرجة قبل البدء في Wave 1
 
-**المصدر:** REMAL_API_Reference.md (الـ Swagger الفعلي)
+**المصدر:** KAZA_BOOKING_API_Reference.md (الـ Swagger الفعلي)
 **الأثر:** يتطلب تصحيح بعض ما كُتب في Wave 0 + يحدد كل الـ contracts لـ Wave 1
 
 ---
@@ -637,4 +637,4 @@ interface AmenityResponse {
 ---
 
 *هذا الملف يُستخدم كـ reference مع كل ticket في Wave 1 وما بعده.*
-*المصدر: REMAL_API_Reference.md — تحليل شامل لجميع الـ 35 section.*
+*المصدر: KAZA_BOOKING_API_Reference.md — تحليل شامل لجميع الـ 35 section.*

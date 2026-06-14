@@ -102,7 +102,7 @@ All 5 Finance tickets depend on typed API contracts covering owner payouts (the 
 
 ```typescript
 // lib/types/finance.types.ts
-// From REMAL_API_Reference.md
+// From KAZA_BOOKING_API_Reference.md
 
 type PayoutStatus  = 'Pending' | 'Scheduled' | 'Paid' | 'Cancelled'
 type PaymentMethod = 'InstaPay' | 'VodafoneCash' | 'Cash' | 'BankTransfer'
@@ -688,7 +688,7 @@ All 5 Owner tickets depend on typed contracts. This ticket creates the full Owne
 
 ```typescript
 // lib/types/owner.types.ts
-// From REMAL_API_Reference.md
+// From KAZA_BOOKING_API_Reference.md
 
 // ── Owner status (lowercase per API design) ──
 type OwnerStatus = 'active' | 'inactive'
@@ -748,7 +748,7 @@ interface UpdateOwnerStatusRequest {
 }
 
 // ── Owner Earnings ──
-// Backend gap: no documented `/api/owners/{id}/earnings` endpoint in REMAL_API_Reference.
+// Backend gap: no documented `/api/owners/{id}/earnings` endpoint in Kaza Booking_API_Reference.
 // Use documented payout summary (`/api/internal/owners/{ownerId}/payout-summary`) instead.
 
 // ── Paginated Owners ──
@@ -1165,7 +1165,7 @@ Clients domain is simpler than others (read-mostly). The API has `GET /api/clien
 
 ```typescript
 // lib/types/client.types.ts
-// From REMAL_API_Reference.md
+// From KAZA_BOOKING_API_Reference.md
 
 // ── Client list item ──
 interface ClientListItemResponse {
@@ -1187,7 +1187,7 @@ interface ClientDetailsResponse {
   isActive:  boolean
   createdAt: string
   updatedAt: string
-  // Backend gap: no documented client booking-history endpoint in REMAL_API_Reference.md.
+  // Backend gap: no documented client booking-history endpoint in KAZA_BOOKING_API_Reference.md.
   // Do not assume internal bookings endpoint supports clientId filter until backend confirms.
 }
 

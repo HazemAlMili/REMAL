@@ -673,7 +673,7 @@ interface PaginationProps {
 **CRITICAL: PaginationMeta from API uses `totalCount` and `totalPages` (not `total`):**
 
 ```typescript
-// From REMAL_API_Reference.md — Shared Response Envelope:
+// From KAZA_BOOKING_API_Reference.md — Shared Response Envelope:
 // pagination: { totalCount, page, pageSize, totalPages }
 // Use totalCount for "showing X of Y results"
 // Use totalPages for calculating page range
@@ -760,7 +760,7 @@ interface StatusBadgeProps {
 
 **CRITICAL — Status values are PascalCase:**
 ```typescript
-// From REMAL_API_Reference.md:
+// From KAZA_BOOKING_API_Reference.md:
 // booking.leadStatus = 'Prospecting' | 'Relevant' | 'NoAnswer' etc.
 // payment.paymentStatus = 'Pending' | 'Paid' | 'Failed' | 'Cancelled'
 // These MUST match the constants from lib/constants/
@@ -992,7 +992,7 @@ Build the `usePermissions()` hook based on the API access matrix, the `<EmptySta
 ### Section 4 — In Scope
 
 - [ ] Create `lib/hooks/usePermissions.ts` — reads `role` from auth store, returns typed Permissions object
-- [ ] The permissions matrix must match the Access Matrix from `REMAL_API_Reference.md` (Section: Access Matrix Summary)
+- [ ] The permissions matrix must match the Access Matrix from `KAZA_BOOKING_API_Reference.md` (Section: Access Matrix Summary)
 - [ ] Create `components/ui/EmptyState.tsx` — icon + title + description + optional CTA button
 - [ ] Create `components/ui/ConfirmDialog.tsx` — uses `<Modal>` from FE-1-UI-04, shows message, Confirm/Cancel buttons
 - [ ] Export all from their respective barrels
@@ -1013,7 +1013,7 @@ Build the `usePermissions()` hook based on the API access matrix, the `<EmptySta
 #### 6a. usePermissions
 
 ```typescript
-// Based directly on REMAL_API_Reference.md Access Matrix Summary:
+// Based directly on KAZA_BOOKING_API_Reference.md Access Matrix Summary:
 interface Permissions {
   canViewCRM:             boolean  // SuperAdmin, Sales
   canManageCRM:           boolean  // SuperAdmin, Sales
@@ -1123,7 +1123,7 @@ interface ConfirmDialogProps {
 
 ### Section 12 — Acceptance Criteria
 
-- [ ] `usePermissions()` permissions matrix matches REMAL_API_Reference.md Access Matrix exactly
+- [ ] `usePermissions()` permissions matrix matches KAZA_BOOKING_API_Reference.md Access Matrix exactly
 - [ ] `AdminRole` values are PascalCase: `'SuperAdmin'`, `'Sales'`, `'Finance'`, `'Tech'`
 - [ ] `subjectType` values are PascalCase: `'Admin'`, `'Owner'`, `'Client'`
 - [ ] `usePermissions()` uses `useMemo` to avoid recalculation on every render
@@ -1151,7 +1151,7 @@ interface ConfirmDialogProps {
 - `isOwner`, `isClient`, `isAdmin` check `subjectType`, not `role` — an owner has no `role` (it's null)
 
 **REFERENCES:**
-- REMAL_API_Reference.md — Access Matrix Summary (last section) — the definitive permissions source
+- KAZA_BOOKING_API_Reference.md — Access Matrix Summary (last section) — the definitive permissions source
 - FE-0-INFRA-05 — auth store (role + subjectType live here)
 - Every Wave 2–5 page ticket — they all import `usePermissions()` to guard access
 

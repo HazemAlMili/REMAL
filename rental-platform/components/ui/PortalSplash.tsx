@@ -72,10 +72,10 @@ export function PortalSplash({
         {/* Brand lockup — continuity from the sign-in screen */}
         <div className="flex items-center gap-2.5" aria-hidden="true">
           <div className="portal-splash-mark grid h-11 w-11 place-items-center rounded-xl bg-primary-500 text-xl font-bold tracking-tight text-white">
-            R
+            K
           </div>
           <span className="text-lg font-semibold tracking-tight text-neutral-900">
-            Remal
+            Kaza Booking
           </span>
         </div>
 

@@ -1,6 +1,6 @@
 // ──────────────────────────────────────────────────────────────────────────────
 // Notifications Hooks
-// From REMAL_API_Reference.md Sections 30-33
+// From KAZA_BOOKING_API_Reference.md Sections 30-33
 // Verified against P25, P26, P27
 // ──────────────────────────────────────────────────────────────────────────────
 

@@ -27,7 +27,7 @@ dotnet run --project RentalPlatform.API/RentalPlatform.API.csproj
 
 ## 3. Stale Solution Archival
 
-The legacy `REMAL.sln` file has been moved to `docs/archive/REMAL.sln.stale`. It is no longer supported as it references an obsolete single-project structure (`REMAL.csproj`) that has since been decomposed into the 4-project layout.
+The legacy `Kaza Booking.sln` file has been moved to `docs/archive/KAZA_BOOKING.sln.stale`. It is no longer supported as it references an obsolete single-project structure (`Kaza Booking.csproj`) that has since been decomposed into the 4-project layout.
 
 > [!CAUTION]
-> Do not attempt to use `REMAL.sln` for active development or build reviews, as it will fail due to missing project references.
+> Do not attempt to use `Kaza Booking.sln` for active development or build reviews, as it will fail due to missing project references.

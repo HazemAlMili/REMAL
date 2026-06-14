@@ -18,7 +18,7 @@ The following image files are required for the hero carousel to function properl
 - **Aspect Ratio**: 16:9 or wider
 - **Quality**: High quality (85-90%)
 - **Subject**: Premium vacation rental properties, coastal destinations, resort views
-- **Style**: Cinematic, luxury aesthetic matching the REMAL brand
+- **Style**: Cinematic, luxury aesthetic matching the Kaza Booking brand
 
 ## Usage
 

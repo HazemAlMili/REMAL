@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Playwright configuration specifically for the REMAL Client Portal Smoke Tests.
+ * Playwright configuration specifically for the Kaza Booking Client Portal Smoke Tests.
  */
 export default defineConfig({
   testDir: "./tests/client-smoke",

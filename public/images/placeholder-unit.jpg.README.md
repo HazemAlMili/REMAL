@@ -9,7 +9,7 @@
 - **Format**: JPG
 - **Dimensions**: 800×600px (4:3 aspect ratio)
 - **Subject**: Generic luxury property or coastal view
-- **Style**: Neutral, professional, matches REMAL brand aesthetic
+- **Style**: Neutral, professional, matches Kaza Booking brand aesthetic
 
 ## Usage
 

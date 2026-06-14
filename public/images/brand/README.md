@@ -16,7 +16,7 @@ The following image files are required for the brand story section:
 - **Dimensions**: Minimum 1200×1600px (portrait orientation)
 - **Aspect Ratio**: 3:4 (desktop) or 4:5 (mobile)
 - **Quality**: High quality (85-90%)
-- **Subject**: Luxury coastal property, villa exterior, or resort view that represents the REMAL brand
+- **Subject**: Luxury coastal property, villa exterior, or resort view that represents the Kaza Booking brand
 - **Style**: Premium, aspirational, coastal/resort aesthetic
 
 ## Usage
@@ -40,4 +40,4 @@ Until actual brand images are provided by the design team, you can use temporary
 - Match the required dimensions and aspect ratio
 - Are properly optimized for web
 - Are stored directly in this directory (NOT fetched from external URLs)
-- Represent the luxury coastal/resort aesthetic of the REMAL brand
+- Represent the luxury coastal/resort aesthetic of the Kaza Booking brand

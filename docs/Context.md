@@ -1,4 +1,4 @@
-أنت الآن تعمل على مشروع **REMAL Rental Property Management Platform**.
+أنت الآن تعمل على مشروع **Kaza Booking Rental Property Management Platform**.
 
 ## دورك الأساسي
 
@@ -26,7 +26,7 @@
 
 # الحالة الحالية للمشروع
 
-المشروع اسمه **REMAL Rental Property Management Platform**.
+المشروع اسمه **Kaza Booking Rental Property Management Platform**.
 
 هو منصة لإدارة وتأجير الوحدات العقارية، تشمل:
 
@@ -64,7 +64,7 @@
 
 1. Business Requirements / PRD
 2. Technical Requirements
-3. `REMAL_API_Reference.md`
+3. `KAZA_BOOKING_API_Reference.md`
 4. `Pre_Wave1_API_Analysis.md`
 5. ملفات الـ frontend waves/tickets الموجودة في المشروع، للقراءة والفهم فقط
 
@@ -94,7 +94,7 @@
 
 عند وجود تعارض:
 
-1. `REMAL_API_Reference.md` هو مصدر الحقيقة النهائي للـ:
+1. `KAZA_BOOKING_API_Reference.md` هو مصدر الحقيقة النهائي للـ:
     - endpoints
     - request bodies
     - response shapes
@@ -147,7 +147,7 @@
 ## قبل التنفيذ
 
 1. اقرأ ticket بالكامل.
-2. اقرأ الأقسام المرتبطة به في `REMAL_API_Reference.md`.
+2. اقرأ الأقسام المرتبطة به في `KAZA_BOOKING_API_Reference.md`.
 3. راجع أي dependencies مذكورة في ticket.
 4. تأكد من:
     - endpoint names
@@ -496,7 +496,7 @@ areaId
 اكتب فقط report بهذا الشكل:
 
 ```markdown
-# REMAL Project Onboarding Report
+# Kaza Booking Project Onboarding Report
 
 ## 1. Business Understanding
 

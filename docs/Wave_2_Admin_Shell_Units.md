@@ -348,7 +348,7 @@ const NAV_ITEMS: NavItem[] = [
 - FE-1-AUTH-06 — LogoutButton component
 - FE-1-UI-10 — usePermissions hook + Permissions type
 - FE-0-INFRA-05 — UIStore (isSidebarOpen, toggleSidebar)
-- REMAL_API_Reference.md — Access Matrix Summary (permissions)
+- KAZA_BOOKING_API_Reference.md — Access Matrix Summary (permissions)
 
 ---
 
@@ -480,7 +480,7 @@ endpoints.reportsBookings.summary   // GET /api/internal/reports/bookings/summar
 | GET | `/api/internal/reports/finance/summary` | `FinanceAnalyticsSummaryResponse` | on page mount |
 | GET | `/api/internal/reports/bookings/summary` | `BookingAnalyticsSummaryResponse` | on page mount |
 
-**Full API Contracts (from REMAL_API_Reference.md):**
+**Full API Contracts (from KAZA_BOOKING_API_Reference.md):**
 
 ```typescript
 // lib/types/report.types.ts
@@ -749,7 +749,7 @@ ROUTES.admin.areas         // '/admin/areas'
 | PUT | `/api/areas/{id}` | `UpdateAreaRequest` | `AreaResponse` | on edit form submit |
 | PATCH | `/api/areas/{id}/status` | `UpdateAreaStatusRequest` | `AreaResponse` | on status toggle confirm |
 
-**Full API Contracts (from REMAL_API_Reference.md):**
+**Full API Contracts (from KAZA_BOOKING_API_Reference.md):**
 
 ```typescript
 // lib/types/area.types.ts
@@ -1056,7 +1056,7 @@ Create `lib/api/services/units.service.ts`, `lib/types/unit.types.ts`, and `lib/
 
 ```typescript
 // lib/types/unit.types.ts
-// All contracts from REMAL_API_Reference.md
+// All contracts from KAZA_BOOKING_API_Reference.md
 
 // ── Enums ──
 type UnitType = 'villa' | 'chalet' | 'studio'  // lowercase per API

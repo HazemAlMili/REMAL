@@ -113,7 +113,7 @@ The **canonical naming** for the implementation is:
 | Target Framework | .NET (implied latest stable) | `net10.0` ✅ |
 | Project Type | 4-project solution | Single console app ❌ |
 | Solution Name | `RentalPlatform.sln` | No `.sln` file ❌ |
-| Project Names | `RentalPlatform.Shared`, `.Data`, `.Business`, `.API` | Single `REMAL.csproj` ❌ |
+| Project Names | `RentalPlatform.Shared`, `.Data`, `.Business`, `.API` | Single `Kaza Booking.csproj` ❌ |
 | SDK Type | `Microsoft.NET.Sdk.Web` (for API) | `Microsoft.NET.Sdk` (console) ❌ |
 
 ### Required 4-Project Layout (from `technical_req.md` §3)
@@ -130,13 +130,13 @@ RentalPlatform.sln
 
 | Decision | Status | Notes |
 |----------|--------|-------|
-| Target framework = `net10.0` | ✅ Confirmed | Already set in `REMAL.csproj` |
+| Target framework = `net10.0` | ✅ Confirmed | Already set in `Kaza Booking.csproj` |
 | Solution rename to `RentalPlatform.sln` | 📋 Pending | Must occur before Tier 2 scaffolding |
 | 4-project split | 📋 Pending | Must be executed as a dedicated scaffolding ticket |
-| Current `REMAL.csproj` + `Program.cs` | 🔄 Will be replaced | These are placeholder artifacts from initial repo setup |
+| Current `Kaza Booking.csproj` + `Program.cs` | 🔄 Will be replaced | These are placeholder artifacts from initial repo setup |
 
 > [!WARNING]
-> The current project structure (`REMAL.csproj` as a single console app) is **not aligned** with the frozen technical spec. A dedicated scaffolding ticket must restructure the solution into the 4-project layout **before** any Tier 2 (Data) or Tier 3 (Business) code is written. Writing EF entities or services into the current single-project structure will create migration debt.
+> The current project structure (`Kaza Booking.csproj` as a single console app) is **not aligned** with the frozen technical spec. A dedicated scaffolding ticket must restructure the solution into the 4-project layout **before** any Tier 2 (Data) or Tier 3 (Business) code is written. Writing EF entities or services into the current single-project structure will create migration debt.
 
 ---
 

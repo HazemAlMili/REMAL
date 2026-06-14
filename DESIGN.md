@@ -1,6 +1,6 @@
 # Design
 
-Visual system for the **Remal operational portals** (Admin, Owner, Client). The public storefront has its own warm-terracotta system and is out of scope here. See [PRODUCT.md](PRODUCT.md) for the strategic context. Frontend: Next.js 14 App Router, TypeScript strict, **Tailwind CSS 3.4**, fonts deliberately offline-safe (no `next/font/google`).
+Visual system for the **Kaza Booking operational portals** (Admin, Owner, Client). The public storefront has its own warm-terracotta system and is out of scope here. See [PRODUCT.md](PRODUCT.md) for the strategic context. Frontend: Next.js 14 App Router, TypeScript strict, **Tailwind CSS 3.4**, fonts deliberately offline-safe (no `next/font/google`).
 
 ## Theme
 

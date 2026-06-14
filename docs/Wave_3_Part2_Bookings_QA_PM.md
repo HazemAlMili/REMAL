@@ -53,7 +53,7 @@ Create `lib/types/booking.types.ts`, `lib/api/services/bookings.service.ts`, and
 
 ```typescript
 // lib/types/booking.types.ts
-// All from REMAL_API_Reference.md
+// All from KAZA_BOOKING_API_Reference.md
 
 // ── Booking Statuses (DIFFERENT from CRM Lead statuses) ──
 // Booking has only 6 statuses (post-conversion formal status)

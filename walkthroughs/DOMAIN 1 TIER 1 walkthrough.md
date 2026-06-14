@@ -11,9 +11,9 @@ Foundational migration to enable `pgcrypto` extension and document all frozen DB
 
 | File | Purpose |
 |------|---------|
-| [0001_init_postgres_conventions.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0001_init_postgres_conventions.sql) | **UP** — enables pgcrypto + documents all conventions |
-| [0001_init_postgres_conventions_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0001_init_postgres_conventions_rollback.sql) | **DOWN** — safely drops pgcrypto |
-| [0001_init_postgres_conventions_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0001_init_postgres_conventions_verify.sql) | **Verify** — checks all 6 acceptance criteria |
+| [0001_init_postgres_conventions.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0001_init_postgres_conventions.sql) | **UP** — enables pgcrypto + documents all conventions |
+| [0001_init_postgres_conventions_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0001_init_postgres_conventions_rollback.sql) | **DOWN** — safely drops pgcrypto |
+| [0001_init_postgres_conventions_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0001_init_postgres_conventions_verify.sql) | **Verify** — checks all 6 acceptance criteria |
 
 ### Frozen Conventions
 
@@ -46,9 +46,9 @@ Create the `amenities` master lookup table with UUID PK, timestamps, and unique 
 
 | File | Purpose |
 |------|---------|
-| [0002_create_amenities.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0002_create_amenities.sql) | **UP** — creates amenities table + unique index |
-| [0002_create_amenities_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0002_create_amenities_rollback.sql) | **DOWN** — drops index + table |
-| [0002_create_amenities_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0002_create_amenities_verify.sql) | **Verify** — tests schema, uniqueness, inserts |
+| [0002_create_amenities.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0002_create_amenities.sql) | **UP** — creates amenities table + unique index |
+| [0002_create_amenities_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0002_create_amenities_rollback.sql) | **DOWN** — drops index + table |
+| [0002_create_amenities_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0002_create_amenities_verify.sql) | **Verify** — tests schema, uniqueness, inserts |
 
 ### Schema
 
@@ -106,9 +106,9 @@ Create the `areas` master table representing geographic/resort zones with UUID P
 
 | File | Purpose |
 |------|---------|
-| [0003_create_areas.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0003_create_areas.sql) | **UP** — creates areas table + unique index |
-| [0003_create_areas_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0003_create_areas_rollback.sql) | **DOWN** — drops index + table |
-| [0003_create_areas_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0003_create_areas_verify.sql) | **Verify** — tests schema, uniqueness, defaults, inserts |
+| [0003_create_areas.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0003_create_areas.sql) | **UP** — creates areas table + unique index |
+| [0003_create_areas_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0003_create_areas_rollback.sql) | **DOWN** — drops index + table |
+| [0003_create_areas_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0003_create_areas_verify.sql) | **Verify** — tests schema, uniqueness, defaults, inserts |
 
 ### Schema
 
@@ -161,9 +161,9 @@ Create the `admin_users` table with role enforcement via CHECK constraint, case-
 
 | File | Purpose |
 |------|---------|
-| [0004_create_admin_users.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0004_create_admin_users.sql) | **UP** — creates table + unique email index + role CHECK |
-| [0004_create_admin_users_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0004_create_admin_users_rollback.sql) | **DOWN** — drops index + table |
-| [0004_create_admin_users_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0004_create_admin_users_verify.sql) | **Verify** — tests schema, constraints, case-insensitive email |
+| [0004_create_admin_users.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0004_create_admin_users.sql) | **UP** — creates table + unique email index + role CHECK |
+| [0004_create_admin_users_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0004_create_admin_users_rollback.sql) | **DOWN** — drops index + table |
+| [0004_create_admin_users_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0004_create_admin_users_verify.sql) | **Verify** — tests schema, constraints, case-insensitive email |
 
 ### Schema
 
@@ -224,9 +224,9 @@ Create the `clients` table with unique phone, nullable unique email (partial ind
 
 | File | Purpose |
 |------|---------|
-| [0005_create_clients.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0005_create_clients.sql) | **UP** — creates table + phone unique + partial email unique |
-| [0005_create_clients_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0005_create_clients_rollback.sql) | **DOWN** — drops indexes + table |
-| [0005_create_clients_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0005_create_clients_verify.sql) | **Verify** — tests phone/email uniqueness, NULL emails, soft delete |
+| [0005_create_clients.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0005_create_clients.sql) | **UP** — creates table + phone unique + partial email unique |
+| [0005_create_clients_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0005_create_clients_rollback.sql) | **DOWN** — drops indexes + table |
+| [0005_create_clients_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0005_create_clients_verify.sql) | **Verify** — tests phone/email uniqueness, NULL emails, soft delete |
 
 ### Schema
 
@@ -284,9 +284,9 @@ Create the `owners` table with unique phone, nullable unique email (partial inde
 
 | File | Purpose |
 |------|---------|
-| [0006_create_owners.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0006_create_owners.sql) | **UP** — creates table, phone unique, partial email unique, and check constraints |
-| [0006_create_owners_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0006_create_owners_rollback.sql) | **DOWN** — drops indexes + table |
-| [0006_create_owners_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0006_create_owners_verify.sql) | **Verify** — tests unique rules, checks validity of status and commission rate, tests NULL emails and soft delete |
+| [0006_create_owners.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0006_create_owners.sql) | **UP** — creates table, phone unique, partial email unique, and check constraints |
+| [0006_create_owners_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0006_create_owners_rollback.sql) | **DOWN** — drops indexes + table |
+| [0006_create_owners_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0006_create_owners_verify.sql) | **Verify** — tests unique rules, checks validity of status and commission rate, tests NULL emails and soft delete |
 
 ### Schema
 
@@ -349,9 +349,9 @@ Ensure master data purity. Validate existing structure exactly matches schema co
 
 | File | Purpose |
 |------|---------|
-| [0007_master_data_integrity_cleanup.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0007_master_data_integrity_cleanup.sql) | **UP** — renames PK constraints (`amenities_pkey` -> `pk_amenities`, etc.) |
-| [0007_master_data_integrity_cleanup_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0007_master_data_integrity_cleanup_rollback.sql) | **DOWN** — reverts PK renames |
-| [0007_master_data_integrity_cleanup_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0007_master_data_integrity_cleanup_verify.sql) | **Verify** — mega script that validates PK names, column counts across all 5 tables, ensures `deleted_at` scope is strictly respected, enforces missing FK/Triggers rules. |
+| [0007_master_data_integrity_cleanup.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0007_master_data_integrity_cleanup.sql) | **UP** — renames PK constraints (`amenities_pkey` -> `pk_amenities`, etc.) |
+| [0007_master_data_integrity_cleanup_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0007_master_data_integrity_cleanup_rollback.sql) | **DOWN** — reverts PK renames |
+| [0007_master_data_integrity_cleanup_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0007_master_data_integrity_cleanup_verify.sql) | **Verify** — mega script that validates PK names, column counts across all 5 tables, ensures `deleted_at` scope is strictly respected, enforces missing FK/Triggers rules. |
 
 ### Schema Normalization
 
@@ -394,9 +394,9 @@ Bootstrap minimal essential master data (admin users, amenities, areas) ensuring
 
 | File | Purpose |
 |------|---------|
-| [0008_seed_dev_master_data.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0008_seed_dev_master_data.sql) | **UP** — securely inserts deterministic dev entities utilizing conflict bypassing. |
-| [0008_seed_dev_master_data_rollback.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0008_seed_dev_master_data_rollback.sql) | **DOWN** — explicitly removes seeded items by known identifiers (`email` / `name`). |
-| [0008_seed_dev_master_data_verify.sql](file:///d:/Clinets/Remal/REMAL/db/migrations/0008_seed_dev_master_data_verify.sql) | **Verify** — asserts record existence and actively sweeps rows for illegal "plaintext pass" security breaches. |
+| [0008_seed_dev_master_data.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0008_seed_dev_master_data.sql) | **UP** — securely inserts deterministic dev entities utilizing conflict bypassing. |
+| [0008_seed_dev_master_data_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0008_seed_dev_master_data_rollback.sql) | **DOWN** — explicitly removes seeded items by known identifiers (`email` / `name`). |
+| [0008_seed_dev_master_data_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0008_seed_dev_master_data_verify.sql) | **Verify** — asserts record existence and actively sweeps rows for illegal "plaintext pass" security breaches. |
 
 ### Entities Seeded (Summary)
 

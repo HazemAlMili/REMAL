@@ -1,6 +1,6 @@
 // ──────────────────────────────────────────────────────────────────────────────
 // Review Types
-// From REMAL_API_Reference.md Sections 22-24
+// From KAZA_BOOKING_API_Reference.md Sections 22-24
 // ──────────────────────────────────────────────────────────────────────────────
 
 export type ReviewStatus = "Pending" | "Published" | "Rejected" | "Hidden";

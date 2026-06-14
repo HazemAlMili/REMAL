@@ -18,15 +18,15 @@ This tier transforms raw Booking & CRM data access into governed, rule-enforced 
 
 | Interface | Responsibility |
 |-----------|---------------|
-| [IBookingService](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Interfaces/IBookingService.cs) | Booking CRUD, pending-state updates, pricing snapshot, overlap validation |
-| [IBookingLifecycleService](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Interfaces/IBookingLifecycleService.cs) | Controlled status transitions: confirm, cancel, complete |
-| [ICrmLeadService](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Interfaces/ICrmLeadService.cs) | Lead CRUD, status management, lead-to-booking conversion |
-| [ICrmNoteService](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Interfaces/ICrmNoteService.cs) | Notes attached to bookings or leads (exactly-one-parent) |
-| [ICrmAssignmentService](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Interfaces/ICrmAssignmentService.cs) | Admin ownership assignment with active/inactive tracking |
+| [IBookingService](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/IBookingService.cs) | Booking CRUD, pending-state updates, pricing snapshot, overlap validation |
+| [IBookingLifecycleService](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/IBookingLifecycleService.cs) | Controlled status transitions: confirm, cancel, complete |
+| [ICrmLeadService](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/ICrmLeadService.cs) | Lead CRUD, status management, lead-to-booking conversion |
+| [ICrmNoteService](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/ICrmNoteService.cs) | Notes attached to bookings or leads (exactly-one-parent) |
+| [ICrmAssignmentService](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/ICrmAssignmentService.cs) | Admin ownership assignment with active/inactive tracking |
 
 ### Domain Decision Note
 
-[0007_booking_crm_business_scope.md](file:///d:/Clinets/Remal/REMAL/docs/decisions/0007_booking_crm_business_scope.md) freezes 6 key decisions:
+[0007_booking_crm_business_scope.md](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/decisions/0007_booking_crm_business_scope.md) freezes 6 key decisions:
 
 1. **Date semantics**: check-in/check-out, checkout is NOT a charged night
 2. **Pricing translation**: `endDate = checkOutDate - 1 day` before calling availability service
@@ -39,7 +39,7 @@ This tier transforms raw Booking & CRM data access into governed, rule-enforced 
 
 ## BZ-BC-02: BookingService
 
-**File**: [BookingService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/BookingService.cs)
+**File**: [BookingService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/BookingService.cs)
 
 ### CreateAsync Flow
 
@@ -75,7 +75,7 @@ Validate dates (checkOut > checkIn)
 
 ## BZ-BC-03: BookingLifecycleService
 
-**File**: [BookingLifecycleService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/BookingLifecycleService.cs)
+**File**: [BookingLifecycleService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/BookingLifecycleService.cs)
 
 ### Transition Matrix
 
@@ -97,7 +97,7 @@ Validate dates (checkOut > checkIn)
 
 ## BZ-BC-04: CrmLeadService
 
-**File**: [CrmLeadService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/CrmLeadService.cs)
+**File**: [CrmLeadService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/CrmLeadService.cs)
 
 ### Validation Rules
 
@@ -129,7 +129,7 @@ Lead remains a distinct entity — no `booking_id` field is simulated.
 
 ## BZ-BC-05: CrmNoteService
 
-**File**: [CrmNoteService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/CrmNoteService.cs)
+**File**: [CrmNoteService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/CrmNoteService.cs)
 
 ### Operations
 
@@ -148,7 +148,7 @@ Lead remains a distinct entity — no `booking_id` field is simulated.
 
 ## BZ-BC-06: CrmAssignmentService
 
-**File**: [CrmAssignmentService.cs](file:///d:/Clinets/Remal/REMAL/RentalPlatform.Business/Services/CrmAssignmentService.cs)
+**File**: [CrmAssignmentService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/CrmAssignmentService.cs)
 
 ### One-Active-Assignment Semantics
 

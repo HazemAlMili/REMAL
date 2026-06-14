@@ -1,4 +1,4 @@
-# REMAL Platform — Master API Reference
+# Kaza Booking Platform — Master API Reference
 
 This document is a verbatim reflection of the current Controller implementations and exactly matches the Swagger UI (localhost) structure.
 **Last updated:** 2026-04-22 | **Controllers covered:** 37 | **Endpoints:** 120+
