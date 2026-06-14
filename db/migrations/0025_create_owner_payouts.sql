@@ -9,6 +9,7 @@ CREATE TABLE owner_payouts (
     payout_amount DECIMAL(12,2) NOT NULL,
     scheduled_at TIMESTAMP NULL,
     paid_at TIMESTAMP NULL,
+    proof_of_payment_url TEXT NULL,
     notes TEXT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
