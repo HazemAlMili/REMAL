@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { RevenueTable } from "@/components/admin/finance/RevenueTable";
 import { BookingsAnalyticsTable } from "@/components/admin/finance/BookingsAnalyticsTable";
+import { format } from "date-fns";
 import {
-  DateRangePicker,
-  type DateRange,
-} from "@/components/ui/DateRangePicker";
+  ReportRangeFilter,
+  DEFAULT_REPORT_RANGE,
+  type ReportRangeValue,
+} from "@/components/admin/analytics/ReportRangeFilter";
 import { useReports } from "@/lib/hooks/useReports";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { ROUTES } from "@/lib/constants/routes";
@@ -22,20 +24,13 @@ export default function FinanceReportsPage() {
     redirect(ROUTES.admin.dashboard);
   }
 
-  // Default to current month
-  const getDefaultDateRange = (): DateRange => {
-    const now = new Date();
-    const from = new Date(now.getFullYear(), now.getMonth(), 1);
-    const to = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    return { from, to };
-  };
-
   const [activeTab, setActiveTab] = useState<ReportTab>("revenue");
-  const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange());
+  const [range, setRange] = useState<ReportRangeValue>(DEFAULT_REPORT_RANGE);
 
+  // All-time (null bounds) sends no date params, so the API returns every period.
   const filters = {
-    dateFrom: dateRange.from ? dateRange.from.toISOString().split("T")[0] : undefined,
-    dateTo: dateRange.to ? dateRange.to.toISOString().split("T")[0] : undefined,
+    dateFrom: range.from ? format(range.from, "yyyy-MM-dd") : undefined,
+    dateTo: range.to ? format(range.to, "yyyy-MM-dd") : undefined,
   };
 
   const { useFinanceDaily, useBookingsDaily } = useReports();
@@ -54,12 +49,8 @@ export default function FinanceReportsPage() {
             Compare daily revenue and booking volume for the selected period.
           </p>
         </div>
-        <div className="w-full max-w-xs">
-          <DateRangePicker
-            value={dateRange}
-            onChange={setDateRange}
-            placeholder="Choose reporting period"
-          />
+        <div className="w-full sm:w-auto">
+          <ReportRangeFilter value={range} onChange={setRange} />
         </div>
       </div>
 

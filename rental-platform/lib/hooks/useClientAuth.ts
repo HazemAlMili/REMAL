@@ -59,6 +59,7 @@ export function useClientGuard() {
             refreshedAuth.subjectType === "Admin"
               ? refreshedAuth.adminRole
               : refreshedAuth.subjectType,
+          permissions: refreshedAuth.permissions,
         });
 
         if (refreshedAuth.subjectType === "Admin") {

@@ -263,10 +263,14 @@ export function useLeftEarlyBooking(bookingId: string) {
   });
 }
 
-export function useBookingPayments(bookingId: string) {
+export function useBookingPayments(
+  bookingId: string,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: queryKeys.bookings.payments(bookingId),
     queryFn: () => bookingsService.getPayments({ bookingId }),
+    enabled: options?.enabled !== false,
   });
 }
 
@@ -385,11 +389,14 @@ export function useLinkPaidPaymentsToInvoices() {
   });
 }
 
-export function useInvoiceDetail(invoiceId: string | null) {
+export function useInvoiceDetail(
+  invoiceId: string | null,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: queryKeys.invoices.detail(invoiceId!),
     queryFn: () => bookingsService.getInvoiceById(invoiceId!),
-    enabled: !!invoiceId,
+    enabled: !!invoiceId && options?.enabled !== false,
     refetchInterval: 5000, // Auto-refetch every 5 seconds
     refetchOnWindowFocus: true, // Refetch when user returns to tab
     staleTime: 2000, // Consider data stale after 2 seconds
@@ -418,11 +425,14 @@ export function useCreateInvoiceDraft(bookingId: string) {
   });
 }
 
-export function useInvoiceBalance(invoiceId: string | null) {
+export function useInvoiceBalance(
+  invoiceId: string | null,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: queryKeys.invoices.balance(invoiceId!),
     queryFn: () => bookingsService.getInvoiceBalance(invoiceId!),
-    enabled: !!invoiceId,
+    enabled: !!invoiceId && options?.enabled !== false,
     refetchInterval: 5000, // Auto-refetch every 5 seconds
     refetchOnWindowFocus: true, // Refetch when user returns to tab
     staleTime: 2000, // Consider data stale after 2 seconds
@@ -564,10 +574,14 @@ export function useAddInvoiceAdjustment(invoiceId: string, bookingId: string) {
 }
 
 // ── Notes ──
-export function useBookingNotes(bookingId: string) {
+export function useBookingNotes(
+  bookingId: string,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: queryKeys.bookings.notes(bookingId),
     queryFn: () => bookingsService.getNotes(bookingId),
+    enabled: options?.enabled !== false,
   });
 }
 
@@ -618,9 +632,13 @@ export function useDeleteBookingNote(bookingId: string) {
 }
 
 // ── Assignment ──
-export function useBookingAssignment(bookingId: string) {
+export function useBookingAssignment(
+  bookingId: string,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: queryKeys.bookings.assignment(bookingId),
+    enabled: options?.enabled !== false,
     queryFn: async () => {
       try {
         return await bookingsService.getAssignment(bookingId);

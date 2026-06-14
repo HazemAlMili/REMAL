@@ -24,19 +24,22 @@ public class AuthController : ControllerBase
     private readonly ITokenService _tokenService;
     private readonly IWebHostEnvironment _environment;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly Options.JwtOptions _jwtOptions;
 
     public AuthController(
         IAuthService authService,
         IClientService clientService,
         ITokenService tokenService,
         IWebHostEnvironment environment,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        Microsoft.Extensions.Options.IOptions<Options.JwtOptions> jwtOptions)
     {
         _authService = authService;
         _clientService = clientService;
         _tokenService = tokenService;
         _environment = environment;
         _unitOfWork = unitOfWork;
+        _jwtOptions = jwtOptions.Value;
     }
 
     [HttpPost("client/register")]
@@ -104,7 +107,6 @@ public class AuthController : ControllerBase
 
         var subClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var subjectTypeClaim = principal.FindFirst("subjectType")?.Value;
-        var roleClaim = principal.FindFirst(ClaimTypes.Role)?.Value;
 
         if (string.IsNullOrEmpty(subClaim) || string.IsNullOrEmpty(subjectTypeClaim))
             return Unauthorized(ApiResponse.CreateFailure("Invalid token claims."));
@@ -113,35 +115,45 @@ public class AuthController : ControllerBase
         var normalizedSubjectType = char.ToUpper(subjectTypeClaim[0]) + subjectTypeClaim.Substring(1);
         var userId = Guid.Parse(subClaim);
 
-        string? identifier = subClaim;
-        string? name = null;
+        // Re-read identity, role, and active status from the database on every
+        // refresh — never from the old token's claims. This is what makes role
+        // changes and deactivations take effect within one access-token
+        // lifetime instead of surviving for the full refresh-cookie window.
+        string? identifier;
+        string? name;
+        Shared.Enums.AdminRole? adminRole = null;
 
         if (normalizedSubjectType == "Client")
         {
             var client = await _unitOfWork.Clients.GetByIdAsync(userId);
-            if (client != null)
-            {
-                identifier = client.Phone;
-                name = client.Name;
-            }
+            if (client == null || !client.IsActive)
+                return Unauthorized(ApiResponse.CreateFailure("Account is inactive or no longer exists."));
+
+            identifier = client.Phone;
+            name = client.Name;
         }
         else if (normalizedSubjectType == "Owner")
         {
             var owner = await _unitOfWork.Owners.GetByIdAsync(userId);
-            if (owner != null)
-            {
-                identifier = owner.Phone;
-                name = owner.Name;
-            }
+            if (owner == null || owner.Status != "active")
+                return Unauthorized(ApiResponse.CreateFailure("Account is inactive or no longer exists."));
+
+            identifier = owner.Phone;
+            name = owner.Name;
         }
         else if (normalizedSubjectType == "Admin")
         {
             var admin = await _unitOfWork.AdminUsers.GetByIdAsync(userId);
-            if (admin != null)
-            {
-                identifier = admin.Email;
-                name = admin.Name;
-            }
+            if (admin == null || !admin.IsActive)
+                return Unauthorized(ApiResponse.CreateFailure("Account is inactive or no longer exists."));
+
+            identifier = admin.Email;
+            name = admin.Name;
+            adminRole = admin.Role;
+        }
+        else
+        {
+            return Unauthorized(ApiResponse.CreateFailure("Invalid token claims."));
         }
 
         var subject = new AuthenticatedSubject
@@ -150,7 +162,7 @@ public class AuthController : ControllerBase
             SubjectType = normalizedSubjectType,
             Identifier = identifier,
             Name = name,
-            AdminRole = string.IsNullOrEmpty(roleClaim) ? null : Enum.Parse<Shared.Enums.AdminRole>(roleClaim)
+            AdminRole = adminRole
         };
 
         return GenerateAuthResponse(subject);
@@ -170,9 +182,13 @@ public class AuthController : ControllerBase
 
         SetRefreshTokenCookie(refreshToken);
 
+        var permissions = subject.AdminRole is { } role
+            ? Authorization.PermissionCatalog.PermissionsForRole(role)
+            : Array.Empty<string>();
+
         var authResponse = new AuthResponse(
             AccessToken: accessToken,
-            ExpiresInSeconds: 15 * 60,
+            ExpiresInSeconds: _jwtOptions.AccessTokenExpirationMinutes * 60,
             SubjectType: subject.SubjectType,
             AdminRole: subject.AdminRole?.ToString(),
             User: new AuthenticatedUserResponse(
@@ -181,7 +197,8 @@ public class AuthController : ControllerBase
                 SubjectType: subject.SubjectType,
                 AdminRole: subject.AdminRole?.ToString(),
                 Name: subject.Name
-            )
+            ),
+            Permissions: permissions
         );
 
         return Ok(ApiResponse<AuthResponse>.CreateSuccess(authResponse));

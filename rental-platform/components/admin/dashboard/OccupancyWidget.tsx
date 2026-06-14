@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { reportsService } from "@/lib/api/services/reports.service";
 import { unitsService } from "@/lib/api/services/units.service";
 import { queryKeys } from "@/lib/hooks/query-keys";
+import { usePermissions } from "@/lib/hooks/usePermissions";
 import { differenceInDays, format, startOfMonth, endOfMonth } from "date-fns";
 
 // CORRECTED per API Reference Section 34 / P28:
@@ -12,20 +13,30 @@ import { differenceInDays, format, startOfMonth, endOfMonth } from "date-fns";
 // completedBookings → totalCompletedBookingsCount
 
 export function OccupancyWidget() {
+  // This widget needs the internal-units endpoint (InternalUnitsRead) and the
+  // bookings-summary endpoint (InternalAnalyticsRead). Every unit-reader also
+  // has analytics read, so canViewUnits is the binding gate; skipping the
+  // fetches for roles without it keeps the widget from ever triggering a 403.
+  const { canViewUnits } = usePermissions();
+
   const dateFrom = format(startOfMonth(new Date()), "yyyy-MM-dd");
   const dateTo = format(endOfMonth(new Date()), "yyyy-MM-dd");
 
   const { data: bookingsSummary, isLoading: summaryLoading } = useQuery({
     queryKey: queryKeys.reports.bookingsSummary({ dateFrom, dateTo }),
     queryFn: () => reportsService.getBookingsSummary({ dateFrom, dateTo }),
+    enabled: canViewUnits,
     staleTime: 1000 * 60 * 10,
   });
 
   const { data: unitsData, isLoading: unitsLoading } = useQuery({
     queryKey: queryKeys.units.internalList({ pageSize: 1000 }),
     queryFn: () => unitsService.getInternalList({ pageSize: 1000 }),
+    enabled: canViewUnits,
     staleTime: 1000 * 60 * 10,
   });
+
+  if (!canViewUnits) return null;
 
   if (summaryLoading || unitsLoading) {
     return <Skeleton height={260} className="rounded-[4px]" />;

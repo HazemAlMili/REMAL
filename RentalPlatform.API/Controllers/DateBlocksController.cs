@@ -24,7 +24,7 @@ public class DateBlocksController : ControllerBase
 
     // 1. GET /api/internal/units/{unitId}/date-blocks
     [HttpGet("api/internal/units/{unitId}/date-blocks")]
-    [Authorize(Policy = "InternalAnalyticsRead")]
+    [Authorize(Policy = "InternalUnitsRead")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<DateBlockResponse>>>> GetByUnitId(Guid unitId)
     {
         var blocks = await _dateBlockService.GetByUnitIdAsync(unitId);

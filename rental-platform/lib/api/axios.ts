@@ -116,6 +116,7 @@ api.interceptors.response.use(
             subjectType: refreshedAuth.subjectType,
             user: refreshedAuth.user,
             role: refreshedAuth.subjectType === "Admin" ? refreshedAuth.adminRole : null,
+            permissions: refreshedAuth.permissions,
           });
         } else {
           useAuthStore.getState().setAccessToken(null);

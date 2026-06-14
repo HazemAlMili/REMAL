@@ -147,12 +147,17 @@ function NoteRow({ note, bookingId, authorName, canEdit, canDelete }: NoteRowPro
 export function BookingNotes({ bookingId }: BookingNotesProps) {
   const [newNoteText, setNewNoteText] = useState("");
 
-  const { data: notes, isLoading } = useBookingNotes(bookingId);
+  // Booking notes live on CrmNotesController (SalesOrSuperAdmin) — skip the
+  // fetch and hide the card for roles the endpoint would reject.
+  const { canManageBookings } = usePermissions();
+
+  const { data: notes, isLoading } = useBookingNotes(bookingId, {
+    enabled: canManageBookings,
+  });
   const addNoteMutation = useAddBookingNote(bookingId);
   const { data: adminUsersData } = useAdminUsers({ includeInactive: true });
 
   const user = useAuthStore((s) => s.user);
-  const { isAdmin } = usePermissions();
 
   // Build a map from adminUserId → name for note author resolution
   const adminNameMap = useMemo(() => {
@@ -168,6 +173,17 @@ export function BookingNotes({ bookingId }: BookingNotesProps) {
       { onSuccess: () => setNewNoteText("") }
     );
   };
+
+  if (!canManageBookings) {
+    return (
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-neutral-700">Notes</h3>
+        <p className="rounded-md bg-neutral-50 p-3 text-sm text-neutral-500">
+          Internal notes are available to Sales and Super Admin roles.
+        </p>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -198,8 +214,12 @@ export function BookingNotes({ bookingId }: BookingNotesProps) {
               note={note}
               bookingId={bookingId}
               authorName={adminNameMap.get(note.createdByAdminUserId)}
-              canEdit={note.createdByAdminUserId === user?.userId || isAdmin}
-              canDelete={note.createdByAdminUserId === user?.userId || isAdmin}
+              canEdit={
+                note.createdByAdminUserId === user?.userId || canManageBookings
+              }
+              canDelete={
+                note.createdByAdminUserId === user?.userId || canManageBookings
+              }
             />
           ))}
         </div>

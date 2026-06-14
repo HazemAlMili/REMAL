@@ -61,7 +61,9 @@ export function AdminUsersSection() {
       { id: roleDialog.userId, role: newRole },
       {
         onSuccess: () => {
-          toastSuccess("Admin role updated");
+          toastSuccess(
+            "Admin role updated. It takes effect on their next sign-in or token refresh (within 15 minutes)."
+          );
           handleCloseRoleDialog();
         },
         onError: (error: Error) => {
@@ -84,7 +86,9 @@ export function AdminUsersSection() {
       { id: statusDialog.userId, isActive: !statusDialog.currentIsActive },
       {
         onSuccess: () => {
-          toastSuccess("Admin user status updated");
+          toastSuccess(
+            "Admin user status updated. An active session ends within 15 minutes."
+          );
           handleCloseStatusDialog();
         },
         onError: (error: Error) => {

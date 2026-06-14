@@ -47,22 +47,29 @@ export default function AdminDashboardPage() {
   const dateTo = format(new Date(), "yyyy-MM-dd");
   const dateFrom = format(subDays(new Date(), 30), "yyyy-MM-dd");
 
-  const { data: unitsCount, isLoading: unitsLoading } = useActiveUnitsCount();
+  // Each query is gated by the permission whose backend policy guards its
+  // endpoint, so a role that can't reach the endpoint never fires it. All five
+  // analytics endpoints require InternalAnalyticsRead; canViewBookings /
+  // canViewFinance are subsets of it, so gating by the display permission is
+  // both 403-safe and avoids fetching data the role won't see.
+  const { data: unitsCount, isLoading: unitsLoading } = useActiveUnitsCount({
+    enabled: canViewUnits,
+  });
   const { data: bookingsSummary, isLoading: bookingsLoading } =
-    useBookingsSummary();
-  const { data: financeSummary, isLoading: financeLoading } =
-    useFinanceSummary();
+    useBookingsSummary(undefined, { enabled: canViewBookings });
+  const { data: financeSummary, isLoading: financeLoading } = useFinanceSummary(
+    undefined,
+    { enabled: canViewFinance }
+  );
 
   // Chart data queries
-  const { data: financeDaily, isLoading: financeLoading2 } = useFinanceDaily({
-    dateFrom,
-    dateTo,
-  });
+  const { data: financeDaily, isLoading: financeLoading2 } = useFinanceDaily(
+    { dateFrom, dateTo },
+    { enabled: canViewFinance }
+  );
   const { data: bookingsDaily, isLoading: bookingsLoading2 } = useBookingsDaily(
-    {
-      dateFrom,
-      dateTo,
-    }
+    { dateFrom, dateTo },
+    { enabled: canViewBookings }
   );
 
   const activeBookingsCount = bookingsSummary?.totalConfirmedBookingsCount || 0;
@@ -139,7 +146,7 @@ export default function AdminDashboardPage() {
 
       {/* Occupancy + Top Units Widgets */}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(280px,0.72fr)_minmax(360px,1.28fr)]">
-        {canViewBookings && <OccupancyWidget />}
+        {canViewUnits && <OccupancyWidget />}
         {canViewUnits && <TopUnitsWidget />}
       </div>
     </div>

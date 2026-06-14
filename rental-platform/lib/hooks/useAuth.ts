@@ -26,6 +26,7 @@ export function useAdminLogin(): UseAdminLoginReturn {
         subjectType: response.subjectType,
         user: response.user,
         role: response.adminRole,
+        permissions: response.permissions,
       })
       router.push(ROUTES.admin.dashboard)
     },

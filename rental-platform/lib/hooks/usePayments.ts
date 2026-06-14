@@ -10,10 +10,14 @@ import type {
   CancelPaymentRequest,
 } from "@/lib/types/booking.types";
 
-export function usePaymentsList(filters?: PaymentListFilters) {
+export function usePaymentsList(
+  filters?: PaymentListFilters,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: queryKeys.payments.list(filters),
     queryFn: () => paymentsService.getAll(filters),
+    enabled: options?.enabled !== false,
     refetchInterval: 5000, // Auto-refetch every 5 seconds
     refetchOnWindowFocus: true, // Refetch when user returns to tab
     staleTime: 2000, // Consider data stale after 2 seconds

@@ -24,7 +24,7 @@ public class SeasonalPricingController : ControllerBase
 
     // 1. GET /api/internal/units/{unitId}/seasonal-pricing
     [HttpGet("api/internal/units/{unitId}/seasonal-pricing")]
-    [Authorize(Policy = "InternalAnalyticsRead")]
+    [Authorize(Policy = "InternalUnitsRead")]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<SeasonalPricingResponse>>>> GetByUnitId(Guid unitId)
     {
         var pricings = await _seasonalPricingService.GetByUnitIdAsync(unitId);

@@ -10,6 +10,8 @@ interface AuthState {
   subjectType: SubjectType | null
   user: AuthUserPayload | null
   role: AuthRole
+  /** Server-issued effective permissions (backend PermissionCatalog names). */
+  permissions: string[]
 
   setAuth: (payload: {
     accessToken: string
@@ -17,6 +19,7 @@ interface AuthState {
     subjectType: SubjectType
     user: AuthUserPayload
     role: AuthRole
+    permissions?: string[]
   }) => void
   setAccessToken: (token: string | null) => void
   clearAuth: () => void
@@ -30,11 +33,13 @@ export const useAuthStore = create<AuthState>()(
       subjectType: null,
       user: null,
       role: null,
+      permissions: [],
 
-      setAuth: ({ accessToken, expiresInSeconds, subjectType, user, role }) =>
-        set({ accessToken, expiresInSeconds, subjectType, user, role }),
+      setAuth: ({ accessToken, expiresInSeconds, subjectType, user, role, permissions }) =>
+        set({ accessToken, expiresInSeconds, subjectType, user, role, permissions: permissions ?? [] }),
       setAccessToken: (token) => set({ accessToken: token }),
-      clearAuth: () => set({ accessToken: null, expiresInSeconds: null, subjectType: null, user: null, role: null }),
+      clearAuth: () =>
+        set({ accessToken: null, expiresInSeconds: null, subjectType: null, user: null, role: null, permissions: [] }),
     }),
     {
       name: 'remal-auth',
@@ -43,6 +48,7 @@ export const useAuthStore = create<AuthState>()(
         subjectType: state.subjectType,
         user: state.user,
         role: state.role,
+        permissions: state.permissions,
       }),
     }
   )

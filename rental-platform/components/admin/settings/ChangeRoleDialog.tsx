@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Select } from "@/components/ui/Select";
 import { AdminRole } from "@/lib/types";
@@ -29,6 +29,15 @@ export function ChangeRoleDialog({
 }: ChangeRoleDialogProps) {
   const [selectedRole, setSelectedRole] = useState<AdminRole>(currentRole);
 
+  // The dialog stays mounted between opens; re-sync the selection to the
+  // user being edited only on the open transition, so a background refetch
+  // can't overwrite an in-progress selection.
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (isOpen && !wasOpen.current) setSelectedRole(currentRole);
+    wasOpen.current = isOpen;
+  }, [isOpen, currentRole]);
+
   const roleLabels = {
     SuperAdmin: "Super Admin",
     Sales: "Sales",
@@ -55,6 +64,10 @@ export function ChangeRoleDialog({
           value={selectedRole}
           onChange={(value) => setSelectedRole(value as AdminRole)}
         />
+        <p className="text-xs text-neutral-500">
+          The new role takes effect on their next sign-in or token refresh
+          (within 15 minutes). Their current screen may not update immediately.
+        </p>
       </div>
     </ConfirmDialog>
   );

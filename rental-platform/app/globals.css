@@ -271,6 +271,84 @@
   font-size: 15px;
 }
 
+/* Public units listing result surface. */
+.units-results {
+  --units-toolbar-spark: rgb(232 118 81 / 0.2);
+}
+
+.units-results-toolbar {
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 0.75rem;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.96), rgb(250 249 247 / 0.88)),
+    var(--units-toolbar-spark);
+  box-shadow: 0 10px 22px rgb(26 22 20 / 0.055);
+}
+
+.units-results-count {
+  background: var(--color-neutral-900);
+  color: white;
+  box-shadow: 0 8px 16px rgb(26 22 20 / 0.12);
+}
+
+.units-results-grid {
+  gap: 1.25rem;
+}
+
+.units-results-grid > a {
+  border: 1px solid rgb(229 226 221 / 0.9);
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgb(26 22 20 / 0.06);
+  transform: none;
+}
+
+.units-results-grid > a:hover {
+  box-shadow: 0 18px 34px rgb(26 22 20 / 0.12);
+  transform: translateY(-4px);
+}
+
+.units-results-grid > a > div:first-child {
+  aspect-ratio: 1.35;
+}
+
+.units-results-grid h3 {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Public unit detail readability surface. */
+.unit-detail-summary {
+  --unit-summary-wash: rgb(232 118 81 / 0.04);
+}
+
+.unit-detail-summary-band {
+  border: 1px solid var(--color-neutral-200);
+  border-radius: 1.25rem;
+  background:
+    linear-gradient(90deg, var(--unit-summary-wash), transparent 48%),
+    rgb(255 255 255 / 0.92);
+  box-shadow: 0 12px 28px rgb(26 22 20 / 0.055);
+}
+
+.unit-detail-summary-stat {
+  border: 1px solid rgb(229 226 221 / 0.9);
+  border-radius: 999px;
+  background: white;
+}
+
+.unit-detail-summary-main {
+  max-width: 780px;
+}
+
+.unit-detail-section {
+  border-block-end: 1px solid var(--color-neutral-200);
+  padding-block-end: 2rem;
+}
+
 /* One consistent, accessible focus treatment across the portal chrome. */
 .portal-admin :is(a, button, input, select, textarea, [tabindex]):focus-visible,
 .portal-auth :is(a, button, input, select, textarea, [tabindex]):focus-visible,

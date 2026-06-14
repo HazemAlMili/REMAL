@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { usePermissions } from "@/lib/hooks/usePermissions";
 import {
   BOOKING_VALID_TRANSITIONS,
   BookingStatus,
@@ -50,6 +51,7 @@ export function BookingLifecycleActions({
   currentStatus,
 }: BookingLifecycleActionsProps) {
   const [activeAction, setActiveAction] = useState<ActionType>(null);
+  const { canManageBookings } = usePermissions();
 
   const confirmMutation = useConfirmBooking(bookingId);
   const bookedMutation = useBookedBooking(bookingId);
@@ -66,6 +68,12 @@ export function BookingLifecycleActions({
   };
 
   const validTransitions = getValidTransitions();
+
+  // Lifecycle endpoints (BookingLifecycleController) require SalesOrSuperAdmin;
+  // roles without it (e.g. Finance) must not see actions that always 403.
+  if (!canManageBookings) {
+    return null;
+  }
 
   const handleActionComplete = (notes?: string) => {
     const data = notes ? { notes } : undefined;

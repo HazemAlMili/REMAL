@@ -28,19 +28,35 @@ export function BookingPayments({ bookingId }: BookingPaymentsProps) {
   const [failedNotes, setFailedNotes] = useState("");
   const [cancelNotes, setCancelNotes] = useState("");
 
-  const { data: payments, isLoading } = useBookingPayments(bookingId);
+  // Payment endpoints (PaymentsController) require FinanceOrSuperAdmin;
+  // gate on the matching capability only, so other roles never see actions
+  // (or trigger fetches) that are guaranteed to 403.
+  const { canViewFinance, canManageFinance } = usePermissions();
+  const canRecordPayment = canManageFinance;
+
+  const { data: payments, isLoading } = useBookingPayments(bookingId, {
+    enabled: canViewFinance,
+  });
   const markPaidMutation = useMarkPaymentPaid(bookingId);
   const markFailedMutation = useMarkPaymentFailed(bookingId);
   const cancelMutation = useCancelPayment(bookingId);
   const linkPaymentsMutation = useLinkPaidPaymentsToInvoices();
 
-  const { canManageFinance, canManageBookings } = usePermissions();
-  const canRecordPayment = canManageFinance || canManageBookings;
-
   // Check if there are unlinked paid payments
   const hasUnlinkedPaidPayments =
     payments?.items.some((p) => p.paymentStatus === "paid" && !p.invoiceId) ??
     false;
+
+  if (!canViewFinance) {
+    return (
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-neutral-700">Payments</h3>
+        <p className="rounded-md bg-neutral-50 p-3 text-sm text-neutral-500">
+          Payment records are available to Finance and Super Admin roles.
+        </p>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return <Skeleton className="h-48 w-full" />;

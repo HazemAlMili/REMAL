@@ -145,52 +145,66 @@ function UnitsPageContent() {
           </aside>
 
           {/* Main Content */}
-          <div className="flex-1">
-            {/* Sort + Mobile Filter Button */}
-            <div className="mb-6 flex items-center justify-between">
-              <div className="w-48">
-                <SortSelect
-                  value={filters.sortBy || ""}
-                  onChange={(value) =>
-                    handleFilterChange({
-                      sortBy: (value ||
-                        undefined) as PublicUnitFilters["sortBy"],
-                      page: 1,
-                    })
-                  }
-                />
+          <div className="flex-1 units-results">
+            <div className="units-results-toolbar mb-5 flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex min-w-0 items-center gap-3">
+                {!isLoading && pagination.totalCount > 0 && (
+                  <span className="units-results-count rounded-full px-3 py-1.5 text-sm font-semibold tabular-nums">
+                    {pagination.totalCount}
+                  </span>
+                )}
+                <div className="min-w-0">
+                  <p className="font-display text-lg font-semibold leading-tight text-neutral-900">
+                    Available properties
+                  </p>
+                  {!isLoading && pagination.totalCount > 0 && (
+                    <p className="mt-1 text-sm text-neutral-600">
+                      Showing {resultStart}–{resultEnd} stays in this view
+                    </p>
+                  )}
+                </div>
               </div>
-              {/* Mobile filter button */}
-              <Button
-                variant="outline"
-                size="md"
-                onClick={() => setMobileFiltersOpen(true)}
-                className="lg:hidden"
-              >
-                <Filter className="mr-2 h-4 w-4" />
-                Filters
-              </Button>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <div className="w-full sm:w-52">
+                  <SortSelect
+                    value={filters.sortBy || ""}
+                    onChange={(value) =>
+                      handleFilterChange({
+                        sortBy: (value ||
+                          undefined) as PublicUnitFilters["sortBy"],
+                        page: 1,
+                      })
+                    }
+                  />
+                </div>
+                <Button
+                  variant="outline"
+                  size="md"
+                  onClick={() => setMobileFiltersOpen(true)}
+                  className="lg:hidden"
+                >
+                  <Filter className="mr-2 h-4 w-4" />
+                  Filters
+                </Button>
+              </div>
             </div>
 
-            {/* Loading State */}
             {isLoading && (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="units-results-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <Skeleton key={i} className="h-[320px] rounded-2xl" />
+                  <Skeleton key={i} className="h-[300px] rounded-2xl" />
                 ))}
               </div>
             )}
 
-            {/* Results Grid */}
             {!isLoading && units.length > 0 && (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="units-results-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {units.map((unit) => (
                   <UnitCard key={unit.id} unit={unit} />
                 ))}
               </div>
             )}
 
-            {/* Empty State */}
             {!isLoading && units.length === 0 && (
               <EmptyState
                 title="No properties match your filters"
@@ -203,7 +217,6 @@ function UnitsPageContent() {
               />
             )}
 
-            {/* Pagination */}
             {!isLoading && pagination.totalPages > 1 && (
               <div className="mt-8 flex justify-center">
                 <Pagination meta={pagination} onPageChange={handlePageChange} />

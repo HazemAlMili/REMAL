@@ -10,7 +10,6 @@ import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { useLogout } from "@/lib/hooks/useLogout";
 import { useClientNotificationSummary } from "@/lib/hooks/useNotifications";
-import { Button } from "@/components/ui/Button";
 import {
   CalendarCheck,
   Star,

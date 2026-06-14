@@ -134,46 +134,37 @@ builder.Services.AddAuthentication(options =>
                 System.Text.Encoding.ASCII.GetBytes(jwtOptions.Secret)),
             ClockSkew = TimeSpan.Zero
         };
+
+        // Refresh tokens are signed with the same key/issuer/audience, so without
+        // this check a (possibly demoted or deactivated) user could present their
+        // 7-day refresh token as a bearer token and skip the DB re-validation in
+        // POST /api/auth/refresh. Only access tokens may authenticate API calls.
+        options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                var tokenType = context.Principal?.FindFirst("tokenType")?.Value;
+                if (tokenType != "access_token")
+                    context.Fail("Invalid token type.");
+                return Task.CompletedTask;
+            }
+        };
     });
 
 // Authorization Policies
+// Admin policies are registered from PermissionCatalog — the single source of
+// truth shared with the effective-permissions list in AuthResponse. Note this
+// also requires a role claim on every admin policy (including
+// AdminAuthenticated): legitimate admin tokens always carry one, so only
+// malformed/stale tokens are affected.
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminAuthenticated", policy => 
-        policy.RequireClaim("subjectType", "admin"));
-
-    options.AddPolicy("SuperAdminOnly", policy => 
-        policy.RequireClaim("subjectType", "admin")
-              .RequireRole(RentalPlatform.Shared.Enums.AdminRole.SuperAdmin.ToString()));
-
-    options.AddPolicy("SalesOrSuperAdmin", policy => 
-        policy.RequireClaim("subjectType", "admin")
-              .RequireRole(RentalPlatform.Shared.Enums.AdminRole.Sales.ToString(), 
-                           RentalPlatform.Shared.Enums.AdminRole.SuperAdmin.ToString()));
-
-    options.AddPolicy("FinanceOrSuperAdmin", policy => 
-        policy.RequireClaim("subjectType", "admin")
-              .RequireRole(RentalPlatform.Shared.Enums.AdminRole.Finance.ToString(), 
-                           RentalPlatform.Shared.Enums.AdminRole.SuperAdmin.ToString()));
-
-    options.AddPolicy("InternalAdminReadOwners", policy => 
-        policy.RequireClaim("subjectType", "admin")
-              .RequireRole(RentalPlatform.Shared.Enums.AdminRole.SuperAdmin.ToString(), 
-                           RentalPlatform.Shared.Enums.AdminRole.Sales.ToString(), 
-                           RentalPlatform.Shared.Enums.AdminRole.Finance.ToString()));
-
-    options.AddPolicy("InternalAdminRead", policy => 
-        policy.RequireClaim("subjectType", "admin")
-              .RequireRole(RentalPlatform.Shared.Enums.AdminRole.SuperAdmin.ToString(), 
-                           RentalPlatform.Shared.Enums.AdminRole.Sales.ToString(), 
-                           RentalPlatform.Shared.Enums.AdminRole.Finance.ToString()));
-
-    options.AddPolicy("InternalAnalyticsRead", policy =>
-        policy.RequireClaim("subjectType", "admin")
-              .RequireRole(RentalPlatform.Shared.Enums.AdminRole.SuperAdmin.ToString(),
-                           RentalPlatform.Shared.Enums.AdminRole.Sales.ToString(),
-                           RentalPlatform.Shared.Enums.AdminRole.Finance.ToString(),
-                           RentalPlatform.Shared.Enums.AdminRole.Tech.ToString()));
+    foreach (var (policyName, roles) in RentalPlatform.API.Authorization.PermissionCatalog.AdminPolicies)
+    {
+        options.AddPolicy(policyName, policy =>
+            policy.RequireClaim("subjectType", "admin")
+                  .RequireRole(roles.Select(r => r.ToString()).ToArray()));
+    }
 
     options.AddPolicy("OwnerOnly", policy =>
         policy.RequireClaim("subjectType", "owner"));

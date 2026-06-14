@@ -21,10 +21,12 @@ interface BookingAssignmentProps {
 export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [showUnassignConfirm, setShowUnassignConfirm] = useState(false);
-  const { canAssignLeads } = usePermissions();
+  const { canAssignLeads, canManageBookings } = usePermissions();
 
+  // The assignment endpoint (CrmAssignmentsController) requires
+  // SalesOrSuperAdmin — skip the fetch for roles that would only 403.
   const { data: assignment, isLoading: assignmentLoading } =
-    useBookingAssignment(bookingId);
+    useBookingAssignment(bookingId, { enabled: canManageBookings });
   const { data: adminUsers, isLoading: usersLoading } = useAdminUsers();
   const assignMutation = useAssignBooking(bookingId);
   const unassignMutation = useUnassignBooking(bookingId);
@@ -51,6 +53,17 @@ export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
       onSuccess: () => setShowUnassignConfirm(false),
     });
   };
+
+  if (!canManageBookings) {
+    return (
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-neutral-700">Assignment</h3>
+        <p className="rounded-md bg-neutral-50 p-3 text-sm text-neutral-500">
+          Sales assignment is available to Sales and Super Admin roles.
+        </p>
+      </div>
+    );
+  }
 
   if (assignmentLoading || usersLoading) {
     return <Skeleton className="h-24 w-full" />;

@@ -2,9 +2,14 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { format, startOfMonth, endOfMonth } from "date-fns";
+import { format } from "date-fns";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { useReports } from "@/lib/hooks/useReports";
+import {
+  ReportRangeFilter,
+  DEFAULT_REPORT_RANGE,
+  type ReportRangeValue,
+} from "@/components/admin/analytics/ReportRangeFilter";
 import { BookingsFunnelChart } from "@/components/admin/analytics/BookingsFunnelChart";
 import { DailyRevenueTable } from "@/components/admin/analytics/DailyRevenueTable";
 import { DailyBookingsTable } from "@/components/admin/analytics/DailyBookingsTable";
@@ -31,28 +36,16 @@ const RevenueLineChart = dynamic(
   }
 );
 
-interface DateRange {
-  from?: Date;
-  to?: Date;
-}
-
 export default function AnalyticsPage() {
   const { canViewReports } = usePermissions();
 
-  // Default: current month
-  const [dateRange, setDateRange] = useState<DateRange>({
-    from: startOfMonth(new Date()),
-    to: endOfMonth(new Date()),
-  });
+  const [range, setRange] = useState<ReportRangeValue>(DEFAULT_REPORT_RANGE);
 
-  // Suppress unused warning - setDateRange will be used when date picker is implemented
-  void setDateRange;
-
-  const effectiveFrom = dateRange.from ?? startOfMonth(new Date());
-  const effectiveTo = dateRange.to ?? endOfMonth(new Date());
-
-  const dateFrom = format(effectiveFrom, "yyyy-MM-dd");
-  const dateTo = format(effectiveTo, "yyyy-MM-dd");
+  // All-time (null bounds) sends no date params, so the API returns every period.
+  const filters = {
+    dateFrom: range.from ? format(range.from, "yyyy-MM-dd") : undefined,
+    dateTo: range.to ? format(range.to, "yyyy-MM-dd") : undefined,
+  };
 
   const {
     useFinanceSummary,
@@ -61,18 +54,23 @@ export default function AnalyticsPage() {
     useBookingsDaily,
   } = useReports();
 
-  const { data: financeSummary, isLoading: summaryLoading } = useFinanceSummary(
-    { dateFrom, dateTo }
-  );
+  const { data: financeSummary, isLoading: summaryLoading } =
+    useFinanceSummary(filters);
 
   const { data: financeDaily, isLoading: financeDailyLoading } =
-    useFinanceDaily({ dateFrom, dateTo });
+    useFinanceDaily(filters);
 
   const { data: bookingsSummary, isLoading: bookingsSummaryLoading } =
-    useBookingsSummary({ dateFrom, dateTo });
+    useBookingsSummary(filters);
 
   const { data: bookingsDaily, isLoading: bookingsDailyLoading } =
-    useBookingsDaily({ dateFrom, dateTo });
+    useBookingsDaily(filters);
+
+  const isEmptyPeriod =
+    !!financeSummary &&
+    financeSummary.totalInvoicedAmount === 0 &&
+    financeSummary.totalPaidAmount === 0 &&
+    financeSummary.totalBookingsWithInvoiceCount === 0;
 
   if (!canViewReports) {
     return (
@@ -104,14 +102,15 @@ export default function AnalyticsPage() {
           </p>
         </div>
 
-        {/* Simple date range display - full picker would be in a real implementation */}
-        <div className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm">
-          <span className="text-neutral-600">
-            {format(effectiveFrom, "MMM d, yyyy")} →{" "}
-            {format(effectiveTo, "MMM d, yyyy")}
-          </span>
-        </div>
+        <ReportRangeFilter value={range} onChange={setRange} />
       </div>
+
+      {isEmptyPeriod && !summaryLoading && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          No financial activity in this period. Try a wider range like “Last 12
+          months” or “All time”.
+        </div>
+      )}
 
       {/* Revenue summary cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">

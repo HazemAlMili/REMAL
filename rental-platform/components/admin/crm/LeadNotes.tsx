@@ -25,7 +25,9 @@ export function LeadNotes({ leadId }: LeadNotesProps) {
   const { data: adminUsersData } = useAdminUsers({ includeInactive: true });
 
   const user = useAuthStore((s) => s.user);
-  const { isAdmin } = usePermissions();
+  // Note endpoints (CrmNotesController) require SalesOrSuperAdmin — use the
+  // matching capability rather than the broader isAdmin.
+  const { canManageCRM } = usePermissions();
 
   // Build a map from adminUserId → name for note author resolution
   const adminNameMap = useMemo(() => {
@@ -81,8 +83,12 @@ export function LeadNotes({ leadId }: LeadNotesProps) {
               note={note}
               authorName={adminNameMap.get(note.createdByAdminUserId)}
               leadId={leadId}
-              canEdit={note.createdByAdminUserId === user?.userId || isAdmin}
-              canDelete={note.createdByAdminUserId === user?.userId || isAdmin}
+              canEdit={
+                note.createdByAdminUserId === user?.userId || canManageCRM
+              }
+              canDelete={
+                note.createdByAdminUserId === user?.userId || canManageCRM
+              }
               isEditing={editingNoteId === note.id}
               onEditClick={() => setEditingNoteId(note.id)}
               onCancelEdit={() => setEditingNoteId(null)}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { DayPicker, DateRange as RDPDateRange } from 'react-day-picker'
+import { DayPicker, DateRange as RDPDateRange, Matcher } from 'react-day-picker'
 import 'react-day-picker/style.css'
 import { cn } from '@/lib/utils/cn'
 
@@ -27,6 +27,7 @@ export function DateRangePicker({
   placeholder,
   error,
   minDate,
+  maxDate,
 }: DateRangePickerProps) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -43,6 +44,14 @@ export function DateRangePicker({
 
   const selected: RDPDateRange | undefined =
     value.from ? { from: value.from, to: value.to ?? undefined } : undefined
+
+  // Backward-compatible disabling: callers that pass neither bound keep the
+  // future-only default (booking / availability flows). Passing maxDate opts a
+  // caller into historical ranges (analytics) — past allowed, future disabled.
+  const disabledMatchers: Matcher[] = []
+  if (minDate) disabledMatchers.push({ before: minDate })
+  if (maxDate) disabledMatchers.push({ after: maxDate })
+  if (!minDate && !maxDate) disabledMatchers.push({ before: new Date() })
 
   const formatDate = (d: Date) =>
     d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -76,13 +85,14 @@ export function DateRangePicker({
           <DayPicker
             mode="range"
             selected={selected}
+            defaultMonth={value.from ?? value.to ?? maxDate ?? undefined}
             onSelect={(range) => {
               onChange({ from: range?.from ?? null, to: range?.to ?? null })
               if (range?.from && range?.to) {
                 setOpen(false)
               }
             }}
-            disabled={minDate ? { before: minDate } : { before: new Date() }}
+            disabled={disabledMatchers}
             numberOfMonths={2}
             showOutsideDays
           />

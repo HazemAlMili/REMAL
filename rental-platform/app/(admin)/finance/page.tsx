@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { format } from "date-fns";
 import { FinanceSummaryCards } from "@/components/admin/finance/FinanceSummaryCards";
 import {
-  DateRangePicker,
-  type DateRange,
-} from "@/components/ui/DateRangePicker";
+  ReportRangeFilter,
+  type ReportRangeValue,
+} from "@/components/admin/analytics/ReportRangeFilter";
 import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/lib/constants/routes";
 import { usePermissions } from "@/lib/hooks/usePermissions";
@@ -20,7 +21,9 @@ export default function FinanceOverviewPage() {
     redirect(ROUTES.admin.dashboard);
   }
 
-  const [dateRange, setDateRange] = useState<DateRange>({
+  // Overview defaults to all-time totals; the filter can narrow to any period.
+  const [range, setRange] = useState<ReportRangeValue>({
+    preset: "all",
     from: null,
     to: null,
   });
@@ -32,12 +35,8 @@ export default function FinanceOverviewPage() {
     isError,
     refetch,
   } = useFinanceSummary({
-    dateFrom: dateRange?.from
-      ? dateRange.from.toISOString().split("T")[0]
-      : undefined,
-    dateTo: dateRange?.to
-      ? dateRange.to.toISOString().split("T")[0]
-      : undefined,
+    dateFrom: range.from ? format(range.from, "yyyy-MM-dd") : undefined,
+    dateTo: range.to ? format(range.to, "yyyy-MM-dd") : undefined,
   });
 
   return (
@@ -52,11 +51,7 @@ export default function FinanceOverviewPage() {
             activity.
           </p>
         </div>
-        <DateRangePicker
-          value={dateRange}
-          onChange={setDateRange}
-          placeholder="Filter by date range"
-        />
+        <ReportRangeFilter value={range} onChange={setRange} />
       </div>
 
       {isError && (

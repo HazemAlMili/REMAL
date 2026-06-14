@@ -83,16 +83,43 @@ export default function UnitDetailPage({ params }: { params: { id: string } }) {
       <UnitGallery images={sortedImages} unitName={unit.name} />
 
       {/* Content */}
-      <div className="mx-auto max-w-container px-6 py-8">
+      <div className="unit-detail-summary mx-auto max-w-container px-6 py-10">
+        <div className="unit-detail-summary-band mb-8 grid gap-4 p-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+          <div className="min-w-0">
+            <p className="font-display text-2xl font-semibold leading-tight text-neutral-900">
+              {unit.name}
+            </p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-600">
+              A quick read before you choose dates: capacity, bedrooms, area,
+              amenities, and guest feedback are grouped below.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <span className="unit-detail-summary-stat px-3 py-1.5 text-sm font-medium text-neutral-700">
+              Up to {unit.maxGuests} guests
+            </span>
+            <span className="unit-detail-summary-stat px-3 py-1.5 text-sm font-medium text-neutral-700">
+              {unit.bedrooms} bedrooms
+            </span>
+            {areaName && (
+              <span className="unit-detail-summary-stat px-3 py-1.5 text-sm font-medium text-neutral-700">
+                {areaName}
+              </span>
+            )}
+          </div>
+        </div>
+
         <div className="flex flex-col gap-8 lg:flex-row">
-          {/* Left Column: Info + Amenities + Reviews */}
-          <div className="flex-1 space-y-12">
-            <UnitDetailInfo unit={unit} areaName={areaName} />
-            <UnitAmenitiesGrid amenities={amenities || []} />
+          <div className="unit-detail-summary-main flex-1 space-y-10">
+            <div className="unit-detail-section">
+              <UnitDetailInfo unit={unit} areaName={areaName} />
+            </div>
+            <div className="unit-detail-section">
+              <UnitAmenitiesGrid amenities={amenities || []} />
+            </div>
             <UnitReviewsSection unitId={unitId} />
           </div>
 
-          {/* Right Column: Booking Panel */}
           <div className="w-full shrink-0 lg:w-[380px]">
             <UnitBookingPanel
               unitId={unit.id}

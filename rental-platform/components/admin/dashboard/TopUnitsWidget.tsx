@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { unitsService } from "@/lib/api/services/units.service";
 import { queryKeys } from "@/lib/hooks/query-keys";
+import { usePermissions } from "@/lib/hooks/usePermissions";
 import { UNIT_TYPE_LABELS } from "@/lib/constants/unit-types";
 import { ROUTES } from "@/lib/constants/routes";
 import { formatCurrency } from "@/lib/utils/format";
@@ -16,11 +17,18 @@ import { Home, Info } from "lucide-react";
 // "Top by bookings" requires backend support for sorting.
 
 export function TopUnitsWidget() {
+  // GET /api/internal/units is guarded by InternalAnalyticsRead; skip the fetch
+  // for roles without it so the widget never triggers a 403.
+  const { canViewUnits } = usePermissions();
+
   const { data: unitsData, isLoading } = useQuery({
     queryKey: queryKeys.units.internalList({ pageSize: 5 }),
     queryFn: () => unitsService.getInternalList({ pageSize: 5 }),
+    enabled: canViewUnits,
     staleTime: 1000 * 60 * 10,
   });
+
+  if (!canViewUnits) return null;
 
   if (isLoading) {
     return <Skeleton height={260} className="rounded-[4px]" />;

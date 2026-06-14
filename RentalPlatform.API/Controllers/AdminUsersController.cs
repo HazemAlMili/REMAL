@@ -8,6 +8,7 @@ using RentalPlatform.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace RentalPlatform.API.Controllers;
@@ -64,6 +65,12 @@ public class AdminUsersController : ControllerBase
     [Authorize(Policy = "SuperAdminOnly")]
     public async Task<ActionResult<ApiResponse<AdminUserResponse>>> UpdateRole(Guid id, UpdateAdminUserRoleRequest request)
     {
+        var callerId = GetCallerId();
+        if (callerId == null)
+            return Unauthorized(ApiResponse.CreateFailure("Could not resolve the caller's identity."));
+        if (callerId == id)
+            return BadRequest(ApiResponse.CreateFailure("You cannot change your own role."));
+
         var admin = await _adminUserService.UpdateRoleAsync(id, request.Role);
         return Ok(ApiResponse<AdminUserResponse>.CreateSuccess(MapToResponse(admin), "Admin role updated successfully."));
     }
@@ -72,13 +79,27 @@ public class AdminUsersController : ControllerBase
     [Authorize(Policy = "SuperAdminOnly")]
     public async Task<ActionResult<ApiResponse<AdminUserResponse>>> UpdateStatus(Guid id, UpdateAdminUserStatusRequest request)
     {
+        var callerId = GetCallerId();
+        if (callerId == null)
+            return Unauthorized(ApiResponse.CreateFailure("Could not resolve the caller's identity."));
+        if (callerId == id)
+            return BadRequest(ApiResponse.CreateFailure("You cannot change your own account's status."));
+
         await _adminUserService.SetActiveAsync(id, request.IsActive);
         var admin = await _adminUserService.GetByIdAsync(id);
-        
+
         if (admin == null)
             return NotFound(ApiResponse.CreateFailure("Admin user not found after status update."));
 
         return Ok(ApiResponse<AdminUserResponse>.CreateSuccess(MapToResponse(admin), $"Admin user {(request.IsActive ? "activated" : "deactivated")} successfully."));
+    }
+
+    // Fail closed: a privileged mutation must not proceed when the caller's
+    // identity claim is missing or malformed.
+    private Guid? GetCallerId()
+    {
+        var callerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return Guid.TryParse(callerId, out var callerGuid) ? callerGuid : null;
     }
 
     private static AdminUserResponse MapToResponse(AdminUser admin)

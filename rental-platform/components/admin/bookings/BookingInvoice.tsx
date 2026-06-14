@@ -34,16 +34,26 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
   const [showInvoiceActionDialog, setShowInvoiceActionDialog] = useState(false);
   const [cancelNotes, setCancelNotes] = useState("");
 
-  const { data: invoice, isLoading: invoiceLoading } =
-    useInvoiceDetail(invoiceId);
-  const { data: balance, isLoading: balanceLoading } =
-    useInvoiceBalance(invoiceId);
-  const { data: paymentsData } = usePaymentsList({ bookingId });
+  // Invoice + payment endpoints require FinanceOrSuperAdmin; skip the fetches
+  // entirely (they poll every 5s) for roles that would only collect 403s.
+  const { canViewFinance, canManageFinance } = usePermissions();
+
+  const { data: invoice, isLoading: invoiceLoading } = useInvoiceDetail(
+    invoiceId,
+    { enabled: canViewFinance }
+  );
+  const { data: balance, isLoading: balanceLoading } = useInvoiceBalance(
+    invoiceId,
+    { enabled: canViewFinance }
+  );
+  const { data: paymentsData } = usePaymentsList(
+    { bookingId },
+    { enabled: canViewFinance }
+  );
   const issueMutation = useIssueInvoice(invoiceId!, bookingId);
   const cancelMutation = useCancelInvoice(invoiceId!, bookingId);
   const createDraftMutation = useCreateInvoiceDraft(bookingId);
   const reissueMutation = useReissueInvoice(invoiceId!, bookingId);
-  const { canManageFinance } = usePermissions();
 
   // Check if there are payment updates that might affect the invoice
   const checkPaymentUpdates = () => {
@@ -179,6 +189,14 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
       },
     });
   };
+
+  if (!canViewFinance) {
+    return (
+      <p className="rounded-md bg-neutral-50 p-3 text-sm text-neutral-500">
+        Invoice details are available to Finance and Super Admin roles.
+      </p>
+    );
+  }
 
   if (!invoiceId) {
     return (
