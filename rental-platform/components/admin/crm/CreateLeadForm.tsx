@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -8,13 +8,14 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { DateRangePicker } from "@/components/ui/DateRangePicker";
-import { Combobox } from "@/components/ui/Combobox";
+import { AvailableUnitPicker } from "./AvailableUnitPicker";
 import { BOOKING_SOURCE_LABELS } from "@/lib/constants/booking-sources";
 import { useInternalUnitsList } from "@/lib/hooks/useUnits";
 import { useAvailabilityCheck } from "@/lib/hooks/usePublic";
 import { formatDateForApi, sanitizePhoneInput } from "@/lib/utils/format";
 import { AlertTriangle } from "lucide-react";
 import type { CreateCrmLeadRequest } from "@/lib/types/crm.types";
+import type { UnitType } from "@/lib/types/unit.types";
 
 const BOOKING_SOURCE_OPTIONS = Object.entries(BOOKING_SOURCE_LABELS).map(
   ([value, label]) => ({
@@ -57,6 +58,7 @@ export function CreateLeadForm({
   onCancel,
   isLoading,
 }: CreateLeadFormProps) {
+  const [unitTypeFilter, setUnitTypeFilter] = useState<"" | UnitType>("");
   const {
     register,
     handleSubmit,
@@ -100,22 +102,23 @@ export function CreateLeadForm({
   const hasInvalidCompleteRange = Boolean(
     desiredStart && desiredEnd && nights < 1
   );
-  const { data: unitsData, isLoading: isLoadingUnits } =
-    useInternalUnitsList(
-      {
-        pageSize: 500,
-        availableFrom: desiredStart ?? undefined,
-        availableTo: desiredEnd ?? undefined,
-      },
-      { enabled: hasValidRange }
-    );
+  const {
+    data: unitsData,
+    isLoading: isLoadingUnits,
+    isFetching: isFetchingUnits,
+  } = useInternalUnitsList(
+    {
+      pageSize: 500,
+      availableFrom: desiredStart ?? undefined,
+      availableTo: desiredEnd ?? undefined,
+      unitType: unitTypeFilter || undefined,
+    },
+    { enabled: hasValidRange }
+  );
   const { data: availability, isLoading: isCheckingAvailability } =
     useAvailabilityCheck(targetUnitId || "", desiredStart, desiredEnd);
   const hasDateConflict = availability?.isAvailable === false;
-  const unitOptions = (unitsData?.items ?? []).map((u) => ({
-    value: u.id,
-    label: u.name,
-  }));
+  const isRefreshingUnits = isLoadingUnits || isFetchingUnits;
   const selectedUnit = (unitsData?.items ?? []).find(
     (unit) => unit.id === targetUnitId
   );
@@ -141,14 +144,14 @@ export function CreateLeadForm({
     }
 
     if (
-      !isLoadingUnits &&
+      !isRefreshingUnits &&
       !(unitsData?.items ?? []).some((unit) => unit.id === targetUnitId)
     ) {
       setValue("targetUnitId", undefined);
     }
   }, [
     hasValidRange,
-    isLoadingUnits,
+    isRefreshingUnits,
     setValue,
     targetUnitId,
     unitsData?.items,
@@ -205,31 +208,24 @@ export function CreateLeadForm({
           name="targetUnitId"
           control={control}
           render={({ field }) => (
-            <Combobox
-              options={unitOptions}
+            <AvailableUnitPicker
+              units={unitsData?.items ?? []}
               value={field.value || null}
-              onChange={(val) => field.onChange(val || undefined)}
-              placeholder={
-                !hasValidRange
-                  ? "Select desired date range to view available units"
-                  : isLoadingUnits
-                    ? "Loading available units…"
-                    : "Search available units"
-              }
-              disabled={
-                isLoading ||
-                !hasValidRange ||
-                isLoadingUnits ||
-                unitOptions.length === 0
-              }
+              onChange={(id) => field.onChange(id || undefined)}
+              unitTypeFilter={unitTypeFilter}
+              onUnitTypeFilterChange={(type) => {
+                setUnitTypeFilter(type);
+                setValue("targetUnitId", undefined, {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                });
+              }}
+              hasValidRange={hasValidRange}
+              isRefreshing={isRefreshingUnits}
+              disabled={isLoading}
             />
           )}
         />
-        {hasValidRange && !isLoadingUnits && unitOptions.length === 0 && (
-          <p className="mt-1 text-xs text-neutral-500">
-            No units available for this date frame. Try adjusting your dates.
-          </p>
-        )}
       </div>
 
       {hasDateConflict && (
@@ -365,7 +361,7 @@ export function CreateLeadForm({
             !targetUnitId ||
             !guestCount ||
             hasGuestCapacityConflict ||
-            isLoadingUnits
+            isRefreshingUnits
           }
         >
           Create lead
