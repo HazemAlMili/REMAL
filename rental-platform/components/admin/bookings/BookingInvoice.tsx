@@ -106,15 +106,8 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
     // Use the backend's ReissueAsync endpoint which marks old invoice as "superseded"
     // This works even when the invoice has paid payments
 
-    // Generate new invoice number
-    const now = new Date();
-    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
-    const randomStr = Math.random().toString(36).substring(2, 7).toUpperCase();
-    const newInvoiceNumber = `INV-${dateStr}-${randomStr}`;
-
     reissueMutation.mutate(
       {
-        newInvoiceNumber,
         notes: "Re-issued invoice due to payment updates",
       },
       {
@@ -143,16 +136,8 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
       {
         onSuccess: () => {
           // Then create a new draft invoice
-          const now = new Date();
-          const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
-          const randomStr = Math.random()
-            .toString(36)
-            .substring(2, 7)
-            .toUpperCase();
-          const newInvoiceNumber = `INV-${dateStr}-${randomStr}`;
-
           createDraftMutation.mutate(
-            { invoiceNumber: newInvoiceNumber },
+            { notes: "Replacement invoice draft due to payment updates" },
             {
               onSuccess: () => {
                 setShowInvoiceActionDialog(false);
@@ -212,19 +197,7 @@ export function BookingInvoice({ bookingId, invoiceId }: BookingInvoiceProps) {
               <Button
                 variant="primary"
                 onClick={() => {
-                  // Generate invoice number: INV-YYYYMMDD-XXXXX
-                  const now = new Date();
-                  const dateStr = now
-                    .toISOString()
-                    .slice(0, 10)
-                    .replace(/-/g, "");
-                  const randomStr = Math.random()
-                    .toString(36)
-                    .substring(2, 7)
-                    .toUpperCase();
-                  const invoiceNumber = `INV-${dateStr}-${randomStr}`;
-
-                  createDraftMutation.mutate({ invoiceNumber });
+                  createDraftMutation.mutate({});
                 }}
                 isLoading={createDraftMutation.isPending}
                 leftIcon={<Plus className="h-4 w-4" />}

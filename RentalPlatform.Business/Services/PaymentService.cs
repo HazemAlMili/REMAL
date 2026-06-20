@@ -26,9 +26,12 @@ public class PaymentService : IPaymentService
         string? paymentStatus = null,
         Guid? bookingId = null,
         Guid? invoiceId = null,
+        string? search = null,
         CancellationToken cancellationToken = default)
     {
-        var query = _unitOfWork.Payments.Query();
+        IQueryable<Payment> query = _unitOfWork.Payments.Query()
+            .Include(p => p.Booking)
+                .ThenInclude(b => b.Client);
 
         if (!string.IsNullOrWhiteSpace(paymentStatus))
             query = query.Where(p => p.PaymentStatus == paymentStatus.Trim().ToLower());
@@ -39,12 +42,38 @@ public class PaymentService : IPaymentService
         if (invoiceId.HasValue)
             query = query.Where(p => p.InvoiceId == invoiceId.Value);
 
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var normalizedSearch = search.Trim().ToLower();
+            var phoneSearch = NormalizePhoneSearch(search);
+
+            query = query.Where(p =>
+                p.BookingId.ToString().ToLower().Contains(normalizedSearch) ||
+                (p.InvoiceId.HasValue && p.InvoiceId.Value.ToString().ToLower().Contains(normalizedSearch)) ||
+                (p.ReferenceNumber != null && p.ReferenceNumber.ToLower().Contains(normalizedSearch)) ||
+                p.Booking.Client.Name.ToLower().Contains(normalizedSearch) ||
+                p.Booking.Client.Phone.ToLower().Contains(normalizedSearch) ||
+                (
+                    phoneSearch != string.Empty &&
+                    p.Booking.Client.Phone
+                        .Replace("+", "")
+                        .Replace(" ", "")
+                        .Replace("-", "")
+                        .Replace("(", "")
+                        .Replace(")", "")
+                        .Contains(phoneSearch)
+                ));
+        }
+
         return await query.OrderByDescending(p => p.CreatedAt).ToListAsync(cancellationToken);
     }
 
     public async Task<Payment?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.Payments.GetByIdAsync(id, cancellationToken);
+        return await _unitOfWork.Payments.Query()
+            .Include(p => p.Booking)
+                .ThenInclude(b => b.Client)
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
     public async Task<Payment> CreateAsync(
@@ -133,9 +162,9 @@ public class PaymentService : IPaymentService
             if (linkedInvoice == null)
                 throw new NotFoundException($"Linked invoice {payment.InvoiceId.Value} not found");
 
-            if (linkedInvoice.InvoiceStatus == "cancelled")
+            if (linkedInvoice.InvoiceStatus is "cancelled" or "superseded")
                 throw new ConflictException(
-                    $"Payment {id} cannot be marked as paid: linked invoice {linkedInvoice.Id} is cancelled.");
+                    $"Payment {id} cannot be marked as paid: linked invoice {linkedInvoice.Id} is {linkedInvoice.InvoiceStatus}.");
 
             // Allow payments to be marked as paid even if invoice is in draft status
             // This supports the workflow where payments are received before invoice is issued
@@ -264,6 +293,11 @@ public class PaymentService : IPaymentService
         return payment;
     }
 
+    private static string NormalizePhoneSearch(string value)
+    {
+        return new string(value.Where(char.IsDigit).ToArray());
+    }
+
     public async Task<int> LinkPaidPaymentsToInvoicesAsync(CancellationToken cancellationToken = default)
     {
         // Find all paid payments that have no invoice_id
@@ -277,7 +311,9 @@ public class PaymentService : IPaymentService
         {
             // Find the active (non-cancelled) invoice for this booking
             var activeInvoice = await _unitOfWork.Invoices.Query()
-                .Where(i => i.BookingId == payment.BookingId && i.InvoiceStatus != "cancelled")
+                .Where(i => i.BookingId == payment.BookingId
+                    && i.InvoiceStatus != "cancelled"
+                    && i.InvoiceStatus != "superseded")
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (activeInvoice != null)

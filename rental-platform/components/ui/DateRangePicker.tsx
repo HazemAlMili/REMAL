@@ -18,6 +18,7 @@ export interface DateRangePickerProps {
   error?: string
   minDate?: Date
   maxDate?: Date
+  disabledDates?: Date[]
 }
 
 export function DateRangePicker({
@@ -28,6 +29,7 @@ export function DateRangePicker({
   error,
   minDate,
   maxDate,
+  disabledDates = [],
 }: DateRangePickerProps) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -51,6 +53,7 @@ export function DateRangePicker({
   const disabledMatchers: Matcher[] = []
   if (minDate) disabledMatchers.push({ before: minDate })
   if (maxDate) disabledMatchers.push({ after: maxDate })
+  if (disabledDates.length > 0) disabledMatchers.push(disabledDates)
   if (!minDate && !maxDate) disabledMatchers.push({ before: new Date() })
 
   const formatDate = (d: Date) =>

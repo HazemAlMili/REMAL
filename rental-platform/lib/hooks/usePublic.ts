@@ -6,12 +6,14 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { publicService } from "@/lib/api/services/public.service";
+import { clientService } from "@/lib/api/services/client.service";
 import { queryKeys } from "@/lib/utils/query-keys";
 import type {
   PublicUnitFilters,
   PublicReviewFilters,
   PublicCreateCrmLeadRequest,
 } from "@/lib/types/public.types";
+import type { CreateClientBookingRequest } from "@/lib/types/booking.types";
 
 // ═══════════════════════════════════════════
 // QUERIES — Server data fetching
@@ -227,6 +229,30 @@ export function useSubmitBookingRequest() {
           queryKey: queryKeys.units.availability(data.targetUnitId, {
             startDate: data.desiredCheckInDate,
             endDate: data.desiredCheckOutDate,
+          }),
+        });
+      }
+    },
+  });
+}
+
+// ── Create Booking (authenticated client) ──
+// Creates a booking directly at "Prospecting" — no CRM lead. Used by the booking
+// flow when the user is a signed-in client (the only path Step 2 allows to Step 3).
+export function useCreateClientBooking() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateClientBookingRequest) =>
+      clientService.createBooking(data),
+
+    onSuccess: (booking) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.clientBookings.all });
+      if (booking.unitId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.units.availability(booking.unitId, {
+            startDate: booking.checkInDate,
+            endDate: booking.checkOutDate,
           }),
         });
       }

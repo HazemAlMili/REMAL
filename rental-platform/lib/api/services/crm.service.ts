@@ -21,6 +21,9 @@ export const crmService = {
   getLeads: (filters?: CrmLeadFilters): Promise<PaginatedLeads> =>
     api.get(endpoints.crmLeads.list, { params: filters }),
 
+  getOpenLeadCount: (): Promise<number> =>
+    api.get(endpoints.crmLeads.openCount),
+
   getLeadById: (id: string): Promise<CrmLeadDetailsResponse> =>
     api.get(endpoints.crmLeads.byId(id)),
 

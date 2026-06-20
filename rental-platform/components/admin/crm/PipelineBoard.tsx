@@ -7,17 +7,41 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { Users, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   CRM_PIPELINE_COLUMNS,
   CRM_CLOSED_STATUSES,
   CRM_STATUS_LABELS,
 } from "@/lib/constants/booking-statuses";
+import { queryKeys } from "@/lib/utils/query-keys";
 import { toastError, toastSuccess } from "@/lib/utils/toast";
+import type { CrmLeadStatus } from "@/lib/types/crm.types";
 
 export default function PipelineBoard() {
   const { groupedLeads, totalCount, isLoading, isError, refetch } =
     useLeadsPipeline();
   const [isClosedSectionOpen, setIsClosedSectionOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Single drop handler so a board move keeps the board, the dashboard open-count,
+  // AND the moved lead's detail view in sync — opening the card after a drag now
+  // shows the new status without a manual refresh.
+  const handleDropLead = async (leadId: string, target: CrmLeadStatus) => {
+    try {
+      const { crmService } = await import("@/lib/api/services/crm.service");
+      await crmService.updateLeadStatus(leadId, { leadStatus: target });
+      toastSuccess(`Lead moved to ${CRM_STATUS_LABELS[target] || target}`);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.crm.leads() }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.crm.openCount() }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.crm.leadDetail(leadId),
+        }),
+      ]);
+    } catch {
+      toastError("Cannot move lead to this stage");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -71,16 +95,7 @@ export default function PipelineBoard() {
             label={CRM_STATUS_LABELS[status] || status}
             leads={groupedLeads[status] || []}
             isLoading={false}
-            onDropLead={async (leadId, target) => {
-              try {
-                const { crmService } = await import("@/lib/api/services/crm.service");
-                await crmService.updateLeadStatus(leadId, { leadStatus: target });
-                toastSuccess(`Lead moved to ${CRM_STATUS_LABELS[target] || target}`);
-                refetch();
-              } catch {
-                toastError("Cannot move lead to this stage");
-              }
-            }}
+            onDropLead={handleDropLead}
           />
         ))}
       </div>
@@ -109,16 +124,7 @@ export default function PipelineBoard() {
                   label={CRM_STATUS_LABELS[status] || status}
                   leads={groupedLeads[status] || []}
                   isLoading={false}
-                  onDropLead={async (leadId, target) => {
-                    try {
-                      const { crmService } = await import("@/lib/api/services/crm.service");
-                      await crmService.updateLeadStatus(leadId, { leadStatus: target });
-                      toastSuccess(`Lead moved to ${CRM_STATUS_LABELS[target] || target}`);
-                      refetch();
-                    } catch {
-                      toastError("Cannot move lead to this stage");
-                    }
-                  }}
+                  onDropLead={handleDropLead}
                 />
               ))}
             </div>

@@ -59,7 +59,7 @@ public class ReportingBookingAnalyticsService : IReportingBookingAnalyticsServic
             DateTo                       = dateTo,
             BookingSource                = string.IsNullOrWhiteSpace(bookingSource) ? null : bookingSource.Trim(),
             TotalBookingsCreatedCount    = rows.Sum(r => r.BookingsCreatedCount),
-            TotalPendingBookingsCount    = rows.Sum(r => r.PendingBookingsCount),
+            TotalProspectingBookingsCount = rows.Sum(r => r.ProspectingBookingsCount),
             TotalConfirmedBookingsCount  = rows.Sum(r => r.ConfirmedBookingsCount),
             TotalCancelledBookingsCount  = rows.Sum(r => r.CancelledBookingsCount),
             TotalCompletedBookingsCount  = rows.Sum(r => r.CompletedBookingsCount),

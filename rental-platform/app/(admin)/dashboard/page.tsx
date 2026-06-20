@@ -10,6 +10,7 @@ import { Building2, Users, CalendarCheck, DollarSign } from "lucide-react";
 import { formatCurrency } from "@/lib/utils/format";
 import { format, subDays } from "date-fns";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useOpenLeadsCount } from "@/lib/hooks/useCrm";
 
 const RevenueLineChart = dynamic(
   () =>
@@ -34,7 +35,8 @@ const BookingsBarChart = dynamic(
 );
 
 export default function AdminDashboardPage() {
-  const { canViewFinance, canViewUnits, canViewBookings } = usePermissions();
+  const { canViewFinance, canViewUnits, canViewBookings, canViewCRM } =
+    usePermissions();
   const {
     useBookingsSummary,
     useFinanceSummary,
@@ -57,6 +59,8 @@ export default function AdminDashboardPage() {
   });
   const { data: bookingsSummary, isLoading: bookingsLoading } =
     useBookingsSummary(undefined, { enabled: canViewBookings });
+  const { data: openLeadsCount = 0, isLoading: leadsLoading } =
+    useOpenLeadsCount(canViewCRM);
   const { data: financeSummary, isLoading: financeLoading } = useFinanceSummary(
     undefined,
     { enabled: canViewFinance }
@@ -73,10 +77,6 @@ export default function AdminDashboardPage() {
   );
 
   const activeBookingsCount = bookingsSummary?.totalConfirmedBookingsCount || 0;
-  // Based on the available data, open leads count could be inferred from another metric, but typically it maps to a different endpoint if not in BookingsSummaryResponse
-  // Let's omit the exact leads logic since it's not present in the type yet, or just display 0 to comply with API
-  const openLeadsCount = 0;
-
   const totalRevenue = financeSummary?.totalPaidAmount || 0;
 
   return (
@@ -103,12 +103,14 @@ export default function AdminDashboardPage() {
 
         {canViewBookings && (
           <>
-            <StatCard
-              title="Open leads"
-              value={openLeadsCount}
-              icon={Users}
-              isLoading={bookingsLoading}
-            />
+            {canViewCRM && (
+              <StatCard
+                title="Open leads"
+                value={openLeadsCount}
+                icon={Users}
+                isLoading={leadsLoading}
+              />
+            )}
             <StatCard
               title="Active bookings"
               value={activeBookingsCount}

@@ -16,22 +16,45 @@ public class CrmLeadService : ICrmLeadService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IBookingService _bookingService;
+    private readonly IUnitAvailabilityService _availabilityService;
 
     private static readonly string[] AllowedSources = { "direct", "admin", "phone", "whatsapp", "website" };
+    // A lead is "open" only through the early sales stages. Once it reaches Booked it is
+    // either converted (-> Completed, becoming a Booking) or dropped (-> NotRelevant).
+    // Confirmed/CheckIn/Completed belong to the BOOKING lifecycle, not the lead.
+    private static readonly LeadStatus[] OpenStatuses =
+    {
+        LeadStatus.Prospecting,
+        LeadStatus.Relevant,
+        LeadStatus.NoAnswer,
+        LeadStatus.Booked
+    };
 
     private static readonly Dictionary<LeadStatus, LeadStatus[]> AllowedTransitions = new()
     {
-        { LeadStatus.New,       new[] { LeadStatus.Contacted, LeadStatus.Lost } },
-        { LeadStatus.Contacted, new[] { LeadStatus.Qualified, LeadStatus.Lost } },
-        { LeadStatus.Qualified, new[] { LeadStatus.Lost } },
-        { LeadStatus.Converted, Array.Empty<LeadStatus>() },
-        { LeadStatus.Lost,      Array.Empty<LeadStatus>() },
+        { LeadStatus.Prospecting, new[] { LeadStatus.Relevant, LeadStatus.NoAnswer, LeadStatus.NotRelevant } },
+        { LeadStatus.Relevant,    new[] { LeadStatus.Booked, LeadStatus.NoAnswer, LeadStatus.NotRelevant } },
+        { LeadStatus.NoAnswer,    new[] { LeadStatus.Relevant, LeadStatus.NotRelevant } },
+        // Booked is the LAST lead stage: forward progress happens only via
+        // ConvertToBookingAsync (which creates a Booking and moves the lead to Completed).
+        // A Booked lead can otherwise only be dropped.
+        { LeadStatus.Booked,      new[] { LeadStatus.NotRelevant } },
+        { LeadStatus.Confirmed,   Array.Empty<LeadStatus>() },
+        { LeadStatus.CheckIn,     Array.Empty<LeadStatus>() },
+        { LeadStatus.NotRelevant, Array.Empty<LeadStatus>() },
+        { LeadStatus.Completed,   Array.Empty<LeadStatus>() },
+        { LeadStatus.Cancelled,   Array.Empty<LeadStatus>() },
+        { LeadStatus.LeftEarly,   Array.Empty<LeadStatus>() },
     };
 
-    public CrmLeadService(IUnitOfWork unitOfWork, IBookingService bookingService)
+    public CrmLeadService(
+        IUnitOfWork unitOfWork,
+        IBookingService bookingService,
+        IUnitAvailabilityService availabilityService)
     {
         _unitOfWork = unitOfWork;
         _bookingService = bookingService;
+        _availabilityService = availabilityService;
     }
 
     public async Task<IReadOnlyList<CrmLead>> GetAllAsync(
@@ -66,6 +89,12 @@ public class CrmLeadService : ICrmLeadService
             .ToListAsync(cancellationToken);
     }
 
+    public Task<int> GetOpenCountAsync(CancellationToken cancellationToken = default)
+    {
+        return _unitOfWork.CrmLeads.Query()
+            .CountAsync(lead => OpenStatuses.Contains(lead.LeadStatus), cancellationToken);
+    }
+
     public async Task<CrmLead?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _unitOfWork.CrmLeads.Query()
@@ -92,6 +121,7 @@ public class CrmLeadService : ICrmLeadService
         var normalizedSource = ValidateAndNormalizeSource(source);
 
         await ValidateOptionalReferencesAsync(clientId, targetUnitId, assignedAdminUserId, cancellationToken);
+        await EnsureDesiredDatesAvailableAsync(targetUnitId, desiredCheckInDate, desiredCheckOutDate, cancellationToken);
         await EnsureNoDuplicateOpenLeadAsync(
             clientId,
             targetUnitId,
@@ -113,7 +143,7 @@ public class CrmLeadService : ICrmLeadService
             DesiredCheckInDate = desiredCheckInDate,
             DesiredCheckOutDate = desiredCheckOutDate,
             GuestCount = guestCount,
-            LeadStatus = LeadStatus.New,
+            LeadStatus = LeadStatus.Prospecting,
             Source = normalizedSource,
             Notes = notes?.Trim(),
             CreatedAt = DateTime.UtcNow,
@@ -150,6 +180,7 @@ public class CrmLeadService : ICrmLeadService
         var normalizedSource = ValidateAndNormalizeSource(source);
 
         await ValidateOptionalReferencesAsync(clientId, targetUnitId, assignedAdminUserId, cancellationToken);
+        await EnsureDesiredDatesAvailableAsync(targetUnitId, desiredCheckInDate, desiredCheckOutDate, cancellationToken);
 
         lead.ClientId = clientId;
         lead.TargetUnitId = targetUnitId;
@@ -206,54 +237,64 @@ public class CrmLeadService : ICrmLeadService
         string? internalNotes,
         CancellationToken cancellationToken = default)
     {
-        var lead = await _unitOfWork.CrmLeads.GetByIdAsync(leadId, cancellationToken);
-        if (lead == null)
-            throw new NotFoundException($"CRM lead with ID {leadId} not found");
+        await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            // Unit first, then lead: every conversion uses the same lock order.
+            await _unitOfWork.AcquireTransactionAdvisoryLockAsync(
+                $"booking-unit:{unitId:N}",
+                cancellationToken);
+            await _unitOfWork.AcquireTransactionAdvisoryLockAsync(
+                $"crm-lead:{leadId:N}",
+                cancellationToken);
 
-        if (lead.LeadStatus == LeadStatus.Converted)
-            throw new ConflictException($"CRM lead {leadId} has already been converted to a booking");
+            var lead = await _unitOfWork.CrmLeads.GetByIdAsync(leadId, cancellationToken);
+            if (lead == null)
+                throw new NotFoundException($"CRM lead with ID {leadId} not found");
 
-        if (lead.LeadStatus == LeadStatus.Lost)
-            throw new ConflictException($"CRM lead {leadId} is marked as lost and cannot be converted");
+            await _unitOfWork.ReloadAsync(lead, cancellationToken);
 
-        if (lead.LeadStatus != LeadStatus.Qualified)
-            throw new ConflictException(
-                $"CRM lead {leadId} must be in 'Qualified' status before conversion. Current status: {lead.LeadStatus}. " +
-                $"Please move the lead through the sales funnel: New → Contacted → Qualified → Convert to Booking");
+            if (lead.LeadStatus != LeadStatus.Booked)
+                throw new ConflictException(
+                    $"CRM lead {leadId} must be in 'Booked' status before conversion. Current status: {lead.LeadStatus}.");
 
-        if (lead.ClientId.HasValue && lead.ClientId.Value != clientId)
-            throw new ConflictException(
-                $"CRM lead {leadId} is already linked to client {lead.ClientId.Value}, but conversion was requested for client {clientId}");
+            if (lead.ClientId.HasValue && lead.ClientId.Value != clientId)
+                throw new ConflictException(
+                    $"CRM lead {leadId} is already linked to client {lead.ClientId.Value}, but conversion was requested for client {clientId}");
 
-        if (lead.TargetUnitId.HasValue && lead.TargetUnitId.Value != unitId)
-            throw new ConflictException(
-                $"CRM lead {leadId} is already linked to unit {lead.TargetUnitId.Value}, but conversion was requested for unit {unitId}");
+            if (lead.TargetUnitId.HasValue && lead.TargetUnitId.Value != unitId)
+                throw new ConflictException(
+                    $"CRM lead {leadId} is already linked to unit {lead.TargetUnitId.Value}, but conversion was requested for unit {unitId}");
 
-        var booking = await _bookingService.CreateAsync(
-            clientId: clientId,
-            unitId: unitId,
-            checkInDate: checkInDate,
-            checkOutDate: checkOutDate,
-            guestCount: guestCount,
-            source: lead.Source,
-            assignedAdminUserId: lead.AssignedAdminUserId,
-            internalNotes: internalNotes,
-            cancellationToken: cancellationToken);
+            var booking = await _bookingService.CreateAsync(
+                clientId: clientId,
+                unitId: unitId,
+                checkInDate: checkInDate,
+                checkOutDate: checkOutDate,
+                guestCount: guestCount,
+                source: lead.Source,
+                assignedAdminUserId: lead.AssignedAdminUserId,
+                internalNotes: internalNotes,
+                initialStatus: BookingStatus.Booked,
+                cancellationToken: cancellationToken);
 
-        lead.LeadStatus = LeadStatus.Converted;
+            // Completed is the available terminal lead state used to mean that
+            // CRM ownership has ended and Booking is now authoritative.
+            lead.LeadStatus = LeadStatus.Completed;
+            lead.ClientId ??= clientId;
+            lead.TargetUnitId ??= unitId;
+            lead.UpdatedAt = DateTime.UtcNow;
 
-        if (!lead.ClientId.HasValue)
-            lead.ClientId = clientId;
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
 
-        if (!lead.TargetUnitId.HasValue)
-            lead.TargetUnitId = unitId;
-
-        lead.UpdatedAt = DateTime.UtcNow;
-
-        _unitOfWork.CrmLeads.Update(lead);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return booking;
+            return booking;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     // ---------------------------------------------------------------
@@ -349,19 +390,37 @@ public class CrmLeadService : ICrmLeadService
             return;
 
         var normalizedPhone = contactPhone.Trim();
-        var openStatuses = new[] { LeadStatus.New, LeadStatus.Contacted, LeadStatus.Qualified };
-
         var duplicateExists = await _unitOfWork.CrmLeads.Query()
             .AnyAsync(l =>
                 l.TargetUnitId == targetUnitId.Value &&
                 l.DesiredCheckInDate == desiredCheckInDate.Value &&
                 l.DesiredCheckOutDate == desiredCheckOutDate.Value &&
                 l.GuestCount == guestCount.Value &&
-                openStatuses.Contains(l.LeadStatus) &&
+                OpenStatuses.Contains(l.LeadStatus) &&
                 (clientId.HasValue ? l.ClientId == clientId.Value : l.ContactPhone == normalizedPhone),
                 cancellationToken);
 
         if (duplicateExists)
             throw new ConflictException("A matching booking request is already open for these dates.");
+    }
+
+    private async Task EnsureDesiredDatesAvailableAsync(
+        Guid? targetUnitId,
+        DateOnly? desiredCheckInDate,
+        DateOnly? desiredCheckOutDate,
+        CancellationToken cancellationToken)
+    {
+        if (!targetUnitId.HasValue || !desiredCheckInDate.HasValue || !desiredCheckOutDate.HasValue)
+            return;
+
+        var availability = await _availabilityService.CheckOperationalAvailabilityAsync(
+            targetUnitId.Value,
+            desiredCheckInDate.Value,
+            desiredCheckOutDate.Value.AddDays(-1),
+            cancellationToken: cancellationToken);
+
+        if (!availability.IsAvailable)
+            throw new ConflictException(
+                $"Unit {targetUnitId.Value} is not available for the requested lead dates: {availability.Reason}");
     }
 }

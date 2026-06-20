@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using RentalPlatform.Business.Exceptions;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data;
@@ -56,7 +58,7 @@ public class InvoiceService : IInvoiceService
 
     public async Task<Invoice> CreateDraftFromBookingAsync(
         Guid bookingId,
-        string invoiceNumber,
+        string? invoiceNumber,
         string? notes,
         CancellationToken cancellationToken = default)
     {
@@ -64,60 +66,97 @@ public class InvoiceService : IInvoiceService
         if (booking == null)
             throw new NotFoundException($"Booking with ID {bookingId} not found");
 
-        var normalizedNumber = invoiceNumber.Trim();
-        if (string.IsNullOrEmpty(normalizedNumber))
-            throw new BusinessValidationException("InvoiceNumber is required");
+        IDbContextTransaction? ownedTransaction = null;
+        if (!_unitOfWork.HasActiveTransaction)
+            ownedTransaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
-        // One non-cancelled invoice per booking rule
-        var hasActiveInvoice = await _unitOfWork.Invoices.ExistsAsync(
-            i => i.BookingId == bookingId && i.InvoiceStatus != "cancelled",
-            cancellationToken);
-        if (hasActiveInvoice)
-            throw new ConflictException(
-                $"Booking {bookingId} already has an active invoice (draft, issued, or paid). Cancel the existing invoice before creating a new one.");
-
-        // Invoice number uniqueness
-        var duplicate = await _unitOfWork.Invoices.ExistsAsync(
-            i => i.InvoiceNumber == normalizedNumber, cancellationToken);
-        if (duplicate)
-            throw new ConflictException($"Invoice number '{normalizedNumber}' is already in use");
-
-        var invoice = new Invoice
+        var shouldGenerateNumber = string.IsNullOrWhiteSpace(invoiceNumber);
+        try
         {
-            Id = Guid.NewGuid(),
-            BookingId = bookingId,
-            InvoiceNumber = normalizedNumber,
-            InvoiceStatus = "draft",
-            SubtotalAmount = booking.FinalAmount,
-            TotalAmount = booking.FinalAmount,
-            Notes = notes?.Trim(),
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
+            await _unitOfWork.AcquireTransactionAdvisoryLockAsync(
+                $"invoice-booking:{bookingId:N}",
+                cancellationToken);
 
-        await _unitOfWork.Invoices.AddAsync(invoice, cancellationToken);
+            if (shouldGenerateNumber)
+            {
+                await _unitOfWork.AcquireTransactionAdvisoryLockAsync(
+                    "invoice-number-generation",
+                    cancellationToken);
+            }
 
-        // Create initial booking_stay line item
-        var bookingStayItem = new InvoiceItem
+            var normalizedNumber = shouldGenerateNumber
+                ? await GenerateInvoiceNumberAsync(cancellationToken)
+                : invoiceNumber!.Trim();
+
+            var hasActiveInvoice = await _unitOfWork.Invoices.ExistsAsync(
+                i => i.BookingId == bookingId
+                    && i.InvoiceStatus != "cancelled"
+                    && i.InvoiceStatus != "superseded",
+                cancellationToken);
+            if (hasActiveInvoice)
+                throw new ConflictException(
+                    $"Booking {bookingId} already has an active invoice (draft, issued, or paid). Cancel the existing invoice before creating a new one.");
+
+            var duplicate = await _unitOfWork.Invoices.ExistsAsync(
+                i => i.InvoiceNumber == normalizedNumber,
+                cancellationToken);
+            if (duplicate)
+                throw new ConflictException($"Invoice number '{normalizedNumber}' is already in use");
+
+            var invoice = new Invoice
+            {
+                Id = Guid.NewGuid(),
+                BookingId = bookingId,
+                InvoiceNumber = normalizedNumber,
+                InvoiceStatus = "draft",
+                SubtotalAmount = booking.FinalAmount,
+                TotalAmount = booking.FinalAmount,
+                Notes = notes?.Trim(),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            await _unitOfWork.Invoices.AddAsync(invoice, cancellationToken);
+            await _unitOfWork.InvoiceItems.AddAsync(
+                new InvoiceItem
+                {
+                    Id = Guid.NewGuid(),
+                    InvoiceId = invoice.Id,
+                    LineType = "booking_stay",
+                    Description = "Booking stay charges",
+                    Quantity = 1,
+                    UnitAmount = booking.FinalAmount,
+                    LineTotal = booking.FinalAmount,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                },
+                cancellationToken);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            if (ownedTransaction != null)
+                await ownedTransaction.CommitAsync(cancellationToken);
+
+            return await _unitOfWork.Invoices.Query()
+                .Include(i => i.InvoiceItems)
+                .FirstOrDefaultAsync(i => i.Id == invoice.Id, cancellationToken) ?? invoice;
+        }
+        catch (DbUpdateException ex) when (IsUniqueViolation(ex))
         {
-            Id = Guid.NewGuid(),
-            InvoiceId = invoice.Id,
-            LineType = "booking_stay",
-            Description = "Booking stay charges",
-            Quantity = 1,
-            UnitAmount = booking.FinalAmount,
-            LineTotal = booking.FinalAmount,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
-
-        await _unitOfWork.InvoiceItems.AddAsync(bookingStayItem, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        // Reload with items
-        return await _unitOfWork.Invoices.Query()
-            .Include(i => i.InvoiceItems)
-            .FirstOrDefaultAsync(i => i.Id == invoice.Id, cancellationToken) ?? invoice;
+            if (ownedTransaction != null)
+                await ownedTransaction.RollbackAsync(cancellationToken);
+            throw new ConflictException("Invoice number collision detected. Retry the operation.");
+        }
+        catch
+        {
+            if (ownedTransaction != null)
+                await ownedTransaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+        finally
+        {
+            if (ownedTransaction != null)
+                await ownedTransaction.DisposeAsync();
+        }
     }
 
     public async Task<Invoice> AddManualAdjustmentAsync(
@@ -270,7 +309,9 @@ public class InvoiceService : IInvoiceService
         {
             // Find the active (non-cancelled) invoice for this booking
             var activeInvoice = await _unitOfWork.Invoices.Query()
-                .Where(i => i.BookingId == payment.BookingId && i.InvoiceStatus != "cancelled")
+                .Where(i => i.BookingId == payment.BookingId
+                    && i.InvoiceStatus != "cancelled"
+                    && i.InvoiceStatus != "superseded")
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (activeInvoice != null)
@@ -292,7 +333,7 @@ public class InvoiceService : IInvoiceService
 
     public async Task<Invoice> ReissueAsync(
         Guid id,
-        string newInvoiceNumber,
+        string? newInvoiceNumber,
         string? notes,
         CancellationToken cancellationToken = default)
     {
@@ -307,19 +348,36 @@ public class InvoiceService : IInvoiceService
             throw new ConflictException(
                 $"Invoice {id} cannot be re-issued: current status is '{oldInvoice.InvoiceStatus}'. Only issued or paid invoices can be re-issued.");
 
-        var normalizedNumber = newInvoiceNumber.Trim();
-        if (string.IsNullOrEmpty(normalizedNumber))
-            throw new BusinessValidationException("InvoiceNumber is required");
-
-        // Check invoice number uniqueness
-        var duplicate = await _unitOfWork.Invoices.ExistsAsync(
-            i => i.InvoiceNumber == normalizedNumber, cancellationToken);
-        if (duplicate)
-            throw new ConflictException($"Invoice number '{normalizedNumber}' is already in use");
-
         await using var tx = await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
+            await _unitOfWork.AcquireTransactionAdvisoryLockAsync(
+                $"invoice-reissue:{id:N}",
+                cancellationToken);
+            await _unitOfWork.ReloadAsync(oldInvoice, cancellationToken);
+
+            if (oldInvoice.InvoiceStatus != "issued" && oldInvoice.InvoiceStatus != "paid")
+                throw new ConflictException(
+                    $"Invoice {id} cannot be re-issued: current status is '{oldInvoice.InvoiceStatus}'. Only issued or paid invoices can be re-issued.");
+
+            var shouldGenerateNumber = string.IsNullOrWhiteSpace(newInvoiceNumber);
+            if (shouldGenerateNumber)
+            {
+                await _unitOfWork.AcquireTransactionAdvisoryLockAsync(
+                    "invoice-number-generation",
+                    cancellationToken);
+            }
+
+            var normalizedNumber = shouldGenerateNumber
+                ? await GenerateInvoiceNumberAsync(cancellationToken)
+                : newInvoiceNumber!.Trim();
+
+            var duplicate = await _unitOfWork.Invoices.ExistsAsync(
+                i => i.InvoiceNumber == normalizedNumber,
+                cancellationToken);
+            if (duplicate)
+                throw new ConflictException($"Invoice number '{normalizedNumber}' is already in use");
+
             // Mark old invoice as superseded (not cancelled, to preserve audit trail)
             oldInvoice.InvoiceStatus = "superseded";
             oldInvoice.Notes = string.IsNullOrEmpty(oldInvoice.Notes)
@@ -421,10 +479,40 @@ public class InvoiceService : IInvoiceService
                 .Include(i => i.InvoiceItems)
                 .FirstOrDefaultAsync(i => i.Id == newInvoice.Id, cancellationToken) ?? newInvoice;
         }
+        catch (DbUpdateException ex) when (IsUniqueViolation(ex))
+        {
+            await tx.RollbackAsync(cancellationToken);
+            throw new ConflictException("Invoice number collision detected. Retry the operation.");
+        }
         catch
         {
             await tx.RollbackAsync(cancellationToken);
             throw;
         }
+    }
+
+    private async Task<string> GenerateInvoiceNumberAsync(CancellationToken cancellationToken)
+    {
+        var prefix = $"INV-{DateTime.UtcNow:yyyyMMdd}";
+        var existingCount = await _unitOfWork.Invoices.Query()
+            .CountAsync(i => i.InvoiceNumber.StartsWith(prefix), cancellationToken);
+
+        for (var sequence = existingCount + 1; sequence <= existingCount + 1000; sequence++)
+        {
+            var candidate = $"{prefix}-{sequence:D4}";
+            var exists = await _unitOfWork.Invoices.ExistsAsync(
+                i => i.InvoiceNumber == candidate,
+                cancellationToken);
+
+            if (!exists)
+                return candidate;
+        }
+
+        throw new ConflictException("Could not generate a unique invoice number. Try again.");
+    }
+
+    private static bool IsUniqueViolation(DbUpdateException exception)
+    {
+        return exception.InnerException is DbException { SqlState: "23505" };
     }
 }

@@ -109,4 +109,40 @@ public class UnitOfWork : IUnitOfWork
     {
         return await _context.Database.BeginTransactionAsync(cancellationToken);
     }
+
+    public bool HasActiveTransaction => _context.Database.CurrentTransaction != null;
+
+    public async Task AcquireTransactionAdvisoryLockAsync(
+        string resourceKey,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureActiveTransaction();
+        await _context.Database.ExecuteSqlInterpolatedAsync(
+            $"SELECT pg_advisory_xact_lock(hashtextextended({resourceKey}, 0))",
+            cancellationToken);
+    }
+
+    public async Task<bool> TryAcquireTransactionAdvisoryLockAsync(
+        string resourceKey,
+        CancellationToken cancellationToken = default)
+    {
+        EnsureActiveTransaction();
+        return await _context.Database
+            .SqlQuery<bool>(
+                $"SELECT pg_try_advisory_xact_lock(hashtextextended({resourceKey}, 0)) AS \"Value\"")
+            .SingleAsync(cancellationToken);
+    }
+
+    public Task ReloadAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        return _context.Entry(entity).ReloadAsync(cancellationToken);
+    }
+
+    private void EnsureActiveTransaction()
+    {
+        if (!HasActiveTransaction)
+            throw new InvalidOperationException(
+                "A transaction-scoped advisory lock requires an active database transaction.");
+    }
 }

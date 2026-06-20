@@ -8,6 +8,7 @@ using RentalPlatform.Business.Exceptions;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data;
 using RentalPlatform.Data.Entities;
+using RentalPlatform.Shared.Constants;
 
 namespace RentalPlatform.Business.Services;
 
@@ -50,6 +51,8 @@ public class DateBlockService : IDateBlockService
         if (hasOverlap)
             throw new ConflictException("The specified date range overlaps with an existing date block for this unit.");
 
+        await EnsureNoActiveBookingOverlapAsync(unitId, startDate, endDate, cancellationToken);
+
         var block = new DateBlock
         {
             UnitId = unitId,
@@ -63,6 +66,24 @@ public class DateBlockService : IDateBlockService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return block;
+    }
+
+    public async Task<DateBlock> CreateOwnerBlockAsync(
+        Guid ownerId,
+        Guid unitId,
+        DateOnly startDate,
+        DateOnly endDate,
+        string? reason,
+        string? notes,
+        CancellationToken cancellationToken = default)
+    {
+        var ownsUnit = await _unitOfWork.Units.ExistsAsync(
+            u => u.Id == unitId && u.OwnerId == ownerId && u.DeletedAt == null,
+            cancellationToken);
+        if (!ownsUnit)
+            throw new NotFoundException($"Unit {unitId} was not found for this owner.");
+
+        return await CreateAsync(unitId, startDate, endDate, reason, notes, cancellationToken);
     }
 
     public async Task<DateBlock> UpdateAsync(
@@ -87,6 +108,8 @@ public class DateBlockService : IDateBlockService
         if (hasOverlap)
             throw new ConflictException("The specified date range overlaps with an existing date block for this unit.");
 
+        await EnsureNoActiveBookingOverlapAsync(block.UnitId, startDate, endDate, cancellationToken);
+
         block.StartDate = startDate;
         block.EndDate = endDate;
         block.Reason = reason?.Trim();
@@ -106,5 +129,23 @@ public class DateBlockService : IDateBlockService
 
         _unitOfWork.DateBlocks.Delete(block);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task EnsureNoActiveBookingOverlapAsync(
+        Guid unitId,
+        DateOnly startDate,
+        DateOnly endDate,
+        CancellationToken cancellationToken)
+    {
+        var holdingStatuses = BookingStatusTransitions.HoldingStatuses;
+        var blockEndExclusive = endDate.AddDays(1);
+
+        var hasBookingOverlap = await _unitOfWork.Bookings.Query()
+            .Where(b => b.UnitId == unitId)
+            .Where(b => holdingStatuses.Contains(b.BookingStatus))
+            .AnyAsync(b => startDate < b.CheckOutDate && blockEndExclusive > b.CheckInDate, cancellationToken);
+
+        if (hasBookingOverlap)
+            throw new ConflictException("The specified date range overlaps with an active booking. Contact management before blocking these dates.");
     }
 }

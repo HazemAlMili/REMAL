@@ -16,6 +16,7 @@ namespace RentalPlatform.Business.Services;
 
 public class BookingService : IBookingService
 {
+    private static readonly TimeSpan RecentDuplicateWindow = TimeSpan.FromSeconds(30);
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUnitAvailabilityService _availabilityService;
 
@@ -33,13 +34,16 @@ public class BookingService : IBookingService
         Guid? clientId = null,
         Guid? ownerId = null,
         string? search = null,
+        DateOnly? checkInFrom = null,
+        DateOnly? checkInTo = null,
         int page = 1,
         int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
         IQueryable<Booking> query = _unitOfWork.Bookings.Query()
             .Include(b => b.Unit)
-            .Include(b => b.Client);
+            .Include(b => b.Client)
+            .Include(b => b.AssignedAdminUser);
 
         if (!string.IsNullOrWhiteSpace(bookingStatus))
         {
@@ -63,8 +67,15 @@ public class BookingService : IBookingService
             query = query.Where(b =>
                 b.Client.Name.ToLower().Contains(s) ||
                 b.Client.Phone.ToLower().Contains(s) ||
-                b.Unit.Name.ToLower().Contains(s));
+                b.Unit.Name.ToLower().Contains(s) ||
+                (b.AssignedAdminUser != null && b.AssignedAdminUser.Name.ToLower().Contains(s)));
         }
+
+        if (checkInFrom.HasValue)
+            query = query.Where(b => b.CheckInDate >= checkInFrom.Value);
+
+        if (checkInTo.HasValue)
+            query = query.Where(b => b.CheckInDate <= checkInTo.Value);
 
         var total = await query.CountAsync(cancellationToken);
         var items = await query
@@ -80,6 +91,8 @@ public class BookingService : IBookingService
     {
         return await _unitOfWork.Bookings.Query()
             .Include(b => b.Unit)
+            .Include(b => b.Client)
+            .Include(b => b.AssignedAdminUser)
             .FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
     }
 
@@ -92,6 +105,7 @@ public class BookingService : IBookingService
         string source,
         Guid? assignedAdminUserId,
         string? internalNotes,
+        BookingStatus? initialStatus = null,
         CancellationToken cancellationToken = default)
     {
         // --- Input validation ---
@@ -142,6 +156,8 @@ public class BookingService : IBookingService
             unitId, pricingStartDate, pricingEndDate, cancellationToken);
 
         // --- Create booking entity ---
+        var startingStatus = initialStatus ?? BookingStatus.Prospecting;
+
         var booking = new Booking
         {
             Id = Guid.NewGuid(),
@@ -150,7 +166,7 @@ public class BookingService : IBookingService
             Unit = unit,
             OwnerId = unit.OwnerId, // snapshot from unit, not caller input
             AssignedAdminUserId = assignedAdminUserId,
-            BookingStatus = BookingStatus.Prospecting,
+            BookingStatus = startingStatus,
             CheckInDate = checkInDate,
             CheckOutDate = checkOutDate,
             GuestCount = guestCount,
@@ -170,7 +186,7 @@ public class BookingService : IBookingService
             Id = Guid.NewGuid(),
             BookingId = booking.Id,
             OldStatus = null,
-            NewStatus = BookingStatus.Prospecting.ToString().ToLower(),
+            NewStatus = startingStatus.ToString().ToLower(),
             ChangedByAdminUserId = assignedAdminUserId,
             Notes = "Booking created",
             ChangedAt = DateTime.UtcNow
@@ -180,6 +196,65 @@ public class BookingService : IBookingService
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return booking;
+    }
+
+    public async Task<Booking> CreateQuickAsync(
+        Guid clientId,
+        Guid unitId,
+        DateOnly checkInDate,
+        DateOnly checkOutDate,
+        int guestCount,
+        string source,
+        Guid? assignedAdminUserId,
+        string? internalNotes,
+        CancellationToken cancellationToken = default)
+    {
+        await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            await _unitOfWork.AcquireTransactionAdvisoryLockAsync(
+                $"booking-unit:{unitId:N}",
+                cancellationToken);
+
+            var duplicateCutoff = DateTime.UtcNow.Subtract(RecentDuplicateWindow);
+            var recentDuplicate = await _unitOfWork.Bookings.Query()
+                .Include(b => b.Unit)
+                .Include(b => b.Client)
+                .Include(b => b.AssignedAdminUser)
+                .Where(b => b.ClientId == clientId)
+                .Where(b => b.UnitId == unitId)
+                .Where(b => b.CheckInDate == checkInDate && b.CheckOutDate == checkOutDate)
+                .Where(b => b.BookingStatus == BookingStatus.Prospecting)
+                .Where(b => b.CreatedAt >= duplicateCutoff)
+                .OrderByDescending(b => b.CreatedAt)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (recentDuplicate != null)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return recentDuplicate;
+            }
+
+            var booking = await CreateAsync(
+                clientId,
+                unitId,
+                checkInDate,
+                checkOutDate,
+                guestCount,
+                source,
+                assignedAdminUserId,
+                internalNotes,
+                BookingStatus.Prospecting,
+                cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+            return booking;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 
     public async Task<Booking> UpdatePendingAsync(

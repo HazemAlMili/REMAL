@@ -61,6 +61,25 @@ export interface BookingListFilters {
   search?: string;
 }
 
+export interface CreateBookingRequest {
+  clientId: string;
+  unitId: string;
+  checkInDate: string;
+  checkOutDate: string;
+  guestCount: number;
+  source: "direct" | "admin" | "phone" | "whatsapp" | "website";
+  assignedAdminUserId?: string;
+  internalNotes?: string;
+}
+
+// Client-portal booking request — client comes from the auth token, so no clientId.
+export interface CreateClientBookingRequest {
+  unitId: string;
+  checkInDate: string; // yyyy-MM-dd
+  checkOutDate: string; // yyyy-MM-dd
+  guestCount: number;
+}
+
 export interface PaginatedBookings {
   items: BookingListItemResponse[];
   pagination: {
@@ -80,6 +99,8 @@ export interface BookingListItemResponse {
   unitName: string | null;
   ownerId: string;
   assignedAdminUserId: string | null;
+  assignedAdminUserName: string | null;
+  assignedAdminUserRole: string | null;
   bookingStatus: FormalBookingStatus;
   checkInDate: string;
   checkOutDate: string;
@@ -97,6 +118,8 @@ export interface BookingDetailsResponse {
   unitName: string | null;
   ownerId: string;
   assignedAdminUserId: string | null;
+  assignedAdminUserName: string | null;
+  assignedAdminUserRole: string | null;
   bookingStatus: FormalBookingStatus;
   checkInDate: string;
   checkOutDate: string;
@@ -165,6 +188,8 @@ export interface PaymentResponse {
   id: string;
   bookingId: string;
   invoiceId: string | null;
+  clientName: string | null;
+  clientPhone: string | null;
   paymentStatus: string;
   paymentMethod: string;
   amount: number;

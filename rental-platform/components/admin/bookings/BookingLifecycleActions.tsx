@@ -17,6 +17,8 @@ import {
   useCheckInBooking,
   useLeftEarlyBooking,
 } from "@/lib/hooks/useBookings";
+import { RecordPaymentModal } from "./RecordPaymentModal";
+import type { BookingFinanceSnapshotResponse } from "@/lib/types/booking.types";
 import {
   CheckCircle,
   XCircle,
@@ -32,6 +34,7 @@ import {
 interface BookingLifecycleActionsProps {
   bookingId: string;
   currentStatus: BookingStatus;
+  financeSnapshot?: BookingFinanceSnapshotResponse | null;
 }
 
 type ActionType =
@@ -49,8 +52,10 @@ type ActionType =
 export function BookingLifecycleActions({
   bookingId,
   currentStatus,
+  financeSnapshot,
 }: BookingLifecycleActionsProps) {
   const [activeAction, setActiveAction] = useState<ActionType>(null);
+  const [showDepositModal, setShowDepositModal] = useState(false);
   const { canManageBookings } = usePermissions();
 
   const confirmMutation = useConfirmBooking(bookingId);
@@ -68,6 +73,10 @@ export function BookingLifecycleActions({
   };
 
   const validTransitions = getValidTransitions();
+  const paidAmount = financeSnapshot?.paidAmount ?? 0;
+  // A deposit is OPTIONAL: when none is recorded yet we still surface the deposit
+  // step on confirm, but it can be skipped and the booking confirmed without it.
+  const noDepositYet = paidAmount <= 0;
 
   // Lifecycle endpoints (BookingLifecycleController) require SalesOrSuperAdmin;
   // roles without it (e.g. Finance) must not see actions that always 403.
@@ -264,7 +273,11 @@ export function BookingLifecycleActions({
           <Button
             variant="primary"
             size="md"
-            onClick={() => setActiveAction("confirm")}
+            onClick={() =>
+              noDepositYet
+                ? setShowDepositModal(true)
+                : setActiveAction("confirm")
+            }
             leftIcon={<CheckCircle className="h-4 w-4" />}
           >
             Confirm booking
@@ -319,6 +332,22 @@ export function BookingLifecycleActions({
             {...dialogConfig}
           />
         )}
+
+        {/* Deposit is optional: record one before confirming, or skip and confirm. */}
+        <RecordPaymentModal
+          isOpen={showDepositModal}
+          onClose={() => setShowDepositModal(false)}
+          bookingId={bookingId}
+          autoMarkPaid
+          title="Record deposit before confirmation"
+          submitLabel="Record paid deposit"
+          skipLabel="Skip & confirm"
+          onSkip={() => {
+            setShowDepositModal(false);
+            setActiveAction("confirm");
+          }}
+          onSuccess={() => setActiveAction("confirm")}
+        />
       </div>
 
       {validTransitions.length === 0 && (

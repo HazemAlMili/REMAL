@@ -1,4 +1,6 @@
 
+using RentalPlatform.Shared.Enums;
+
 namespace RentalPlatform.Data.Entities;
 
 public class OwnerPayout
@@ -6,7 +8,7 @@ public class OwnerPayout
     public Guid Id { get; set; }
     public Guid BookingId { get; set; }
     public Guid OwnerId { get; set; }
-    public string PayoutStatus { get; set; } = null!;
+    public OwnerPayoutStatus PayoutStatus { get; set; }
     public decimal GrossBookingAmount { get; set; }
     public decimal CommissionRate { get; set; }
     public decimal CommissionAmount { get; set; }

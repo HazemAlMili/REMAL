@@ -13,10 +13,12 @@ import type {
   UpdateBookingNoteRequest,
   AssignBookingRequest,
   BookingListFilters,
+  CreateBookingRequest,
   ConfirmBookingRequest,
   CancelBookingRequest,
   CompleteBookingRequest,
   CreatePaymentRequest,
+  MarkPaymentPaidRequest,
   MarkPaymentFailedRequest,
   CancelPaymentRequest,
 } from "@/lib/types/booking.types";
@@ -36,6 +38,18 @@ export function useBookingDetail(bookingId: string) {
     queryKey: queryKeys.bookings.detail(bookingId),
     queryFn: () => bookingsService.getById(bookingId),
     staleTime: 1000 * 30, // 30 seconds
+  });
+}
+
+export function useCreateQuickBooking() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateBookingRequest) => bookingsService.quickCreate(data),
+    onSuccess: () => {
+      toastSuccess("Quick booking created");
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.all });
+    },
+    onError: handleMutationError,
   });
 }
 
@@ -300,21 +314,30 @@ export function useCreatePayment() {
 export function useMarkPaymentPaid(bookingId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (paymentId: string) => bookingsService.markPaid(paymentId),
-    onSuccess: () => {
+    mutationFn: (
+      variables:
+        | string
+        | { paymentId: string; data?: MarkPaymentPaidRequest }
+    ) =>
+      typeof variables === "string"
+        ? bookingsService.markPaid(variables)
+        : bookingsService.markPaid(variables.paymentId, variables.data),
+    onSuccess: async () => {
       toastSuccess("Payment marked as paid");
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.bookings.payments(bookingId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.payments.list({ bookingId }),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.bookings.financeSnapshot(bookingId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.bookings.detail(bookingId),
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.bookings.payments(bookingId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.payments.list({ bookingId }),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.bookings.financeSnapshot(bookingId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.bookings.detail(bookingId),
+        }),
+      ]);
     },
   });
 }
@@ -506,7 +529,7 @@ export function useCancelInvoice(invoiceId: string, bookingId: string) {
 export function useReissueInvoice(invoiceId: string, bookingId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { newInvoiceNumber: string; notes?: string }) =>
+    mutationFn: (data: { newInvoiceNumber?: string; notes?: string }) =>
       bookingsService.reissueInvoice(invoiceId, data),
     onSuccess: async (newInvoice) => {
       toastSuccess(

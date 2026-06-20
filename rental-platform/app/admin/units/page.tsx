@@ -45,13 +45,24 @@ function UnitsPageContent() {
 
   const page = Number(searchParams.get("page")) || DEFAULT_PAGE;
   const pageSize = Number(searchParams.get("pageSize")) || DEFAULT_PAGE_SIZE;
+  const areaId = searchParams.get("areaId") || undefined;
+  const unitType = (searchParams.get("unitType") ||
+    undefined) as UnitListFilters["unitType"];
+  const status = searchParams.get("isActive");
+  const isActive =
+    status === "true" ? true : status === "false" ? false : undefined;
+  const search = searchParams.get("search") || undefined;
 
   const filters: UnitListFilters = React.useMemo(
     () => ({
       page,
       pageSize,
+      areaId,
+      unitType,
+      isActive,
+      search,
     }),
-    [page, pageSize]
+    [areaId, isActive, page, pageSize, search, unitType]
   );
 
   const {
@@ -75,11 +86,27 @@ function UnitsPageContent() {
   };
 
   const handleFilterChange = (newFilters: UnitListFilters) => {
-    // Only keeping page and pageSize as documented
     const params = new URLSearchParams(searchParams.toString());
-    if (newFilters.page) params.set("page", String(newFilters.page));
-    if (newFilters.pageSize)
-      params.set("pageSize", String(newFilters.pageSize));
+    params.set("page", String(newFilters.page ?? DEFAULT_PAGE));
+    params.set("pageSize", String(newFilters.pageSize ?? pageSize));
+
+    const filterKeys: Array<keyof UnitListFilters> = [
+      "areaId",
+      "unitType",
+      "search",
+    ];
+    for (const key of filterKeys) {
+      const value = newFilters[key];
+      if (value) params.set(key, String(value));
+      else params.delete(key);
+    }
+
+    if (typeof newFilters.isActive === "boolean") {
+      params.set("isActive", String(newFilters.isActive));
+    } else {
+      params.delete("isActive");
+    }
+
     router.push(`${pathname}?${params.toString()}`);
   };
 
@@ -126,10 +153,12 @@ function UnitsPageContent() {
     );
   }
 
-  // Handle total empty state correctly: no items across DB at all.
-  // Because no filters are used except pagination, page 1 empty means everything empty
+  const hasFilters = Boolean(areaId || unitType || typeof isActive === "boolean" || search);
   const noUnitsAtAll =
-    !isLoading && paginatedUnits?.pagination?.totalCount === 0 && page === 1;
+    !isLoading &&
+    paginatedUnits?.pagination?.totalCount === 0 &&
+    page === 1 &&
+    !hasFilters;
 
   return (
     <div className="space-y-6">

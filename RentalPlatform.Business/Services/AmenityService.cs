@@ -81,6 +81,19 @@ public class AmenityService : IAmenityService
         return amenity;
     }
 
+    public async Task<Amenity> UpdateStatusAsync(Guid id, bool isActive, CancellationToken cancellationToken = default)
+    {
+        var amenity = await _unitOfWork.Amenities.GetByIdAsync(id, cancellationToken)
+            ?? throw new NotFoundException($"Amenity with ID {id} not found.");
+
+        amenity.IsActive = isActive;
+
+        _unitOfWork.Amenities.Update(amenity);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return amenity;
+    }
+
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var amenity = await _unitOfWork.Amenities.GetByIdAsync(id, cancellationToken)

@@ -12,6 +12,8 @@ public record BookingListItemResponse
     public string? UnitName { get; init; }
     public Guid OwnerId { get; init; }
     public Guid? AssignedAdminUserId { get; init; }
+    public string? AssignedAdminUserName { get; init; }
+    public string? AssignedAdminUserRole { get; init; }
     public string BookingStatus { get; init; } = string.Empty;
     public DateOnly CheckInDate { get; init; }
     public DateOnly CheckOutDate { get; init; }
@@ -30,6 +32,8 @@ public record BookingDetailsResponse
     public string? UnitName { get; init; }
     public Guid OwnerId { get; init; }
     public Guid? AssignedAdminUserId { get; init; }
+    public string? AssignedAdminUserName { get; init; }
+    public string? AssignedAdminUserRole { get; init; }
     public string BookingStatus { get; init; } = string.Empty;
     public DateOnly CheckInDate { get; init; }
     public DateOnly CheckOutDate { get; init; }

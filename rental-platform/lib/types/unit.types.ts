@@ -3,7 +3,9 @@ export type UnitType = "villa" | "chalet" | "studio";
 export interface UnitListItemResponse {
   id: string;
   ownerId: string;
+  ownerName: string;
   areaId: string;
+  areaName: string;
   name: string;
   unitType: UnitType;
   bedrooms: number;
@@ -17,7 +19,9 @@ export interface UnitListItemResponse {
 export interface UnitDetailsResponse {
   id: string;
   ownerId: string;
+  ownerName: string;
   areaId: string;
+  areaName: string;
   name: string;
   description?: string | null;
   address?: string | null;
@@ -36,6 +40,12 @@ export interface UnitDetailsResponse {
 export interface UnitListFilters {
   page?: number;
   pageSize?: number;
+  includeInactive?: boolean;
+  ownerId?: string;
+  areaId?: string;
+  unitType?: UnitType;
+  isActive?: boolean;
+  search?: string;
 }
 
 export interface CreateUnitRequest {

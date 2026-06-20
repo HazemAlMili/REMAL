@@ -126,26 +126,52 @@ public class BookingLifecycleService : IBookingLifecycleService
         string? notes,
         CancellationToken cancellationToken)
     {
-        var unit = await _unitOfWork.Units.FirstOrDefaultAsync(
-            u => u.Id == booking.UnitId && u.IsActive && u.DeletedAt == null, cancellationToken);
-        if (unit == null)
-            throw new ConflictException(
-                $"Cannot confirm booking {booking.Id}: unit {booking.UnitId} is no longer active or has been deleted.");
-
-        var pricingStartDate = booking.CheckInDate;
-        var pricingEndDate = booking.CheckOutDate.AddDays(-1);
-
-        var availability = await _availabilityService.CheckOperationalAvailabilityAsync(
-            booking.UnitId, pricingStartDate, pricingEndDate, booking.Id, cancellationToken);
-        if (!availability.IsAvailable)
-            throw new ConflictException(
-                $"Cannot confirm booking {booking.Id}: unit {booking.UnitId} is not operationally available: {availability.Reason}");
-
-        await EnsureNoOverlap(booking.UnitId, booking.CheckInDate, booking.CheckOutDate, booking.Id, cancellationToken);
-
         await using var tx = await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
+            await _unitOfWork.AcquireTransactionAdvisoryLockAsync(
+                $"booking-unit:{booking.UnitId:N}",
+                cancellationToken);
+            await _unitOfWork.ReloadAsync(booking, cancellationToken);
+
+            if (!BookingStatusTransitions.IsValidTransition(
+                    booking.BookingStatus,
+                    BookingStatus.Confirmed))
+            {
+                throw new ConflictException(
+                    $"Cannot confirm booking {booking.Id} from current status '{booking.BookingStatus}'.");
+            }
+
+            var unit = await _unitOfWork.Units.FirstOrDefaultAsync(
+                u => u.Id == booking.UnitId && u.IsActive && u.DeletedAt == null,
+                cancellationToken);
+            if (unit == null)
+                throw new ConflictException(
+                    $"Cannot confirm booking {booking.Id}: unit {booking.UnitId} is no longer active or has been deleted.");
+
+            var pricingStartDate = booking.CheckInDate;
+            var pricingEndDate = booking.CheckOutDate.AddDays(-1);
+
+            var availability = await _availabilityService.CheckOperationalAvailabilityAsync(
+                booking.UnitId,
+                pricingStartDate,
+                pricingEndDate,
+                booking.Id,
+                cancellationToken);
+            if (!availability.IsAvailable)
+                throw new ConflictException(
+                    $"Cannot confirm booking {booking.Id}: unit {booking.UnitId} is not operationally available: {availability.Reason}");
+
+            await EnsureNoOverlap(
+                booking.UnitId,
+                booking.CheckInDate,
+                booking.CheckOutDate,
+                booking.Id,
+                cancellationToken);
+
+            // A paid deposit is optional for confirmation: admins may confirm a booking
+            // before any payment is recorded (deposit can be collected separately).
+
             var oldStatus = booking.BookingStatus;
             booking.BookingStatus = BookingStatus.Confirmed;
             booking.UpdatedAt = DateTime.UtcNow;
@@ -158,13 +184,18 @@ public class BookingLifecycleService : IBookingLifecycleService
             // This handles cases where the booking was previously confirmed and the
             // status was rolled back manually while the invoice remained active.
             var existingInvoice = await _unitOfWork.Invoices.FirstOrDefaultAsync(
-                i => i.BookingId == booking.Id && i.InvoiceStatus != "cancelled", cancellationToken);
+                i => i.BookingId == booking.Id
+                    && i.InvoiceStatus != "cancelled"
+                    && i.InvoiceStatus != "superseded",
+                cancellationToken);
 
             if (existingInvoice == null)
             {
-                var invoiceNumber = $"INV-{booking.Id.ToString()[..8].ToUpper()}";
                 var draftInvoice = await _invoiceService.CreateDraftFromBookingAsync(
-                    booking.Id, invoiceNumber, "Auto-generated on confirmation", cancellationToken);
+                    booking.Id,
+                    invoiceNumber: null,
+                    notes: "Auto-generated on confirmation",
+                    cancellationToken);
                 await _invoiceService.IssueAsync(draftInvoice.Id, cancellationToken);
             }
 

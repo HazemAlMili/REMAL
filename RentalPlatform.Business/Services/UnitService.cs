@@ -91,7 +91,9 @@ public class UnitService : IUnitService
 
     public async Task<IReadOnlyList<Unit>> GetAllAsync(bool includeInactive = true, Guid? ownerId = null, CancellationToken cancellationToken = default)
     {
-        var query = _unitOfWork.Units.Query();
+        IQueryable<Unit> query = _unitOfWork.Units.Query()
+            .Include(u => u.Area)
+            .Include(u => u.Owner);
         
         if (!includeInactive)
         {
@@ -104,6 +106,77 @@ public class UnitService : IUnitService
         }
 
         return await query.ToListAsync(cancellationToken);
+    }
+
+    public async Task<PagedResult<Unit>> GetInternalCatalogAsync(
+        int page = 1,
+        int pageSize = 20,
+        bool includeInactive = true,
+        Guid? ownerId = null,
+        Guid? areaId = null,
+        string? unitType = null,
+        bool? isActive = null,
+        string? search = null,
+        CancellationToken cancellationToken = default)
+    {
+        page = Math.Max(page, 1);
+        pageSize = Math.Clamp(pageSize, 1, MaxPublicPageSize);
+
+        IQueryable<Unit> query = _unitOfWork.Units.Query()
+            .AsNoTracking()
+            .Include(u => u.Area)
+            .Include(u => u.Owner)
+            .Include(u => u.UnitImages);
+
+        if (isActive.HasValue)
+        {
+            query = query.Where(u => u.IsActive == isActive.Value);
+        }
+        else if (!includeInactive)
+        {
+            query = query.Where(u => u.IsActive);
+        }
+
+        if (ownerId.HasValue)
+        {
+            query = query.Where(u => u.OwnerId == ownerId.Value);
+        }
+
+        if (areaId.HasValue)
+        {
+            query = query.Where(u => u.AreaId == areaId.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(unitType))
+        {
+            var normalizedType = unitType.Trim().ToLower();
+            if (!AllowedUnitTypes.Contains(normalizedType))
+                throw new BusinessValidationException($"Invalid unit type '{unitType}'. Allowed values: {string.Join(", ", AllowedUnitTypes)}");
+
+            query = query.Where(u => u.UnitType == normalizedType);
+        }
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var normalizedSearch = search.Trim().ToLower();
+            query = query.Where(u =>
+                u.Name.ToLower().Contains(normalizedSearch) ||
+                (u.Address != null && u.Address.ToLower().Contains(normalizedSearch)) ||
+                (u.Description != null && u.Description.ToLower().Contains(normalizedSearch)) ||
+                (u.Area != null && u.Area.Name.ToLower().Contains(normalizedSearch)) ||
+                (u.Owner != null && u.Owner.Name.ToLower().Contains(normalizedSearch)));
+        }
+
+        var total = await query.CountAsync(cancellationToken);
+        var items = await query
+            .OrderByDescending(u => u.CreatedAt)
+            .ThenBy(u => u.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .AsSplitQuery()
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<Unit>(items, total);
     }
 
     private static IOrderedQueryable<Unit> ApplyPublicCatalogSort(IQueryable<Unit> query, string? sortBy)
@@ -139,7 +212,11 @@ public class UnitService : IUnitService
 
     public async Task<Unit?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.Units.GetByIdAsync(id, cancellationToken);
+        return await _unitOfWork.Units.Query()
+            .Include(u => u.Area)
+            .Include(u => u.Owner)
+            .Include(u => u.UnitImages)
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     }
 
     public async Task<Unit> CreateAsync(

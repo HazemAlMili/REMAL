@@ -14,7 +14,7 @@ public record BookingAnalyticsSummaryResult
     public DateOnly? DateTo { get; init; }
     public string? BookingSource { get; init; }
     public int TotalBookingsCreatedCount { get; init; }
-    public int TotalPendingBookingsCount { get; init; }
+    public int TotalProspectingBookingsCount { get; init; }
     public int TotalConfirmedBookingsCount { get; init; }
     public int TotalCancelledBookingsCount { get; init; }
     public int TotalCompletedBookingsCount { get; init; }

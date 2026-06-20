@@ -6,7 +6,12 @@
 import api from "@/lib/api/axios";
 import { endpoints } from "@/lib/api/endpoints";
 import { ApiError } from "@/lib/api/api-error";
-import type { BookingListFilters, PaginatedBookings } from "@/lib/types/booking.types";
+import type {
+  BookingListFilters,
+  PaginatedBookings,
+  BookingDetailsResponse,
+  CreateClientBookingRequest,
+} from "@/lib/types/booking.types";
 import type {
   ClientAccountProfileResponse,
   ClientReviewByBookingResponse,
@@ -24,6 +29,13 @@ export const clientService = {
   getClientBookings: async (
     params?: BookingListFilters
   ): Promise<PaginatedBookings> => api.get(endpoints.clientBookings.list, { params }),
+
+  // Creates a booking directly at "Prospecting" for the authenticated client
+  // (no CRM lead). The backend derives the client from the auth token.
+  createBooking: async (
+    data: CreateClientBookingRequest
+  ): Promise<BookingDetailsResponse> =>
+    api.post(endpoints.clientBookings.create, data),
 
   /**
    * Check if a review exists for a booking.

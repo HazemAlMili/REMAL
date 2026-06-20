@@ -62,4 +62,17 @@ public interface IUnitOfWork
     /// IDbContextTransaction to finalise or abort.
     /// </summary>
     Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+
+    bool HasActiveTransaction { get; }
+
+    Task AcquireTransactionAdvisoryLockAsync(
+        string resourceKey,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> TryAcquireTransactionAdvisoryLockAsync(
+        string resourceKey,
+        CancellationToken cancellationToken = default);
+
+    Task ReloadAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+        where TEntity : class;
 }

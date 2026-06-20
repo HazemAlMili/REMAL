@@ -11,6 +11,8 @@ public sealed class OwnerPortalFinanceOverview
     public Guid OwnerId { get; init; }
     public Guid BookingId { get; init; }
     public Guid UnitId { get; init; }
+    public string UnitName { get; init; } = string.Empty;
+    public string ClientName { get; init; } = string.Empty;
     public Guid? InvoiceId { get; init; }
     public string? InvoiceStatus { get; init; }
     public decimal InvoicedAmount { get; init; }

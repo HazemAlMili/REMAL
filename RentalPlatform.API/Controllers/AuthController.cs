@@ -122,6 +122,7 @@ public class AuthController : ControllerBase
         string? identifier;
         string? name;
         Shared.Enums.AdminRole? adminRole = null;
+        DateTime? subjectClientUpdatedAt = null;
 
         if (normalizedSubjectType == "Client")
         {
@@ -129,8 +130,17 @@ public class AuthController : ControllerBase
             if (client == null || !client.IsActive)
                 return Unauthorized(ApiResponse.CreateFailure("Account is inactive or no longer exists."));
 
+            var stampClaim = principal.FindFirst(JwtTokenService.ClientUpdatedAtClaim)?.Value;
+            if (!long.TryParse(stampClaim, out var tokenStamp) ||
+                tokenStamp != client.UpdatedAt.Ticks)
+            {
+                return Unauthorized(ApiResponse.CreateFailure(
+                    "This session is no longer valid. Please log in again."));
+            }
+
             identifier = client.Phone;
             name = client.Name;
+            subjectClientUpdatedAt = client.UpdatedAt;
         }
         else if (normalizedSubjectType == "Owner")
         {
@@ -162,7 +172,8 @@ public class AuthController : ControllerBase
             SubjectType = normalizedSubjectType,
             Identifier = identifier,
             Name = name,
-            AdminRole = adminRole
+            AdminRole = adminRole,
+            ClientUpdatedAt = subjectClientUpdatedAt
         };
 
         return GenerateAuthResponse(subject);

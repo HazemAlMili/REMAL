@@ -35,17 +35,20 @@ export function OwnerFinanceTable({ rows }: OwnerFinanceTableProps) {
                 <td className="px-4 py-3">
                   <Link
                     href={ROUTES.owner.bookingDetail(row.bookingId)}
-                    className="font-mono text-xs text-primary-600 hover:underline"
+                    className="font-medium text-primary-600 hover:underline"
                   >
-                    {row.bookingId.slice(0, 8)}
+                    Booking {row.bookingId.slice(0, 8).toUpperCase()}
                   </Link>
+                  <p className="mt-0.5 text-xs text-neutral-500">
+                    {row.clientName}
+                  </p>
                 </td>
                 <td className="px-4 py-3">
                   <Link
                     href={ROUTES.owner.unitDetail(row.unitId)}
-                    className="font-mono text-xs text-primary-600 hover:underline"
+                    className="font-medium text-primary-600 hover:underline"
                   >
-                    {row.unitId.slice(0, 8)}
+                    {row.unitName}
                   </Link>
                 </td>
                 <td className="px-4 py-3">

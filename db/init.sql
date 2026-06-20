@@ -139,8 +139,25 @@
 \echo '=== Running migration 0045: reports analytics integrity cleanup ==='
 \i /docker-entrypoint-initdb.d/migrations/0045_reports_analytics_integrity_cleanup.sql
 
+-- 0046 is intentionally excluded: it is a heavy transactional demo dataset.
+-- 0047 seeds only the minimal portal login accounts required for local access.
 \echo '=== Running migration 0047: seed minimal dev login users (owners + clients) ==='
 \i /docker-entrypoint-initdb.d/migrations/0047_seed_minimal_dev_login.sql
+
+\echo '=== Running migration 0048: align CRM lead pipeline ==='
+\i /docker-entrypoint-initdb.d/migrations/0048_align_crm_lead_pipeline.sql
+
+\echo '=== Running migration 0049: owner portal finance display names ==='
+\i /docker-entrypoint-initdb.d/migrations/0049_owner_portal_finance_names.sql
+
+\echo '=== Running migration 0050: add is_active flag to amenities ==='
+\i /docker-entrypoint-initdb.d/migrations/0050_add_amenity_is_active.sql
+
+\echo '=== Running migration 0051: allow superseded invoice status ==='
+\i /docker-entrypoint-initdb.d/migrations/0051_allow_superseded_invoice_status.sql
+
+\echo '=== Running migration 0052: align reporting views with current pipelines ==='
+\i /docker-entrypoint-initdb.d/migrations/0052_align_reporting_views_with_pipeline.sql
 
 \echo '=== All migrations completed successfully ==='
 

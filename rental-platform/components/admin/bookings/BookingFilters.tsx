@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { DateRangePicker, DateRange } from "@/components/ui/DateRangePicker";
 import { BOOKING_STATUS_LABELS } from "@/lib/constants/booking-statuses";
+import { formatDateForApi, parseDateOnly } from "@/lib/utils/format";
 import type { BookingListFilters, FormalBookingStatus } from "@/lib/types/booking.types";
 
 const BOOKING_STATUS_OPTIONS = Object.entries(BOOKING_STATUS_LABELS).map(([key, label]) => ({
@@ -35,8 +36,8 @@ export function BookingFilters({ filters, onChange }: BookingFiltersProps) {
 
   const dateRangeValue: DateRange = useMemo(() => {
     return {
-      from: filters.checkInFrom ? new Date(filters.checkInFrom) : null,
-      to: filters.checkInTo ? new Date(filters.checkInTo) : null,
+      from: filters.checkInFrom ? parseDateOnly(filters.checkInFrom) : null,
+      to: filters.checkInTo ? parseDateOnly(filters.checkInTo) : null,
     };
   }, [filters.checkInFrom, filters.checkInTo]);
 
@@ -44,8 +45,8 @@ export function BookingFilters({ filters, onChange }: BookingFiltersProps) {
     onChange({
       ...filters,
       page: 1,
-      checkInFrom: range.from ? range.from.toISOString().split("T")[0] : undefined,
-      checkInTo: range.to ? range.to.toISOString().split("T")[0] : undefined,
+      checkInFrom: range.from ? formatDateForApi(range.from) : undefined,
+      checkInTo: range.to ? formatDateForApi(range.to) : undefined,
     });
   };
 

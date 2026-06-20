@@ -35,7 +35,7 @@ export function PaymentsTable({
   onCancel,
 }: PaymentsTableProps) {
   if (isLoading) {
-    return <SkeletonTable rows={10} columns={8} />;
+    return <SkeletonTable rows={10} columns={10} />;
   }
 
   return (
@@ -46,6 +46,9 @@ export function PaymentsTable({
             <tr>
               <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
                 Booking
+              </th>
+              <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
+                Client
               </th>
               <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide">
                 Invoice
@@ -86,6 +89,16 @@ export function PaymentsTable({
                   >
                     {payment.bookingId.slice(0, 8)}...
                   </Link>
+                </td>
+                <td className="h-[var(--portal-row-height)] px-3 py-2">
+                  <div className="min-w-40">
+                    <p className="font-medium text-neutral-800">
+                      {payment.clientName ?? "Unknown client"}
+                    </p>
+                    <p className="text-xs text-neutral-500">
+                      {payment.clientPhone ?? "-"}
+                    </p>
+                  </div>
                 </td>
                 <td className="h-[var(--portal-row-height)] px-3 py-2 font-mono text-neutral-500">
                   {payment.invoiceId

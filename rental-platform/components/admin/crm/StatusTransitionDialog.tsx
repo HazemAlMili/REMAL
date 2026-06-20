@@ -36,7 +36,10 @@ export function StatusTransitionDialog({
   if (!targetStatus) return null;
 
   const isDestructive =
-    targetStatus === "Lost";
+    targetStatus === "NotRelevant" ||
+    targetStatus === "Cancelled" ||
+    targetStatus === "LeftEarly";
+  const createsSoftHold = targetStatus === "Booked";
 
   return (
     <Modal
@@ -61,10 +64,9 @@ export function StatusTransitionDialog({
           </p>
         )}
 
-        {targetStatus === "Converted" && (
+        {createsSoftHold && (
           <p className="text-xs font-medium text-accent-blue">
-            Moving this lead to Converted will create a hold on the requested
-            unit dates.
+            Moving this lead to Booked means the requested dates are soft-held.
           </p>
         )}
 

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/Badge";
 import { parseISO, differenceInDays } from "date-fns";
 import { CRM_STATUS_LABELS } from "@/lib/constants/booking-statuses";
 import { BOOKING_SOURCE_LABELS } from "@/lib/constants/booking-sources";
+import { getStatusVariant } from "@/lib/utils/status";
 import { Mail, Phone } from "lucide-react";
 
 interface LeadDetailHeaderProps {
@@ -19,24 +20,6 @@ export function LeadDetailHeader({ lead }: LeadDetailHeaderProps) {
   const statusLabel =
     CRM_STATUS_LABELS[lead.leadStatus as keyof typeof CRM_STATUS_LABELS] ??
     lead.leadStatus;
-
-  // Determine badge variant based on status
-  const getStatusVariant = (status: string) => {
-    switch (status) {
-      case "New":
-        return "info";
-      case "Contacted":
-        return "warning";
-      case "Qualified":
-        return "success";
-      case "Converted":
-        return "success";
-      case "Lost":
-        return "danger";
-      default:
-        return "neutral";
-    }
-  };
 
   return (
     <div className="flex flex-col justify-between gap-4 rounded-[var(--portal-radius-card)] border border-neutral-200 bg-white p-5 md:flex-row md:items-center">

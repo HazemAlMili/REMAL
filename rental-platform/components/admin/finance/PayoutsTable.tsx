@@ -124,7 +124,7 @@ function PayoutActions({
   onCancel: (id: string) => void;
 }) {
   switch (payout.payoutStatus) {
-    case "Pending":
+    case "pending":
       return (
         <div className="flex gap-2">
           <Button
@@ -150,7 +150,7 @@ function PayoutActions({
           </Button>
         </div>
       );
-    case "Scheduled":
+    case "scheduled":
       return (
         <div className="flex gap-2">
           <Button
@@ -169,9 +169,9 @@ function PayoutActions({
           </Button>
         </div>
       );
-    case "Paid":
+    case "paid":
       return <span className="text-xs text-neutral-400">Completed</span>;
-    case "Cancelled":
+    case "cancelled":
       return <span className="text-xs text-neutral-400">-</span>;
     default:
       return null;

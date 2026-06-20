@@ -37,6 +37,14 @@ public static class NotificationTemplateRegistry
                 DefaultBody = "Welcome back, {adminName}!",
                 AllowedChannels = new[] { "InApp" }
             }
+        },
+        {
+            "BOOKING_COMPLETED_WITH_BALANCE", new NotificationTemplateDefinition
+            {
+                DefaultTitle = "Booking completed with outstanding balance",
+                DefaultBody = "Booking {bookingShortId} for {clientName} in {unitName} was auto-completed after checkout on {checkOutDate}. Outstanding balance: {outstandingAmount} EGP.",
+                AllowedChannels = new[] { "InApp" }
+            }
         }
     };
 

@@ -61,8 +61,8 @@ export function BookingHeader({ booking }: BookingHeaderProps) {
                 <span className="text-xs px-2 py-[2px] bg-neutral-100 rounded-full border border-neutral-200">
                   {unit.unitType}
                 </span>
-                <span className="text-xs ml-2 text-neutral-400">
-                  ({unit.areaId})
+                <span className="text-xs ml-2 px-2 py-[2px] bg-neutral-50 rounded-full border border-neutral-200 text-neutral-600">
+                  {unit.areaName ?? "Unassigned area"}
                 </span>
               </div>
             ) : null}

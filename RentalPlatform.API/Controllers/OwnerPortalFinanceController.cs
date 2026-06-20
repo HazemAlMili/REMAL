@@ -92,6 +92,8 @@ public class OwnerPortalFinanceController : ControllerBase
         {
             BookingId        = row.BookingId,
             UnitId           = row.UnitId,
+            UnitName         = row.UnitName,
+            ClientName       = row.ClientName,
             InvoiceId        = row.InvoiceId,
             InvoiceStatus    = row.InvoiceStatus,
             InvoicedAmount   = row.InvoicedAmount,

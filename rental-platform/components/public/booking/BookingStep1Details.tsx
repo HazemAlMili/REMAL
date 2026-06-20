@@ -62,11 +62,21 @@ export function BookingStep1Details({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateRange]);
 
+  // The checkout day is a departure, not an occupied night. Price & availability
+  // therefore cover the stay nights [check-in .. checkout-1], matching how a booking
+  // is actually priced on the server (so the preview total equals the booking total).
+  const stayEndDate = (() => {
+    if (!endDate) return null;
+    const d = parseDateOnly(endDate);
+    d.setDate(d.getDate() - 1);
+    return formatDateForApi(d);
+  })();
+
   // Pricing query (P05 corrected)
   const { data: pricing, isLoading: pricingLoading } = usePricingCalculate(
     unit.id,
     startDate,
-    endDate
+    stayEndDate
   );
 
   // Notify parent when pricing changes (for Step 3)
@@ -76,11 +86,12 @@ export function BookingStep1Details({
     }
   }, [pricing, onPricingChange]);
 
-  // Availability query (P04 corrected)
+  // Availability query (P04 corrected) — checks the occupied nights, not the
+  // checkout day, so it matches the booking's own availability window.
   const { data: availability, isLoading: availLoading } = useAvailabilityCheck(
     unit.id,
     startDate,
-    endDate
+    stayEndDate
   );
 
   const isAvailable = availability?.isAvailable ?? null;

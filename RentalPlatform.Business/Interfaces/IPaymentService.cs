@@ -12,6 +12,7 @@ public interface IPaymentService
         string? paymentStatus = null,
         Guid? bookingId = null,
         Guid? invoiceId = null,
+        string? search = null,
         CancellationToken cancellationToken = default);
 
     Task<Payment?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);

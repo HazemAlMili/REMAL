@@ -35,8 +35,8 @@ export function BookingsFunnelChart({
       color: "var(--color-primary-500)",
     },
     {
-      label: "Pending",
-      value: data.totalPendingBookingsCount,
+      label: "Prospecting",
+      value: data.totalProspectingBookingsCount,
       color: "var(--color-accent-amber)",
     },
     {

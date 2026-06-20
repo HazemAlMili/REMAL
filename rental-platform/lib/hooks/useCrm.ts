@@ -6,7 +6,11 @@ import { ApiError } from "@/lib/api/api-error";
 import { queryKeys } from "@/lib/utils/query-keys";
 import { ROUTES } from "@/lib/constants/routes";
 import { toastSuccess, toastError } from "@/lib/utils";
-import { CRM_STATUS_LABELS } from "@/lib/constants/booking-statuses";
+import {
+  CRM_LEAD_STATUSES,
+  CRM_STATUS_LABELS,
+} from "@/lib/constants/booking-statuses";
+import { normalizeStatus } from "@/lib/utils/status";
 import type {
   CrmLeadStatus,
   CrmLeadListItemResponse,
@@ -18,19 +22,30 @@ import type {
   AssignLeadRequest,
 } from "@/lib/types/crm.types";
 
-export function useLeadsPipeline() {
+export function useLeadsPipeline(enabled = true) {
   const query = useQuery({
     queryKey: queryKeys.crm.leads(),
     queryFn: () => crmService.getLeads({ pageSize: 200 }), // fetch all for pipeline view
-    staleTime: 1000 * 60 * 1, // 1 minute — pipeline needs to be relatively fresh
+    staleTime: 0,
+    refetchInterval: 5000,
     refetchOnWindowFocus: true, // sales switches between windows
+    enabled,
   });
 
   const groupedLeads = useMemo(() => {
     const all = query.data?.items ?? [];
     return all.reduce(
       (acc, lead) => {
-        const status = lead.leadStatus;
+        const normalizedStatus = normalizeStatus(lead.leadStatus);
+        if (
+          !Object.values(CRM_LEAD_STATUSES).includes(
+            normalizedStatus as CrmLeadStatus
+          )
+        ) {
+          return acc;
+        }
+
+        const status = normalizedStatus as CrmLeadStatus;
         if (!acc[status]) acc[status] = [];
         acc[status].push(lead);
         return acc;
@@ -39,6 +54,9 @@ export function useLeadsPipeline() {
     );
   }, [query.data]);
 
+  // Open-lead count is intentionally NOT derived here: the pipeline fetch is page-capped
+  // and would undercount. The authoritative count comes from the server via
+  // useOpenLeadsCount() (GET /api/internal/crm/leads/open-count) — single source of truth.
   return {
     groupedLeads,
     totalCount: query.data?.pagination?.totalCount ?? 0,
@@ -46,6 +64,16 @@ export function useLeadsPipeline() {
     isError: query.isError,
     refetch: query.refetch,
   };
+}
+
+export function useOpenLeadsCount(enabled = true) {
+  return useQuery({
+    queryKey: queryKeys.crm.openCount(),
+    queryFn: crmService.getOpenLeadCount,
+    enabled,
+    staleTime: 15_000,
+    refetchOnWindowFocus: true,
+  });
 }
 
 export function useLeadDetail(leadId: string) {
@@ -63,6 +91,7 @@ export function useCreateLead() {
     onSuccess: () => {
       toastSuccess("Lead created successfully");
       queryClient.refetchQueries({ queryKey: queryKeys.crm.leads() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.crm.openCount() });
     },
     onError: (error: unknown) => {
       if (error instanceof ApiError) {
@@ -102,6 +131,7 @@ export function useUpdateLeadStatus(leadId: string) {
         queryKey: queryKeys.crm.leadDetail(leadId),
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.crm.leads() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.crm.openCount() });
     },
     onError: (error: unknown) => {
       if (error instanceof ApiError) {
@@ -125,6 +155,7 @@ export function useConvertToBooking(leadId: string) {
         queryKey: queryKeys.crm.leadDetail(leadId),
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.crm.leads() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.crm.openCount() });
       router.push(ROUTES.admin.bookings.detail(booking.id));
     },
     onError: (error: unknown) => {

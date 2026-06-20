@@ -5,5 +5,6 @@ public enum InvoiceStatus
     Draft,
     Issued,
     Paid,
-    Cancelled
+    Cancelled,
+    Superseded
 }

@@ -96,6 +96,7 @@ export const endpoints = {
   internalBookings: {
     list: "/api/internal/bookings",
     create: "/api/internal/bookings",
+    quickCreate: "/api/internal/bookings/quick",
     byId: (id: string) => `/api/internal/bookings/${id}`,
     update: (id: string) => `/api/internal/bookings/${id}`,
     statusHistory: (id: string) =>
@@ -104,6 +105,7 @@ export const endpoints = {
 
   clientBookings: {
     list: "/api/client/bookings",
+    create: "/api/client/bookings",
     byId: (id: string) => `/api/client/bookings/${id}`,
   },
 
@@ -130,6 +132,7 @@ export const endpoints = {
     publicCreate: "/api/crm/leads",
     create: "/api/internal/crm/leads", // Internal endpoint for admin use
     list: "/api/internal/crm/leads",
+    openCount: "/api/internal/crm/leads/open-count",
     byId: (id: string) => `/api/internal/crm/leads/${id}`,
     update: (id: string) => `/api/internal/crm/leads/${id}`,
     status: (id: string) => `/api/internal/crm/leads/${id}/status`,
@@ -235,6 +238,7 @@ export const endpoints = {
     list: "/api/clients",
     byId: (id: string) => `/api/clients/${id}`,
     status: (id: string) => `/api/clients/${id}/status`,
+    password: (id: string) => `/api/clients/${id}/password`,
   },
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REVIEWS â€” PUBLIC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -321,6 +325,7 @@ export const endpoints = {
     units: {
       list: "/api/owner/units",
       detail: (unitId: string) => `/api/owner/units/${unitId}`,
+      dateBlocks: (unitId: string) => `/api/owner/units/${unitId}/date-blocks`,
     },
     bookings: {
       list: "/api/owner/bookings",

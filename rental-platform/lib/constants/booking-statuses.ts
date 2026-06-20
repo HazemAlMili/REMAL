@@ -1,9 +1,14 @@
 export const CRM_LEAD_STATUSES = {
-  New: "New",
-  Contacted: "Contacted",
-  Qualified: "Qualified",
-  Converted: "Converted",
-  Lost: "Lost",
+  Prospecting: "Prospecting",
+  Relevant: "Relevant",
+  NoAnswer: "NoAnswer",
+  NotRelevant: "NotRelevant",
+  Booked: "Booked",
+  Confirmed: "Confirmed",
+  CheckIn: "CheckIn",
+  Completed: "Completed",
+  Cancelled: "Cancelled",
+  LeftEarly: "LeftEarly",
 } as const;
 
 export type CrmLeadStatus =
@@ -26,11 +31,16 @@ export type BookingStatus =
   (typeof BOOKING_STATUSES)[keyof typeof BOOKING_STATUSES];
 
 export const CRM_STATUS_LABELS: Record<CrmLeadStatus, string> = {
-  New: "New",
-  Contacted: "Contacted",
-  Qualified: "Qualified",
-  Converted: "Converted",
-  Lost: "Lost",
+  Prospecting: "Prospecting",
+  Relevant: "Relevant",
+  NoAnswer: "No Answer",
+  NotRelevant: "Not Relevant",
+  Booked: "Booked",
+  Confirmed: "Confirmed",
+  CheckIn: "Check In",
+  Completed: "Completed",
+  Cancelled: "Cancelled",
+  LeftEarly: "Left Early",
 };
 
 export const BOOKING_STATUS_LABELS: Record<BookingStatus, string> = {
@@ -59,25 +69,40 @@ export const BOOKING_STATUS_COLORS: Record<BookingStatus, string> = {
   LeftEarly: "warning",
 } as const;
 
+// Lead board ends at "Booked". Forward progress past Booked happens only via
+// "Convert to Booking" (which creates a Booking and closes the lead as Completed).
+// Confirmed / CheckIn belong to the BOOKING lifecycle, not the lead pipeline.
 export const CRM_PIPELINE_COLUMNS: CrmLeadStatus[] = [
-  "New",
-  "Contacted",
-  "Qualified",
+  "Prospecting",
+  "Relevant",
+  "NoAnswer",
+  "Booked",
 ];
 
-export const CRM_CLOSED_STATUSES: CrmLeadStatus[] = ["Converted", "Lost"];
+export const CRM_CLOSED_STATUSES: CrmLeadStatus[] = [
+  "NotRelevant",
+  "Completed",
+  "Cancelled",
+  "LeftEarly",
+];
 
 export const CRM_VALID_TRANSITIONS: Record<CrmLeadStatus, CrmLeadStatus[]> = {
-  New: ["Contacted", "Lost"],
-  Contacted: ["Qualified", "Lost"],
-  Qualified: ["Lost"],
-  Converted: [],
-  Lost: [],
+  Prospecting: ["Relevant", "NoAnswer", "NotRelevant"],
+  Relevant: ["Booked", "NoAnswer", "NotRelevant"],
+  NoAnswer: ["Relevant", "NotRelevant"],
+  // Booked is terminal for the lead board — move forward by converting to a booking.
+  Booked: ["NotRelevant"],
+  Confirmed: [],
+  CheckIn: [],
+  NotRelevant: [],
+  Completed: [],
+  Cancelled: [],
+  LeftEarly: [],
 };
 
 export const BOOKING_VALID_TRANSITIONS: Record<BookingStatus, BookingStatus[]> =
   {
-    Prospecting: ["Relevant", "NoAnswer", "NotRelevant", "Booked"],
+    Prospecting: ["Relevant", "NoAnswer", "NotRelevant"],
     Relevant: ["Booked", "NoAnswer", "NotRelevant"],
     NoAnswer: ["Relevant", "NotRelevant"],
     Booked: ["Confirmed", "NotRelevant"],

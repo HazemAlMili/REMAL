@@ -38,7 +38,8 @@ export function DailyBookingsTable({
   const totals = data.reduce(
     (acc, row) => ({
       bookingsCreatedCount: acc.bookingsCreatedCount + row.bookingsCreatedCount,
-      pendingBookingsCount: acc.pendingBookingsCount + row.pendingBookingsCount,
+      prospectingBookingsCount:
+        acc.prospectingBookingsCount + row.prospectingBookingsCount,
       confirmedBookingsCount:
         acc.confirmedBookingsCount + row.confirmedBookingsCount,
       cancelledBookingsCount:
@@ -49,7 +50,7 @@ export function DailyBookingsTable({
     }),
     {
       bookingsCreatedCount: 0,
-      pendingBookingsCount: 0,
+      prospectingBookingsCount: 0,
       confirmedBookingsCount: 0,
       cancelledBookingsCount: 0,
       completedBookingsCount: 0,
@@ -65,7 +66,7 @@ export function DailyBookingsTable({
             <th className="p-3">Date</th>
             <th className="p-3">Source</th>
             <th className="p-3">Created</th>
-            <th className="p-3">Pending</th>
+            <th className="p-3">Prospecting</th>
             <th className="p-3">Confirmed</th>
             <th className="p-3">Completed</th>
             <th className="p-3">Cancelled</th>
@@ -85,7 +86,7 @@ export function DailyBookingsTable({
                 ] ?? row.bookingSource}
               </td>
               <td className="p-3 text-sm">{row.bookingsCreatedCount}</td>
-              <td className="p-3 text-sm">{row.pendingBookingsCount}</td>
+              <td className="p-3 text-sm">{row.prospectingBookingsCount}</td>
               <td className="p-3 text-sm">{row.confirmedBookingsCount}</td>
               <td className="p-3 text-sm">{row.completedBookingsCount}</td>
               <td className="p-3 text-sm">{row.cancelledBookingsCount}</td>
@@ -99,7 +100,7 @@ export function DailyBookingsTable({
             <td className="p-3 text-sm">Total</td>
             <td className="p-3 text-sm">—</td>
             <td className="p-3 text-sm">{totals.bookingsCreatedCount}</td>
-            <td className="p-3 text-sm">{totals.pendingBookingsCount}</td>
+            <td className="p-3 text-sm">{totals.prospectingBookingsCount}</td>
             <td className="p-3 text-sm">{totals.confirmedBookingsCount}</td>
             <td className="p-3 text-sm">{totals.completedBookingsCount}</td>
             <td className="p-3 text-sm">{totals.cancelledBookingsCount}</td>

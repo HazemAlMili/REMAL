@@ -31,8 +31,8 @@ public sealed class ReportingBookingDailySummaryConfiguration
             .HasColumnName("bookings_created_count")
             .IsRequired();
 
-        builder.Property(x => x.PendingBookingsCount)
-            .HasColumnName("pending_bookings_count")
+        builder.Property(x => x.ProspectingBookingsCount)
+            .HasColumnName("prospecting_bookings_count")
             .IsRequired();
 
         builder.Property(x => x.ConfirmedBookingsCount)

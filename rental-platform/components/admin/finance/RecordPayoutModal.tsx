@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -36,18 +36,34 @@ export function RecordPayoutModal({
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  // Fetch confirmed/completed bookings for the owner
-  // Note: We fetch Confirmed bookings. Completed bookings should also be eligible.
-  // TODO: Backend should support multiple status filters or we need two separate queries
   const {
-    data: bookingsData,
-    isLoading: bookingsLoading,
-    error: bookingsError,
+    data: confirmedBookingsData,
+    isLoading: confirmedBookingsLoading,
+    error: confirmedBookingsError,
   } = useBookingsList({
     bookingStatus: "Confirmed",
     ownerId: ownerId,
     pageSize: 100,
   });
+  const {
+    data: completedBookingsData,
+    isLoading: completedBookingsLoading,
+    error: completedBookingsError,
+  } = useBookingsList({
+    bookingStatus: "Completed",
+    ownerId: ownerId,
+    pageSize: 100,
+  });
+
+  const eligibleBookings = useMemo(
+    () => [
+      ...(confirmedBookingsData?.items ?? []),
+      ...(completedBookingsData?.items ?? []),
+    ],
+    [confirmedBookingsData?.items, completedBookingsData?.items]
+  );
+  const bookingsLoading = confirmedBookingsLoading || completedBookingsLoading;
+  const bookingsError = confirmedBookingsError || completedBookingsError;
 
   // Fetch owner details to get commission rate
   const { data: ownersData } = useOwners({ pageSize: 100 });
@@ -75,8 +91,8 @@ export function RecordPayoutModal({
 
   // Auto-populate commission rate when booking is selected
   useEffect(() => {
-    if (watchedBookingId && bookingsData?.items) {
-      const selectedBooking = bookingsData.items.find(
+    if (watchedBookingId && eligibleBookings.length > 0) {
+      const selectedBooking = eligibleBookings.find(
         (b) => b.id === watchedBookingId
       );
       if (selectedBooking && ownersData?.items) {
@@ -88,7 +104,7 @@ export function RecordPayoutModal({
         }
       }
     }
-  }, [watchedBookingId, bookingsData, ownersData, setValue]);
+  }, [watchedBookingId, eligibleBookings, ownersData, setValue]);
 
   // Handle image selection
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,7 +198,7 @@ export function RecordPayoutModal({
   };
 
   // Get selected booking details for display
-  const selectedBooking = bookingsData?.items.find(
+  const selectedBooking = eligibleBookings.find(
     (b) => b.id === watchedBookingId
   );
 
@@ -241,7 +257,7 @@ export function RecordPayoutModal({
             Could not load bookings
           </h3>
           <p className="text-sm text-neutral-600">
-            We could not load confirmed bookings for this owner. Close and try again.
+            We could not load eligible bookings for this owner. Close and try again.
           </p>
           <div className="mt-6">
             <Button onClick={onClose}>Close</Button>
@@ -266,9 +282,9 @@ export function RecordPayoutModal({
                   <option value="">
                     {bookingsLoading
                       ? "Loading bookings..."
-                      : "Choose a confirmed booking"}
+                      : "Choose an eligible booking"}
                   </option>
-                  {bookingsData?.items.map((booking) => (
+                  {eligibleBookings.map((booking) => (
                     <option key={booking.id} value={booking.id}>
                       {booking.unitName} - {booking.clientName} (
                       {formatCurrency(booking.finalAmount)}) -{" "}

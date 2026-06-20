@@ -115,14 +115,17 @@ export function BookingTable({
       accessorKey: "assignedAdminUserId",
       header: "Assigned To",
       cell: ({ row }) => {
-        const id = row.original.assignedAdminUserId;
+        const name = row.original.assignedAdminUserName;
+        const role = row.original.assignedAdminUserRole;
         return (
-          <span
-            className="font-mono text-xs text-neutral-500"
-            title={id || "Unassigned"}
-          >
-            {id ? `${id.split("-")[0]}...` : "Unassigned"}
-          </span>
+          <div className="min-w-[120px]">
+            <div className="truncate text-sm font-medium text-neutral-800">
+              {name || "Unassigned"}
+            </div>
+            {role && (
+              <div className="mt-0.5 text-xs text-neutral-500">{role}</div>
+            )}
+          </div>
         );
       },
     },

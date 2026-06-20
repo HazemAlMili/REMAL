@@ -1,18 +1,22 @@
 ﻿"use client";
 
-import { Suspense, useMemo, useEffect } from "react";
+import { Suspense, useMemo, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useBookingsList } from "@/lib/hooks/useBookings";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { BookingFilters } from "@/components/admin/bookings/BookingFilters";
 import { BookingTable } from "@/components/admin/bookings/BookingTable";
+import { QuickBookingModal } from "@/components/admin/bookings/QuickBookingModal";
+import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/lib/constants/routes";
 import { FormalBookingStatus, BookingListFilters } from "@/lib/types/booking.types";
+import { Plus } from "lucide-react";
 
 function BookingsListContent() {
-  const { canViewBookings } = usePermissions();
+  const { canViewBookings, canManageBookings } = usePermissions();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [isQuickBookingOpen, setIsQuickBookingOpen] = useState(false);
 
   useEffect(() => {
     if (!canViewBookings) {
@@ -58,6 +62,15 @@ function BookingsListContent() {
             payment records.
           </p>
         </div>
+        {canManageBookings && (
+          <Button
+            type="button"
+            onClick={() => setIsQuickBookingOpen(true)}
+            leftIcon={<Plus className="h-4 w-4" />}
+          >
+            Quick Booking
+          </Button>
+        )}
       </div>
       <BookingFilters filters={filters} onChange={handleFilterChange} />
       <BookingTable 
@@ -65,6 +78,10 @@ function BookingsListContent() {
         isLoading={isLoading} 
         pagination={data?.pagination || undefined}
         onPageChange={(page) => handleFilterChange({ ...filters, page })}
+      />
+      <QuickBookingModal
+        isOpen={isQuickBookingOpen}
+        onClose={() => setIsQuickBookingOpen(false)}
       />
     </div>
   );

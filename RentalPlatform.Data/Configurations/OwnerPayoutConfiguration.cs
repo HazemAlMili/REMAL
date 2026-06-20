@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RentalPlatform.Data.Entities;
+using RentalPlatform.Shared.Enums;
 
 namespace RentalPlatform.Data.Configurations;
 
@@ -29,7 +30,10 @@ public class OwnerPayoutConfiguration : IEntityTypeConfiguration<OwnerPayout>
         builder.Property(op => op.PayoutStatus)
             .HasColumnName("payout_status")
             .HasMaxLength(50)
-            .IsRequired();
+            .IsRequired()
+            .HasConversion(
+                value => value.ToString().ToLowerInvariant(),
+                value => Enum.Parse<OwnerPayoutStatus>(value, true));
 
         builder.Property(op => op.GrossBookingAmount)
             .HasColumnName("gross_booking_amount")

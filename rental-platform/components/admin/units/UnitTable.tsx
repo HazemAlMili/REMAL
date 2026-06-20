@@ -44,20 +44,20 @@ export function UnitTable({
         header: "Name",
       },
       {
-        accessorKey: "areaId",
-        header: "Area ID",
+        accessorKey: "areaName",
+        header: "Area",
         cell: ({ row }) => (
-          <span className="font-mono text-xs text-neutral-500">
-            {row.getValue("areaId")}
+          <span className="text-sm text-neutral-700">
+            {row.getValue("areaName") || "[Unassigned Area]"}
           </span>
         ),
       },
       {
-        accessorKey: "ownerId",
-        header: "Owner ID",
+        accessorKey: "ownerName",
+        header: "Owner",
         cell: ({ row }) => (
-          <span className="font-mono text-xs text-neutral-500">
-            {row.getValue("ownerId")}
+          <span className="text-sm text-neutral-700">
+            {row.getValue("ownerName") || "[Unassigned Owner]"}
           </span>
         ),
       },
@@ -121,8 +121,7 @@ export function UnitTable({
                     size="sm"
                     className="h-8 w-8 px-0 text-neutral-500"
                     title="Edit unit"
-                    // Edit modal placeholder
-                    onClick={() => console.log("TODO: Edit Unit", unit.id)}
+                    onClick={() => router.push(ROUTES.admin.units.edit(unit.id))}
                   >
                     <Pencil className="h-4 w-4" />
                     <span className="sr-only">Edit</span>

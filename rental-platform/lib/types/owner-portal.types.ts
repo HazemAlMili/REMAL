@@ -95,6 +95,8 @@ export interface OwnerPortalBookingListFilters {
 export interface OwnerPortalFinanceRowResponse {
   bookingId: string;
   unitId: string;
+  unitName: string;
+  clientName: string;
   invoiceId: string;
   invoiceStatus: string;
   invoicedAmount: number;

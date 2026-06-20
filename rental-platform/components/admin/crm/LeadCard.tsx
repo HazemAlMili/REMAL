@@ -17,7 +17,7 @@ interface LeadCardProps {
 export function LeadCard({ lead, className }: LeadCardProps) {
   const router = useRouter();
   const daysInStatus = differenceInDays(new Date(), parseISO(lead.createdAt));
-  const isNoAnswer = lead.leadStatus === "Lost";
+  const isNoAnswer = lead.leadStatus === "NoAnswer";
 
   const maskedPhone =
     lead.contactPhone.length > 7

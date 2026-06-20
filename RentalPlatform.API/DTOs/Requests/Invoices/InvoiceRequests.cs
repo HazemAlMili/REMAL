@@ -5,7 +5,7 @@ namespace RentalPlatform.API.DTOs.Requests.Invoices;
 public record CreateInvoiceDraftRequest
 {
     public Guid BookingId { get; init; }
-    public string InvoiceNumber { get; init; } = string.Empty;
+    public string? InvoiceNumber { get; init; }
     public string? Notes { get; init; }
 }
 
@@ -23,6 +23,6 @@ public record CancelInvoiceRequest
 
 public record ReissueInvoiceRequest
 {
-    public string NewInvoiceNumber { get; init; } = string.Empty;
+    public string? NewInvoiceNumber { get; init; }
     public string? Notes { get; init; }
 }

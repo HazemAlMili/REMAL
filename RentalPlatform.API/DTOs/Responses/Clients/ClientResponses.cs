@@ -21,6 +21,17 @@ public record ClientDetailsResponse(
     DateTime UpdatedAt
 );
 
+public record CreateClientResponse(
+    Guid Id,
+    string Name,
+    string Phone,
+    string? Email,
+    bool IsActive,
+    DateTime CreatedAt,
+    DateTime UpdatedAt,
+    string TemporaryPassword
+);
+
 public record ClientProfileResponse(
     Guid Id,
     string Name,

@@ -53,7 +53,8 @@ export function useOwnerLogin(): UseOwnerLoginReturn {
         expiresInSeconds: response.expiresInSeconds,
         subjectType: response.subjectType, // 'Owner'
         user: response.user,
-        role: null,
+        role: 'Owner',
+        permissions: response.permissions,
       })
       router.push(ROUTES.owner.dashboard)
     },

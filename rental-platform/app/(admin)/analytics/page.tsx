@@ -123,7 +123,7 @@ export default function AnalyticsPage() {
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <DollarSign className="h-5 w-5 text-neutral-500" />
-                <span className="text-2xl font-semibold text-neutral-900">
+                <span className="text-2xl font-semibold tabular-nums text-neutral-900">
                   {formatCurrency(financeSummary.totalInvoicedAmount)}
                 </span>
               </div>
@@ -133,7 +133,7 @@ export default function AnalyticsPage() {
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <TrendingUp className="h-5 w-5 text-neutral-500" />
-                <span className="text-2xl font-semibold text-neutral-900">
+                <span className="text-2xl font-semibold tabular-nums text-neutral-900">
                   {formatCurrency(financeSummary.totalPaidAmount)}
                 </span>
               </div>
@@ -143,7 +143,7 @@ export default function AnalyticsPage() {
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <TrendingDown className="h-5 w-5 text-neutral-500" />
-                <span className="text-2xl font-semibold text-neutral-900">
+                <span className="text-2xl font-semibold tabular-nums text-neutral-900">
                   {formatCurrency(financeSummary.totalRemainingAmount)}
                 </span>
               </div>
@@ -153,7 +153,7 @@ export default function AnalyticsPage() {
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <Wallet className="h-5 w-5 text-neutral-500" />
-                <span className="text-2xl font-semibold text-neutral-900">
+                <span className="text-2xl font-semibold tabular-nums text-neutral-900">
                   {formatCurrency(financeSummary.totalPendingPayoutAmount)}
                 </span>
               </div>
@@ -163,7 +163,7 @@ export default function AnalyticsPage() {
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <Calendar className="h-5 w-5 text-neutral-500" />
-                <span className="text-2xl font-semibold text-neutral-900">
+                <span className="text-2xl font-semibold tabular-nums text-neutral-900">
                   {formatCurrency(financeSummary.totalScheduledPayoutAmount)}
                 </span>
               </div>
@@ -173,7 +173,7 @@ export default function AnalyticsPage() {
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <CreditCard className="h-5 w-5 text-neutral-500" />
-                <span className="text-2xl font-semibold text-neutral-900">
+                <span className="text-2xl font-semibold tabular-nums text-neutral-900">
                   {formatCurrency(financeSummary.totalPaidPayoutAmount)}
                 </span>
               </div>
@@ -183,7 +183,7 @@ export default function AnalyticsPage() {
             <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <FileText className="h-5 w-5 text-neutral-500" />
-                <span className="text-2xl font-semibold text-neutral-900">
+                <span className="text-2xl font-semibold tabular-nums text-neutral-900">
                   {financeSummary.totalBookingsWithInvoiceCount}
                 </span>
               </div>

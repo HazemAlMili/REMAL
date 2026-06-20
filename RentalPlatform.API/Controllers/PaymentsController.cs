@@ -30,10 +30,11 @@ public class PaymentsController : ControllerBase
         [FromQuery] string? paymentStatus = null,
         [FromQuery] Guid? bookingId = null,
         [FromQuery] Guid? invoiceId = null,
+        [FromQuery] string? search = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
-        var allPayments = await _paymentService.GetAllAsync(paymentStatus, bookingId, invoiceId);
+        var allPayments = await _paymentService.GetAllAsync(paymentStatus, bookingId, invoiceId, search);
 
         int total = allPayments.Count;
         int totalPages = (int)Math.Ceiling(total / (double)pageSize);
@@ -130,6 +131,8 @@ public class PaymentsController : ControllerBase
             Id = payment.Id,
             BookingId = payment.BookingId,
             InvoiceId = payment.InvoiceId,
+            ClientName = payment.Booking?.Client?.Name,
+            ClientPhone = payment.Booking?.Client?.Phone,
             PaymentStatus = payment.PaymentStatus,
             PaymentMethod = payment.PaymentMethod,
             Amount = payment.Amount,

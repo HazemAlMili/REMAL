@@ -159,6 +159,18 @@ export default function PaymentsListPage() {
 
       {/* Filter bar */}
       <div className="grid grid-cols-1 gap-4 rounded-xl border border-neutral-200 bg-white p-4 md:grid-cols-4">
+        <Input
+          label="Search"
+          placeholder="Client name, phone, reference, ID"
+          value={filters.search ?? ""}
+          onChange={(e) =>
+            setFilters({
+              ...filters,
+              search: e.target.value || undefined,
+              page: 1,
+            })
+          }
+        />
         <Select
           label="Status"
           options={[

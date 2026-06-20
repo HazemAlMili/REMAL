@@ -7,6 +7,7 @@ using RentalPlatform.Business.Exceptions;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Business.Models;
 using RentalPlatform.Data;
+using RentalPlatform.Shared.Enums;
 
 namespace RentalPlatform.Business.Services;
 
@@ -81,7 +82,7 @@ public class FinanceSummaryService : IFinanceSummaryService
             InvoicedAmount = invoicedAmount,
             PaidAmount = paidAmount,
             RemainingAmount = remaining,
-            OwnerPayoutStatus = payout?.PayoutStatus
+            OwnerPayoutStatus = payout?.PayoutStatus.ToString().ToLowerInvariant()
         };
     }
 
@@ -101,9 +102,9 @@ public class FinanceSummaryService : IFinanceSummaryService
         return new OwnerPayoutSummaryResult
         {
             OwnerId = ownerId,
-            TotalPending = payouts.Where(op => op.PayoutStatus == "pending").Sum(op => op.PayoutAmount),
-            TotalScheduled = payouts.Where(op => op.PayoutStatus == "scheduled").Sum(op => op.PayoutAmount),
-            TotalPaid = payouts.Where(op => op.PayoutStatus == "paid").Sum(op => op.PayoutAmount)
+            TotalPending = payouts.Where(op => op.PayoutStatus == OwnerPayoutStatus.Pending).Sum(op => op.PayoutAmount),
+            TotalScheduled = payouts.Where(op => op.PayoutStatus == OwnerPayoutStatus.Scheduled).Sum(op => op.PayoutAmount),
+            TotalPaid = payouts.Where(op => op.PayoutStatus == OwnerPayoutStatus.Paid).Sum(op => op.PayoutAmount)
         };
     }
 }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RentalPlatform.Shared.Enums;
 
 namespace RentalPlatform.API.Controllers;
 
@@ -33,10 +34,21 @@ public class BookingsController : ControllerBase
         [FromQuery] Guid? clientId = null,
         [FromQuery] Guid? ownerId = null,
         [FromQuery] string? search = null,
+        [FromQuery] DateOnly? checkInFrom = null,
+        [FromQuery] DateOnly? checkInTo = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
-        var result = await _bookingService.GetAllAsync(bookingStatus, assignedAdminUserId, clientId, ownerId, search, page, pageSize);
+        var result = await _bookingService.GetAllAsync(
+            bookingStatus,
+            assignedAdminUserId,
+            clientId,
+            ownerId,
+            search,
+            checkInFrom,
+            checkInTo,
+            page,
+            pageSize);
 
         int totalPages = (int)Math.Ceiling(result.Total / (double)pageSize);
         if (totalPages == 0) totalPages = 1;
@@ -95,6 +107,25 @@ public class BookingsController : ControllerBase
         return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(MapToDetailsResponse(booking), "Booking created successfully."));
     }
 
+    // 4b. POST /api/internal/bookings/quick
+    [HttpPost("quick")]
+    [Authorize(Policy = "SalesOrSuperAdmin")]
+    public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> CreateQuickBooking(CreateBookingRequest request)
+    {
+        var booking = await _bookingService.CreateQuickAsync(
+            request.ClientId,
+            request.UnitId,
+            request.CheckInDate,
+            request.CheckOutDate,
+            request.GuestCount,
+            string.IsNullOrWhiteSpace(request.Source) ? "admin" : request.Source,
+            request.AssignedAdminUserId,
+            request.InternalNotes
+        );
+
+        return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(MapToDetailsResponse(booking), "Quick booking created successfully."));
+    }
+
     // 5. PUT /api/internal/bookings/{id}
     [HttpPut("{id}")]
     [Authorize(Policy = "SalesOrSuperAdmin")]
@@ -125,6 +156,8 @@ public class BookingsController : ControllerBase
             UnitName = booking.Unit?.Name,
             OwnerId = booking.OwnerId,
             AssignedAdminUserId = booking.AssignedAdminUserId,
+            AssignedAdminUserName = booking.AssignedAdminUser?.Name,
+            AssignedAdminUserRole = booking.AssignedAdminUser?.Role.ToString(),
             BookingStatus = booking.BookingStatus.ToString(),
             CheckInDate = booking.CheckInDate,
             CheckOutDate = booking.CheckOutDate,
@@ -146,6 +179,8 @@ public class BookingsController : ControllerBase
             UnitName = booking.Unit?.Name,
             OwnerId = booking.OwnerId,
             AssignedAdminUserId = booking.AssignedAdminUserId,
+            AssignedAdminUserName = booking.AssignedAdminUser?.Name,
+            AssignedAdminUserRole = booking.AssignedAdminUser?.Role.ToString(),
             BookingStatus = booking.BookingStatus.ToString(),
             CheckInDate = booking.CheckInDate,
             CheckOutDate = booking.CheckOutDate,
@@ -165,11 +200,18 @@ public class BookingsController : ControllerBase
         {
             Id = history.Id,
             BookingId = history.BookingId,
-            OldStatus = history.OldStatus,
-            NewStatus = history.NewStatus,
+            OldStatus = NormalizeBookingStatus(history.OldStatus),
+            NewStatus = NormalizeBookingStatus(history.NewStatus) ?? history.NewStatus,
             ChangedByAdminUserId = history.ChangedByAdminUserId ?? Guid.Empty,
             Notes = history.Notes,
             ChangedAt = history.ChangedAt
         };
+    }
+
+    private static string? NormalizeBookingStatus(string? status)
+    {
+        return Enum.TryParse<BookingStatus>(status, ignoreCase: true, out var parsed)
+            ? parsed.ToString()
+            : status;
     }
 }

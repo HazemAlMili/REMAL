@@ -4,10 +4,13 @@ using RentalPlatform.API.DTOs.Requests.Clients;
 using RentalPlatform.API.DTOs.Responses.Clients;
 using RentalPlatform.API.Models;
 using RentalPlatform.Business.Interfaces;
+using RentalPlatform.Business.Exceptions;
 using RentalPlatform.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace RentalPlatform.API.Controllers;
@@ -25,16 +28,48 @@ public class ClientsController : ControllerBase
 
     [HttpPost]
     [Authorize(Policy = "SalesOrSuperAdmin")]
-    public async Task<ActionResult<ApiResponse<ClientDetailsResponse>>> Create(
+    public async Task<ActionResult<ApiResponse<CreateClientResponse>>> Create(
         [FromBody] CreateClientRequest request,
         CancellationToken cancellationToken)
     {
-        var tempPassword = Guid.NewGuid().ToString("N");
+        var tempPassword = GenerateTemporaryPassword();
         var client = await _clientService.CreateAsync(
             request.Name, request.Phone, request.Email, tempPassword, cancellationToken);
 
-        return Ok(ApiResponse<ClientDetailsResponse>.CreateSuccess(
-            MapToDetailsResponse(client), "Client created successfully."));
+        var response = new CreateClientResponse(
+            client.Id,
+            client.Name,
+            client.Phone,
+            client.Email,
+            client.IsActive,
+            client.CreatedAt,
+            client.UpdatedAt,
+            tempPassword);
+
+        return Ok(ApiResponse<CreateClientResponse>.CreateSuccess(
+            response,
+            "Client created successfully."));
+    }
+
+    // Generates a human-friendly but strong one-time password, e.g. "Kxq7-Mp42-Rt9w".
+    // Uses an unambiguous alphabet (no 0/O/1/l/I) so it can be read aloud / copied without confusion.
+    private static string GenerateTemporaryPassword()
+    {
+        const string alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+        Span<byte> bytes = stackalloc byte[12];
+        RandomNumberGenerator.Fill(bytes);
+
+        var chars = new char[14]; // 3 groups of 4 + 2 hyphens
+        var ci = 0;
+        var bi = 0;
+        for (var group = 0; group < 3; group++)
+        {
+            if (group > 0) chars[ci++] = '-';
+            for (var k = 0; k < 4; k++)
+                chars[ci++] = alphabet[bytes[bi++] % alphabet.Length];
+        }
+
+        return new string(chars);
     }
 
     [HttpGet]
@@ -82,6 +117,24 @@ public class ClientsController : ControllerBase
         return Ok(ApiResponse<ClientDetailsResponse>.CreateSuccess(
             MapToDetailsResponse(client),
             client.IsActive ? "Client reactivated successfully." : "Client deactivated successfully."));
+    }
+
+    [HttpPatch("{id}/password")]
+    [Authorize(Policy = "SuperAdminOnly")]
+    public async Task<ActionResult<ApiResponse<ClientDetailsResponse>>> ResetPassword(Guid id, ResetClientPasswordRequest request)
+    {
+        var actorClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!Guid.TryParse(actorClaim, out var actorAdminUserId))
+            throw new UnauthorizedBusinessException("Current admin ID not found in claims.");
+
+        var client = await _clientService.ResetPasswordAsync(
+            id,
+            request.NewPassword,
+            actorAdminUserId);
+
+        return Ok(ApiResponse<ClientDetailsResponse>.CreateSuccess(
+            MapToDetailsResponse(client),
+            "Client password reset successfully."));
     }
 
     private static ClientListItemResponse MapToListItemResponse(Client client)

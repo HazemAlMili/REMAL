@@ -7,7 +7,8 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useSubmitBookingRequest } from "@/lib/hooks/usePublic";
+import { useSubmitBookingRequest, useCreateClientBooking } from "@/lib/hooks/usePublic";
+import { useAuthStore } from "@/lib/stores/auth.store";
 import { Button } from "@/components/ui/Button";
 import { BookingPricingSummary } from "./BookingPricingSummary";
 import { Badge } from "@/components/ui/Badge";
@@ -68,7 +69,10 @@ export function BookingStep3Review({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const submitInFlightRef = useRef(false);
 
+  const { subjectType } = useAuthStore();
   const submitMutation = useSubmitBookingRequest();
+  const createBookingMutation = useCreateClientBooking();
+  const isSubmitting = submitMutation.isPending || createBookingMutation.isPending;
 
   const coverImage = images.find((img) => img.isCover) || images[0];
   const nightsCount = getNights(startDate, endDate);
@@ -93,9 +97,20 @@ export function BookingStep3Review({
     };
 
     try {
-      const result = await submitMutation.mutateAsync(leadRequest);
-      // Navigate to confirmation page with lead ID
-      router.push(`/booking-confirmation?id=${result.id}`); // P06: id, NOT leadId
+      if (subjectType === "Client") {
+        // Signed-in client → create a booking directly at "Prospecting" (no CRM lead).
+        const booking = await createBookingMutation.mutateAsync({
+          unitId: unit.id,
+          checkInDate: startDate,
+          checkOutDate: endDate,
+          guestCount: guestCount || 1,
+        });
+        router.push(`/booking-confirmation?id=${booking.id}`);
+      } else {
+        // Fallback (no signed-in client) → CRM lead for the sales team to follow up.
+        const result = await submitMutation.mutateAsync(leadRequest);
+        router.push(`/booking-confirmation?id=${result.id}`); // P06: id, NOT leadId
+      }
     } catch (error) {
       const errorData = error as {
         response?: { data?: { message?: string; errors?: string[] } };
@@ -237,8 +252,8 @@ export function BookingStep3Review({
           size="lg"
           className="w-full"
           onClick={handleSubmit}
-          isLoading={submitMutation.isPending}
-          disabled={submitMutation.isPending}
+          isLoading={isSubmitting}
+          disabled={isSubmitting}
         >
           Submit Booking Request
         </Button>
@@ -254,7 +269,7 @@ export function BookingStep3Review({
         variant="ghost"
         onClick={onBack}
         className="w-full"
-        disabled={submitMutation.isPending}
+        disabled={isSubmitting}
       >
         Back to Your Details
       </Button>

@@ -35,6 +35,14 @@ export interface UpdateClientStatusRequest {
   isActive: boolean;
 }
 
+export interface CreateClientResponse extends ClientDetailsResponse {
+  temporaryPassword: string;
+}
+
+export interface ResetClientPasswordRequest {
+  newPassword: string;
+}
+
 export interface CreateClientRequest {
   name: string;
   phone: string;

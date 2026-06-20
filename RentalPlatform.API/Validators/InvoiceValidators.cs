@@ -9,11 +9,6 @@ public class CreateInvoiceDraftRequestValidator : AbstractValidator<CreateInvoic
     {
         RuleFor(x => x.BookingId)
             .NotEmpty();
-
-        RuleFor(x => x.InvoiceNumber)
-            .NotEmpty()
-            .Must(n => !string.IsNullOrWhiteSpace(n))
-            .WithMessage("InvoiceNumber is required and cannot be blank.");
     }
 }
 
@@ -43,11 +38,5 @@ public class CancelInvoiceRequestValidator : AbstractValidator<CancelInvoiceRequ
 
 public class ReissueInvoiceRequestValidator : AbstractValidator<ReissueInvoiceRequest>
 {
-    public ReissueInvoiceRequestValidator()
-    {
-        RuleFor(x => x.NewInvoiceNumber)
-            .NotEmpty()
-            .Must(n => !string.IsNullOrWhiteSpace(n))
-            .WithMessage("NewInvoiceNumber is required and cannot be blank.");
-    }
+    public ReissueInvoiceRequestValidator() { }
 }

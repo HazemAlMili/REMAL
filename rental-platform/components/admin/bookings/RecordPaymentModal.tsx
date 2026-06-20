@@ -1,6 +1,6 @@
 ﻿import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreatePayment } from "@/lib/hooks/useBookings";
+import { useCreatePayment, useMarkPaymentPaid } from "@/lib/hooks/useBookings";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -13,10 +13,30 @@ interface RecordPaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
   bookingId: string;
+  autoMarkPaid?: boolean;
+  title?: string;
+  submitLabel?: string;
+  onSuccess?: () => void;
+  // When provided, renders a tertiary action (e.g. "Skip & confirm") so recording a
+  // payment is optional — used by the confirm flow where a deposit is not mandatory.
+  onSkip?: () => void;
+  skipLabel?: string;
 }
 
-export function RecordPaymentModal({ isOpen, onClose, bookingId }: RecordPaymentModalProps) {
+export function RecordPaymentModal({
+  isOpen,
+  onClose,
+  bookingId,
+  autoMarkPaid = false,
+  title = "Record payment",
+  submitLabel = "Record payment",
+  onSuccess,
+  onSkip,
+  skipLabel = "Skip",
+}: RecordPaymentModalProps) {
   const createMutation = useCreatePayment();
+  const markPaidMutation = useMarkPaymentPaid(bookingId);
+  const isSubmitting = createMutation.isPending || markPaidMutation.isPending;
 
   const {
     register,
@@ -36,24 +56,43 @@ export function RecordPaymentModal({ isOpen, onClose, bookingId }: RecordPayment
   });
 
   const onSubmit = (data: CreatePaymentRequest) => {
+    const referenceNumber = data.referenceNumber || undefined;
+    const notes = data.notes || undefined;
+
     createMutation.mutate(
       {
         ...data,
         bookingId,  // always attach current booking
-        referenceNumber: data.referenceNumber || undefined,
-        notes: data.notes || undefined,
+        referenceNumber,
+        notes,
       },
       {
-        onSuccess: () => {
-          reset();
-          onClose();
+        onSuccess: (payment) => {
+          const finish = () => {
+            reset();
+            onSuccess?.();
+            onClose();
+          };
+
+          if (!autoMarkPaid) {
+            finish();
+            return;
+          }
+
+          markPaidMutation.mutate(
+            {
+              paymentId: payment.id,
+              data: { referenceNumber, notes },
+            },
+            { onSuccess: finish }
+          );
         },
       }
     );
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Record payment" size="md">
+    <Modal isOpen={isOpen} onClose={onClose} title={title} size="md">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
         <Input
           label="Payment amount (EGP)"
@@ -61,6 +100,7 @@ export function RecordPaymentModal({ isOpen, onClose, bookingId }: RecordPayment
           step="0.01"
           {...register("amount", { valueAsNumber: true })}
           error={errors.amount?.message}
+          disabled={isSubmitting}
           required
         />
 
@@ -74,6 +114,7 @@ export function RecordPaymentModal({ isOpen, onClose, bookingId }: RecordPayment
               value={field.value}
               onChange={field.onChange}
               error={errors.paymentMethod?.message}
+              disabled={isSubmitting}
               required
             />
           )}
@@ -84,6 +125,7 @@ export function RecordPaymentModal({ isOpen, onClose, bookingId }: RecordPayment
           {...register("referenceNumber")}
           error={errors.referenceNumber?.message}
           placeholder="InstaPay ref, transfer ID, etc."
+          disabled={isSubmitting}
         />
 
         <div className="grid gap-1">
@@ -92,15 +134,29 @@ export function RecordPaymentModal({ isOpen, onClose, bookingId }: RecordPayment
             {...register("notes")}
             placeholder="Add payment context for the finance team"
             className="w-full border border-neutral-200 rounded-md p-2 text-sm resize-none h-20 focus:ring-1 focus:ring-neutral-900 focus:border-neutral-900 outline-none"
+            disabled={isSubmitting}
           />
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button variant="ghost" type="button" onClick={onClose} disabled={createMutation.isPending}>
+          <Button variant="ghost" type="button" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button type="submit" isLoading={createMutation.isPending}>
-            Record payment
+          {onSkip && (
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => {
+                reset();
+                onSkip();
+              }}
+              disabled={isSubmitting}
+            >
+              {skipLabel}
+            </Button>
+          )}
+          <Button type="submit" isLoading={isSubmitting}>
+            {submitLabel}
           </Button>
         </div>
       </form>

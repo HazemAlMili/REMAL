@@ -44,7 +44,12 @@ public class OwnerPayoutService : IOwnerPayoutService
             .Where(op => op.OwnerId == ownerId);
 
         if (!string.IsNullOrWhiteSpace(payoutStatus))
-            query = query.Where(op => op.PayoutStatus == payoutStatus.Trim().ToLower());
+        {
+            if (!Enum.TryParse<OwnerPayoutStatus>(payoutStatus.Trim(), true, out var parsedStatus))
+                throw new BusinessValidationException($"Invalid payout status '{payoutStatus}'.");
+
+            query = query.Where(op => op.PayoutStatus == parsedStatus);
+        }
 
         return await query.OrderByDescending(op => op.CreatedAt).ToListAsync(cancellationToken);
     }
@@ -76,7 +81,7 @@ public class OwnerPayoutService : IOwnerPayoutService
 
         if (existing != null)
         {
-            if (existing.PayoutStatus != "pending")
+            if (existing.PayoutStatus != OwnerPayoutStatus.Pending)
                 throw new ConflictException(
                     $"Payout for booking {bookingId} cannot be updated: current status is '{existing.PayoutStatus}'. Only pending payouts can be recalculated.");
 
@@ -104,7 +109,7 @@ public class OwnerPayoutService : IOwnerPayoutService
             Id = Guid.NewGuid(),
             BookingId = bookingId,
             OwnerId = booking.OwnerId,
-            PayoutStatus = "pending",
+            PayoutStatus = OwnerPayoutStatus.Pending,
             GrossBookingAmount = gross,
             CommissionRate = commissionRate,
             CommissionAmount = commissionAmount,
@@ -128,11 +133,11 @@ public class OwnerPayoutService : IOwnerPayoutService
     {
         var payout = await GetPayoutOrThrowAsync(payoutId, cancellationToken);
 
-        if (payout.PayoutStatus != "pending")
+        if (payout.PayoutStatus != OwnerPayoutStatus.Pending)
             throw new ConflictException(
                 $"Owner payout {payoutId} cannot be scheduled: current status is '{payout.PayoutStatus}'. Only pending payouts can be scheduled.");
 
-        payout.PayoutStatus = "scheduled";
+        payout.PayoutStatus = OwnerPayoutStatus.Scheduled;
         payout.ScheduledAt ??= DateTime.UtcNow;
 
         if (notes != null)
@@ -154,11 +159,12 @@ public class OwnerPayoutService : IOwnerPayoutService
     {
         var payout = await GetPayoutOrThrowAsync(payoutId, cancellationToken);
 
-        if (payout.PayoutStatus != "pending" && payout.PayoutStatus != "scheduled")
+        if (payout.PayoutStatus != OwnerPayoutStatus.Pending &&
+            payout.PayoutStatus != OwnerPayoutStatus.Scheduled)
             throw new ConflictException(
                 $"Owner payout {payoutId} cannot be marked as paid: current status is '{payout.PayoutStatus}'. Only pending or scheduled payouts can be marked as paid.");
 
-        payout.PayoutStatus = "paid";
+        payout.PayoutStatus = OwnerPayoutStatus.Paid;
         payout.PaidAt ??= DateTime.UtcNow;
 
         if (proofOfPaymentUrl != null)
@@ -182,13 +188,13 @@ public class OwnerPayoutService : IOwnerPayoutService
     {
         var payout = await GetPayoutOrThrowAsync(payoutId, cancellationToken);
 
-        if (payout.PayoutStatus == "paid")
+        if (payout.PayoutStatus == OwnerPayoutStatus.Paid)
             throw new ConflictException($"Owner payout {payoutId} cannot be cancelled: payout is already paid.");
 
-        if (payout.PayoutStatus == "cancelled")
+        if (payout.PayoutStatus == OwnerPayoutStatus.Cancelled)
             throw new ConflictException($"Owner payout {payoutId} is already cancelled.");
 
-        payout.PayoutStatus = "cancelled";
+        payout.PayoutStatus = OwnerPayoutStatus.Cancelled;
 
         if (notes != null)
             payout.Notes = notes.Trim();

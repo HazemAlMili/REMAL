@@ -94,6 +94,14 @@ public class CrmLeadsController : ControllerBase
         return Ok(ApiResponse<IReadOnlyList<CrmLeadListItemResponse>>.CreateSuccess(response, null, pagination));
     }
 
+    [HttpGet("api/internal/crm/leads/open-count")]
+    [Authorize(Policy = "SalesOrSuperAdmin")]
+    public async Task<ActionResult<ApiResponse<int>>> GetOpenLeadCount()
+    {
+        var count = await _crmLeadService.GetOpenCountAsync();
+        return Ok(ApiResponse<int>.CreateSuccess(count));
+    }
+
     // 3. GET /api/internal/crm/leads/{id} - Internal Detail
     [HttpGet("api/internal/crm/leads/{id}")]
     [Authorize(Policy = "SalesOrSuperAdmin")]

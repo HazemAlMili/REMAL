@@ -3,6 +3,7 @@ import { endpoints } from "@/lib/api/endpoints";
 import type { CrmAssignmentResponse } from "@/lib/types/crm.types";
 import type {
   BookingListFilters,
+  CreateBookingRequest,
   PaginatedBookings,
   BookingDetailsResponse,
   ConfirmBookingRequest,
@@ -36,6 +37,9 @@ export const bookingsService = {
 
   getById: (id: string): Promise<BookingDetailsResponse> =>
     api.get(endpoints.internalBookings.byId(id)),
+
+  quickCreate: (data: CreateBookingRequest): Promise<BookingDetailsResponse> =>
+    api.post(endpoints.internalBookings.quickCreate, data),
 
   // -- Lifecycle --
   confirm: (
@@ -183,7 +187,7 @@ export const bookingsService = {
 
   reissueInvoice: (
     id: string,
-    data: { newInvoiceNumber: string; notes?: string }
+    data: { newInvoiceNumber?: string; notes?: string }
   ): Promise<InvoiceResponse> => api.post(endpoints.invoices.reissue(id), data),
 
   addAdjustment: (

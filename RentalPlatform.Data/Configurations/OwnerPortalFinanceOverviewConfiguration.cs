@@ -21,6 +21,8 @@ public sealed class OwnerPortalFinanceOverviewConfiguration
         builder.Property(x => x.OwnerId).HasColumnName("owner_id").IsRequired();
         builder.Property(x => x.BookingId).HasColumnName("booking_id").IsRequired();
         builder.Property(x => x.UnitId).HasColumnName("unit_id").IsRequired();
+        builder.Property(x => x.UnitName).HasColumnName("unit_name").HasMaxLength(200).IsRequired();
+        builder.Property(x => x.ClientName).HasColumnName("client_name").HasMaxLength(200).IsRequired();
         builder.Property(x => x.InvoiceId).HasColumnName("invoice_id");
         builder.Property(x => x.InvoiceStatus).HasColumnName("invoice_status").HasMaxLength(50);
         builder.Property(x => x.InvoicedAmount).HasColumnName("invoiced_amount").HasColumnType("decimal(12,2)").IsRequired();

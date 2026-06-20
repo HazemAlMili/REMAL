@@ -4,16 +4,22 @@
 // ═══════════════════════════════════════════════════════════
 
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   usePricingCalculate,
   useAvailabilityCheck,
 } from "@/lib/hooks/usePublic";
 import { Button } from "@/components/ui/Button";
+import { DateRangePicker, DateRange } from "@/components/ui/DateRangePicker";
 import { PricingBreakdown } from "./PricingBreakdown";
-import { formatCurrency, getTodayDateString } from "@/lib/utils/format";
-import { ShieldCheck, AlertCircle, Calendar } from "lucide-react";
+import {
+  formatCurrency,
+  formatDateForApi,
+  getTodayDateString,
+  parseDateOnly,
+} from "@/lib/utils/format";
+import { ShieldCheck, AlertCircle } from "lucide-react";
 
 interface UnitBookingPanelProps {
   unitId: string;
@@ -30,6 +36,17 @@ export function UnitBookingPanel({
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [guestCount, setGuestCount] = useState(1);
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: null,
+    to: null,
+  });
+
+  const today = useMemo(() => getTodayDateString(), []);
+  const preloadEndDate = useMemo(() => {
+    const end = parseDateOnly(today);
+    end.setDate(end.getDate() + 180);
+    return formatDateForApi(end);
+  }, [today]);
 
   const {
     data: pricing,
@@ -40,6 +57,19 @@ export function UnitBookingPanel({
     unitId,
     startDate || null,
     endDate || null
+  );
+  const { data: calendarAvailability } = useAvailabilityCheck(
+    unitId,
+    today,
+    preloadEndDate
+  );
+
+  const disabledDates = useMemo(
+    () =>
+      (calendarAvailability?.blockedDates ?? []).map((date) =>
+        parseDateOnly(date)
+      ),
+    [calendarAvailability?.blockedDates]
   );
 
   const isAvailable = availability?.isAvailable ?? null;
@@ -52,8 +82,11 @@ export function UnitBookingPanel({
     );
   };
 
-  // Get today's local calendar date in YYYY-MM-DD format for min date.
-  const today = getTodayDateString();
+  const handleDateRangeChange = (range: DateRange) => {
+    setDateRange(range);
+    setStartDate(range.from ? formatDateForApi(range.from) : "");
+    setEndDate(range.to ? formatDateForApi(range.to) : "");
+  };
 
   return (
     <div className="sticky top-24 rounded-2xl border border-neutral-100 bg-white p-6 shadow-card">
@@ -66,37 +99,15 @@ export function UnitBookingPanel({
       </div>
 
       {/* Date Range Inputs */}
-      <div className="mb-4 space-y-3">
-        <div>
-          <label className="mb-1 block text-sm font-medium text-neutral-700">
-            Check-in
-          </label>
-          <div className="relative">
-            <Calendar className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              min={today}
-              className="w-full rounded-lg border border-neutral-200 py-2 pl-10 pr-3 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
-            />
-          </div>
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-neutral-700">
-            Check-out
-          </label>
-          <div className="relative">
-            <Calendar className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              min={startDate || today}
-              className="w-full rounded-lg border border-neutral-200 py-2 pl-10 pr-3 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
-            />
-          </div>
-        </div>
+      <div className="mb-4">
+        <DateRangePicker
+          label="Dates"
+          value={dateRange}
+          onChange={handleDateRangeChange}
+          minDate={parseDateOnly(today)}
+          disabledDates={disabledDates}
+          placeholder="Check-in → Check-out"
+        />
       </div>
 
       {/* Guest Count */}

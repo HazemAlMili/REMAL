@@ -15,6 +15,7 @@ import type {
   CreateReviewReplyRequest,
   UpdateReviewReplyRequest,
 } from "../types/owner-portal.types";
+import type { CreateDateBlockRequest } from "../types/unit.types";
 
 // ── Dashboard ──
 
@@ -68,6 +69,23 @@ export function useOwnerUnitAvailability(unitId: string, month: Date) {
       ownerPortalService.checkUnitAvailability(unitId, { startDate, endDate }),
     enabled: !!unitId,
     staleTime: 0, // Always fresh per requirements
+  });
+}
+
+export function useCreateOwnerDateBlock(unitId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateDateBlockRequest) =>
+      ownerPortalService.createDateBlock(unitId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["ownerPortal", "unitAvailability", unitId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.ownerPortal.units.detail(unitId),
+      });
+    },
   });
 }
 

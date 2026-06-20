@@ -7,6 +7,8 @@ public record PaymentResponse
     public Guid Id { get; init; }
     public Guid BookingId { get; init; }
     public Guid? InvoiceId { get; init; }
+    public string? ClientName { get; init; }
+    public string? ClientPhone { get; init; }
     public string PaymentStatus { get; init; } = string.Empty;
     public string PaymentMethod { get; init; } = string.Empty;
     public decimal Amount { get; init; }

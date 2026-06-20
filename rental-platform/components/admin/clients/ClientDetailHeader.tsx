@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/Button";
 import { formatDate } from "@/lib/utils/format";
 import { useUpdateClientStatus } from "@/lib/hooks/useClients";
 import { usePermissions } from "@/lib/hooks/usePermissions";
+import { ClientPasswordResetDialog } from "./ClientPasswordResetDialog";
 import type { ClientDetailsResponse } from "@/lib/types/client.types";
-import { UserCheck, UserX } from "lucide-react";
+import { KeyRound, UserCheck, UserX } from "lucide-react";
 
 interface ClientDetailHeaderProps {
   client: ClientDetailsResponse;
@@ -15,7 +16,8 @@ interface ClientDetailHeaderProps {
 
 export function ClientDetailHeader({ client }: ClientDetailHeaderProps) {
   const updateStatus = useUpdateClientStatus(client.id);
-  const { canManageClients } = usePermissions();
+  const { canManageClients, canResetClientPasswords } = usePermissions();
+  const [showPasswordDialog, setShowPasswordDialog] = React.useState(false);
   const nextIsActive = !client.isActive;
 
   return (
@@ -31,22 +33,36 @@ export function ClientDetailHeader({ client }: ClientDetailHeaderProps) {
             colorMap={{ active: "success", inactive: "neutral" }}
           />
         </div>
-        {canManageClients && (
-          <Button
-            variant={client.isActive ? "outline" : "success"}
-            size="sm"
-            leftIcon={
-              client.isActive ? (
-                <UserX className="h-4 w-4" />
-              ) : (
-                <UserCheck className="h-4 w-4" />
-              )
-            }
-            isLoading={updateStatus.isPending}
-            onClick={() => updateStatus.mutate({ isActive: nextIsActive })}
-          >
-            {client.isActive ? "Deactivate" : "Reactivate"}
-          </Button>
+        {(canManageClients || canResetClientPasswords) && (
+          <div className="flex flex-wrap gap-2">
+            {canResetClientPasswords && (
+              <Button
+                variant="secondary"
+                size="sm"
+                leftIcon={<KeyRound className="h-4 w-4" />}
+                onClick={() => setShowPasswordDialog(true)}
+              >
+                Reset password
+              </Button>
+            )}
+            {canManageClients && (
+              <Button
+                variant={client.isActive ? "outline" : "success"}
+                size="sm"
+                leftIcon={
+                  client.isActive ? (
+                    <UserX className="h-4 w-4" />
+                  ) : (
+                    <UserCheck className="h-4 w-4" />
+                  )
+                }
+                isLoading={updateStatus.isPending}
+                onClick={() => updateStatus.mutate({ isActive: nextIsActive })}
+              >
+                {client.isActive ? "Deactivate" : "Reactivate"}
+              </Button>
+            )}
+          </div>
         )}
       </div>
       <div className="grid grid-cols-2 gap-4 text-sm">
@@ -71,6 +87,11 @@ export function ClientDetailHeader({ client }: ClientDetailHeaderProps) {
           <p>{formatDate(client.updatedAt)}</p>
         </div>
       </div>
+      <ClientPasswordResetDialog
+        isOpen={showPasswordDialog}
+        onClose={() => setShowPasswordDialog(false)}
+        clientId={client.id}
+      />
     </div>
   );
 }

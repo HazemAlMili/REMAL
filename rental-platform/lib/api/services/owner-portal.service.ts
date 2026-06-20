@@ -23,7 +23,11 @@ import type {
   UpdateReviewReplyRequest,
   OperationalAvailabilityRequest,
 } from "@/lib/types/owner-portal.types";
-import type { OperationalAvailabilityResponse } from "@/lib/types/unit.types";
+import type {
+  CreateDateBlockRequest,
+  DateBlockResponse,
+  OperationalAvailabilityResponse,
+} from "@/lib/types/unit.types";
 import type { UnitPublishedReviewSummaryResponse } from "@/lib/types/review.types";
 
 // Transform params: camelCase to PascalCase for .NET API
@@ -81,6 +85,12 @@ export const ownerPortalService = {
     data: OperationalAvailabilityRequest
   ): Promise<OperationalAvailabilityResponse> =>
     api.post(endpoints.units.operationalCheck(unitId), data),
+
+  createDateBlock: (
+    unitId: string,
+    data: CreateDateBlockRequest
+  ): Promise<DateBlockResponse> =>
+    api.post(endpoints.ownerPortal.units.dateBlocks(unitId), data),
 
   // ── Bookings ──
   getBookings: (

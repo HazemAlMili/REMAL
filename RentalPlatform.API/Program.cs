@@ -141,12 +141,43 @@ builder.Services.AddAuthentication(options =>
         // POST /api/auth/refresh. Only access tokens may authenticate API calls.
         options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
         {
-            OnTokenValidated = context =>
+            OnTokenValidated = async context =>
             {
                 var tokenType = context.Principal?.FindFirst("tokenType")?.Value;
                 if (tokenType != "access_token")
+                {
                     context.Fail("Invalid token type.");
-                return Task.CompletedTask;
+                    return;
+                }
+
+                var subjectType = context.Principal?.FindFirst("subjectType")?.Value;
+                if (!string.Equals(subjectType, "client", StringComparison.Ordinal))
+                    return;
+
+                var subjectId = context.Principal?.FindFirst(
+                    System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                var stamp = context.Principal?.FindFirst(
+                    JwtTokenService.ClientUpdatedAtClaim)?.Value;
+                if (!Guid.TryParse(subjectId, out var clientId) ||
+                    !long.TryParse(stamp, out var tokenUpdatedAtTicks))
+                {
+                    context.Fail("Invalid client security stamp.");
+                    return;
+                }
+
+                var dbContext = context.HttpContext.RequestServices
+                    .GetRequiredService<AppDbContext>();
+                var currentUpdatedAt = await dbContext.Clients
+                    .AsNoTracking()
+                    .Where(c => c.Id == clientId && c.IsActive && c.DeletedAt == null)
+                    .Select(c => (DateTime?)c.UpdatedAt)
+                    .SingleOrDefaultAsync(context.HttpContext.RequestAborted);
+
+                if (!currentUpdatedAt.HasValue ||
+                    currentUpdatedAt.Value.Ticks != tokenUpdatedAtTicks)
+                {
+                    context.Fail("Client session has been revoked.");
+                }
             }
         };
     });
@@ -239,6 +270,7 @@ builder.Services.AddScoped<IReportingBookingAnalyticsService, ReportingBookingAn
 builder.Services.AddScoped<IReportingFinanceAnalyticsService, ReportingFinanceAnalyticsService>();
 builder.Services.AddScoped<IReportingReviewsAnalyticsService, ReportingReviewsAnalyticsService>();
 builder.Services.AddScoped<IReportingNotificationsAnalyticsService, ReportingNotificationsAnalyticsService>();
+builder.Services.AddHostedService<AutoCompleteBookingsJob>();
 
 var app = builder.Build();
 

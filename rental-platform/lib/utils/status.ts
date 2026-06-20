@@ -14,11 +14,16 @@ import {
 export type StatusVariant = "success" | "warning" | "danger" | "info" | "neutral";
 
 const CRM_STATUS_COLORS: Record<string, StatusVariant> = {
-  [CRM_LEAD_STATUSES.New]: "info",
-  [CRM_LEAD_STATUSES.Contacted]: "warning",
-  [CRM_LEAD_STATUSES.Qualified]: "success",
-  [CRM_LEAD_STATUSES.Converted]: "success",
-  [CRM_LEAD_STATUSES.Lost]: "danger",
+  [CRM_LEAD_STATUSES.Prospecting]: "warning",
+  [CRM_LEAD_STATUSES.Relevant]: "warning",
+  [CRM_LEAD_STATUSES.NoAnswer]: "warning",
+  [CRM_LEAD_STATUSES.NotRelevant]: "neutral",
+  [CRM_LEAD_STATUSES.Booked]: "info",
+  [CRM_LEAD_STATUSES.Confirmed]: "success",
+  [CRM_LEAD_STATUSES.CheckIn]: "info",
+  [CRM_LEAD_STATUSES.Completed]: "success",
+  [CRM_LEAD_STATUSES.Cancelled]: "danger",
+  [CRM_LEAD_STATUSES.LeftEarly]: "warning",
 };
 
 const GENERIC_STATUS_LABELS: Record<string, string> = {

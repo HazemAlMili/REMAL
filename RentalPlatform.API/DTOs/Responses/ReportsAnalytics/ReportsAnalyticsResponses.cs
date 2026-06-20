@@ -11,7 +11,7 @@ public record BookingAnalyticsDailySummaryResponse
     public DateOnly MetricDate { get; init; }
     public string BookingSource { get; init; } = string.Empty;
     public int BookingsCreatedCount { get; init; }
-    public int PendingBookingsCount { get; init; }
+    public int ProspectingBookingsCount { get; init; }
     public int ConfirmedBookingsCount { get; init; }
     public int CancelledBookingsCount { get; init; }
     public int CompletedBookingsCount { get; init; }
@@ -24,7 +24,7 @@ public record BookingAnalyticsSummaryResponse
     public DateOnly? DateTo { get; init; }
     public string? BookingSource { get; init; }
     public int TotalBookingsCreatedCount { get; init; }
-    public int TotalPendingBookingsCount { get; init; }
+    public int TotalProspectingBookingsCount { get; init; }
     public int TotalConfirmedBookingsCount { get; init; }
     public int TotalCancelledBookingsCount { get; init; }
     public int TotalCompletedBookingsCount { get; init; }

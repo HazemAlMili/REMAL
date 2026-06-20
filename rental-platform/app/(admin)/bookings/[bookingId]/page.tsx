@@ -147,6 +147,7 @@ export default function BookingDetailPage() {
         <BookingLifecycleActions
           bookingId={booking.id}
           currentStatus={booking.bookingStatus}
+          financeSnapshot={snapshot ?? null}
         />
       </div>
 

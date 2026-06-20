@@ -8,5 +8,6 @@ public interface IAmenityService
     Task<Amenity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Amenity> CreateAsync(string name, string? icon, CancellationToken cancellationToken = default);
     Task<Amenity> UpdateAsync(Guid id, string name, string? icon, CancellationToken cancellationToken = default);
+    Task<Amenity> UpdateStatusAsync(Guid id, bool isActive, CancellationToken cancellationToken = default);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }

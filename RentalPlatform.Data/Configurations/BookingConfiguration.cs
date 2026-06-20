@@ -77,6 +77,11 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
             .HasColumnName("updated_at")
             .IsRequired();
 
+        // PostgreSQL's built-in xmin column provides optimistic concurrency
+        // without adding application schema.
+        builder.Property<uint>("xmin")
+            .IsRowVersion();
+
         // Relationships
         builder.HasOne(b => b.Client)
             .WithMany() // Assuming Client entity doesn't have a Bookings collection yet, or it does but it's not defined here. 

@@ -100,7 +100,7 @@ export function Combobox<T = string | number>({
           )}
         >
           <span
-            className={cn("truncate", !selectedOption && "text-neutral-400")}
+            className={cn("truncate", !selectedOption && "text-neutral-500")}
           >
             {selectedOption ? selectedOption.label : placeholder}
           </span>
@@ -126,12 +126,12 @@ export function Combobox<T = string | number>({
         </button>
 
         {isOpen && (
-          <div className="absolute z-[var(--z-dropdown)] mt-1 flex max-h-60 w-full flex-col rounded-[var(--portal-radius-control)] border border-neutral-200 bg-white shadow-md focus:outline-none">
+          <div className="absolute left-0 right-0 top-full z-[80] mt-1 flex max-h-60 w-full flex-col overflow-hidden rounded-[var(--portal-radius-control)] border border-neutral-300 bg-white shadow-xl ring-1 ring-neutral-900/5 focus:outline-none">
             {searchable && (
               <div className="sticky top-0 shrink-0 border-b border-neutral-200 bg-white p-2">
                 <input
                   type="text"
-                  className="w-full rounded-[var(--portal-radius-control)] border border-neutral-300 px-3 py-2 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full rounded-[var(--portal-radius-control)] border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-800 placeholder:text-neutral-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
                   placeholder="Search..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -141,7 +141,7 @@ export function Combobox<T = string | number>({
               </div>
             )}
 
-            <div className="overflow-auto py-1">
+            <div className="overflow-auto bg-white py-1">
               {filteredOptions.length === 0 ? (
                 <div className="px-3 py-2 text-sm text-neutral-400">
                   No results found
@@ -156,7 +156,7 @@ export function Combobox<T = string | number>({
                       }
                     }}
                     className={cn(
-                      "cursor-pointer px-3 py-2 text-sm transition-colors",
+                      "cursor-pointer px-3 py-2 text-sm text-neutral-800 transition-colors",
                       opt.disabled
                         ? "cursor-not-allowed opacity-50"
                         : "hover:bg-neutral-100",

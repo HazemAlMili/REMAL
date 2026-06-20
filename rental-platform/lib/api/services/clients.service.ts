@@ -2,10 +2,12 @@
 import { endpoints } from "@/lib/api/endpoints";
 import type {
   ClientDetailsResponse,
+  CreateClientResponse,
   ClientListFilters,
   PaginatedClients,
   PaginatedBookings,
   UpdateClientStatusRequest,
+  ResetClientPasswordRequest,
   CreateClientRequest,
 } from "@/lib/types";
 
@@ -16,13 +18,18 @@ export const clientsService = {
   getById: (id: string): Promise<ClientDetailsResponse> =>
     api.get(endpoints.clients.byId(id)),
 
-  create: (data: CreateClientRequest): Promise<ClientDetailsResponse> =>
+  create: (data: CreateClientRequest): Promise<CreateClientResponse> =>
     api.post(endpoints.clients.list, data),
 
   updateStatus: (
     id: string,
     data: UpdateClientStatusRequest
   ): Promise<ClientDetailsResponse> => api.patch(endpoints.clients.status(id), data),
+
+  resetPassword: (
+    id: string,
+    data: ResetClientPasswordRequest
+  ): Promise<ClientDetailsResponse> => api.patch(endpoints.clients.password(id), data),
 
   // Backend gap: client booking-history endpoint is not documented.
   // Keep this method blocked behind backend confirmation.

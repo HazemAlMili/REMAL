@@ -32,7 +32,8 @@ export function BookingsAnalyticsTable({
   const totals = data.reduce(
     (acc, row) => ({
       bookingsCreatedCount: acc.bookingsCreatedCount + row.bookingsCreatedCount,
-      pendingBookingsCount: acc.pendingBookingsCount + row.pendingBookingsCount,
+      prospectingBookingsCount:
+        acc.prospectingBookingsCount + row.prospectingBookingsCount,
       confirmedBookingsCount:
         acc.confirmedBookingsCount + row.confirmedBookingsCount,
       cancelledBookingsCount:
@@ -43,7 +44,7 @@ export function BookingsAnalyticsTable({
     }),
     {
       bookingsCreatedCount: 0,
-      pendingBookingsCount: 0,
+      prospectingBookingsCount: 0,
       confirmedBookingsCount: 0,
       cancelledBookingsCount: 0,
       completedBookingsCount: 0,
@@ -59,7 +60,7 @@ export function BookingsAnalyticsTable({
             <th className="px-4 py-3">Date</th>
             <th className="px-4 py-3">Source</th>
             <th className="px-4 py-3 text-right">Created</th>
-            <th className="px-4 py-3 text-right">Pending</th>
+            <th className="px-4 py-3 text-right">Prospecting</th>
             <th className="px-4 py-3 text-right">Confirmed</th>
             <th className="px-4 py-3 text-right">Completed</th>
             <th className="px-4 py-3 text-right">Cancelled</th>
@@ -84,7 +85,7 @@ export function BookingsAnalyticsTable({
                 {row.bookingsCreatedCount}
               </td>
               <td className="px-4 py-3 text-right text-sm text-amber-600">
-                {row.pendingBookingsCount}
+                {row.prospectingBookingsCount}
               </td>
               <td className="px-4 py-3 text-right text-sm text-blue-600">
                 {row.confirmedBookingsCount}
@@ -109,7 +110,7 @@ export function BookingsAnalyticsTable({
               {totals.bookingsCreatedCount}
             </td>
             <td className="px-4 py-4 text-right text-sm">
-              {totals.pendingBookingsCount}
+              {totals.prospectingBookingsCount}
             </td>
             <td className="px-4 py-4 text-right text-sm">
               {totals.confirmedBookingsCount}

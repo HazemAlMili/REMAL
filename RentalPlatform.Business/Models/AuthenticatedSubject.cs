@@ -9,4 +9,5 @@ public class AuthenticatedSubject
     public string? Identifier { get; set; }
     public string? Name { get; set; }
     public AdminRole? AdminRole { get; set; }
+    public DateTime? ClientUpdatedAt { get; set; }
 }

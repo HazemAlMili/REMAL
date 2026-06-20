@@ -16,6 +16,7 @@ export default function OwnerLayout({
 }) {
   const router = useRouter();
   const { subjectType, accessToken, setAuth, clearAuth } = useAuthStore();
+  const [hasHydrated, setHasHydrated] = useState(false);
   // Start ready only if we already have a token in memory (in-app navigation).
   // On cold start (page refresh) the token is null until refresh completes.
   const [isAuthReady, setIsAuthReady] = useState(!!accessToken);
@@ -23,6 +24,27 @@ export default function OwnerLayout({
   const showApp = usePortalReady(isAuthReady && subjectType === "Owner");
 
   useEffect(() => {
+    const persistApi = useAuthStore.persist;
+
+    if (!persistApi) {
+      setHasHydrated(true);
+      return;
+    }
+
+    const unsubscribe = persistApi.onFinishHydration(() => {
+      setHasHydrated(true);
+    });
+
+    setHasHydrated(persistApi.hasHydrated());
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+
     if (subjectType !== "Owner") {
       router.replace(ROUTES.auth.ownerLogin);
       return;
@@ -52,6 +74,7 @@ export default function OwnerLayout({
           subjectType: auth.subjectType,
           user: auth.user,
           role: "Owner",
+          permissions: auth.permissions,
         });
       })
       .catch(() => {
@@ -61,8 +84,7 @@ export default function OwnerLayout({
       .finally(() => {
         setIsAuthReady(true);
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [accessToken, clearAuth, hasHydrated, router, setAuth, subjectType]);
 
   if (!showApp) {
     return <PortalSplash className="portal-owner" label="Loading your dashboard" />;

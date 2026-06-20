@@ -6,11 +6,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RentalPlatform.API.DTOs.Requests.Bookings;
 using RentalPlatform.API.DTOs.Responses.Bookings;
 using RentalPlatform.API.Models;
 using RentalPlatform.Business.Exceptions;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
+using RentalPlatform.Shared.Enums;
 
 namespace RentalPlatform.API.Controllers;
 
@@ -22,15 +24,18 @@ public class ClientBookingsController : ControllerBase
     private readonly IBookingService _bookingService;
     private readonly ICrmLeadService _crmLeadService;
     private readonly IUnitAvailabilityService _availabilityService;
+    private readonly ILogger<ClientBookingsController> _logger;
 
     public ClientBookingsController(
         IBookingService bookingService, 
         ICrmLeadService crmLeadService,
-        IUnitAvailabilityService availabilityService)
+        IUnitAvailabilityService availabilityService,
+        ILogger<ClientBookingsController> logger)
     {
         _bookingService = bookingService;
         _crmLeadService = crmLeadService;
         _availabilityService = availabilityService;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -53,21 +58,15 @@ public class ClientBookingsController : ControllerBase
         // Fetch all leads (pending booking requests) for the client
         var leads = await _crmLeadService.GetByClientIdAsync(clientId, cancellationToken);
         var combined = new List<BookingListItemResponse>();
-        Console.WriteLine($"[DEBUG] Fetched {leads.Count} leads for client {clientId}. Combined currently has {combined.Count} bookings.");
         combined.AddRange(bookingsResult.Items.Select(MapToListItemResponse));
 
-        // Include active leads mapped to "Prospecting" status
-        var filteredLeads = leads.AsEnumerable();
+        var filteredLeads = leads.Where(l => !IsTerminalLeadStatus(l.LeadStatus));
         if (!string.IsNullOrWhiteSpace(bookingStatus))
         {
-            if (bookingStatus.Equals("Prospecting", StringComparison.OrdinalIgnoreCase))
-                filteredLeads = filteredLeads.Where(l => l.LeadStatus != RentalPlatform.Shared.Enums.LeadStatus.Converted && l.LeadStatus != RentalPlatform.Shared.Enums.LeadStatus.Lost);
+            if (Enum.TryParse<LeadStatus>(bookingStatus.Trim(), ignoreCase: true, out var requestedLeadStatus))
+                filteredLeads = filteredLeads.Where(l => l.LeadStatus == requestedLeadStatus);
             else
                 filteredLeads = Enumerable.Empty<CrmLead>();
-        }
-        else
-        {
-            filteredLeads = filteredLeads.Where(l => l.LeadStatus != RentalPlatform.Shared.Enums.LeadStatus.Converted && l.LeadStatus != RentalPlatform.Shared.Enums.LeadStatus.Lost);
         }
 
         foreach (var lead in filteredLeads)
@@ -90,6 +89,31 @@ public class ClientBookingsController : ControllerBase
         return Ok(ApiResponse<IReadOnlyList<BookingListItemResponse>>.CreateSuccess(pagedResponse, null, pagination));
     }
 
+    // Client-portal booking: creates a booking directly at "Prospecting" for the
+    // authenticated client (no CRM lead). The client id comes from the token only.
+    [HttpPost]
+    public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> CreateOwnBooking(
+        [FromBody] CreateClientBookingRequest request,
+        CancellationToken cancellationToken)
+    {
+        var clientId = GetCurrentClientId();
+
+        var booking = await _bookingService.CreateQuickAsync(
+            clientId,
+            request.UnitId,
+            request.CheckInDate,
+            request.CheckOutDate,
+            request.GuestCount,
+            source: "website",
+            assignedAdminUserId: null,
+            internalNotes: null,
+            cancellationToken);
+
+        return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(
+            MapToDetailsResponse(booking),
+            "Booking request submitted."));
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> GetOwnBooking(Guid id, CancellationToken cancellationToken)
     {
@@ -99,7 +123,7 @@ public class ClientBookingsController : ControllerBase
         if (booking == null)
         {
             var lead = await _crmLeadService.GetByIdAsync(id, cancellationToken);
-            if (lead == null || lead.ClientId != clientId)
+            if (lead == null || lead.ClientId != clientId || IsTerminalLeadStatus(lead.LeadStatus))
                 throw new NotFoundException($"Booking or request {id} not found.");
 
             return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(await MapLeadToDetailsResponseAsync(lead, cancellationToken)));
@@ -184,7 +208,10 @@ public class ClientBookingsController : ControllerBase
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[WARNING] Failed to calculate pricing for lead {lead.Id}: {ex.Message}");
+                _logger.LogWarning(
+                    ex,
+                    "Could not calculate client-visible pricing for CRM lead {LeadId}.",
+                    lead.Id);
             }
         }
 
@@ -198,7 +225,7 @@ public class ClientBookingsController : ControllerBase
             UnitName = lead.TargetUnit?.Name,
             OwnerId = Guid.Empty,
             AssignedAdminUserId = lead.AssignedAdminUserId,
-            BookingStatus = "Prospecting", // Map pending CRM leads as Prospecting requests
+            BookingStatus = lead.LeadStatus.ToString(),
             CheckInDate = lead.DesiredCheckInDate ?? default,
             CheckOutDate = lead.DesiredCheckOutDate ?? default,
             GuestCount = lead.GuestCount ?? 0,
@@ -227,7 +254,10 @@ public class ClientBookingsController : ControllerBase
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[WARNING] Failed to calculate pricing for lead {lead.Id}: {ex.Message}");
+                _logger.LogWarning(
+                    ex,
+                    "Could not calculate client-visible pricing for CRM lead {LeadId}.",
+                    lead.Id);
             }
         }
 
@@ -239,7 +269,7 @@ public class ClientBookingsController : ControllerBase
             UnitName = lead.TargetUnit?.Name,
             OwnerId = Guid.Empty,
             AssignedAdminUserId = lead.AssignedAdminUserId,
-            BookingStatus = "Prospecting",
+            BookingStatus = lead.LeadStatus.ToString(),
             CheckInDate = lead.DesiredCheckInDate ?? default,
             CheckOutDate = lead.DesiredCheckOutDate ?? default,
             GuestCount = lead.GuestCount ?? 0,
@@ -250,5 +280,13 @@ public class ClientBookingsController : ControllerBase
             CreatedAt = lead.CreatedAt,
             UpdatedAt = lead.UpdatedAt
         };
+    }
+
+    private static bool IsTerminalLeadStatus(LeadStatus status)
+    {
+        return status is LeadStatus.NotRelevant
+            or LeadStatus.Completed
+            or LeadStatus.Cancelled
+            or LeadStatus.LeftEarly;
     }
 }

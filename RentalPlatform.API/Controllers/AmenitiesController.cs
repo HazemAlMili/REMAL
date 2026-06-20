@@ -39,12 +39,31 @@ public class AmenitiesController : ControllerBase
         return Ok(ApiResponse<AmenityResponse>.CreateSuccess(MapToResponse(amenity), "Amenity created successfully."));
     }
 
+    [HttpPut("{id}")]
+    [Authorize(Policy = "SuperAdminOnly")]
+    public async Task<ActionResult<ApiResponse<AmenityResponse>>> Update(Guid id, UpdateAmenityRequest request)
+    {
+        var amenity = await _amenityService.UpdateAsync(id, request.Name, request.Icon);
+        return Ok(ApiResponse<AmenityResponse>.CreateSuccess(MapToResponse(amenity), "Amenity updated successfully."));
+    }
+
+    [HttpPatch("{id}/status")]
+    [Authorize(Policy = "SuperAdminOnly")]
+    public async Task<ActionResult<ApiResponse<AmenityResponse>>> UpdateStatus(Guid id, UpdateAmenityStatusRequest request)
+    {
+        var amenity = await _amenityService.UpdateStatusAsync(id, request.IsActive);
+        return Ok(ApiResponse<AmenityResponse>.CreateSuccess(
+            MapToResponse(amenity),
+            request.IsActive ? "Amenity activated successfully." : "Amenity deactivated successfully."));
+    }
+
     private static AmenityResponse MapToResponse(Amenity amenity)
     {
         return new AmenityResponse(
             amenity.Id,
             amenity.Name,
             amenity.Icon,
+            amenity.IsActive,
             amenity.CreatedAt,
             amenity.UpdatedAt
         );

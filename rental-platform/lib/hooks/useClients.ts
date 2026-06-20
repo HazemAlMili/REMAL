@@ -6,6 +6,7 @@ import { ApiError } from "@/lib/api/api-error";
 import type {
   ClientListFilters,
   UpdateClientStatusRequest,
+  ResetClientPasswordRequest,
   CreateClientRequest,
 } from "@/lib/types";
 
@@ -83,6 +84,29 @@ export function useUpdateClientStatus(id: string) {
         toastError(error.message || "Failed to update client status");
       } else {
         toastError("Failed to update client status. Please try again.");
+      }
+    },
+  });
+}
+
+export function useResetClientPassword(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: ResetClientPasswordRequest) =>
+      clientsService.resetPassword(id, data),
+    onSuccess: () => {
+      toastSuccess("Client password reset");
+      queryClient.invalidateQueries({ queryKey: queryKeys.clients.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.clients.detail(id),
+      });
+    },
+    onError: (error: unknown) => {
+      if (error instanceof ApiError) {
+        toastError(error.message || "Failed to reset client password");
+      } else {
+        toastError("Failed to reset client password. Please try again.");
       }
     },
   });

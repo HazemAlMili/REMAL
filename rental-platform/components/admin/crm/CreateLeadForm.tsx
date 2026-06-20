@@ -10,6 +10,9 @@ import { DateRangePicker } from "@/components/ui/DateRangePicker";
 import { Combobox } from "@/components/ui/Combobox";
 import { BOOKING_SOURCE_LABELS } from "@/lib/constants/booking-sources";
 import { useInternalUnitsList } from "@/lib/hooks/useUnits";
+import { useAvailabilityCheck } from "@/lib/hooks/usePublic";
+import { formatDateForApi } from "@/lib/utils/format";
+import { AlertTriangle } from "lucide-react";
 import type { CreateCrmLeadRequest } from "@/lib/types/crm.types";
 
 const BOOKING_SOURCE_OPTIONS = Object.entries(BOOKING_SOURCE_LABELS).map(
@@ -69,6 +72,18 @@ export function CreateLeadForm({
   const { data: unitsData, isLoading: isLoadingUnits } = useInternalUnitsList({
     pageSize: 500,
   });
+  const targetUnitId = watch("targetUnitId");
+  const desiredCheckInDate = watch("desiredCheckInDate");
+  const desiredCheckOutDate = watch("desiredCheckOutDate");
+  const desiredStart = desiredCheckInDate
+    ? formatDateForApi(desiredCheckInDate)
+    : null;
+  const desiredEnd = desiredCheckOutDate
+    ? formatDateForApi(desiredCheckOutDate)
+    : null;
+  const { data: availability, isLoading: isCheckingAvailability } =
+    useAvailabilityCheck(targetUnitId || "", desiredStart, desiredEnd);
+  const hasDateConflict = availability?.isAvailable === false;
   const unitOptions = (unitsData?.items ?? []).map((u) => ({
     value: u.id,
     label: u.name,
@@ -193,6 +208,21 @@ export function CreateLeadForm({
         }}
       />
 
+      {hasDateConflict && (
+        <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <div>
+            <p className="font-medium">Selected dates are unavailable.</p>
+            <p className="mt-0.5">
+              {availability?.reason || "BookingConflict"}
+              {availability?.blockedDates?.length
+                ? `: ${availability.blockedDates.join(", ")}`
+                : ""}
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="w-full">
         <label className="mb-1.5 block text-sm font-medium text-neutral-700">
           Internal note (optional)
@@ -214,7 +244,11 @@ export function CreateLeadForm({
         >
           Cancel
         </Button>
-        <Button type="submit" isLoading={isLoading}>
+        <Button
+          type="submit"
+          isLoading={isLoading || isCheckingAvailability}
+          disabled={hasDateConflict}
+        >
           Create lead
         </Button>
       </div>

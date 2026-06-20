@@ -100,7 +100,7 @@ public class OwnerPayoutsController : ControllerBase
             Id = payout.Id,
             BookingId = payout.BookingId,
             OwnerId = payout.OwnerId,
-            PayoutStatus = payout.PayoutStatus,
+            PayoutStatus = payout.PayoutStatus.ToString().ToLowerInvariant(),
             GrossBookingAmount = payout.GrossBookingAmount,
             CommissionRate = payout.CommissionRate,
             CommissionAmount = payout.CommissionAmount,

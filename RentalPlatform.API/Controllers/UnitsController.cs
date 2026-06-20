@@ -75,16 +75,30 @@ public class UnitsController : ControllerBase
         [FromQuery] int page = 1, 
         [FromQuery] int pageSize = 20, 
         [FromQuery] bool includeInactive = true,
-        [FromQuery] Guid? ownerId = null)
+        [FromQuery] Guid? ownerId = null,
+        [FromQuery] Guid? areaId = null,
+        [FromQuery] string? unitType = null,
+        [FromQuery] bool? isActive = null,
+        [FromQuery] string? search = null)
     {
-        var allUnits = await _unitService.GetAllAsync(includeInactive: includeInactive, ownerId: ownerId);
-        
-        int total = allUnits.Count;
+        page = Math.Max(page, 1);
+        pageSize = Math.Clamp(pageSize, 1, 100);
+
+        var result = await _unitService.GetInternalCatalogAsync(
+            page,
+            pageSize,
+            includeInactive,
+            ownerId,
+            areaId,
+            unitType,
+            isActive,
+            search);
+
+        int total = result.Total;
         int totalPages = (int)Math.Ceiling(total / (double)pageSize);
         if (totalPages == 0) totalPages = 1;
-        var pagedUnits = allUnits.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-        
-        var response = pagedUnits.Select(MapToListItemResponse).ToList();
+
+        var response = result.Items.Select(MapToListItemResponse).ToList();
         var pagination = new PaginationMeta(total, page, pageSize, totalPages);
         
         return Ok(ApiResponse<IReadOnlyList<UnitListItemResponse>>.CreateSuccess(response, null, pagination));
@@ -178,7 +192,9 @@ public class UnitsController : ControllerBase
         {
             Id = unit.Id,
             OwnerId = unit.OwnerId,
+            OwnerName = unit.Owner?.Name ?? "[Unassigned Owner]",
             AreaId = unit.AreaId,
+            AreaName = unit.Area?.Name ?? "[Unassigned Area]",
             Name = unit.Name,
             UnitType = unit.UnitType,
             Bedrooms = unit.Bedrooms,
@@ -241,7 +257,9 @@ public class UnitsController : ControllerBase
         {
             Id = unit.Id,
             OwnerId = unit.OwnerId,
+            OwnerName = unit.Owner?.Name ?? "[Unassigned Owner]",
             AreaId = unit.AreaId,
+            AreaName = unit.Area?.Name ?? "[Unassigned Area]",
             Name = unit.Name,
             Description = unit.Description,
             Address = unit.Address,

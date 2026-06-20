@@ -38,7 +38,10 @@ public class AuthService : IAuthService
 
     public async Task<AuthenticatedSubject?> ValidateClientCredentialsAsync(string phone, string password, CancellationToken cancellationToken = default)
     {
-        var client = await _unitOfWork.Clients.FirstOrDefaultAsync(c => c.Phone == phone && c.IsActive, cancellationToken);
+        var normalizedPhone = phone.Trim().TrimStart('+');
+        var client = await _unitOfWork.Clients.FirstOrDefaultAsync(
+            c => c.Phone.Replace("+", string.Empty) == normalizedPhone && c.IsActive,
+            cancellationToken);
         
         if (client == null)
             return null;
@@ -52,7 +55,8 @@ public class AuthService : IAuthService
             SubjectType = "Client",
             Identifier = client.Phone,
             Name = client.Name,
-            AdminRole = null
+            AdminRole = null,
+            ClientUpdatedAt = client.UpdatedAt
         };
     }
 

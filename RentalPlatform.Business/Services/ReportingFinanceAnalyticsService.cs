@@ -9,6 +9,7 @@ using RentalPlatform.Business.Exceptions;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Business.Models;
 using RentalPlatform.Data;
+using RentalPlatform.Shared.Enums;
 using RentalPlatform.Data.ReadModels;
 
 namespace RentalPlatform.Business.Services;
@@ -118,9 +119,9 @@ public class ReportingFinanceAnalyticsService : IReportingFinanceAnalyticsServic
                 payout.Id, payout.BookingId, payout.PayoutStatus, payout.PayoutAmount);
         }
 
-        var pendingPayouts = payouts.Where(p => p.PayoutStatus == "pending").ToList();
-        var scheduledPayouts = payouts.Where(p => p.PayoutStatus == "scheduled").ToList();
-        var paidPayouts = payouts.Where(p => p.PayoutStatus == "paid").ToList();
+        var pendingPayouts = payouts.Where(p => p.PayoutStatus == OwnerPayoutStatus.Pending).ToList();
+        var scheduledPayouts = payouts.Where(p => p.PayoutStatus == OwnerPayoutStatus.Scheduled).ToList();
+        var paidPayouts = payouts.Where(p => p.PayoutStatus == OwnerPayoutStatus.Paid).ToList();
 
         _logger.LogDebug("[FinanceAnalytics] Pending payouts: {Count}, Total: {Total}", pendingPayouts.Count, pendingPayouts.Sum(p => p.PayoutAmount));
         _logger.LogDebug("[FinanceAnalytics] Scheduled payouts: {Count}, Total: {Total}", scheduledPayouts.Count, scheduledPayouts.Sum(p => p.PayoutAmount));

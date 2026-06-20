@@ -8,6 +8,7 @@ using RentalPlatform.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace RentalPlatform.API.Controllers;
@@ -49,6 +50,23 @@ public class DateBlocksController : ControllerBase
         return Ok(ApiResponse<DateBlockResponse>.CreateSuccess(MapToResponse(block), "Date block created successfully."));
     }
 
+    [HttpPost("api/owner/units/{unitId}/date-blocks")]
+    [Authorize(Policy = "OwnerOnly")]
+    public async Task<ActionResult<ApiResponse<DateBlockResponse>>> CreateOwnerBlock(Guid unitId, CreateDateBlockRequest request)
+    {
+        var ownerId = GetCurrentOwnerId();
+        var block = await _dateBlockService.CreateOwnerBlockAsync(
+            ownerId,
+            unitId,
+            request.StartDate,
+            request.EndDate,
+            request.Reason,
+            request.Notes
+        );
+
+        return Ok(ApiResponse<DateBlockResponse>.CreateSuccess(MapToResponse(block), "Date block created successfully."));
+    }
+
     // 3. PUT /api/internal/date-blocks/{id}
     [HttpPut("api/internal/date-blocks/{id}")]
     [Authorize(Policy = "SuperAdminOnly")]
@@ -87,5 +105,16 @@ public class DateBlocksController : ControllerBase
             CreatedAt = block.CreatedAt,
             UpdatedAt = block.UpdatedAt
         };
+    }
+
+    private Guid GetCurrentOwnerId()
+    {
+        var subClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(subClaim) || !Guid.TryParse(subClaim, out var ownerId))
+        {
+            throw new UnauthorizedAccessException("Current owner ID not found in claims.");
+        }
+
+        return ownerId;
     }
 }

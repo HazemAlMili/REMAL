@@ -11,6 +11,7 @@ namespace RentalPlatform.API.Services;
 
 public class JwtTokenService : ITokenService
 {
+    public const string ClientUpdatedAtClaim = "clientUpdatedAtTicks";
     private readonly JwtOptions _options;
     private readonly ILogger<JwtTokenService> _logger;
 
@@ -34,6 +35,8 @@ public class JwtTokenService : ITokenService
             claims.Add(new(ClaimTypes.Role, subject.AdminRole.ToString()!));
         }
 
+        AddClientSecurityStampClaim(claims, subject);
+
         return CreateToken(claims, _options.AccessTokenExpirationMinutes);
     }
 
@@ -50,6 +53,8 @@ public class JwtTokenService : ITokenService
         {
             claims.Add(new(ClaimTypes.Role, subject.AdminRole.ToString()!));
         }
+
+        AddClientSecurityStampClaim(claims, subject);
 
         return CreateToken(claims, _options.RefreshTokenExpirationDays * 24 * 60);
     }
@@ -103,5 +108,21 @@ public class JwtTokenService : ITokenService
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+    }
+
+    private static void AddClientSecurityStampClaim(
+        ICollection<Claim> claims,
+        AuthenticatedSubject subject)
+    {
+        if (!string.Equals(subject.SubjectType, "Client", StringComparison.OrdinalIgnoreCase) ||
+            !subject.ClientUpdatedAt.HasValue)
+        {
+            return;
+        }
+
+        claims.Add(new Claim(
+            ClientUpdatedAtClaim,
+            subject.ClientUpdatedAt.Value.Ticks.ToString(
+                System.Globalization.CultureInfo.InvariantCulture)));
     }
 }

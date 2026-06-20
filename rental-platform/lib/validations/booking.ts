@@ -27,8 +27,8 @@ export const crmLeadRequestSchema = z
       .string()
       .min(1, "Contact phone is required")
       .regex(
-        /^01[0-9]{9}$/,
-        "Enter a valid Egyptian phone number (e.g., 01012345678)"
+        /^\+?\d{10,15}$/,
+        "Enter 10 to 15 digits, optionally starting with +"
       ),
     contactEmail: z
       .string()

@@ -75,6 +75,7 @@
     all: ["crm"] as const,
     leads: (filters?: object) =>
       [...queryKeys.crm.all, "leads", filters ?? {}] as const,
+    openCount: () => [...queryKeys.crm.all, "open-count"] as const,
     leadDetail: (id: string) => [...queryKeys.crm.all, "lead", id] as const,
     leadNotes: (leadId: string) =>
       [...queryKeys.crm.all, leadId, "notes"] as const,

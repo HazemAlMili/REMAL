@@ -21,6 +21,7 @@ const STATUS_BUTTON_VARIANT: Record<string, "success" | "danger" | "warning"> =
     NotRelevant: "danger",
     Cancelled: "danger",
     NoAnswer: "warning",
+    LeftEarly: "warning",
   };
 
 interface LeadStatusTransitionProps {

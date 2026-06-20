@@ -19,6 +19,7 @@ export interface Permissions {
   canManageOwners: boolean;
   canViewClients: boolean;
   canManageClients: boolean;
+  canResetClientPasswords: boolean;
   canModerateReviews: boolean;
   canManageAdminUsers: boolean;
   canManageAreas: boolean;
@@ -101,6 +102,7 @@ export function usePermissions(): Permissions {
       canManageOwners: has("SuperAdminOnly"),
       canViewClients: has("InternalAdminRead"),
       canManageClients: has("SalesOrSuperAdmin"),
+      canResetClientPasswords: has("SuperAdminOnly"),
       canModerateReviews: has("SalesOrSuperAdmin"),
       canManageAdminUsers: has("SuperAdminOnly"),
       canManageAreas: has("SuperAdminOnly"),

@@ -1,7 +1,7 @@
 import type { PaymentResponse, PaymentStatus } from "@/lib/types/booking.types";
 import type { PaginationMeta } from "@/lib/api/types";
 
-export type PayoutStatus = "Pending" | "Scheduled" | "Paid" | "Cancelled";
+export type PayoutStatus = "pending" | "scheduled" | "paid" | "cancelled";
 
 // Owner Payout
 export interface OwnerPayoutResponse {
@@ -79,7 +79,7 @@ export interface BookingAnalyticsDailySummaryResponse {
   metricDate: string;
   bookingSource: string;
   bookingsCreatedCount: number;
-  pendingBookingsCount: number;
+  prospectingBookingsCount: number;
   confirmedBookingsCount: number;
   cancelledBookingsCount: number;
   completedBookingsCount: number;
@@ -92,7 +92,7 @@ export interface BookingAnalyticsSummaryResponse {
   dateTo: string;
   bookingSource: string;
   totalBookingsCreatedCount: number;
-  totalPendingBookingsCount: number;
+  totalProspectingBookingsCount: number;
   totalConfirmedBookingsCount: number;
   totalCancelledBookingsCount: number;
   totalCompletedBookingsCount: number;
@@ -104,6 +104,7 @@ export interface PaymentListFilters {
   bookingId?: string;
   invoiceId?: string;
   paymentStatus?: PaymentStatus;
+  search?: string;
   page?: number;
   pageSize?: number;
 }

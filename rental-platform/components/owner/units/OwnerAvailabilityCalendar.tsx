@@ -1,12 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { DayPicker } from "react-day-picker";
 import { format } from "date-fns";
-import { useOwnerUnitAvailability } from "@/lib/hooks/useOwnerPortal";
+import {
+  useCreateOwnerDateBlock,
+  useOwnerUnitAvailability,
+} from "@/lib/hooks/useOwnerPortal";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "react-hot-toast";
 import "react-day-picker/dist/style.css";
+import type { DateBlockReason } from "@/lib/types/unit.types";
 
 interface OwnerAvailabilityCalendarProps {
   unitId: string;
@@ -18,8 +25,20 @@ export function OwnerAvailabilityCalendar({
   unitName,
 }: OwnerAvailabilityCalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [blockForm, setBlockForm] = useState<{
+    startDate: string;
+    endDate: string;
+    reason: DateBlockReason;
+    notes: string;
+  }>({
+    startDate: "",
+    endDate: "",
+    reason: "OwnerUse",
+    notes: "",
+  });
 
   const { data, isLoading } = useOwnerUnitAvailability(unitId, currentMonth);
+  const createBlock = useCreateOwnerDateBlock(unitId);
 
   // P04: blockedDates is a FLAT STRING ARRAY — map to Date objects for react-day-picker
   const disabledDays =
@@ -34,6 +53,44 @@ export function OwnerAvailabilityCalendar({
   const handleNextMonth = () => {
     setCurrentMonth(
       (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1)
+    );
+  };
+
+  const canCreateBlock =
+    blockForm.startDate &&
+    blockForm.endDate &&
+    blockForm.startDate <= blockForm.endDate &&
+    !createBlock.isPending;
+
+  const submitBlock = (event: FormEvent) => {
+    event.preventDefault();
+    if (!canCreateBlock) return;
+
+    createBlock.mutate(
+      {
+        startDate: blockForm.startDate,
+        endDate: blockForm.endDate,
+        reason: blockForm.reason,
+        notes: blockForm.notes.trim() || undefined,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Dates blocked");
+          setBlockForm({
+            startDate: "",
+            endDate: "",
+            reason: "OwnerUse",
+            notes: "",
+          });
+        },
+        onError: (error: unknown) => {
+          const message =
+            error instanceof Error
+              ? error.message
+              : "Could not block these dates";
+          toast.error(message);
+        },
+      }
     );
   };
 
@@ -56,6 +113,76 @@ export function OwnerAvailabilityCalendar({
           </Button>
         </div>
       </div>
+
+      <form
+        onSubmit={submitBlock}
+        className="mx-auto grid max-w-2xl gap-3 rounded-lg border border-neutral-200 bg-white p-4 md:grid-cols-2"
+      >
+        <Input
+          label="Block from"
+          type="date"
+          value={blockForm.startDate}
+          onChange={(event) =>
+            setBlockForm((current) => ({
+              ...current,
+              startDate: event.target.value,
+            }))
+          }
+          disabled={createBlock.isPending}
+          required
+        />
+        <Input
+          label="Block to"
+          type="date"
+          value={blockForm.endDate}
+          min={blockForm.startDate || undefined}
+          onChange={(event) =>
+            setBlockForm((current) => ({
+              ...current,
+              endDate: event.target.value,
+            }))
+          }
+          disabled={createBlock.isPending}
+          required
+        />
+        <Select
+          label="Reason"
+          value={blockForm.reason}
+          options={[
+            { value: "OwnerUse", label: "Owner use" },
+            { value: "Maintenance", label: "Maintenance" },
+            { value: "Other", label: "Other" },
+          ]}
+          onChange={(value) =>
+            setBlockForm((current) => ({
+              ...current,
+              reason: value as DateBlockReason,
+            }))
+          }
+          disabled={createBlock.isPending}
+        />
+        <Input
+          label="Note"
+          value={blockForm.notes}
+          onChange={(event) =>
+            setBlockForm((current) => ({
+              ...current,
+              notes: event.target.value,
+            }))
+          }
+          disabled={createBlock.isPending}
+          placeholder="Optional"
+        />
+        <div className="md:col-span-2 flex justify-end">
+          <Button
+            type="submit"
+            isLoading={createBlock.isPending}
+            disabled={!canCreateBlock}
+          >
+            Block dates
+          </Button>
+        </div>
+      </form>
 
       {/* Calendar */}
       {isLoading ? (

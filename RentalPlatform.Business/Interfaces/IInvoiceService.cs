@@ -20,7 +20,7 @@ public interface IInvoiceService
 
     Task<Invoice> CreateDraftFromBookingAsync(
         Guid bookingId,
-        string invoiceNumber,
+        string? invoiceNumber,
         string? notes,
         CancellationToken cancellationToken = default);
 
@@ -35,7 +35,7 @@ public interface IInvoiceService
     Task<Invoice> CancelAsync(Guid id, string? notes, CancellationToken cancellationToken = default);
     Task<Invoice> ReissueAsync(
         Guid id,
-        string newInvoiceNumber,
+        string? newInvoiceNumber,
         string? notes,
         CancellationToken cancellationToken = default);
     Task<int> LinkOrphanedPaymentsAsync(CancellationToken cancellationToken = default);
