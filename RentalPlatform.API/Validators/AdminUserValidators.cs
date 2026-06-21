@@ -9,8 +9,10 @@ public class CreateAdminUserRequestValidator : AbstractValidator<CreateAdminUser
     {
         RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required.");
         RuleFor(x => x.Email).NotEmpty().EmailAddress().WithMessage("Valid email is required.");
-        RuleFor(x => x.Password).NotEmpty().WithMessage("Password is required.");
-        RuleFor(x => x.Role).IsInEnum().WithMessage("Invalid role specified.");
+        RuleFor(x => x.Password)
+            .NotEmpty().WithMessage("Password is required.")
+            .MinimumLength(8).WithMessage("Password must be at least 8 characters.");
+        RuleFor(x => x.RoleTemplateId).NotEmpty().WithMessage("Role template is required.");
     }
 }
 
@@ -18,7 +20,7 @@ public class UpdateAdminUserRoleRequestValidator : AbstractValidator<UpdateAdmin
 {
     public UpdateAdminUserRoleRequestValidator()
     {
-        RuleFor(x => x.Role).IsInEnum().WithMessage("Invalid role specified.");
+        RuleFor(x => x.RoleTemplateId).NotEmpty().WithMessage("Role template is required.");
     }
 }
 

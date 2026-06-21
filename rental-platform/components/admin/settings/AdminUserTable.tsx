@@ -3,7 +3,7 @@
 import { format } from "date-fns";
 import { Badge, BadgeVariant } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { AdminUserResponse, AdminRole } from "@/lib/types";
+import { AdminUserResponse } from "@/lib/types";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { SkeletonTable } from "@/components/ui/SkeletonTable";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -11,7 +11,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 interface AdminUserTableProps {
   users: AdminUserResponse[];
   isLoading: boolean;
-  onChangeRole: (id: string, currentRole: AdminRole) => void;
+  onChangeRole: (id: string, roleTemplateId: string, roleName: string) => void;
+  onEditOverrides: (id: string, name: string) => void;
   onToggleStatus: (id: string, currentIsActive: boolean) => void;
 }
 
@@ -19,6 +20,7 @@ export function AdminUserTable({
   users,
   isLoading,
   onChangeRole,
+  onEditOverrides,
   onToggleStatus,
 }: AdminUserTableProps) {
   const { user: currentUser } = useAuthStore();
@@ -82,7 +84,7 @@ export function AdminUserTable({
                   {adminUser.email}
                 </td>
                 <td className="h-[var(--portal-row-height)] px-3 py-2 align-middle">
-                  <RoleBadge role={adminUser.role} />
+                  <RoleBadge role={adminUser.role} roleName={adminUser.roleName} />
                 </td>
                 <td className="h-[var(--portal-row-height)] px-3 py-2 align-middle">
                   <Badge variant={adminUser.isActive ? "success" : "neutral"}>
@@ -97,13 +99,28 @@ export function AdminUserTable({
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => onChangeRole(adminUser.id, adminUser.role)}
+                      onClick={() =>
+                        onChangeRole(
+                          adminUser.id,
+                          adminUser.roleTemplateId,
+                          adminUser.roleName
+                        )
+                      }
                       disabled={isSelf}
                       title={
                         isSelf ? "Cannot change your own role" : "Change role"
                       }
                     >
                       Change role
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => onEditOverrides(adminUser.id, adminUser.name)}
+                      disabled={isSelf}
+                      title={isSelf ? "Cannot edit your own overrides" : "Edit overrides"}
+                    >
+                      Permissions
                     </Button>
                     <Button
                       size="sm"
@@ -133,8 +150,14 @@ export function AdminUserTable({
   );
 }
 
-function RoleBadge({ role }: { role: AdminRole }) {
-  const roleVariants: Record<AdminRole, BadgeVariant> = {
+function RoleBadge({
+  role,
+  roleName,
+}: {
+  role: AdminUserResponse["role"];
+  roleName: string;
+}) {
+  const roleVariants: Record<NonNullable<AdminUserResponse["role"]>, BadgeVariant> = {
     SuperAdmin: "danger",
     Sales: "info",
     Finance: "success",
@@ -148,5 +171,6 @@ function RoleBadge({ role }: { role: AdminRole }) {
     Tech: "Tech",
   };
 
-  return <Badge variant={roleVariants[role]}>{roleLabels[role]}</Badge>;
+  const variant = role ? roleVariants[role] : "neutral";
+  return <Badge variant={variant}>{role ? roleLabels[role] : roleName}</Badge>;
 }

@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Responses.Finance;
+using RentalPlatform.API.DTOs.Requests.ReportsAnalytics;
+using RentalPlatform.API.DTOs.Responses.ReportsAnalytics;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using System;
 using System.Threading.Tasks;
@@ -12,15 +15,45 @@ namespace RentalPlatform.API.Controllers;
 public class FinanceSummaryController : ControllerBase
 {
     private readonly IFinanceSummaryService _financeSummaryService;
+    private readonly IReportingFinanceAnalyticsService _reportingFinanceService;
 
-    public FinanceSummaryController(IFinanceSummaryService financeSummaryService)
+    public FinanceSummaryController(
+        IFinanceSummaryService financeSummaryService,
+        IReportingFinanceAnalyticsService reportingFinanceService)
     {
         _financeSummaryService = financeSummaryService;
+        _reportingFinanceService = reportingFinanceService;
+    }
+
+    [HttpGet("api/internal/finance/overview")]
+    [Authorize(Policy = PermissionKeys.FinanceOverview)]
+    public async Task<ActionResult<ApiResponse<FinanceAnalyticsSummaryResponse>>> GetFinanceOverview(
+        [FromQuery] GetFinanceAnalyticsRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await _reportingFinanceService.GetSummaryAsync(
+            request.DateFrom,
+            request.DateTo,
+            cancellationToken);
+
+        return Ok(ApiResponse<FinanceAnalyticsSummaryResponse>.CreateSuccess(
+            new FinanceAnalyticsSummaryResponse
+            {
+                DateFrom = result.DateFrom,
+                DateTo = result.DateTo,
+                TotalBookingsWithInvoiceCount = result.TotalBookingsWithInvoiceCount,
+                TotalInvoicedAmount = result.TotalInvoicedAmount,
+                TotalPaidAmount = result.TotalPaidAmount,
+                TotalRemainingAmount = result.TotalRemainingAmount,
+                TotalPendingPayoutAmount = result.TotalPendingPayoutAmount,
+                TotalScheduledPayoutAmount = result.TotalScheduledPayoutAmount,
+                TotalPaidPayoutAmount = result.TotalPaidPayoutAmount
+            }));
     }
 
     // GET /api/internal/invoices/{invoiceId}/balance
     [HttpGet("api/internal/invoices/{invoiceId}/balance")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceOverview)]
     public async Task<ActionResult<ApiResponse<InvoiceBalanceResponse>>> GetInvoiceBalance(Guid invoiceId)
     {
         var summary = await _financeSummaryService.GetInvoiceBalanceAsync(invoiceId);
@@ -37,7 +70,7 @@ public class FinanceSummaryController : ControllerBase
 
     // GET /api/internal/bookings/{bookingId}/finance-snapshot
     [HttpGet("api/internal/bookings/{bookingId}/finance-snapshot")]
-    [Authorize(Policy = "InternalAdminRead")]
+    [Authorize(Policy = PermissionKeys.FinanceOverview)]
     public async Task<ActionResult<ApiResponse<BookingFinanceSnapshotResponse>>> GetBookingFinanceSnapshot(Guid bookingId)
     {
         var summary = await _financeSummaryService.GetBookingFinanceSnapshotAsync(bookingId);
@@ -56,7 +89,7 @@ public class FinanceSummaryController : ControllerBase
 
     // GET /api/internal/owners/{ownerId}/payout-summary
     [HttpGet("api/internal/owners/{ownerId}/payout-summary")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceOverview)]
     public async Task<ActionResult<ApiResponse<OwnerPayoutSummaryResponse>>> GetOwnerPayoutSummary(Guid ownerId)
     {
         var summary = await _financeSummaryService.GetOwnerPayoutSummaryAsync(ownerId);

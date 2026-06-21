@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminUsersService } from "@/lib/api/services/admin-users.service";
 import { queryKeys } from "@/lib/utils/query-keys";
-import type { AdminUserListFilters, AdminRole } from "@/lib/types";
+import type { AdminUserListFilters } from "@/lib/types";
 
 export function useAdminUsers(filters?: AdminUserListFilters) {
   return useQuery({
@@ -10,11 +10,19 @@ export function useAdminUsers(filters?: AdminUserListFilters) {
   });
 }
 
+export function useAdminDirectory() {
+  return useQuery({
+    queryKey: queryKeys.adminUsers.directory(),
+    queryFn: adminUsersService.getDirectory,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 export function useChangeAdminRole() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, role }: { id: string; role: AdminRole }) =>
-      adminUsersService.changeRole(id, role),
+    mutationFn: ({ id, roleTemplateId }: { id: string; roleTemplateId: string }) =>
+      adminUsersService.changeRole(id, roleTemplateId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.adminUsers.all });
     },

@@ -35,11 +35,11 @@ const BookingsBarChart = dynamic(
 );
 
 export default function AdminDashboardPage() {
-  const { canViewFinance, canViewUnits, canViewBookings, canViewCRM } =
+  const { canViewFinance, canViewUnits, canViewBookings, canViewCRM, canViewReports } =
     usePermissions();
   const {
     useBookingsSummary,
-    useFinanceSummary,
+    useFinanceOverview,
     useActiveUnitsCount,
     useFinanceDaily,
     useBookingsDaily,
@@ -49,19 +49,15 @@ export default function AdminDashboardPage() {
   const dateTo = format(new Date(), "yyyy-MM-dd");
   const dateFrom = format(subDays(new Date(), 30), "yyyy-MM-dd");
 
-  // Each query is gated by the permission whose backend policy guards its
-  // endpoint, so a role that can't reach the endpoint never fires it. All five
-  // analytics endpoints require InternalAnalyticsRead; canViewBookings /
-  // canViewFinance are subsets of it, so gating by the display permission is
-  // both 403-safe and avoids fetching data the role won't see.
+  // Each query is gated by the exact permission guarding its endpoint.
   const { data: unitsCount, isLoading: unitsLoading } = useActiveUnitsCount({
     enabled: canViewUnits,
   });
   const { data: bookingsSummary, isLoading: bookingsLoading } =
-    useBookingsSummary(undefined, { enabled: canViewBookings });
+    useBookingsSummary(undefined, { enabled: canViewBookings && canViewReports });
   const { data: openLeadsCount = 0, isLoading: leadsLoading } =
     useOpenLeadsCount(canViewCRM);
-  const { data: financeSummary, isLoading: financeLoading } = useFinanceSummary(
+  const { data: financeSummary, isLoading: financeLoading } = useFinanceOverview(
     undefined,
     { enabled: canViewFinance }
   );
@@ -69,11 +65,11 @@ export default function AdminDashboardPage() {
   // Chart data queries
   const { data: financeDaily, isLoading: financeLoading2 } = useFinanceDaily(
     { dateFrom, dateTo },
-    { enabled: canViewFinance }
+    { enabled: canViewFinance && canViewReports }
   );
   const { data: bookingsDaily, isLoading: bookingsLoading2 } = useBookingsDaily(
     { dateFrom, dateTo },
-    { enabled: canViewBookings }
+    { enabled: canViewBookings && canViewReports }
   );
 
   const activeBookingsCount = bookingsSummary?.totalConfirmedBookingsCount || 0;
@@ -101,7 +97,7 @@ export default function AdminDashboardPage() {
           />
         )}
 
-        {canViewBookings && (
+        {canViewBookings && canViewReports && (
           <>
             {canViewCRM && (
               <StatCard
@@ -120,7 +116,7 @@ export default function AdminDashboardPage() {
           </>
         )}
 
-        {canViewFinance && (
+        {canViewFinance && canViewReports && (
           <StatCard
             title="Paid revenue"
             value={formatCurrency(totalRevenue)}
@@ -138,7 +134,7 @@ export default function AdminDashboardPage() {
             isLoading={financeLoading2}
           />
         )}
-        {canViewBookings && (
+        {canViewBookings && canViewReports && (
           <BookingsBarChart
             data={bookingsDaily ?? []}
             isLoading={bookingsLoading2}
@@ -148,7 +144,7 @@ export default function AdminDashboardPage() {
 
       {/* Occupancy + Top Units Widgets */}
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(280px,0.72fr)_minmax(360px,1.28fr)]">
-        {canViewUnits && <OccupancyWidget />}
+        {canViewUnits && canViewReports && <OccupancyWidget />}
         {canViewUnits && <TopUnitsWidget />}
       </div>
     </div>

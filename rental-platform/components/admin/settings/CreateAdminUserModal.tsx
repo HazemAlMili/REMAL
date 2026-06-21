@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { toastSuccess } from "@/lib/utils/toast";
 import { adminUsersService } from "@/lib/api/services/admin-users.service";
 import { queryKeys } from "@/lib/utils/query-keys";
-import { ADMIN_ROLE_LABELS, ADMIN_ROLES } from "@/lib/constants/roles";
+import { useRoleTemplates } from "@/lib/hooks/useRbac";
 import type { CreateAdminUserRequest } from "@/lib/types/admin-user.types";
 import type { AxiosError } from "axios";
 
@@ -20,7 +20,7 @@ const createAdminUserSchema = z.object({
   name: z.string().min(1, "Please enter the admin user's full name"),
   email: z.string().email("Enter a valid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  role: z.enum(["SuperAdmin", "Sales", "Finance", "Tech"]),
+  roleTemplateId: z.string().uuid("Select an admin role"),
 });
 
 type CreateAdminUserFormValues = z.infer<typeof createAdminUserSchema>;
@@ -35,6 +35,7 @@ export function CreateAdminUserModal({
   onClose,
 }: CreateAdminUserModalProps) {
   const queryClient = useQueryClient();
+  const rolesQuery = useRoleTemplates();
 
   const {
     register,
@@ -43,17 +44,26 @@ export function CreateAdminUserModal({
     formState: { errors },
     reset,
     setError,
+    setValue,
   } = useForm<CreateAdminUserFormValues>({
     resolver: zodResolver(createAdminUserSchema),
     defaultValues: {
       name: "",
       email: "",
       password: "",
-      role: "Sales",
+      roleTemplateId: "",
     },
   });
 
   const [serverError, setServerError] = useState<string | null>(null);
+
+  const activeRoles = (rolesQuery.data ?? []).filter((role) => role.isActive);
+  const firstActiveRoleId = activeRoles[0]?.id;
+  useEffect(() => {
+    if (firstActiveRoleId) {
+      setValue("roleTemplateId", firstActiveRoleId, { shouldValidate: false });
+    }
+  }, [firstActiveRoleId, setValue]);
 
   const createMutation = useMutation({
     mutationFn: adminUsersService.create,
@@ -92,9 +102,9 @@ export function CreateAdminUserModal({
     onClose();
   };
 
-  const roleOptions = Object.entries(ADMIN_ROLES).map(([, value]) => ({
-    value,
-    label: ADMIN_ROLE_LABELS[value as keyof typeof ADMIN_ROLE_LABELS],
+  const roleOptions = activeRoles.map((role) => ({
+    value: role.id,
+    label: role.name,
   }));
 
   return (
@@ -138,16 +148,17 @@ export function CreateAdminUserModal({
         />
 
         <Controller
-          name="role"
+          name="roleTemplateId"
           control={control}
           render={({ field }) => (
             <Select
           label="Admin role"
               required
-              error={errors.role?.message}
+              error={errors.roleTemplateId?.message}
               options={roleOptions}
               value={field.value}
               onChange={field.onChange}
+              disabled={rolesQuery.isLoading || roleOptions.length === 0}
             />
           )}
         />

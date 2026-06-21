@@ -37,11 +37,12 @@ export function AdminHeader() {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const user = useAuthStore((s) => s.user);
   const role = useAuthStore((s) => s.role);
+  const roleName = useAuthStore((s) => s.roleName);
 
-  const roleLabel =
+  const roleLabel = roleName ?? (
     role && role in ADMIN_ROLE_LABELS
       ? ADMIN_ROLE_LABELS[role as keyof typeof ADMIN_ROLE_LABELS]
-      : role;
+      : role);
 
   const sectionTitle = deriveSectionTitle(pathname);
 

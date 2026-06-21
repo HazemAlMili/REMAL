@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.Areas;
 using RentalPlatform.API.DTOs.Responses.Areas;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -53,7 +54,7 @@ public class AreasController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.AreasManage)]
     public async Task<ActionResult<ApiResponse<AreaResponse>>> Create(CreateAreaRequest request)
     {
         var area = await _areaService.CreateAsync(request.Name, request.Description, request.IsActive);
@@ -61,7 +62,7 @@ public class AreasController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.AreasManage)]
     public async Task<ActionResult<ApiResponse<AreaResponse>>> Update(Guid id, UpdateAreaRequest request)
     {
         var area = await _areaService.UpdateAsync(id, request.Name, request.Description, request.IsActive);
@@ -69,7 +70,7 @@ public class AreasController : ControllerBase
     }
 
     [HttpPatch("{id}/status")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.AreasManage)]
     public async Task<ActionResult<ApiResponse<AreaResponse>>> UpdateStatus(Guid id, UpdateAreaStatusRequest request)
     {
         await _areaService.SetActiveAsync(id, request.IsActive);

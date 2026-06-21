@@ -58,6 +58,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           subjectType: auth.subjectType,
           user: auth.user,
           role: auth.subjectType === "Admin" ? auth.adminRole : null,
+          roleName: auth.roleName,
           permissions: auth.permissions,
         });
 

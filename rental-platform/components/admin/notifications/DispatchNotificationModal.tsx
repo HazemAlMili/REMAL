@@ -10,10 +10,8 @@ import {
   useSendAdminNotification,
   useSendClientNotification,
   useSendOwnerNotification,
+  useNotificationRecipients,
 } from "@/lib/hooks/useNotifications";
-import { useAdminUsers } from "@/lib/hooks/useAdminUsers";
-import { useClients } from "@/lib/hooks/useClients";
-import { useOwners } from "@/lib/hooks/useOwners";
 import { toast } from "react-hot-toast";
 import { Plus, Trash2 } from "lucide-react";
 import type { NotificationChannel } from "@/lib/types/notification.types";
@@ -83,32 +81,17 @@ export function DispatchNotificationModal({
 
   const recipientType = watch("recipientType");
 
-  // Fetch recipient lists based on type
-  const { data: adminUsers } = useAdminUsers();
-  const { data: clients } = useClients();
-  const { data: owners } = useOwners();
+  const { data: recipients } = useNotificationRecipients(
+    recipientType,
+    isOpen
+  );
 
   // Build recipient options for combobox
   const recipientOptions = (() => {
-    switch (recipientType) {
-      case "Admin":
-        return (adminUsers?.items ?? []).map((u) => ({
-          value: u.id,
-          label: `${u.name} (${u.email})`,
-        }));
-      case "Client":
-        return (clients?.items ?? []).map((c) => ({
-          value: c.id,
-          label: `${c.name} (${c.phone})`,
-        }));
-      case "Owner":
-        return (owners?.items ?? []).map((o) => ({
-          value: o.id,
-          label: `${o.name} (${o.phone})`,
-        }));
-      default:
-        return [];
-    }
+    return (recipients ?? []).map((recipient) => ({
+      value: recipient.id,
+      label: `${recipient.displayName} (${recipient.identifier})`,
+    }));
   })();
 
   // Reset recipientId when type changes

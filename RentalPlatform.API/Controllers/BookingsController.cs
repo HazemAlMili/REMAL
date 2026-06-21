@@ -4,6 +4,7 @@ using RentalPlatform.API.DTOs.Requests.Bookings;
 using RentalPlatform.API.DTOs.Responses.Bookings;
 using RentalPlatform.API.DTOs.Responses.BookingLifecycle;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -27,7 +28,7 @@ public class BookingsController : ControllerBase
 
     // 1. GET /api/internal/bookings
     [HttpGet]
-    [Authorize(Policy = "InternalAdminRead")]
+    [Authorize(Policy = PermissionKeys.BookingsRead)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<BookingListItemResponse>>>> ListInternalBookings(
         [FromQuery] string? bookingStatus = null,
         [FromQuery] Guid? assignedAdminUserId = null,
@@ -61,7 +62,7 @@ public class BookingsController : ControllerBase
 
     // 2. GET /api/internal/bookings/{id}
     [HttpGet("{id}")]
-    [Authorize(Policy = "InternalAdminRead")]
+    [Authorize(Policy = PermissionKeys.BookingsRead)]
     public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> GetInternalBookingById(Guid id)
     {
         var booking = await _bookingService.GetByIdAsync(id);
@@ -74,7 +75,7 @@ public class BookingsController : ControllerBase
 
     // 3. GET /api/internal/bookings/{id}/status-history
     [HttpGet("{id}/status-history")]
-    [Authorize(Policy = "InternalAdminRead")]
+    [Authorize(Policy = PermissionKeys.BookingsRead)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<BookingStatusHistoryResponse>>>> GetBookingStatusHistory(Guid id)
     {
         // First check if booking exists
@@ -90,7 +91,7 @@ public class BookingsController : ControllerBase
 
     // 4. POST /api/internal/bookings
     [HttpPost]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.BookingsWrite)]
     public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> CreateBooking(CreateBookingRequest request)
     {
         var booking = await _bookingService.CreateAsync(
@@ -109,7 +110,7 @@ public class BookingsController : ControllerBase
 
     // 4b. POST /api/internal/bookings/quick
     [HttpPost("quick")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.BookingsWrite)]
     public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> CreateQuickBooking(CreateBookingRequest request)
     {
         var booking = await _bookingService.CreateQuickAsync(
@@ -128,7 +129,7 @@ public class BookingsController : ControllerBase
 
     // 5. PUT /api/internal/bookings/{id}
     [HttpPut("{id}")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.BookingsWrite)]
     public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> UpdatePendingBooking(Guid id, UpdatePendingBookingRequest request)
     {
         var booking = await _bookingService.UpdatePendingAsync(
@@ -157,7 +158,8 @@ public class BookingsController : ControllerBase
             OwnerId = booking.OwnerId,
             AssignedAdminUserId = booking.AssignedAdminUserId,
             AssignedAdminUserName = booking.AssignedAdminUser?.Name,
-            AssignedAdminUserRole = booking.AssignedAdminUser?.Role.ToString(),
+            AssignedAdminUserRole = booking.AssignedAdminUser?.RoleTemplate?.Name
+                ?? booking.AssignedAdminUser?.Role?.ToString(),
             BookingStatus = booking.BookingStatus.ToString(),
             CheckInDate = booking.CheckInDate,
             CheckOutDate = booking.CheckOutDate,
@@ -180,7 +182,8 @@ public class BookingsController : ControllerBase
             OwnerId = booking.OwnerId,
             AssignedAdminUserId = booking.AssignedAdminUserId,
             AssignedAdminUserName = booking.AssignedAdminUser?.Name,
-            AssignedAdminUserRole = booking.AssignedAdminUser?.Role.ToString(),
+            AssignedAdminUserRole = booking.AssignedAdminUser?.RoleTemplate?.Name
+                ?? booking.AssignedAdminUser?.Role?.ToString(),
             BookingStatus = booking.BookingStatus.ToString(),
             CheckInDate = booking.CheckInDate,
             CheckOutDate = booking.CheckOutDate,

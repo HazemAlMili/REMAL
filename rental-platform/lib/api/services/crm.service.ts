@@ -13,6 +13,7 @@ import type {
   UpdateCrmNoteRequest,
   CrmAssignmentResponse,
   AssignLeadRequest,
+  CrmAssigneeResponse,
 } from "@/lib/types/crm.types";
 import type { BookingDetailsResponse } from "@/lib/types/booking.types";
 
@@ -68,6 +69,9 @@ export const crmService = {
     api.delete(endpoints.crmNotes.delete(noteId)),
 
   // ── Assignment ──
+  getAssignees: (): Promise<CrmAssigneeResponse[]> =>
+    api.get(endpoints.crmAssignments.assignees),
+
   getLeadAssignment: (leadId: string): Promise<CrmAssignmentResponse> =>
     api.get(endpoints.crmAssignments.leadGet(leadId)),
 

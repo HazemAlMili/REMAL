@@ -17,6 +17,16 @@ export const endpoints = {
     status: (id: string) => `/api/admin-users/${id}/status`,
   },
 
+  adminDirectory: "/api/internal/admin-directory",
+
+  security: {
+    permissions: "/api/internal/security/permissions",
+    roles: "/api/internal/security/roles",
+    role: (id: string) => `/api/internal/security/roles/${id}`,
+    userOverrides: (id: string) =>
+      `/api/internal/security/users/${id}/overrides`,
+  },
+
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ AMENITIES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   amenities: {
     list: "/api/amenities",
@@ -156,6 +166,7 @@ export const endpoints = {
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CRM ASSIGNMENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   crmAssignments: {
+    assignees: "/api/internal/crm/assignees",
     bookingGet: (bookingId: string) =>
       `/api/internal/bookings/${bookingId}/assignment`,
     bookingSet: (bookingId: string) =>
@@ -194,6 +205,7 @@ export const endpoints = {
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FINANCE SUMMARY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   financeSummary: {
+    overview: "/api/internal/finance/overview",
     bookingFinanceSnapshot: (bookingId: string) =>
       `/api/internal/bookings/${bookingId}/finance-snapshot`,
     ownerPayoutSummary: (ownerId: string) =>
@@ -310,6 +322,8 @@ export const endpoints = {
 
   // ──────────── INTERNAL NOTIFICATIONS (dispatch) ────────────
   internalNotifications: {
+    recipients: (subjectType: "Admin" | "Client" | "Owner") =>
+      `/api/internal/notifications/recipients/${subjectType}`,
     toAdmin: (adminUserId: string) =>
       `/api/internal/notifications/admins/${adminUserId}`,
     toClient: (clientId: string) =>

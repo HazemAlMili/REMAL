@@ -4,6 +4,7 @@ using RentalPlatform.API.DTOs.Requests.CrmLeads;
 using RentalPlatform.API.DTOs.Responses.CrmLeads;
 using RentalPlatform.API.DTOs.Responses.Bookings;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -47,7 +48,7 @@ public class CrmLeadsController : ControllerBase
 
     // 1b. POST /api/internal/crm/leads - Internal Admin Create
     [HttpPost("api/internal/crm/leads")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.CrmWrite)]
     public async Task<ActionResult<ApiResponse<CrmLeadDetailsResponse>>> InternalCreateLead(InternalCreateCrmLeadRequest request)
     {
         var lead = await _crmLeadService.CreateAsync(
@@ -74,7 +75,7 @@ public class CrmLeadsController : ControllerBase
 
     // 2. GET /api/internal/crm/leads - Internal List
     [HttpGet("api/internal/crm/leads")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.CrmRead)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<CrmLeadListItemResponse>>>> ListInternalLeads(
         [FromQuery] string? leadStatus = null,
         [FromQuery] Guid? assignedAdminUserId = null,
@@ -100,7 +101,7 @@ public class CrmLeadsController : ControllerBase
     }
 
     [HttpGet("api/internal/crm/leads/open-count")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.CrmRead)]
     public async Task<ActionResult<ApiResponse<int>>> GetOpenLeadCount()
     {
         var count = await _crmLeadService.GetOpenCountAsync();
@@ -109,7 +110,7 @@ public class CrmLeadsController : ControllerBase
 
     // 3. GET /api/internal/crm/leads/{id} - Internal Detail
     [HttpGet("api/internal/crm/leads/{id}")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.CrmRead)]
     public async Task<ActionResult<ApiResponse<CrmLeadDetailsResponse>>> GetInternalLeadById(Guid id)
     {
         var lead = await _crmLeadService.GetByIdAsync(id);
@@ -121,7 +122,7 @@ public class CrmLeadsController : ControllerBase
 
     // 4. PUT /api/internal/crm/leads/{id} - Internal Update
     [HttpPut("api/internal/crm/leads/{id}")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.CrmWrite)]
     public async Task<ActionResult<ApiResponse<CrmLeadDetailsResponse>>> UpdateInternalLead(Guid id, UpdateCrmLeadRequest request)
     {
         var lead = await _crmLeadService.UpdateAsync(
@@ -144,7 +145,7 @@ public class CrmLeadsController : ControllerBase
 
     // 5. PATCH /api/internal/crm/leads/{id}/status - Internal Status Update
     [HttpPatch("api/internal/crm/leads/{id}/status")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.CrmWrite)]
     public async Task<ActionResult<ApiResponse<CrmLeadDetailsResponse>>> UpdateLeadStatus(Guid id, UpdateCrmLeadStatusRequest request)
     {
         var lead = await _crmLeadService.SetStatusAsync(id, request.LeadStatus);
@@ -153,7 +154,7 @@ public class CrmLeadsController : ControllerBase
 
     // 6. POST /api/internal/crm/leads/{id}/convert-to-booking - Internal Conversion
     [HttpPost("api/internal/crm/leads/{id}/convert-to-booking")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.CrmWrite)]
     public async Task<ActionResult<ApiResponse<BookingDetailsResponse>>> ConvertLeadToBooking(Guid id, ConvertLeadToBookingRequest request)
     {
         var booking = await _crmLeadService.ConvertToBookingAsync(

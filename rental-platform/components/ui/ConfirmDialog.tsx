@@ -12,6 +12,7 @@ export interface ConfirmDialogProps {
   onClose?: () => void;
   isLoading?: boolean;
   confirmLabel?: string;
+  confirmDisabled?: boolean;
   variant?: "primary" | "danger" | "secondary";
   children?: React.ReactNode;
 }
@@ -25,6 +26,7 @@ export function ConfirmDialog({
   onClose,
   isLoading,
   confirmLabel = "Confirm",
+  confirmDisabled = false,
   variant = "primary",
   children,
 }: ConfirmDialogProps) {
@@ -39,7 +41,12 @@ export function ConfirmDialog({
         <Button variant="ghost" onClick={handleCancel}>
           Cancel
         </Button>
-        <Button variant={variant} onClick={onConfirm} isLoading={isLoading}>
+        <Button
+          variant={variant}
+          onClick={onConfirm}
+          isLoading={isLoading}
+          disabled={confirmDisabled}
+        >
           {confirmLabel}
         </Button>
       </div>

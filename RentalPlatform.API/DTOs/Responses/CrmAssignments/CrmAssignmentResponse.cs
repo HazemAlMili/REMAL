@@ -12,3 +12,9 @@ public record CrmAssignmentResponse
     public DateTime AssignedAt { get; init; }
     public DateTime UpdatedAt { get; init; }
 }
+
+public record CrmAssigneeResponse(
+    Guid Id,
+    string Name,
+    string Email,
+    string RoleName);

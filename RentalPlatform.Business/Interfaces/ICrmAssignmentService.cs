@@ -9,6 +9,7 @@ public interface ICrmAssignmentService
 {
     Task<CrmAssignment?> GetActiveForBookingAsync(Guid bookingId, CancellationToken cancellationToken = default);
     Task<CrmAssignment?> GetActiveForLeadAsync(Guid leadId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<AdminUser>> GetAssignableAdminsAsync(CancellationToken cancellationToken = default);
     Task<CrmAssignment> AssignBookingAsync(Guid bookingId, Guid assignedAdminUserId, CancellationToken cancellationToken = default);
     Task<CrmAssignment> AssignLeadAsync(Guid leadId, Guid assignedAdminUserId, CancellationToken cancellationToken = default);
     Task ClearBookingAssignmentAsync(Guid bookingId, CancellationToken cancellationToken = default);

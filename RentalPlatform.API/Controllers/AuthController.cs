@@ -12,6 +12,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using RentalPlatform.Data;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace RentalPlatform.API.Controllers;
 
@@ -25,6 +26,7 @@ public class AuthController : ControllerBase
     private readonly IWebHostEnvironment _environment;
     private readonly IUnitOfWork _unitOfWork;
     private readonly Options.JwtOptions _jwtOptions;
+    private readonly IPermissionResolver _permissionResolver;
 
     public AuthController(
         IAuthService authService,
@@ -32,6 +34,7 @@ public class AuthController : ControllerBase
         ITokenService tokenService,
         IWebHostEnvironment environment,
         IUnitOfWork unitOfWork,
+        IPermissionResolver permissionResolver,
         Microsoft.Extensions.Options.IOptions<Options.JwtOptions> jwtOptions)
     {
         _authService = authService;
@@ -39,6 +42,7 @@ public class AuthController : ControllerBase
         _tokenService = tokenService;
         _environment = environment;
         _unitOfWork = unitOfWork;
+        _permissionResolver = permissionResolver;
         _jwtOptions = jwtOptions.Value;
     }
 
@@ -122,6 +126,9 @@ public class AuthController : ControllerBase
         string? identifier;
         string? name;
         Shared.Enums.AdminRole? adminRole = null;
+        string? adminRoleName = null;
+        IReadOnlyCollection<string> adminPermissions = Array.Empty<string>();
+        DateTime? subjectAdminUpdatedAt = null;
         DateTime? subjectClientUpdatedAt = null;
 
         if (normalizedSubjectType == "Client")
@@ -153,13 +160,27 @@ public class AuthController : ControllerBase
         }
         else if (normalizedSubjectType == "Admin")
         {
-            var admin = await _unitOfWork.AdminUsers.GetByIdAsync(userId);
+            var admin = await _unitOfWork.AdminUsers.Query()
+                .AsNoTracking()
+                .Include(entry => entry.RoleTemplate)
+                .SingleOrDefaultAsync(entry => entry.Id == userId);
             if (admin == null || !admin.IsActive)
                 return Unauthorized(ApiResponse.CreateFailure("Account is inactive or no longer exists."));
+
+            var stampClaim = principal.FindFirst(JwtTokenService.AdminUpdatedAtClaim)?.Value;
+            if (!long.TryParse(stampClaim, out var tokenStamp) ||
+                tokenStamp != admin.UpdatedAt.Ticks)
+            {
+                return Unauthorized(ApiResponse.CreateFailure(
+                    "This admin session is no longer valid. Please log in again."));
+            }
 
             identifier = admin.Email;
             name = admin.Name;
             adminRole = admin.Role;
+            adminRoleName = admin.RoleTemplate?.Name;
+            adminPermissions = await _permissionResolver.ResolveAsync(admin.Id);
+            subjectAdminUpdatedAt = admin.UpdatedAt;
         }
         else
         {
@@ -173,6 +194,9 @@ public class AuthController : ControllerBase
             Identifier = identifier,
             Name = name,
             AdminRole = adminRole,
+            AdminRoleName = adminRoleName,
+            AdminPermissions = adminPermissions,
+            AdminUpdatedAt = subjectAdminUpdatedAt,
             ClientUpdatedAt = subjectClientUpdatedAt
         };
 
@@ -193,15 +217,12 @@ public class AuthController : ControllerBase
 
         SetRefreshTokenCookie(refreshToken);
 
-        var permissions = subject.AdminRole is { } role
-            ? Authorization.PermissionCatalog.PermissionsForRole(role)
-            : Array.Empty<string>();
-
         var authResponse = new AuthResponse(
             AccessToken: accessToken,
             ExpiresInSeconds: _jwtOptions.AccessTokenExpirationMinutes * 60,
             SubjectType: subject.SubjectType,
             AdminRole: subject.AdminRole?.ToString(),
+            RoleName: subject.AdminRoleName,
             User: new AuthenticatedUserResponse(
                 UserId: subject.UserId,
                 Identifier: subject.Identifier ?? subject.UserId.ToString(),
@@ -209,7 +230,7 @@ public class AuthController : ControllerBase
                 AdminRole: subject.AdminRole?.ToString(),
                 Name: subject.Name
             ),
-            Permissions: permissions
+            Permissions: subject.AdminPermissions.OrderBy(key => key, StringComparer.Ordinal).ToArray()
         );
 
         return Ok(ApiResponse<AuthResponse>.CreateSuccess(authResponse));

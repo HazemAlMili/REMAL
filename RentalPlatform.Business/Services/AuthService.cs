@@ -4,22 +4,30 @@ using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Business.Models;
 using RentalPlatform.Data;
 using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
 
 namespace RentalPlatform.Business.Services;
 
 public class AuthService : IAuthService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPermissionResolver _permissionResolver;
 
-    public AuthService(IUnitOfWork unitOfWork)
+    public AuthService(IUnitOfWork unitOfWork, IPermissionResolver permissionResolver)
     {
         _unitOfWork = unitOfWork;
+        _permissionResolver = permissionResolver;
     }
 
     public async Task<AuthenticatedSubject?> ValidateAdminCredentialsAsync(string email, string password, CancellationToken cancellationToken = default)
     {
         var emailLower = email.ToLowerInvariant();
-        var admin = await _unitOfWork.AdminUsers.FirstOrDefaultAsync(a => a.Email.ToLower() == emailLower && a.IsActive, cancellationToken);
+        var admin = await _unitOfWork.AdminUsers.Query()
+            .AsNoTracking()
+            .Include(a => a.RoleTemplate)
+            .SingleOrDefaultAsync(
+                a => a.Email.ToLower() == emailLower && a.IsActive,
+                cancellationToken);
         
         if (admin == null)
             return null;
@@ -27,12 +35,18 @@ public class AuthService : IAuthService
         if (!BCrypt.Net.BCrypt.Verify(password, admin.PasswordHash))
             return null;
 
+        var permissions = await _permissionResolver.ResolveAsync(admin.Id, cancellationToken);
+
         return new AuthenticatedSubject
         {
             UserId = admin.Id,
             SubjectType = "Admin",
             Identifier = admin.Email,
-            AdminRole = admin.Role
+            Name = admin.Name,
+            AdminRole = admin.Role,
+            AdminRoleName = admin.RoleTemplate?.Name,
+            AdminPermissions = permissions,
+            AdminUpdatedAt = admin.UpdatedAt
         };
     }
 

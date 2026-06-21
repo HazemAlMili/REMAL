@@ -28,6 +28,12 @@ export const reportsService = {
     return api.get(endpoints.reportsFinance.summary, { params: filters });
   },
 
+  getFinanceOverview: async (
+    filters?: ReportDateFilters
+  ): Promise<FinanceAnalyticsSummaryResponse> => {
+    return api.get(endpoints.financeSummary.overview, { params: filters });
+  },
+
   getFinanceDaily: async (
     filters?: ReportDailyFilters
   ): Promise<FinanceAnalyticsDailySummaryResponse[]> => {

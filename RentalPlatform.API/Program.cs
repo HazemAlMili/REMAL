@@ -151,56 +151,82 @@ builder.Services.AddAuthentication(options =>
                 }
 
                 var subjectType = context.Principal?.FindFirst("subjectType")?.Value;
-                if (!string.Equals(subjectType, "client", StringComparison.Ordinal))
-                    return;
-
                 var subjectId = context.Principal?.FindFirst(
                     System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                var stamp = context.Principal?.FindFirst(
-                    JwtTokenService.ClientUpdatedAtClaim)?.Value;
-                if (!Guid.TryParse(subjectId, out var clientId) ||
-                    !long.TryParse(stamp, out var tokenUpdatedAtTicks))
+                if (!Guid.TryParse(subjectId, out var parsedSubjectId))
                 {
-                    context.Fail("Invalid client security stamp.");
+                    context.Fail("Invalid subject identifier.");
                     return;
                 }
 
                 var dbContext = context.HttpContext.RequestServices
                     .GetRequiredService<AppDbContext>();
-                var currentUpdatedAt = await dbContext.Clients
-                    .AsNoTracking()
-                    .Where(c => c.Id == clientId && c.IsActive && c.DeletedAt == null)
-                    .Select(c => (DateTime?)c.UpdatedAt)
-                    .SingleOrDefaultAsync(context.HttpContext.RequestAborted);
 
-                if (!currentUpdatedAt.HasValue ||
-                    currentUpdatedAt.Value.Ticks != tokenUpdatedAtTicks)
+                if (string.Equals(subjectType, "client", StringComparison.Ordinal))
                 {
-                    context.Fail("Client session has been revoked.");
+                    var stamp = context.Principal?.FindFirst(
+                        JwtTokenService.ClientUpdatedAtClaim)?.Value;
+                    if (!long.TryParse(stamp, out var tokenUpdatedAtTicks))
+                    {
+                        context.Fail("Invalid client security stamp.");
+                        return;
+                    }
+
+                    var currentUpdatedAt = await dbContext.Clients
+                        .AsNoTracking()
+                        .Where(c => c.Id == parsedSubjectId && c.IsActive && c.DeletedAt == null)
+                        .Select(c => (DateTime?)c.UpdatedAt)
+                        .SingleOrDefaultAsync(context.HttpContext.RequestAborted);
+
+                    if (!currentUpdatedAt.HasValue ||
+                        currentUpdatedAt.Value.Ticks != tokenUpdatedAtTicks)
+                    {
+                        context.Fail("Client session has been revoked.");
+                    }
+                }
+                else if (string.Equals(subjectType, "admin", StringComparison.Ordinal))
+                {
+                    var stamp = context.Principal?.FindFirst(
+                        JwtTokenService.AdminUpdatedAtClaim)?.Value;
+                    if (!long.TryParse(stamp, out var tokenUpdatedAtTicks))
+                    {
+                        context.Fail("Invalid admin security stamp.");
+                        return;
+                    }
+
+                    var currentUpdatedAt = await dbContext.AdminUsers
+                        .AsNoTracking()
+                        .Where(admin => admin.Id == parsedSubjectId && admin.IsActive)
+                        .Select(admin => (DateTime?)admin.UpdatedAt)
+                        .SingleOrDefaultAsync(context.HttpContext.RequestAborted);
+
+                    if (!currentUpdatedAt.HasValue ||
+                        currentUpdatedAt.Value.Ticks != tokenUpdatedAtTicks)
+                    {
+                        context.Fail("Admin session has been revoked.");
+                    }
                 }
             }
         };
     });
 
-// Authorization Policies
-// Admin policies are registered from PermissionCatalog — the single source of
-// truth shared with the effective-permissions list in AuthResponse. Note this
-// also requires a role claim on every admin policy (including
-// AdminAuthenticated): legitimate admin tokens always carry one, so only
-// malformed/stale tokens are affected.
+// Authorization policies
 builder.Services.AddAuthorization(options =>
 {
-    foreach (var (policyName, roles) in RentalPlatform.API.Authorization.PermissionCatalog.AdminPolicies)
+    foreach (var permissionKey in RentalPlatform.API.Authorization.PermissionKeys.All)
     {
-        options.AddPolicy(policyName, policy =>
+        options.AddPolicy(permissionKey, policy =>
             policy.RequireClaim("subjectType", "admin")
-                  .RequireRole(roles.Select(r => r.ToString()).ToArray()));
+                  .RequireClaim("perm", permissionKey));
     }
 
-    options.AddPolicy("OwnerOnly", policy =>
+    options.AddPolicy(RentalPlatform.API.Authorization.PermissionCatalog.AdminAuthenticated, policy =>
+        policy.RequireClaim("subjectType", "admin"));
+
+    options.AddPolicy(RentalPlatform.API.Authorization.PermissionCatalog.OwnerOnly, policy =>
         policy.RequireClaim("subjectType", "owner"));
 
-    options.AddPolicy("ClientOnly", policy =>
+    options.AddPolicy(RentalPlatform.API.Authorization.PermissionCatalog.ClientOnly, policy =>
         policy.RequireClaim("subjectType", "client"));
 });
 
@@ -228,6 +254,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Routing.RouteOptions>(options =>
 
 // Unit Of Work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddSingleton<IRbacPermissionRegistry, RentalPlatform.API.Authorization.RbacPermissionRegistry>();
 
 // Services
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
@@ -237,6 +264,8 @@ builder.Services.AddScoped<IOwnerService, OwnerService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IAdminUserService, AdminUserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPermissionResolver, PermissionResolver>();
+builder.Services.AddScoped<IRbacAdminService, RbacAdminService>();
 builder.Services.AddScoped<IUnitService, UnitService>();
 builder.Services.AddScoped<IUnitImageService, UnitImageService>();
 builder.Services.AddScoped<IUnitAmenityService, UnitAmenityService>();

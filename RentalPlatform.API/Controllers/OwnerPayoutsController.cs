@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.OwnerPayouts;
 using RentalPlatform.API.DTOs.Responses.OwnerPayouts;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -24,7 +25,7 @@ public class OwnerPayoutsController : ControllerBase
 
     // GET /api/internal/owner-payouts/by-booking/{bookingId}
     [HttpGet("api/internal/owner-payouts/by-booking/{bookingId}")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinancePayouts)]
     public async Task<ActionResult<ApiResponse<OwnerPayoutResponse>>> GetPayoutByBooking(Guid bookingId)
     {
         var payout = await _ownerPayoutService.GetByBookingIdAsync(bookingId);
@@ -37,7 +38,7 @@ public class OwnerPayoutsController : ControllerBase
 
     // GET /api/internal/owners/{ownerId}/payouts
     [HttpGet("api/internal/owners/{ownerId}/payouts")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinancePayouts)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<OwnerPayoutResponse>>>> GetPayoutsByOwner(
         Guid ownerId,
         [FromQuery] string? payoutStatus = null)
@@ -50,7 +51,7 @@ public class OwnerPayoutsController : ControllerBase
 
     // POST /api/internal/owner-payouts
     [HttpPost("api/internal/owner-payouts")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinancePayouts)]
     public async Task<ActionResult<ApiResponse<OwnerPayoutResponse>>> CreateOrUpdateOwnerPayout(CreateOrUpdateOwnerPayoutRequest request)
     {
         var payout = await _ownerPayoutService.CreateOrUpdateFromBookingAsync(
@@ -65,7 +66,7 @@ public class OwnerPayoutsController : ControllerBase
 
     // POST /api/internal/owner-payouts/{id}/schedule
     [HttpPost("api/internal/owner-payouts/{id}/schedule")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinancePayouts)]
     public async Task<ActionResult<ApiResponse<OwnerPayoutResponse>>> SetPayoutScheduled(Guid id, SetOwnerPayoutScheduledRequest request)
     {
         var payout = await _ownerPayoutService.SetScheduledAsync(id, request.Notes);
@@ -75,7 +76,7 @@ public class OwnerPayoutsController : ControllerBase
 
     // POST /api/internal/owner-payouts/{id}/mark-paid
     [HttpPost("api/internal/owner-payouts/{id}/mark-paid")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinancePayouts)]
     public async Task<ActionResult<ApiResponse<OwnerPayoutResponse>>> MarkPayoutPaid(Guid id, MarkOwnerPayoutPaidRequest request)
     {
         var payout = await _ownerPayoutService.MarkPaidAsync(id, request.ProofOfPaymentUrl, request.Notes);
@@ -85,7 +86,7 @@ public class OwnerPayoutsController : ControllerBase
 
     // POST /api/internal/owner-payouts/{id}/cancel
     [HttpPost("api/internal/owner-payouts/{id}/cancel")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinancePayouts)]
     public async Task<ActionResult<ApiResponse<OwnerPayoutResponse>>> CancelPayout(Guid id, CancelOwnerPayoutRequest request)
     {
         var payout = await _ownerPayoutService.CancelAsync(id, request.Notes);

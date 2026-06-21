@@ -13,6 +13,9 @@ public interface IUnitOfWork
     IRepository<Amenity> Amenities { get; }
     IRepository<Area> Areas { get; }
     IRepository<AdminUser> AdminUsers { get; }
+    IRepository<RbacRoleTemplate> RbacRoleTemplates { get; }
+    IRepository<RbacRoleTemplatePermission> RbacRoleTemplatePermissions { get; }
+    IRepository<RbacAdminUserPermissionOverride> RbacAdminUserPermissionOverrides { get; }
     IRepository<Client> Clients { get; }
     IRepository<Owner> Owners { get; }
     IRepository<Unit> Units { get; }

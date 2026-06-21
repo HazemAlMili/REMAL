@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.Amenities;
 using RentalPlatform.API.DTOs.Responses.Amenities;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ public class AmenitiesController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.AmenitiesManage)]
     public async Task<ActionResult<ApiResponse<AmenityResponse>>> Create(CreateAmenityRequest request)
     {
         var amenity = await _amenityService.CreateAsync(request.Name, request.Icon);
@@ -40,7 +41,7 @@ public class AmenitiesController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.AmenitiesManage)]
     public async Task<ActionResult<ApiResponse<AmenityResponse>>> Update(Guid id, UpdateAmenityRequest request)
     {
         var amenity = await _amenityService.UpdateAsync(id, request.Name, request.Icon);
@@ -48,7 +49,7 @@ public class AmenitiesController : ControllerBase
     }
 
     [HttpPatch("{id}/status")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.AmenitiesManage)]
     public async Task<ActionResult<ApiResponse<AmenityResponse>>> UpdateStatus(Guid id, UpdateAmenityStatusRequest request)
     {
         var amenity = await _amenityService.UpdateStatusAsync(id, request.IsActive);

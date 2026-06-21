@@ -13,11 +13,8 @@ import { differenceInDays, format, startOfMonth, endOfMonth } from "date-fns";
 // completedBookings → totalCompletedBookingsCount
 
 export function OccupancyWidget() {
-  // This widget needs the internal-units endpoint (InternalUnitsRead) and the
-  // bookings-summary endpoint (InternalAnalyticsRead). Every unit-reader also
-  // has analytics read, so canViewUnits is the binding gate; skipping the
-  // fetches for roles without it keeps the widget from ever triggering a 403.
-  const { canViewUnits } = usePermissions();
+  const { canViewUnits, canViewReports } = usePermissions();
+  const canViewOccupancy = canViewUnits && canViewReports;
 
   const dateFrom = format(startOfMonth(new Date()), "yyyy-MM-dd");
   const dateTo = format(endOfMonth(new Date()), "yyyy-MM-dd");
@@ -25,18 +22,18 @@ export function OccupancyWidget() {
   const { data: bookingsSummary, isLoading: summaryLoading } = useQuery({
     queryKey: queryKeys.reports.bookingsSummary({ dateFrom, dateTo }),
     queryFn: () => reportsService.getBookingsSummary({ dateFrom, dateTo }),
-    enabled: canViewUnits,
+    enabled: canViewOccupancy,
     staleTime: 1000 * 60 * 10,
   });
 
   const { data: unitsData, isLoading: unitsLoading } = useQuery({
     queryKey: queryKeys.units.internalList({ pageSize: 1000 }),
     queryFn: () => unitsService.getInternalList({ pageSize: 1000 }),
-    enabled: canViewUnits,
+    enabled: canViewOccupancy,
     staleTime: 1000 * 60 * 10,
   });
 
-  if (!canViewUnits) return null;
+  if (!canViewOccupancy) return null;
 
   if (summaryLoading || unitsLoading) {
     return <Skeleton height={260} className="rounded-[4px]" />;

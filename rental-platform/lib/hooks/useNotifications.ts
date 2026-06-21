@@ -19,6 +19,18 @@ import { toastError } from "@/lib/utils/toast";
 
 // ── Admin Inbox ──
 
+export function useNotificationRecipients(
+  subjectType: "Admin" | "Client" | "Owner",
+  enabled = true
+) {
+  return useQuery({
+    queryKey: queryKeys.notifications.recipients(subjectType),
+    queryFn: () => notificationsService.getRecipients(subjectType),
+    enabled,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 export function useAdminNotificationInbox() {
   return useQuery({
     queryKey: queryKeys.notifications.adminInbox(),

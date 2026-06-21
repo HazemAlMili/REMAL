@@ -159,5 +159,8 @@
 \echo '=== Running migration 0052: align reporting views with current pipelines ==='
 \i /docker-entrypoint-initdb.d/migrations/0052_align_reporting_views_with_pipeline.sql
 
+\echo '=== Running migration 0053: create dynamic RBAC ==='
+\i /docker-entrypoint-initdb.d/migrations/0053_create_dynamic_rbac.sql
+
 \echo '=== All migrations completed successfully ==='
 

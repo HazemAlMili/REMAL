@@ -4,10 +4,7 @@ import { unitsService } from "../api/services/units.service";
 import { queryKeys } from "./query-keys";
 import { ReportDateFilters, ReportDailyFilters } from "../types/report.types";
 
-// Every reporting/analytics endpoint here is guarded by the backend
-// `InternalAnalyticsRead` policy. Callers pass `{ enabled }` derived from the
-// matching permission so a role that can't reach the endpoint never fires a
-// guaranteed-403 request (default true preserves existing callers).
+// Callers gate each query with the permission that guards its endpoint.
 interface ReportQueryOptions {
   enabled?: boolean;
 }
@@ -31,6 +28,16 @@ export const useReports = () => {
       useQuery({
         queryKey: queryKeys.reports.financeSummary(filters || {}),
         queryFn: () => reportsService.getFinanceSummary(filters),
+        enabled: options?.enabled !== false,
+      }),
+
+    useFinanceOverview: (
+      filters?: ReportDateFilters,
+      options?: ReportQueryOptions
+    ) =>
+      useQuery({
+        queryKey: [...queryKeys.reports.financeSummary(filters || {}), "overview"],
+        queryFn: () => reportsService.getFinanceOverview(filters),
         enabled: options?.enabled !== false,
       }),
 

@@ -6,8 +6,8 @@ import {
   useLeadAssignment,
   useAssignLead,
   useUnassignLead,
+  useAssignableAdmins,
 } from "@/lib/hooks/useCrm";
-import { useAdminUsers } from "@/lib/hooks/useAdminUsers";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
@@ -25,16 +25,13 @@ export function LeadAssignment({ leadId }: LeadAssignmentProps) {
 
   const { data: assignment, isLoading: assignmentLoading } =
     useLeadAssignment(leadId);
-  const { data: adminUsers, isLoading: usersLoading } = useAdminUsers();
+  const { data: assignees, isLoading: usersLoading } =
+    useAssignableAdmins(canAssignLeads);
   const assignMutation = useAssignLead(leadId);
   const unassignMutation = useUnassignLead(leadId);
 
-  const salesUsers = (adminUsers?.items ?? []).filter(
-    (u) => u.isActive && (u.role === "Sales" || u.role === "SuperAdmin")
-  );
-
   const getAdminName = (userId: string) => {
-    const user = adminUsers?.items?.find((u) => u.id === userId);
+    const user = assignees?.find((u) => u.id === userId);
     return user?.name ?? "Unknown admin";
   };
 
@@ -102,9 +99,9 @@ export function LeadAssignment({ leadId }: LeadAssignmentProps) {
           <Select
             value={selectedUserId}
             onChange={(val) => setSelectedUserId(val as string)}
-            options={salesUsers.map((u) => ({
+            options={(assignees ?? []).map((u) => ({
               value: u.id,
-              label: `${u.name} (${u.role})`,
+              label: `${u.name} (${u.roleName})`,
             }))}
             placeholder="Choose a sales owner"
           />

@@ -19,7 +19,10 @@ public class AdminUserConfiguration : IEntityTypeConfiguration<AdminUser>
         builder.Property(x => x.Role)
                .HasColumnName("role")
                .HasConversion(new RentalPlatform.Data.Converters.AdminRoleValueConverter())
-               .HasMaxLength(50)
+               .HasMaxLength(50);
+
+        builder.Property(x => x.RoleTemplateId)
+               .HasColumnName("role_template_id")
                .IsRequired();
                
         builder.Property(x => x.IsActive).HasColumnName("is_active").IsRequired();
@@ -27,5 +30,12 @@ public class AdminUserConfiguration : IEntityTypeConfiguration<AdminUser>
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at").IsRequired();
 
         builder.HasIndex(x => x.Email).IsUnique().HasDatabaseName("ux_admin_users_email");
+        builder.HasIndex(x => x.RoleTemplateId).HasDatabaseName("ix_admin_users_role_template_id");
+
+        builder.HasOne(x => x.RoleTemplate)
+            .WithMany(x => x.AdminUsers)
+            .HasForeignKey(x => x.RoleTemplateId)
+            .OnDelete(DeleteBehavior.Restrict)
+            .HasConstraintName("fk_admin_users_role_template_id");
     }
 }

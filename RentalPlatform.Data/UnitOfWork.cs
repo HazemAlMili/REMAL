@@ -16,6 +16,9 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<Amenity> Amenities { get; }
     public IRepository<Area> Areas { get; }
     public IRepository<AdminUser> AdminUsers { get; }
+    public IRepository<RbacRoleTemplate> RbacRoleTemplates { get; }
+    public IRepository<RbacRoleTemplatePermission> RbacRoleTemplatePermissions { get; }
+    public IRepository<RbacAdminUserPermissionOverride> RbacAdminUserPermissionOverrides { get; }
     public IRepository<Client> Clients { get; }
     public IRepository<Owner> Owners { get; }
     public IRepository<Unit> Units { get; }
@@ -69,6 +72,9 @@ public class UnitOfWork : IUnitOfWork
         Amenities = new Repository<Amenity>(_context);
         Areas = new Repository<Area>(_context);
         AdminUsers = new Repository<AdminUser>(_context);
+        RbacRoleTemplates = new Repository<RbacRoleTemplate>(_context);
+        RbacRoleTemplatePermissions = new Repository<RbacRoleTemplatePermission>(_context);
+        RbacAdminUserPermissionOverrides = new Repository<RbacAdminUserPermissionOverride>(_context);
         Clients = new Repository<Client>(_context);
         Owners = new Repository<Owner>(_context);
         Units = new Repository<Unit>(_context);

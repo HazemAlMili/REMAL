@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.CrmAssignments;
 using RentalPlatform.API.DTOs.Responses.CrmAssignments;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 namespace RentalPlatform.API.Controllers;
 
 [ApiController]
-[Authorize(Policy = "SalesOrSuperAdmin")]
+[Authorize(Policy = PermissionKeys.CrmAssign)]
 public class CrmAssignmentsController : ControllerBase
 {
     private readonly ICrmAssignmentService _assignmentService;
@@ -19,6 +20,21 @@ public class CrmAssignmentsController : ControllerBase
     public CrmAssignmentsController(ICrmAssignmentService assignmentService)
     {
         _assignmentService = assignmentService;
+    }
+
+    [HttpGet("api/internal/crm/assignees")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<CrmAssigneeResponse>>>> GetAssignees(
+        CancellationToken cancellationToken)
+    {
+        var admins = await _assignmentService.GetAssignableAdminsAsync(cancellationToken);
+        var response = admins
+            .Select(admin => new CrmAssigneeResponse(
+                admin.Id,
+                admin.Name,
+                admin.Email,
+                admin.RoleTemplate?.Name ?? admin.Role?.ToString() ?? "Custom"))
+            .ToArray();
+        return Ok(ApiResponse<IReadOnlyList<CrmAssigneeResponse>>.CreateSuccess(response));
     }
 
     // 1. GET /api/internal/bookings/{bookingId}/assignment

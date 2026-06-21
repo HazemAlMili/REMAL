@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.UnitAmenities;
 using RentalPlatform.API.DTOs.Responses.UnitAmenities;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -52,7 +53,7 @@ public class UnitAmenitiesController : ControllerBase
 
     // 2. POST /api/internal/units/{unitId}/amenities (Internal)
     [HttpPost("api/internal/units/{unitId}/amenities")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse>> AssignAmenity(Guid unitId, AssignUnitAmenityRequest request)
     {
         await _unitAmenityService.AssignAsync(unitId, request.AmenityId);
@@ -61,7 +62,7 @@ public class UnitAmenitiesController : ControllerBase
 
     // 3. DELETE /api/internal/units/{unitId}/amenities/{amenityId} (Internal)
     [HttpDelete("api/internal/units/{unitId}/amenities/{amenityId}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse>> RemoveAmenity(Guid unitId, Guid amenityId)
     {
         await _unitAmenityService.RemoveAsync(unitId, amenityId);
@@ -70,7 +71,7 @@ public class UnitAmenitiesController : ControllerBase
 
     // 4. PUT /api/internal/units/{unitId}/amenities (Internal)
     [HttpPut("api/internal/units/{unitId}/amenities")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<UnitAmenityResponse>>>> ReplaceAmenities(Guid unitId, ReplaceUnitAmenitiesRequest request)
     {
         await _unitAmenityService.ReplaceAllAsync(unitId, request.AmenityIds);

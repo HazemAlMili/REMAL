@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.DateBlocks;
 using RentalPlatform.API.DTOs.Responses.DateBlocks;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -25,7 +26,7 @@ public class DateBlocksController : ControllerBase
 
     // 1. GET /api/internal/units/{unitId}/date-blocks
     [HttpGet("api/internal/units/{unitId}/date-blocks")]
-    [Authorize(Policy = "InternalUnitsRead")]
+    [Authorize(Policy = PermissionKeys.UnitsRead)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<DateBlockResponse>>>> GetByUnitId(Guid unitId)
     {
         var blocks = await _dateBlockService.GetByUnitIdAsync(unitId);
@@ -36,7 +37,7 @@ public class DateBlocksController : ControllerBase
 
     // 2. POST /api/internal/units/{unitId}/date-blocks
     [HttpPost("api/internal/units/{unitId}/date-blocks")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse<DateBlockResponse>>> Create(Guid unitId, CreateDateBlockRequest request)
     {
         var block = await _dateBlockService.CreateAsync(
@@ -69,7 +70,7 @@ public class DateBlocksController : ControllerBase
 
     // 3. PUT /api/internal/date-blocks/{id}
     [HttpPut("api/internal/date-blocks/{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse<DateBlockResponse>>> Update(Guid id, UpdateDateBlockRequest request)
     {
         var block = await _dateBlockService.UpdateAsync(
@@ -85,7 +86,7 @@ public class DateBlocksController : ControllerBase
 
     // 4. DELETE /api/internal/date-blocks/{id}
     [HttpDelete("api/internal/date-blocks/{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse>> Delete(Guid id)
     {
         await _dateBlockService.DeleteAsync(id);

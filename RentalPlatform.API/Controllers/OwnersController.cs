@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.Owners;
 using RentalPlatform.API.DTOs.Responses.Owners;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -26,7 +27,7 @@ public class OwnersController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Policy = "InternalAdminReadOwners")]
+    [Authorize(Policy = PermissionKeys.OwnersRead)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<OwnerListItemResponse>>>> GetAll(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
@@ -49,7 +50,7 @@ public class OwnersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Policy = "InternalAdminReadOwners")]
+    [Authorize(Policy = PermissionKeys.OwnersRead)]
     public async Task<ActionResult<ApiResponse<OwnerDetailsResponse>>> GetById(Guid id)
     {
         var owner = await _ownerService.GetByIdAsync(id);
@@ -61,7 +62,7 @@ public class OwnersController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.OwnersManage)]
     public async Task<ActionResult<ApiResponse<OwnerDetailsResponse>>> Create(CreateOwnerRequest request)
     {
         var owner = await _ownerService.CreateAsync(
@@ -80,7 +81,7 @@ public class OwnersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.OwnersManage)]
     public async Task<ActionResult<ApiResponse<OwnerDetailsResponse>>> Update(Guid id, UpdateOwnerRequest request)
     {
         var owner = await _ownerService.UpdateAsync(
@@ -99,7 +100,7 @@ public class OwnersController : ControllerBase
     }
 
     [HttpPatch("{id}/status")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.OwnersManage)]
     public async Task<ActionResult<ApiResponse<OwnerDetailsResponse>>> UpdateStatus(Guid id, UpdateOwnerStatusRequest request)
     {
         var owner = await _ownerService.GetByIdAsync(id);
@@ -123,7 +124,7 @@ public class OwnersController : ControllerBase
     }
 
     [HttpGet("{id}/units")]
-    [Authorize(Policy = "InternalAdminReadOwners")]
+    [Authorize(Policy = PermissionKeys.OwnersRead)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<OwnerUnitResponse>>>> GetOwnerUnits(
         Guid id,
         [FromQuery] int page = 1,

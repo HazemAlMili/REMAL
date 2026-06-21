@@ -10,6 +10,7 @@ using RentalPlatform.API.DTOs.Requests.ReviewModeration;
 using RentalPlatform.API.DTOs.Responses.ReviewModeration;
 using RentalPlatform.API.DTOs.Responses.Reviews;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Exceptions;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
@@ -18,7 +19,7 @@ namespace RentalPlatform.API.Controllers;
 
 [ApiController]
 [Route("api/internal/reviews")]
-[Authorize(Policy = "SalesOrSuperAdmin")]
+[Authorize(Policy = PermissionKeys.ReviewsModerate)]
 public class ReviewModerationController : ControllerBase
 {
     private readonly IReviewModerationService _reviewModerationService;

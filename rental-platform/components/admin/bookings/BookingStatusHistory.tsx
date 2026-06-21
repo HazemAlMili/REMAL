@@ -1,7 +1,7 @@
 "use client";
 
 import { useBookingStatusHistory } from "@/lib/hooks/useBookings";
-import { useAdminUsers } from "@/lib/hooks/useAdminUsers";
+import { useAdminDirectory } from "@/lib/hooks/useAdminUsers";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { formatRelativeTime } from "@/lib/utils/format";
@@ -14,11 +14,11 @@ interface BookingStatusHistoryProps {
 
 export function BookingStatusHistory({ bookingId }: BookingStatusHistoryProps) {
   const { data: history, isLoading } = useBookingStatusHistory(bookingId);
-  const { data: adminUsers } = useAdminUsers();
+  const { data: adminUsers } = useAdminDirectory();
 
   const getAdminName = (userId: string) => {
     if (userId === "SYSTEM" || !userId) return "System";
-    const user = adminUsers?.items?.find((u) => u.id === userId);
+    const user = adminUsers?.find((u) => u.id === userId);
     return user?.name ?? "Unknown Admin";
   };
 

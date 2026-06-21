@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.ReportsAnalytics;
 using RentalPlatform.API.DTOs.Responses.ReportsAnalytics;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 
 namespace RentalPlatform.API.Controllers;
 
 [ApiController]
-[Authorize(Policy = "InternalAnalyticsRead")]
+[Authorize(Policy = PermissionKeys.AnalyticsRead)]
 public class ReportingFinanceAnalyticsController : ControllerBase
 {
     private readonly IReportingFinanceAnalyticsService _service;

@@ -31,6 +31,7 @@ export interface AuthResponse {
   expiresInSeconds: number
   subjectType: SubjectType
   adminRole: AdminRole | null
+  roleName: string | null
   user: AuthUserPayload
   /** Effective permission names from the backend PermissionCatalog — the single source of truth for what this session can do. */
   permissions: string[]

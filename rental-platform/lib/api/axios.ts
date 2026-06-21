@@ -116,6 +116,7 @@ api.interceptors.response.use(
             subjectType: refreshedAuth.subjectType,
             user: refreshedAuth.user,
             role: refreshedAuth.subjectType === "Admin" ? refreshedAuth.adminRole : null,
+            roleName: refreshedAuth.roleName,
             permissions: refreshedAuth.permissions,
           });
         } else {

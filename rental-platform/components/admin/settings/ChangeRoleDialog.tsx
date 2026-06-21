@@ -3,47 +3,40 @@
 import { useEffect, useRef, useState } from "react";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Select } from "@/components/ui/Select";
-import { AdminRole } from "@/lib/types";
+import { useRoleTemplates } from "@/lib/hooks/useRbac";
 
 interface ChangeRoleDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  currentRole: AdminRole;
-  onConfirm: (newRole: AdminRole) => void;
+  currentRoleTemplateId: string;
+  currentRoleName: string;
+  onConfirm: (roleTemplateId: string) => void;
   isLoading: boolean;
 }
-
-const ROLE_OPTIONS = [
-  { value: "SuperAdmin", label: "Super Admin" },
-  { value: "Sales", label: "Sales" },
-  { value: "Finance", label: "Finance" },
-  { value: "Tech", label: "Tech" },
-];
 
 export function ChangeRoleDialog({
   isOpen,
   onClose,
-  currentRole,
+  currentRoleTemplateId,
+  currentRoleName,
   onConfirm,
   isLoading,
 }: ChangeRoleDialogProps) {
-  const [selectedRole, setSelectedRole] = useState<AdminRole>(currentRole);
+  const rolesQuery = useRoleTemplates();
+  const [selectedRole, setSelectedRole] = useState(currentRoleTemplateId);
 
   // The dialog stays mounted between opens; re-sync the selection to the
   // user being edited only on the open transition, so a background refetch
   // can't overwrite an in-progress selection.
   const wasOpen = useRef(false);
   useEffect(() => {
-    if (isOpen && !wasOpen.current) setSelectedRole(currentRole);
+    if (isOpen && !wasOpen.current) setSelectedRole(currentRoleTemplateId);
     wasOpen.current = isOpen;
-  }, [isOpen, currentRole]);
+  }, [isOpen, currentRoleTemplateId]);
 
-  const roleLabels = {
-    SuperAdmin: "Super Admin",
-    Sales: "Sales",
-    Finance: "Finance",
-    Tech: "Tech",
-  };
+  const roleOptions = (rolesQuery.data ?? [])
+    .filter((role) => role.isActive)
+    .map((role) => ({ value: role.id, label: role.name }));
 
   return (
     <ConfirmDialog
@@ -53,20 +46,24 @@ export function ChangeRoleDialog({
       onConfirm={() => onConfirm(selectedRole)}
       isLoading={isLoading}
       confirmLabel="Change role"
+      confirmDisabled={
+        !selectedRole || selectedRole === currentRoleTemplateId || rolesQuery.isLoading
+      }
     >
       <div className="space-y-3">
         <p className="text-sm text-neutral-600">
-          Current role: <strong>{roleLabels[currentRole]}</strong>
+          Current role: <strong>{currentRoleName}</strong>
         </p>
         <Select
           label="New role"
-          options={ROLE_OPTIONS}
+          options={roleOptions}
           value={selectedRole}
-          onChange={(value) => setSelectedRole(value as AdminRole)}
+          onChange={(value) => setSelectedRole(String(value))}
+          disabled={rolesQuery.isLoading}
         />
         <p className="text-xs text-neutral-500">
-          The new role takes effect on their next sign-in or token refresh
-          (within 15 minutes). Their current screen may not update immediately.
+          Their current session will be revoked so the new access profile takes
+          effect immediately.
         </p>
       </div>
     </ConfirmDialog>

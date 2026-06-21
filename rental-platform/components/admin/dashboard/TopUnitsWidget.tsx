@@ -17,8 +17,7 @@ import { Home, Info } from "lucide-react";
 // "Top by bookings" requires backend support for sorting.
 
 export function TopUnitsWidget() {
-  // GET /api/internal/units is guarded by InternalAnalyticsRead; skip the fetch
-  // for roles without it so the widget never triggers a 403.
+  // GET /api/internal/units is guarded by units:read.
   const { canViewUnits } = usePermissions();
 
   const { data: unitsData, isLoading } = useQuery({

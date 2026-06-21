@@ -123,6 +123,13 @@ export interface CrmAssignmentResponse {
   updatedAt: string;
 }
 
+export interface CrmAssigneeResponse {
+  id: string;
+  name: string;
+  email: string;
+  roleName: string;
+}
+
 export interface AssignLeadRequest {
   assignedAdminUserId: string;
 }

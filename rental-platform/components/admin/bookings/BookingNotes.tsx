@@ -13,9 +13,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Textarea } from "@/components/ui/Textarea";
 import { formatRelativeTime } from "@/lib/utils/format";
-import { useAuthStore } from "@/lib/stores/auth.store";
 import { usePermissions } from "@/lib/hooks/usePermissions";
-import { useAdminUsers } from "@/lib/hooks/useAdminUsers";
+import { useAdminDirectory } from "@/lib/hooks/useAdminUsers";
 import { MessageSquare } from "lucide-react";
 import type { BookingNoteResponse } from "@/lib/types/booking.types";
 
@@ -147,22 +146,18 @@ function NoteRow({ note, bookingId, authorName, canEdit, canDelete }: NoteRowPro
 export function BookingNotes({ bookingId }: BookingNotesProps) {
   const [newNoteText, setNewNoteText] = useState("");
 
-  // Booking notes live on CrmNotesController (SalesOrSuperAdmin) — skip the
-  // fetch and hide the card for roles the endpoint would reject.
-  const { canManageBookings } = usePermissions();
+  const { canViewCRM, canManageCRM } = usePermissions();
 
   const { data: notes, isLoading } = useBookingNotes(bookingId, {
-    enabled: canManageBookings,
+    enabled: canViewCRM,
   });
   const addNoteMutation = useAddBookingNote(bookingId);
-  const { data: adminUsersData } = useAdminUsers({ includeInactive: true });
-
-  const user = useAuthStore((s) => s.user);
+  const { data: adminUsersData } = useAdminDirectory();
 
   // Build a map from adminUserId → name for note author resolution
   const adminNameMap = useMemo(() => {
     const map = new Map<string, string>();
-    (adminUsersData?.items ?? []).forEach((u) => map.set(u.id, u.name));
+    (adminUsersData ?? []).forEach((u) => map.set(u.id, u.name));
     return map;
   }, [adminUsersData]);
 
@@ -174,12 +169,12 @@ export function BookingNotes({ bookingId }: BookingNotesProps) {
     );
   };
 
-  if (!canManageBookings) {
+  if (!canViewCRM) {
     return (
       <div className="space-y-4">
         <h3 className="text-sm font-semibold text-neutral-700">Notes</h3>
         <p className="rounded-md bg-neutral-50 p-3 text-sm text-neutral-500">
-          Internal notes are available to Sales and Super Admin roles.
+          You do not have permission to view internal notes.
         </p>
       </div>
     );
@@ -214,18 +209,14 @@ export function BookingNotes({ bookingId }: BookingNotesProps) {
               note={note}
               bookingId={bookingId}
               authorName={adminNameMap.get(note.createdByAdminUserId)}
-              canEdit={
-                note.createdByAdminUserId === user?.userId || canManageBookings
-              }
-              canDelete={
-                note.createdByAdminUserId === user?.userId || canManageBookings
-              }
+              canEdit={canManageCRM}
+              canDelete={canManageCRM}
             />
           ))}
         </div>
       )}
 
-      <div className="flex gap-2 border-t border-neutral-100 pt-3">
+      {canManageCRM && <div className="flex gap-2 border-t border-neutral-100 pt-3">
         <Textarea
           value={newNoteText}
           onChange={(e) => setNewNoteText(e.target.value)}
@@ -241,7 +232,7 @@ export function BookingNotes({ bookingId }: BookingNotesProps) {
         >
           Add note
         </Button>
-      </div>
+      </div>}
     </div>
   );
 }

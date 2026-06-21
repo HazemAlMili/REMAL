@@ -73,3 +73,9 @@ export interface CreateOwnerNotificationRequest {
   variables?: Record<string, string>;
   scheduledAt?: string;
 }
+export interface NotificationRecipient {
+  id: string;
+  displayName: string;
+  identifier: string;
+  subjectType: "Admin" | "Client" | "Owner";
+}

@@ -12,6 +12,7 @@ public class AutoCompleteBookingsJob : BackgroundService
     private const string InAppChannel = "in_app";
     private const string OutstandingBalanceTemplateCode = "BOOKING_COMPLETED_WITH_BALANCE";
     private const string SweepLockKey = "job:auto-complete-bookings";
+    private const string FinanceManagePermission = "finance:manage";
     private static readonly TimeSpan RunAtUtcTime = TimeSpan.FromHours(2);
     private static readonly TimeZoneInfo CairoTimeZone = ResolveCairoTimeZone();
 
@@ -164,9 +165,17 @@ public class AutoCompleteBookingsJob : BackgroundService
         var adminQuery = unitOfWork.AdminUsers.Query()
             .Where(a => a.IsActive)
             .Where(a =>
-                a.Role == AdminRole.SuperAdmin ||
-                a.Role == AdminRole.Finance ||
-                (booking.AssignedAdminUserId.HasValue && a.Id == booking.AssignedAdminUserId.Value));
+                (booking.AssignedAdminUserId.HasValue && a.Id == booking.AssignedAdminUserId.Value) ||
+                (a.RoleTemplate != null &&
+                 a.RoleTemplate.IsActive &&
+                 !a.PermissionOverrides.Any(entry =>
+                     entry.PermissionKey == FinanceManagePermission &&
+                     entry.ModifierType == "deny") &&
+                 (a.RoleTemplate.Permissions.Any(permission =>
+                      permission.PermissionKey == FinanceManagePermission) ||
+                  a.PermissionOverrides.Any(entry =>
+                      entry.PermissionKey == FinanceManagePermission &&
+                      entry.ModifierType == "grant"))));
 
         var admins = await adminQuery.ToListAsync(cancellationToken);
         if (admins.Count == 0)

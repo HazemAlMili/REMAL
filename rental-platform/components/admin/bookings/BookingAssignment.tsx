@@ -6,7 +6,7 @@ import {
   useAssignBooking,
   useUnassignBooking,
 } from "@/lib/hooks/useBookings";
-import { useAdminUsers } from "@/lib/hooks/useAdminUsers";
+import { useAssignableAdmins } from "@/lib/hooks/useCrm";
 import { usePermissions } from "@/lib/hooks/usePermissions";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
@@ -21,22 +21,18 @@ interface BookingAssignmentProps {
 export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [showUnassignConfirm, setShowUnassignConfirm] = useState(false);
-  const { canAssignLeads, canManageBookings } = usePermissions();
+  const { canAssignLeads } = usePermissions();
 
-  // The assignment endpoint (CrmAssignmentsController) requires
-  // SalesOrSuperAdmin — skip the fetch for roles that would only 403.
+  // Assignment reads and writes use the same granular permission.
   const { data: assignment, isLoading: assignmentLoading } =
-    useBookingAssignment(bookingId, { enabled: canManageBookings });
-  const { data: adminUsers, isLoading: usersLoading } = useAdminUsers();
+    useBookingAssignment(bookingId, { enabled: canAssignLeads });
+  const { data: assignees, isLoading: usersLoading } =
+    useAssignableAdmins(canAssignLeads);
   const assignMutation = useAssignBooking(bookingId);
   const unassignMutation = useUnassignBooking(bookingId);
 
-  const salesUsers = (adminUsers?.items ?? []).filter(
-    (u) => u.isActive && (u.role === "Sales" || u.role === "SuperAdmin")
-  );
-
   const getAdminName = (userId: string) => {
-    const user = adminUsers?.items?.find((u) => u.id === userId);
+    const user = assignees?.find((u) => u.id === userId);
     return user?.name ?? "Unknown admin";
   };
 
@@ -54,12 +50,12 @@ export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
     });
   };
 
-  if (!canManageBookings) {
+  if (!canAssignLeads) {
     return (
       <div className="space-y-4">
         <h3 className="text-sm font-semibold text-neutral-700">Assignment</h3>
         <p className="rounded-md bg-neutral-50 p-3 text-sm text-neutral-500">
-          Sales assignment is available to Sales and Super Admin roles.
+          You do not have permission to manage assignments.
         </p>
       </div>
     );
@@ -106,9 +102,9 @@ export function BookingAssignment({ bookingId }: BookingAssignmentProps) {
           <Select
             value={selectedUserId}
             onChange={(val) => setSelectedUserId(val as string)}
-            options={salesUsers.map((u) => ({
+            options={(assignees ?? []).map((u) => ({
               value: u.id,
-              label: `${u.name} (${u.role})`,
+              label: `${u.name} (${u.roleName})`,
             }))}
             placeholder="Choose a sales owner"
           />

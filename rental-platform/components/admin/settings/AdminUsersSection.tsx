@@ -13,19 +13,25 @@ import {
   useToggleAdminStatus,
 } from "@/lib/hooks/useAdminUsers";
 import { usePermissions } from "@/lib/hooks/usePermissions";
-import { AdminRole } from "@/lib/types";
-
 import { AdminUserTable } from "./AdminUserTable";
 import { ChangeRoleDialog } from "./ChangeRoleDialog";
 import { CreateAdminUserModal } from "./CreateAdminUserModal";
+import { PermissionOverridesModal } from "./rbac/PermissionOverridesModal";
 
 export function AdminUsersSection() {
   const { canManageAdminUsers } = usePermissions();
   const [roleDialog, setRoleDialog] = useState<{
     isOpen: boolean;
     userId: string;
-    currentRole: AdminRole;
-  }>({ isOpen: false, userId: "", currentRole: "Sales" });
+    currentRoleTemplateId: string;
+    currentRoleName: string;
+  }>({ isOpen: false, userId: "", currentRoleTemplateId: "", currentRoleName: "" });
+
+  const [overridesDialog, setOverridesDialog] = useState({
+    isOpen: false,
+    userId: "",
+    userName: "",
+  });
 
   const [statusDialog, setStatusDialog] = useState<{
     isOpen: boolean;
@@ -48,21 +54,25 @@ export function AdminUsersSection() {
     );
   }
 
-  const handleOpenRoleDialog = (userId: string, currentRole: AdminRole) => {
-    setRoleDialog({ isOpen: true, userId, currentRole });
+  const handleOpenRoleDialog = (
+    userId: string,
+    currentRoleTemplateId: string,
+    currentRoleName: string
+  ) => {
+    setRoleDialog({ isOpen: true, userId, currentRoleTemplateId, currentRoleName });
   };
 
   const handleCloseRoleDialog = () => {
-    setRoleDialog({ isOpen: false, userId: "", currentRole: "Sales" });
+    setRoleDialog({ isOpen: false, userId: "", currentRoleTemplateId: "", currentRoleName: "" });
   };
 
-  const handleRoleConfirm = (newRole: AdminRole) => {
+  const handleRoleConfirm = (roleTemplateId: string) => {
     changeRoleMutation.mutate(
-      { id: roleDialog.userId, role: newRole },
+      { id: roleDialog.userId, roleTemplateId },
       {
         onSuccess: () => {
           toastSuccess(
-            "Admin role updated. It takes effect on their next sign-in or token refresh (within 15 minutes)."
+            "Admin role updated. Their previous session has been revoked."
           );
           handleCloseRoleDialog();
         },
@@ -133,6 +143,9 @@ export function AdminUsersSection() {
           isLoading={isLoading}
           onChangeRole={handleOpenRoleDialog}
           onToggleStatus={handleOpenStatusDialog}
+          onEditOverrides={(userId, userName) =>
+            setOverridesDialog({ isOpen: true, userId, userName })
+          }
         />
       ) : (
         <EmptyState
@@ -149,9 +162,19 @@ export function AdminUsersSection() {
       <ChangeRoleDialog
         isOpen={roleDialog.isOpen}
         onClose={handleCloseRoleDialog}
-        currentRole={roleDialog.currentRole}
+        currentRoleTemplateId={roleDialog.currentRoleTemplateId}
+        currentRoleName={roleDialog.currentRoleName}
         onConfirm={handleRoleConfirm}
         isLoading={changeRoleMutation.isPending}
+      />
+
+      <PermissionOverridesModal
+        isOpen={overridesDialog.isOpen}
+        adminUserId={overridesDialog.userId}
+        adminUserName={overridesDialog.userName}
+        onClose={() =>
+          setOverridesDialog({ isOpen: false, userId: "", userName: "" })
+        }
       />
 
       <ConfirmDialog

@@ -12,6 +12,7 @@ namespace RentalPlatform.API.Services;
 public class JwtTokenService : ITokenService
 {
     public const string ClientUpdatedAtClaim = "clientUpdatedAtTicks";
+    public const string AdminUpdatedAtClaim = "adminUpdatedAtTicks";
     private readonly JwtOptions _options;
     private readonly ILogger<JwtTokenService> _logger;
 
@@ -35,6 +36,8 @@ public class JwtTokenService : ITokenService
             claims.Add(new(ClaimTypes.Role, subject.AdminRole.ToString()!));
         }
 
+        AddAdminClaims(claims, subject);
+
         AddClientSecurityStampClaim(claims, subject);
 
         return CreateToken(claims, _options.AccessTokenExpirationMinutes);
@@ -53,6 +56,8 @@ public class JwtTokenService : ITokenService
         {
             claims.Add(new(ClaimTypes.Role, subject.AdminRole.ToString()!));
         }
+
+        AddAdminClaims(claims, subject);
 
         AddClientSecurityStampClaim(claims, subject);
 
@@ -124,5 +129,24 @@ public class JwtTokenService : ITokenService
             ClientUpdatedAtClaim,
             subject.ClientUpdatedAt.Value.Ticks.ToString(
                 System.Globalization.CultureInfo.InvariantCulture)));
+    }
+
+    private static void AddAdminClaims(
+        ICollection<Claim> claims,
+        AuthenticatedSubject subject)
+    {
+        if (!string.Equals(subject.SubjectType, "Admin", StringComparison.OrdinalIgnoreCase))
+            return;
+
+        foreach (var permission in subject.AdminPermissions.Distinct(StringComparer.Ordinal))
+            claims.Add(new Claim("perm", permission));
+
+        if (subject.AdminUpdatedAt.HasValue)
+        {
+            claims.Add(new Claim(
+                AdminUpdatedAtClaim,
+                subject.AdminUpdatedAt.Value.Ticks.ToString(
+                    System.Globalization.CultureInfo.InvariantCulture)));
+        }
     }
 }

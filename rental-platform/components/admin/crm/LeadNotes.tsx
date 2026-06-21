@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useLeadNotes, useAddLeadNote } from "@/lib/hooks/useCrm";
-import { useAdminUsers } from "@/lib/hooks/useAdminUsers";
+import { useAdminDirectory } from "@/lib/hooks/useAdminUsers";
 import { NoteItem } from "@/components/admin/crm/NoteItem";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -22,17 +22,16 @@ export function LeadNotes({ leadId }: LeadNotesProps) {
 
   const { data: notes, isLoading } = useLeadNotes(leadId);
   const addNoteMutation = useAddLeadNote(leadId);
-  const { data: adminUsersData } = useAdminUsers({ includeInactive: true });
+  const { data: adminUsersData } = useAdminDirectory();
 
   const user = useAuthStore((s) => s.user);
-  // Note endpoints (CrmNotesController) require SalesOrSuperAdmin — use the
-  // matching capability rather than the broader isAdmin.
+  // Note mutations require crm:write.
   const { canManageCRM } = usePermissions();
 
   // Build a map from adminUserId → name for note author resolution
   const adminNameMap = useMemo(() => {
     const map = new Map<string, string>();
-    (adminUsersData?.items ?? []).forEach((u) => map.set(u.id, u.name));
+    (adminUsersData ?? []).forEach((u) => map.set(u.id, u.name));
     return map;
   }, [adminUsersData]);
 

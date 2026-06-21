@@ -16,6 +16,9 @@ public class AppDbContext : DbContext
     public DbSet<Amenity> Amenities { get; set; } = null!;
     public DbSet<Area> Areas { get; set; } = null!;
     public DbSet<AdminUser> AdminUsers { get; set; } = null!;
+    public DbSet<RbacRoleTemplate> RbacRoleTemplates { get; set; } = null!;
+    public DbSet<RbacRoleTemplatePermission> RbacRoleTemplatePermissions { get; set; } = null!;
+    public DbSet<RbacAdminUserPermissionOverride> RbacAdminUserPermissionOverrides { get; set; } = null!;
     public DbSet<Client> Clients { get; set; } = null!;
     public DbSet<Owner> Owners { get; set; } = null!;
     public DbSet<Unit> Units { get; set; } = null!;

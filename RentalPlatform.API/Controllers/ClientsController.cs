@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.Clients;
 using RentalPlatform.API.DTOs.Responses.Clients;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Business.Exceptions;
 using RentalPlatform.Data.Entities;
@@ -27,7 +28,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.ClientsWrite)]
     public async Task<ActionResult<ApiResponse<CreateClientResponse>>> Create(
         [FromBody] CreateClientRequest request,
         CancellationToken cancellationToken)
@@ -73,7 +74,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Policy = "InternalAdminRead")]
+    [Authorize(Policy = PermissionKeys.ClientsRead)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<ClientListItemResponse>>>> GetAll(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
@@ -97,7 +98,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Policy = "InternalAdminRead")]
+    [Authorize(Policy = PermissionKeys.ClientsRead)]
     public async Task<ActionResult<ApiResponse<ClientDetailsResponse>>> GetById(Guid id)
     {
         var client = await _clientService.GetByIdAsync(id);
@@ -109,7 +110,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpPatch("{id}/status")]
-    [Authorize(Policy = "SalesOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.ClientsWrite)]
     public async Task<ActionResult<ApiResponse<ClientDetailsResponse>>> UpdateStatus(Guid id, UpdateClientStatusRequest request)
     {
         var client = await _clientService.UpdateStatusAsync(id, request.IsActive);
@@ -120,7 +121,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpPatch("{id}/password")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.ClientsResetPassword)]
     public async Task<ActionResult<ApiResponse<ClientDetailsResponse>>> ResetPassword(Guid id, ResetClientPasswordRequest request)
     {
         var actorClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

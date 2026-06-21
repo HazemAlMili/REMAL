@@ -15,7 +15,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default function FinanceOverviewPage() {
-  const { canViewFinance } = usePermissions();
+  const { canViewFinance, canManageFinance, canManagePayouts } = usePermissions();
 
   if (canViewFinance === false) {
     redirect(ROUTES.admin.dashboard);
@@ -28,13 +28,13 @@ export default function FinanceOverviewPage() {
     to: null,
   });
 
-  const { useFinanceSummary } = useReports();
+  const { useFinanceOverview } = useReports();
   const {
     data: summary,
     isLoading,
     isError,
     refetch,
-  } = useFinanceSummary({
+  } = useFinanceOverview({
     dateFrom: range.from ? format(range.from, "yyyy-MM-dd") : undefined,
     dateTo: range.to ? format(range.to, "yyyy-MM-dd") : undefined,
   });
@@ -66,12 +66,16 @@ export default function FinanceOverviewPage() {
       <FinanceSummaryCards data={summary} isLoading={isLoading} />
 
       <div className="mt-4 flex flex-wrap gap-4">
-        <Link href={ROUTES.admin.financePayments}>
-          <Button variant="secondary">Open payments ledger</Button>
-        </Link>
-        <Link href={ROUTES.admin.financePayouts}>
-          <Button variant="secondary">Manage owner payouts</Button>
-        </Link>
+        {canManageFinance && (
+          <Link href={ROUTES.admin.financePayments}>
+            <Button variant="secondary">Open payments ledger</Button>
+          </Link>
+        )}
+        {canManagePayouts && (
+          <Link href={ROUTES.admin.financePayouts}>
+            <Button variant="secondary">Manage owner payouts</Button>
+          </Link>
+        )}
       </div>
     </div>
   );

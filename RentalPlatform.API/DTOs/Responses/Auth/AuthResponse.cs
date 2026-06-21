@@ -13,6 +13,7 @@ public record AuthResponse(
     int ExpiresInSeconds,
     string SubjectType,
     string? AdminRole,
+    string? RoleName,
     AuthenticatedUserResponse User,
     IReadOnlyList<string> Permissions
 );

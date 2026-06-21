@@ -5,7 +5,9 @@ export interface AdminUserResponse {
   id: string;
   name: string;
   email: string;
-  role: AdminRole;
+  role: AdminRole | null;
+  roleTemplateId: string;
+  roleName: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -17,6 +19,14 @@ export interface AdminUserListFilters {
   pageSize?: number;
 }
 
+export interface AdminDirectoryUser {
+  id: string;
+  name: string;
+  email: string;
+  roleName: string;
+  isActive: boolean;
+}
+
 export interface PaginatedAdminUsers {
   items: AdminUserResponse[];
   pagination: PaginationMeta;
@@ -26,11 +36,11 @@ export interface CreateAdminUserRequest {
   name: string;
   email: string;
   password: string;
-  role: AdminRole;
+  roleTemplateId: string;
 }
 
 export interface UpdateAdminUserRoleRequest {
-  role: AdminRole;
+  roleTemplateId: string;
 }
 
 export interface UpdateAdminUserStatusRequest {

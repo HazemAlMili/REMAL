@@ -9,5 +9,8 @@ public class AuthenticatedSubject
     public string? Identifier { get; set; }
     public string? Name { get; set; }
     public AdminRole? AdminRole { get; set; }
+    public string? AdminRoleName { get; set; }
+    public IReadOnlyCollection<string> AdminPermissions { get; set; } = Array.Empty<string>();
+    public DateTime? AdminUpdatedAt { get; set; }
     public DateTime? ClientUpdatedAt { get; set; }
 }

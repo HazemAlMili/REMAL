@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using RentalPlatform.API.Authorization;
 
 namespace RentalPlatform.API.Controllers;
 
@@ -25,7 +26,7 @@ public class AdminUsersController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Policy = "AdminAuthenticated")]
+    [Authorize(Policy = PermissionKeys.SettingsAdmin)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<AdminUserResponse>>>> GetAll(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
@@ -48,21 +49,21 @@ public class AdminUsersController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.SettingsAdmin)]
     public async Task<ActionResult<ApiResponse<AdminUserResponse>>> Create(CreateAdminUserRequest request)
     {
         var admin = await _adminUserService.CreateAsync(
             request.Name,
             request.Email,
             request.Password,
-            request.Role
+            request.RoleTemplateId
         );
 
         return Ok(ApiResponse<AdminUserResponse>.CreateSuccess(MapToResponse(admin), "Admin user created successfully."));
     }
 
     [HttpPatch("{id}/role")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.SettingsAdmin)]
     public async Task<ActionResult<ApiResponse<AdminUserResponse>>> UpdateRole(Guid id, UpdateAdminUserRoleRequest request)
     {
         var callerId = GetCallerId();
@@ -71,12 +72,12 @@ public class AdminUsersController : ControllerBase
         if (callerId == id)
             return BadRequest(ApiResponse.CreateFailure("You cannot change your own role."));
 
-        var admin = await _adminUserService.UpdateRoleAsync(id, request.Role);
+        var admin = await _adminUserService.UpdateRoleAsync(id, request.RoleTemplateId);
         return Ok(ApiResponse<AdminUserResponse>.CreateSuccess(MapToResponse(admin), "Admin role updated successfully."));
     }
 
     [HttpPatch("{id}/status")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.SettingsAdmin)]
     public async Task<ActionResult<ApiResponse<AdminUserResponse>>> UpdateStatus(Guid id, UpdateAdminUserStatusRequest request)
     {
         var callerId = GetCallerId();
@@ -109,6 +110,8 @@ public class AdminUsersController : ControllerBase
             admin.Name,
             admin.Email,
             admin.Role,
+            admin.RoleTemplateId,
+            admin.RoleTemplate?.Name ?? admin.Role?.ToString() ?? "Custom",
             admin.IsActive,
             admin.CreatedAt,
             admin.UpdatedAt

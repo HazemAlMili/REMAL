@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.BookingLifecycle;
 using RentalPlatform.API.DTOs.Responses.Bookings;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -13,7 +14,7 @@ namespace RentalPlatform.API.Controllers;
 
 [ApiController]
 [Route("api/internal/bookings/{id}")]
-[Authorize(Policy = "SalesOrSuperAdmin")]
+[Authorize(Policy = PermissionKeys.BookingsWrite)]
 public class BookingLifecycleController : ControllerBase
 {
     private readonly IBookingLifecycleService _lifecycleService;

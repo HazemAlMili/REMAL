@@ -24,7 +24,8 @@ public class AdminUserService : IAdminUserService
 
     public async Task<IReadOnlyList<AdminUser>> GetAllAsync(bool includeInactive = true, CancellationToken cancellationToken = default)
     {
-        var query = _unitOfWork.AdminUsers.Query();
+        IQueryable<AdminUser> query = _unitOfWork.AdminUsers.Query()
+            .Include(admin => admin.RoleTemplate);
 
         if (!includeInactive)
         {
@@ -36,10 +37,12 @@ public class AdminUserService : IAdminUserService
 
     public async Task<AdminUser?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.AdminUsers.GetByIdAsync(id, cancellationToken);
+        return await _unitOfWork.AdminUsers.Query()
+            .Include(admin => admin.RoleTemplate)
+            .SingleOrDefaultAsync(admin => admin.Id == id, cancellationToken);
     }
 
-    public async Task<AdminUser> CreateAsync(string name, string email, string plainTextPassword, AdminRole role, CancellationToken cancellationToken = default)
+    public async Task<AdminUser> CreateAsync(string name, string email, string plainTextPassword, Guid roleTemplateId, CancellationToken cancellationToken = default)
     {
         var trimmedName = name?.Trim();
         var trimmedEmail = email?.Trim();
@@ -48,10 +51,7 @@ public class AdminUserService : IAdminUserService
         if (string.IsNullOrWhiteSpace(trimmedEmail)) throw new BusinessValidationException("Email is required.");
         if (string.IsNullOrWhiteSpace(plainTextPassword)) throw new BusinessValidationException("Password is required.");
 
-        if (!Enum.IsDefined(typeof(AdminRole), role))
-        {
-            throw new BusinessValidationException("Invalid role provided.");
-        }
+        var roleTemplate = await GetActiveRoleTemplateAsync(roleTemplateId, cancellationToken);
 
         var duplicateEmail = await _unitOfWork.AdminUsers.ExistsAsync(a => a.Email.ToLower() == trimmedEmail.ToLower(), cancellationToken);
         if (duplicateEmail) throw new ConflictException($"Admin user with email '{trimmedEmail}' already exists.");
@@ -62,7 +62,9 @@ public class AdminUserService : IAdminUserService
             Name = trimmedName,
             Email = trimmedEmail,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(plainTextPassword, 12),
-            Role = role,
+            Role = LegacyRoleForTemplate(roleTemplate.Name),
+            RoleTemplateId = roleTemplate.Id,
+            RoleTemplate = roleTemplate,
             IsActive = true
         };
 
@@ -72,17 +74,16 @@ public class AdminUserService : IAdminUserService
         return adminUser;
     }
 
-    public async Task<AdminUser> UpdateRoleAsync(Guid id, AdminRole role, CancellationToken cancellationToken = default)
+    public async Task<AdminUser> UpdateRoleAsync(Guid id, Guid roleTemplateId, CancellationToken cancellationToken = default)
     {
-        if (!Enum.IsDefined(typeof(AdminRole), role))
-        {
-            throw new BusinessValidationException("Invalid role provided.");
-        }
+        var roleTemplate = await GetActiveRoleTemplateAsync(roleTemplateId, cancellationToken);
 
         var adminUser = await _unitOfWork.AdminUsers.GetByIdAsync(id, cancellationToken)
             ?? throw new NotFoundException($"Admin user with ID {id} not found.");
 
-        adminUser.Role = role;
+        adminUser.RoleTemplateId = roleTemplate.Id;
+        adminUser.Role = LegacyRoleForTemplate(roleTemplate.Name);
+        adminUser.RoleTemplate = roleTemplate;
 
         _unitOfWork.AdminUsers.Update(adminUser);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -99,5 +100,25 @@ public class AdminUserService : IAdminUserService
 
         _unitOfWork.AdminUsers.Update(adminUser);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task<RbacRoleTemplate> GetActiveRoleTemplateAsync(
+        Guid roleTemplateId,
+        CancellationToken cancellationToken)
+    {
+        if (roleTemplateId == Guid.Empty)
+            throw new BusinessValidationException("Role template is required.");
+
+        return await _unitOfWork.RbacRoleTemplates.FirstOrDefaultAsync(
+            role => role.Id == roleTemplateId && role.IsActive,
+            cancellationToken)
+            ?? throw new BusinessValidationException("The selected role template is unavailable.");
+    }
+
+    private static AdminRole? LegacyRoleForTemplate(string roleTemplateName)
+    {
+        return Enum.TryParse<AdminRole>(roleTemplateName, ignoreCase: false, out var legacyRole)
+            ? legacyRole
+            : null;
     }
 }

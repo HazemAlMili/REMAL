@@ -4,6 +4,7 @@ using RentalPlatform.API.DTOs.Requests.Units;
 using RentalPlatform.API.DTOs.Responses.UnitImages;
 using RentalPlatform.API.DTOs.Responses.Units;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Business.Models;
 using RentalPlatform.Data.Entities;
@@ -70,7 +71,7 @@ public class UnitsController : ControllerBase
 
     // 3. GET /api/internal/units (Internal)
     [HttpGet("api/internal/units")]
-    [Authorize(Policy = "InternalUnitsRead")]
+    [Authorize(Policy = PermissionKeys.UnitsRead)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<UnitListItemResponse>>>> GetInternalUnits(
         [FromQuery] int page = 1, 
         [FromQuery] int pageSize = 20, 
@@ -110,7 +111,7 @@ public class UnitsController : ControllerBase
 
     // 4. GET /api/internal/units/{id} (Internal)
     [HttpGet("api/internal/units/{id}")]
-    [Authorize(Policy = "InternalUnitsRead")]
+    [Authorize(Policy = PermissionKeys.UnitsRead)]
     public async Task<ActionResult<ApiResponse<UnitDetailsResponse>>> GetInternalUnitById(Guid id)
     {
         var unit = await _unitService.GetByIdAsync(id);
@@ -123,7 +124,7 @@ public class UnitsController : ControllerBase
 
     // 5. POST /api/internal/units
     [HttpPost("api/internal/units")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse<UnitDetailsResponse>>> CreateUnit(CreateUnitRequest request)
     {
         var unit = await _unitService.CreateAsync(
@@ -145,7 +146,7 @@ public class UnitsController : ControllerBase
 
     // 6. PUT /api/internal/units/{id}
     [HttpPut("api/internal/units/{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse<UnitDetailsResponse>>> UpdateUnit(Guid id, UpdateUnitRequest request)
     {
         var unit = await _unitService.UpdateAsync(
@@ -168,7 +169,7 @@ public class UnitsController : ControllerBase
 
     // 7. PATCH /api/internal/units/{id}/status
     [HttpPatch("api/internal/units/{id}/status")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse<UnitDetailsResponse>>> UpdateUnitStatus(Guid id, UpdateUnitStatusRequest request)
     {
         await _unitService.SetActiveAsync(id, request.IsActive);
@@ -182,7 +183,7 @@ public class UnitsController : ControllerBase
 
     // 8. DELETE /api/internal/units/{id}
     [HttpDelete("api/internal/units/{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse>> DeleteUnit(Guid id)
     {
         await _unitService.SoftDeleteAsync(id);

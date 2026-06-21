@@ -6,31 +6,38 @@ import { test, expect, Page } from "@playwright/test";
  * tabs the role can't reach. Fully mocked: it intercepts every /api/** call,
  * so it is independent of the (separately deployed) backend.
  *
- * Models the units/analytics policy split: Finance keeps `InternalAnalyticsRead`
- * (financial reports + the Analytics tab) but NOT `InternalUnitsRead`, so the
+ * Models the units/analytics permission split: Finance keeps `analytics:read`
+ * (financial reports + the Analytics tab) but NOT `units:read`, so the
  * Units section and its dashboard widgets disappear for Finance. A units-reader
  * role (Sales/SuperAdmin/Tech) has both.
  */
 
 const PAGE_ORIGIN = "http://localhost:3001";
 
-// Finance: reports yes (InternalAnalyticsRead), units inventory no.
+// Finance: reports yes, units inventory no.
 const FINANCE_PERMS = [
-  "AdminAuthenticated",
-  "FinanceOrSuperAdmin",
-  "InternalAdminReadOwners",
-  "InternalAdminRead",
-  "InternalAnalyticsRead",
+  "finance:overview",
+  "finance:manage",
+  "finance:payouts",
+  "bookings:read",
+  "clients:read",
+  "owners:read",
+  "analytics:read",
 ];
 
 // Sales: units inventory + analytics.
 const SALES_PERMS = [
-  "AdminAuthenticated",
-  "SalesOrSuperAdmin",
-  "InternalAdminReadOwners",
-  "InternalAdminRead",
-  "InternalUnitsRead",
-  "InternalAnalyticsRead",
+  "crm:read",
+  "crm:write",
+  "crm:assign",
+  "bookings:read",
+  "bookings:write",
+  "reviews:moderate",
+  "clients:read",
+  "clients:write",
+  "owners:read",
+  "units:read",
+  "analytics:read",
 ];
 
 const CORS = {
@@ -75,6 +82,7 @@ async function mockAdminSession(
           expiresInSeconds: 900,
           subjectType: "Admin",
           adminRole: role,
+          roleName: role,
           user: {
             userId: "11111111-1111-1111-1111-111111111111",
             identifier: `${role.toLowerCase()}.dev@rental.local`,
@@ -85,6 +93,10 @@ async function mockAdminSession(
           permissions,
         },
       });
+    }
+
+    if (url.includes("/api/internal/crm/leads/open-count")) {
+      return json({ success: true, data: 0 });
     }
 
     // Benign empty payload for any other endpoint (lists, summaries, etc.).

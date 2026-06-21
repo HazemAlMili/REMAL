@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.UnitImages;
 using RentalPlatform.API.DTOs.Responses.UnitImages;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -47,7 +48,7 @@ public class UnitImagesController : ControllerBase
 
     // 2. POST /api/internal/units/{unitId}/images (Internal)
     [HttpPost("api/internal/units/{unitId}/images")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse<UnitImageResponse>>> AddImage(Guid unitId, AddUnitImageRequest request)
     {
         var image = await _unitImageService.AddAsync(
@@ -62,7 +63,7 @@ public class UnitImagesController : ControllerBase
 
     // 3. PUT /api/internal/units/{unitId}/images/reorder (Internal)
     [HttpPut("api/internal/units/{unitId}/images/reorder")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<UnitImageResponse>>>> ReorderImages(Guid unitId, ReorderUnitImagesRequest request)
     {
         var ordering = request.Items.Select(x => (x.ImageId, x.DisplayOrder)).ToList();
@@ -76,7 +77,7 @@ public class UnitImagesController : ControllerBase
 
     // 4. PATCH /api/internal/units/{unitId}/images/{imageId}/cover (Internal)
     [HttpPatch("api/internal/units/{unitId}/images/{imageId}/cover")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<UnitImageResponse>>>> SetCoverImage(Guid unitId, Guid imageId)
     {
         await _unitImageService.SetCoverAsync(unitId, imageId);
@@ -89,7 +90,7 @@ public class UnitImagesController : ControllerBase
 
     // 5. DELETE /api/internal/units/{unitId}/images/{imageId} (Internal)
     [HttpDelete("api/internal/units/{unitId}/images/{imageId}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse>> RemoveImage(Guid unitId, Guid imageId)
     {
         await _unitImageService.RemoveAsync(unitId, imageId);

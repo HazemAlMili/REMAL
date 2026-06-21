@@ -12,6 +12,7 @@ namespace RentalPlatform.Business.Services;
 
 public class CrmAssignmentService : ICrmAssignmentService
 {
+    private const string CrmAssignPermission = "crm:assign";
     private readonly IUnitOfWork _unitOfWork;
 
     public CrmAssignmentService(IUnitOfWork unitOfWork)
@@ -39,6 +40,24 @@ public class CrmAssignmentService : ICrmAssignmentService
         return await _unitOfWork.CrmAssignments.Query()
             .Where(a => a.CrmLeadId == leadId && a.IsActive)
             .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<AdminUser>> GetAssignableAdminsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return await _unitOfWork.AdminUsers.Query()
+            .AsNoTracking()
+            .Include(admin => admin.RoleTemplate)
+            .Where(admin => admin.IsActive && admin.RoleTemplate != null && admin.RoleTemplate.IsActive)
+            .Where(admin =>
+                !admin.PermissionOverrides.Any(entry =>
+                    entry.PermissionKey == CrmAssignPermission && entry.ModifierType == "deny") &&
+                (admin.RoleTemplate!.Permissions.Any(permission =>
+                     permission.PermissionKey == CrmAssignPermission) ||
+                 admin.PermissionOverrides.Any(entry =>
+                     entry.PermissionKey == CrmAssignPermission && entry.ModifierType == "grant")))
+            .OrderBy(admin => admin.Name)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<CrmAssignment> AssignBookingAsync(
@@ -197,10 +216,21 @@ public class CrmAssignmentService : ICrmAssignmentService
 
     private async Task ValidateAdminExistsAsync(Guid adminUserId, CancellationToken cancellationToken)
     {
-        var exists = await _unitOfWork.AdminUsers.ExistsAsync(
-            a => a.Id == adminUserId && a.IsActive, cancellationToken);
+        var exists = await _unitOfWork.AdminUsers.Query()
+            .AsNoTracking()
+            .Where(admin => admin.Id == adminUserId && admin.IsActive)
+            .Where(admin => admin.RoleTemplate != null && admin.RoleTemplate.IsActive)
+            .Where(admin =>
+                !admin.PermissionOverrides.Any(entry =>
+                    entry.PermissionKey == CrmAssignPermission && entry.ModifierType == "deny") &&
+                (admin.RoleTemplate!.Permissions.Any(permission =>
+                     permission.PermissionKey == CrmAssignPermission) ||
+                 admin.PermissionOverrides.Any(entry =>
+                     entry.PermissionKey == CrmAssignPermission && entry.ModifierType == "grant")))
+            .AnyAsync(cancellationToken);
         if (!exists)
-            throw new NotFoundException($"Active admin user with ID {adminUserId} not found");
+            throw new BusinessValidationException(
+                "The selected admin is inactive or does not have assignment permission.");
     }
 
     private async Task DeactivateBookingAssignmentsAsync(Guid bookingId, CancellationToken cancellationToken)

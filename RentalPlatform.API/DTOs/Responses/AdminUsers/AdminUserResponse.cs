@@ -7,7 +7,9 @@ public record AdminUserResponse(
     Guid Id,
     string Name,
     string Email,
-    AdminRole Role,
+    AdminRole? Role,
+    Guid RoleTemplateId,
+    string RoleName,
     bool IsActive,
     DateTime CreatedAt,
     DateTime UpdatedAt

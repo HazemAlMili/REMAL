@@ -14,6 +14,7 @@ import type {
   CreateAdminNotificationRequest,
   CreateClientNotificationRequest,
   CreateOwnerNotificationRequest,
+  NotificationRecipient,
 } from "@/lib/types/notification.types";
 
 export interface NotificationInboxParams {
@@ -46,6 +47,11 @@ export const notificationsService = {
     api.put(endpoints.notificationPreferences.adminUpdate, data),
 
   // ── Dispatch (admin sends to users) ──
+  getRecipients: (
+    subjectType: "Admin" | "Client" | "Owner"
+  ): Promise<NotificationRecipient[]> =>
+    api.get(endpoints.internalNotifications.recipients(subjectType)),
+
   // Per P25: template-based, NOT free-text title/body
   sendToAdmin: (
     adminUserId: string,

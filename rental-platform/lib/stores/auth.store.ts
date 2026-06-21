@@ -10,7 +10,8 @@ interface AuthState {
   subjectType: SubjectType | null
   user: AuthUserPayload | null
   role: AuthRole
-  /** Server-issued effective permissions (backend PermissionCatalog names). */
+  roleName: string | null
+  /** Server-issued effective granular permissions. */
   permissions: string[]
 
   setAuth: (payload: {
@@ -19,6 +20,7 @@ interface AuthState {
     subjectType: SubjectType
     user: AuthUserPayload
     role: AuthRole
+    roleName?: string | null
     permissions?: string[]
   }) => void
   setAccessToken: (token: string | null) => void
@@ -33,13 +35,14 @@ export const useAuthStore = create<AuthState>()(
       subjectType: null,
       user: null,
       role: null,
+      roleName: null,
       permissions: [],
 
-      setAuth: ({ accessToken, expiresInSeconds, subjectType, user, role, permissions }) =>
-        set({ accessToken, expiresInSeconds, subjectType, user, role, permissions: permissions ?? [] }),
+      setAuth: ({ accessToken, expiresInSeconds, subjectType, user, role, roleName, permissions }) =>
+        set({ accessToken, expiresInSeconds, subjectType, user, role, roleName: roleName ?? null, permissions: permissions ?? [] }),
       setAccessToken: (token) => set({ accessToken: token }),
       clearAuth: () =>
-        set({ accessToken: null, expiresInSeconds: null, subjectType: null, user: null, role: null, permissions: [] }),
+        set({ accessToken: null, expiresInSeconds: null, subjectType: null, user: null, role: null, roleName: null, permissions: [] }),
     }),
     {
       name: 'kaza-auth',
@@ -48,6 +51,7 @@ export const useAuthStore = create<AuthState>()(
         subjectType: state.subjectType,
         user: state.user,
         role: state.role,
+        roleName: state.roleName,
         permissions: state.permissions,
       }),
     }

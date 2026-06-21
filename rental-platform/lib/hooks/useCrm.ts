@@ -238,6 +238,14 @@ export function useLeadAssignment(leadId: string) {
   });
 }
 
+export function useAssignableAdmins(enabled = true) {
+  return useQuery({
+    queryKey: queryKeys.crm.assignees(),
+    queryFn: crmService.getAssignees,
+    enabled,
+  });
+}
+
 export function useAssignLead(leadId: string) {
   const queryClient = useQueryClient();
   return useMutation({

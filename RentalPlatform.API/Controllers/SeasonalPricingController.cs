@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.SeasonalPricing;
 using RentalPlatform.API.DTOs.Responses.SeasonalPricing;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -24,7 +25,7 @@ public class SeasonalPricingController : ControllerBase
 
     // 1. GET /api/internal/units/{unitId}/seasonal-pricing
     [HttpGet("api/internal/units/{unitId}/seasonal-pricing")]
-    [Authorize(Policy = "InternalUnitsRead")]
+    [Authorize(Policy = PermissionKeys.UnitsRead)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<SeasonalPricingResponse>>>> GetByUnitId(Guid unitId)
     {
         var pricings = await _seasonalPricingService.GetByUnitIdAsync(unitId);
@@ -35,7 +36,7 @@ public class SeasonalPricingController : ControllerBase
 
     // 2. POST /api/internal/units/{unitId}/seasonal-pricing
     [HttpPost("api/internal/units/{unitId}/seasonal-pricing")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse<SeasonalPricingResponse>>> Create(Guid unitId, CreateSeasonalPricingRequest request)
     {
         var pricing = await _seasonalPricingService.CreateAsync(
@@ -50,7 +51,7 @@ public class SeasonalPricingController : ControllerBase
 
     // 3. PUT /api/internal/seasonal-pricing/{id}
     [HttpPut("api/internal/seasonal-pricing/{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse<SeasonalPricingResponse>>> Update(Guid id, UpdateSeasonalPricingRequest request)
     {
         var pricing = await _seasonalPricingService.UpdateAsync(
@@ -65,7 +66,7 @@ public class SeasonalPricingController : ControllerBase
 
     // 4. DELETE /api/internal/seasonal-pricing/{id}
     [HttpDelete("api/internal/seasonal-pricing/{id}")]
-    [Authorize(Policy = "SuperAdminOnly")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse>> Delete(Guid id)
     {
         await _seasonalPricingService.DeleteAsync(id);

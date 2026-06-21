@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.Invoices;
 using RentalPlatform.API.DTOs.Responses.Invoices;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -25,7 +26,7 @@ public class InvoicesController : ControllerBase
 
     // GET /api/internal/invoices
     [HttpGet]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<InvoiceResponse>>>> ListInvoices(
         [FromQuery] string? invoiceStatus = null,
         [FromQuery] Guid? bookingId = null,
@@ -45,7 +46,7 @@ public class InvoicesController : ControllerBase
 
     // GET /api/internal/invoices/{id}
     [HttpGet("{id}")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<InvoiceResponse>>> GetInvoiceById(Guid id)
     {
         var invoice = await _invoiceService.GetByIdAsync(id);
@@ -58,7 +59,7 @@ public class InvoicesController : ControllerBase
 
     // POST /api/internal/invoices/drafts
     [HttpPost("drafts")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<InvoiceResponse>>> CreateInvoiceDraft(CreateInvoiceDraftRequest request)
     {
         var invoice = await _invoiceService.CreateDraftFromBookingAsync(
@@ -72,7 +73,7 @@ public class InvoicesController : ControllerBase
 
     // POST /api/internal/invoices/{id}/items/manual-adjustment
     [HttpPost("{id}/items/manual-adjustment")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<InvoiceResponse>>> AddManualAdjustment(Guid id, AddInvoiceManualAdjustmentRequest request)
     {
         var invoice = await _invoiceService.AddManualAdjustmentAsync(
@@ -87,7 +88,7 @@ public class InvoicesController : ControllerBase
 
     // POST /api/internal/invoices/{id}/issue
     [HttpPost("{id}/issue")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<InvoiceResponse>>> IssueInvoice(Guid id)
     {
         var invoice = await _invoiceService.IssueAsync(id);
@@ -97,7 +98,7 @@ public class InvoicesController : ControllerBase
 
     // POST /api/internal/invoices/{id}/cancel
     [HttpPost("{id}/cancel")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<InvoiceResponse>>> CancelInvoice(Guid id, CancelInvoiceRequest request)
     {
         var invoice = await _invoiceService.CancelAsync(id, request.Notes);
@@ -107,7 +108,7 @@ public class InvoicesController : ControllerBase
 
     // POST /api/internal/invoices/{id}/reissue
     [HttpPost("{id}/reissue")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<InvoiceResponse>>> ReissueInvoice(Guid id, ReissueInvoiceRequest request)
     {
         var invoice = await _invoiceService.ReissueAsync(id, request.NewInvoiceNumber, request.Notes);
@@ -117,7 +118,7 @@ public class InvoicesController : ControllerBase
 
     // POST /api/internal/invoices/link-orphaned-payments
     [HttpPost("link-orphaned-payments")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<object>>> LinkOrphanedPayments()
     {
         var linkedCount = await _invoiceService.LinkOrphanedPaymentsAsync();

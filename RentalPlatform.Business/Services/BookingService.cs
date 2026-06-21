@@ -43,7 +43,8 @@ public class BookingService : IBookingService
         IQueryable<Booking> query = _unitOfWork.Bookings.Query()
             .Include(b => b.Unit)
             .Include(b => b.Client)
-            .Include(b => b.AssignedAdminUser);
+            .Include(b => b.AssignedAdminUser)
+                .ThenInclude(admin => admin!.RoleTemplate);
 
         if (!string.IsNullOrWhiteSpace(bookingStatus))
         {
@@ -93,6 +94,7 @@ public class BookingService : IBookingService
             .Include(b => b.Unit)
             .Include(b => b.Client)
             .Include(b => b.AssignedAdminUser)
+                .ThenInclude(admin => admin!.RoleTemplate)
             .FirstOrDefaultAsync(b => b.Id == id, cancellationToken);
     }
 
@@ -221,6 +223,7 @@ public class BookingService : IBookingService
                 .Include(b => b.Unit)
                 .Include(b => b.Client)
                 .Include(b => b.AssignedAdminUser)
+                    .ThenInclude(admin => admin!.RoleTemplate)
                 .Where(b => b.ClientId == clientId)
                 .Where(b => b.UnitId == unitId)
                 .Where(b => b.CheckInDate == checkInDate && b.CheckOutDate == checkOutDate)

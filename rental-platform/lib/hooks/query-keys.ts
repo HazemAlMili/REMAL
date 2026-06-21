@@ -77,6 +77,8 @@ export const queryKeys = {
       ["notifications", "client", "inbox", "summary"] as const,
     clientPreferences: () =>
       ["notifications", "client", "preferences"] as const,
+    recipients: (subjectType: "Admin" | "Client" | "Owner") =>
+      ["notifications", "recipients", subjectType] as const,
   },
   ownerPortal: {
     all: ["ownerPortal"] as const,

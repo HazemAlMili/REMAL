@@ -81,6 +81,7 @@
       [...queryKeys.crm.all, leadId, "notes"] as const,
     leadAssignment: (leadId: string) =>
       [...queryKeys.crm.all, leadId, "assignment"] as const,
+    assignees: () => [...queryKeys.crm.all, "assignees"] as const,
   },
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ OWNERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -204,8 +205,17 @@
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ADMIN USERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   adminUsers: {
     all: ["admin-users"] as const,
+    directory: () => ["admin-users", "directory"] as const,
     list: (filters?: object) =>
       [...queryKeys.adminUsers.all, "list", filters ?? {}] as const,
+  },
+
+  security: {
+    all: ["security"] as const,
+    permissions: () => ["security", "permissions"] as const,
+    roles: () => ["security", "roles"] as const,
+    userOverrides: (adminUserId: string) =>
+      ["security", "users", adminUserId, "overrides"] as const,
   },
 
   // ──────────── PUBLIC REVIEWS ────────────

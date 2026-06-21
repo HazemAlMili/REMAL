@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalPlatform.API.DTOs.Requests.Payments;
 using RentalPlatform.API.DTOs.Responses.Payments;
 using RentalPlatform.API.Models;
+using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
 using RentalPlatform.Data.Entities;
 using System;
@@ -25,7 +26,7 @@ public class PaymentsController : ControllerBase
 
     // GET /api/internal/payments
     [HttpGet]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<PaymentResponse>>>> ListPayments(
         [FromQuery] string? paymentStatus = null,
         [FromQuery] Guid? bookingId = null,
@@ -53,7 +54,7 @@ public class PaymentsController : ControllerBase
 
     // GET /api/internal/payments/{id}
     [HttpGet("{id}")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<PaymentResponse>>> GetPaymentById(Guid id)
     {
         var payment = await _paymentService.GetByIdAsync(id);
@@ -66,7 +67,7 @@ public class PaymentsController : ControllerBase
 
     // POST /api/internal/payments
     [HttpPost]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<PaymentResponse>>> CreatePayment(CreatePaymentRequest request)
     {
         var payment = await _paymentService.CreateAsync(
@@ -83,7 +84,7 @@ public class PaymentsController : ControllerBase
 
     // POST /api/internal/payments/{id}/mark-paid
     [HttpPost("{id}/mark-paid")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<PaymentResponse>>> MarkPaymentPaid(Guid id, MarkPaymentPaidRequest request)
     {
         var payment = await _paymentService.MarkPaidAsync(id, request.ReferenceNumber, request.Notes);
@@ -93,7 +94,7 @@ public class PaymentsController : ControllerBase
 
     // POST /api/internal/payments/{id}/mark-failed
     [HttpPost("{id}/mark-failed")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<PaymentResponse>>> MarkPaymentFailed(Guid id, MarkPaymentFailedRequest request)
     {
         var payment = await _paymentService.MarkFailedAsync(id, request.Notes);
@@ -103,7 +104,7 @@ public class PaymentsController : ControllerBase
 
     // POST /api/internal/payments/{id}/cancel
     [HttpPost("{id}/cancel")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<PaymentResponse>>> CancelPayment(Guid id, CancelPaymentRequest request)
     {
         var payment = await _paymentService.CancelAsync(id, request.Notes);
@@ -113,7 +114,7 @@ public class PaymentsController : ControllerBase
 
     // POST /api/internal/payments/link-paid-to-invoices
     [HttpPost("link-paid-to-invoices")]
-    [Authorize(Policy = "FinanceOrSuperAdmin")]
+    [Authorize(Policy = PermissionKeys.FinanceManage)]
     public async Task<ActionResult<ApiResponse<object>>> LinkPaidPaymentsToInvoices()
     {
         var linkedCount = await _paymentService.LinkPaidPaymentsToInvoicesAsync();
