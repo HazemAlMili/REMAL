@@ -22,6 +22,7 @@ public interface IUnitService
         string? search = null,
         DateOnly? availableFrom = null,
         DateOnly? availableTo = null,
+        Guid? amenityId = null,
         CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Unit>> GetAllAsync(bool includeInactive = true, Guid? ownerId = null, CancellationToken cancellationToken = default);
     Task<Unit?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);

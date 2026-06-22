@@ -120,6 +120,7 @@ public class UnitService : IUnitService
         string? search = null,
         DateOnly? availableFrom = null,
         DateOnly? availableTo = null,
+        Guid? amenityId = null,
         CancellationToken cancellationToken = default)
     {
         page = Math.Max(page, 1);
@@ -167,7 +168,14 @@ public class UnitService : IUnitService
                 (u.Address != null && u.Address.ToLower().Contains(normalizedSearch)) ||
                 (u.Description != null && u.Description.ToLower().Contains(normalizedSearch)) ||
                 (u.Area != null && u.Area.Name.ToLower().Contains(normalizedSearch)) ||
-                (u.Owner != null && u.Owner.Name.ToLower().Contains(normalizedSearch)));
+                (u.Owner != null && u.Owner.Name.ToLower().Contains(normalizedSearch)) ||
+                u.UnitAmenities.Any(ua => ua.Amenity.Name.ToLower().Contains(normalizedSearch)));
+        }
+
+        if (amenityId.HasValue)
+        {
+            query = query.Where(u =>
+                u.UnitAmenities.Any(ua => ua.AmenityId == amenityId.Value));
         }
 
         // Availability filter: exclude units with an overlapping holding booking or

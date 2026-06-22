@@ -48,6 +48,7 @@ function UnitsPageContent() {
   const areaId = searchParams.get("areaId") || undefined;
   const unitType = (searchParams.get("unitType") ||
     undefined) as UnitListFilters["unitType"];
+  const amenityId = searchParams.get("amenityId") || undefined;
   const status = searchParams.get("isActive");
   const isActive =
     status === "true" ? true : status === "false" ? false : undefined;
@@ -59,15 +60,17 @@ function UnitsPageContent() {
       pageSize,
       areaId,
       unitType,
+      amenityId,
       isActive,
       search,
     }),
-    [areaId, isActive, page, pageSize, search, unitType]
+    [amenityId, areaId, isActive, page, pageSize, search, unitType]
   );
 
   const {
     data: paginatedUnits,
     isLoading,
+    isFetching,
     isError,
     error,
   } = useInternalUnitsList(filters);
@@ -85,30 +88,34 @@ function UnitsPageContent() {
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const handleFilterChange = (newFilters: UnitListFilters) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", String(newFilters.page ?? DEFAULT_PAGE));
-    params.set("pageSize", String(newFilters.pageSize ?? pageSize));
+  const handleFilterChange = React.useCallback(
+    (newFilters: UnitListFilters) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", String(newFilters.page ?? DEFAULT_PAGE));
+      params.set("pageSize", String(newFilters.pageSize ?? pageSize));
 
-    const filterKeys: Array<keyof UnitListFilters> = [
-      "areaId",
-      "unitType",
-      "search",
-    ];
-    for (const key of filterKeys) {
-      const value = newFilters[key];
-      if (value) params.set(key, String(value));
-      else params.delete(key);
-    }
+      const filterKeys: Array<keyof UnitListFilters> = [
+        "areaId",
+        "unitType",
+        "amenityId",
+        "search",
+      ];
+      for (const key of filterKeys) {
+        const value = newFilters[key];
+        if (value) params.set(key, String(value));
+        else params.delete(key);
+      }
 
-    if (typeof newFilters.isActive === "boolean") {
-      params.set("isActive", String(newFilters.isActive));
-    } else {
-      params.delete("isActive");
-    }
+      if (typeof newFilters.isActive === "boolean") {
+        params.set("isActive", String(newFilters.isActive));
+      } else {
+        params.delete("isActive");
+      }
 
-    router.push(`${pathname}?${params.toString()}`);
-  };
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    },
+    [pageSize, pathname, router, searchParams]
+  );
 
   const handleToggleStatusRequest = (unit: UnitListItemResponse) => {
     setStatusConfirmUnit(unit);
@@ -153,7 +160,9 @@ function UnitsPageContent() {
     );
   }
 
-  const hasFilters = Boolean(areaId || unitType || typeof isActive === "boolean" || search);
+  const hasFilters = Boolean(
+    areaId || unitType || amenityId || typeof isActive === "boolean" || search
+  );
   const noUnitsAtAll =
     !isLoading &&
     paginatedUnits?.pagination?.totalCount === 0 &&
@@ -168,7 +177,8 @@ function UnitsPageContent() {
             Units
           </h1>
           <p className="text-sm text-neutral-500">
-            Manage rentable units, active status, availability, images, and amenities.
+            Manage rentable units, active status, availability, images, and
+            amenities.
           </p>
         </div>
 
@@ -185,7 +195,7 @@ function UnitsPageContent() {
       <UnitFilters
         filters={filters}
         onChange={handleFilterChange}
-        isLoading={isLoading}
+        isFetching={isFetching}
       />
 
       {isLoading ? (

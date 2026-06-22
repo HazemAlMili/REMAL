@@ -82,22 +82,24 @@ public class UnitsController : ControllerBase
         [FromQuery] bool? isActive = null,
         [FromQuery] string? search = null,
         [FromQuery] DateOnly? availableFrom = null,
-        [FromQuery] DateOnly? availableTo = null)
+        [FromQuery] DateOnly? availableTo = null,
+        [FromQuery] Guid? amenityId = null)
     {
         page = Math.Max(page, 1);
         pageSize = Math.Clamp(pageSize, 1, 100);
 
         var result = await _unitService.GetInternalCatalogAsync(
-            page,
-            pageSize,
-            includeInactive,
-            ownerId,
-            areaId,
-            unitType,
-            isActive,
-            search,
-            availableFrom,
-            availableTo);
+            page: page,
+            pageSize: pageSize,
+            includeInactive: includeInactive,
+            ownerId: ownerId,
+            areaId: areaId,
+            unitType: unitType,
+            isActive: isActive,
+            search: search,
+            availableFrom: availableFrom,
+            availableTo: availableTo,
+            amenityId: amenityId);
 
         int total = result.Total;
         int totalPages = (int)Math.Ceiling(total / (double)pageSize);

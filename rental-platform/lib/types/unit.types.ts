@@ -44,6 +44,7 @@ export interface UnitListFilters {
   ownerId?: string;
   areaId?: string;
   unitType?: UnitType;
+  amenityId?: string;
   isActive?: boolean;
   search?: string;
   availableFrom?: string; // YYYY-MM-DD
