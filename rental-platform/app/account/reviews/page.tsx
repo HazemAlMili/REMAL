@@ -7,7 +7,10 @@ import { Modal } from "@/components/ui/Modal";
 import { ReviewForm } from "@/components/public/account/ReviewForm";
 import { ReviewCard } from "@/components/public/account/ReviewCard";
 import { useClientBookings } from "@/lib/hooks/useClient";
-import { useCreateClientReview, useUpdateClientReview } from "@/lib/hooks/useClientReviews";
+import {
+  useCreateClientReview,
+  useUpdateClientReview,
+} from "@/lib/hooks/useClientReviews";
 import { clientService } from "@/lib/api/services/client.service";
 import { queryKeys } from "@/lib/utils/query-keys";
 import { useReviewsUIStore } from "@/lib/stores";
@@ -15,7 +18,13 @@ import { formatCurrency, formatDate } from "@/lib/utils/format";
 import { isBookingStatus } from "@/lib/utils/status";
 import { toastSuccess } from "@/lib/utils/toast";
 import { cn } from "@/lib/utils/cn";
-import { Star, CalendarCheck, MessageSquare, Calendar, Home } from "lucide-react";
+import {
+  Star,
+  CalendarCheck,
+  MessageSquare,
+  Calendar,
+  Home,
+} from "lucide-react";
 import type { ClientReviewByBookingResponse } from "@/lib/types/client.types";
 import type { ReviewFormData } from "@/lib/validations/review";
 
@@ -67,7 +76,7 @@ export default function AccountReviewsPage() {
   // Parse list of completed bookings that await reviews vs those already reviewed
   const awaitingReviewList: typeof completedBookings = [];
   const feedbackHistoryList: Array<{
-    booking: typeof completedBookings[number];
+    booking: (typeof completedBookings)[number];
     review: ClientReviewByBookingResponse;
   }> = [];
 
@@ -90,8 +99,10 @@ export default function AccountReviewsPage() {
   const averageRating =
     totalReviews > 0
       ? (
-          feedbackHistoryList.reduce((acc, item) => acc + item.review.rating, 0) /
-          totalReviews
+          feedbackHistoryList.reduce(
+            (acc, item) => acc + item.review.rating,
+            0
+          ) / totalReviews
         ).toFixed(1)
       : "0.0";
 
@@ -180,7 +191,9 @@ export default function AccountReviewsPage() {
             <Calendar className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-sm font-medium text-neutral-500">Completed stays</p>
+            <p className="text-sm font-medium text-neutral-500">
+              Completed stays
+            </p>
             <p className="mt-0.5 text-2xl font-semibold tabular-nums text-neutral-900">
               {completedBookings.length}
             </p>
@@ -188,11 +201,13 @@ export default function AccountReviewsPage() {
         </div>
 
         <div className="flex items-center gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
-          <div className="rounded-lg bg-success/10 p-3 text-success">
+          <div className="bg-success/10 rounded-lg p-3 text-success">
             <MessageSquare className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-sm font-medium text-neutral-500">Reviews written</p>
+            <p className="text-sm font-medium text-neutral-500">
+              Reviews written
+            </p>
             <p className="mt-0.5 text-2xl font-semibold tabular-nums text-neutral-900">
               {totalReviews}
             </p>
@@ -204,10 +219,14 @@ export default function AccountReviewsPage() {
             <Star className="h-6 w-6 fill-amber-400 text-amber-400" />
           </div>
           <div>
-            <p className="text-sm font-medium text-neutral-500">Average rating</p>
+            <p className="text-sm font-medium text-neutral-500">
+              Average rating
+            </p>
             <p className="mt-0.5 text-2xl font-semibold tabular-nums text-neutral-900">
               {averageRating}{" "}
-              <span className="text-sm font-medium text-neutral-500">/ 5.0</span>
+              <span className="text-sm font-medium text-neutral-500">
+                / 5.0
+              </span>
             </p>
           </div>
         </div>
@@ -226,7 +245,9 @@ export default function AccountReviewsPage() {
           )}
         >
           Awaiting review{" "}
-          <span className="ml-1 tabular-nums">({awaitingReviewList.length})</span>
+          <span className="ml-1 tabular-nums">
+            ({awaitingReviewList.length})
+          </span>
         </button>
         <button
           onClick={() => setActiveTab("feedback")}
@@ -239,11 +260,13 @@ export default function AccountReviewsPage() {
           )}
         >
           My feedback history{" "}
-          <span className="ml-1 tabular-nums">({feedbackHistoryList.length})</span>
+          <span className="ml-1 tabular-nums">
+            ({feedbackHistoryList.length})
+          </span>
         </button>
       </div>
 
-      {/* Main Content Area */}
+      {/* Main content region */}
       {showSkeleton && (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
@@ -278,26 +301,35 @@ export default function AccountReviewsPage() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-sm font-semibold text-neutral-900">
                       <Home className="h-4 w-4 shrink-0 text-neutral-400" />
-                      <span className="truncate">{booking.unitName ?? "Property"}</span>
+                      <span className="truncate">
+                        {booking.unitName ?? "Property"}
+                      </span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs text-neutral-500">
                       <div>
                         <p className="font-medium">Dates</p>
                         <p className="mt-0.5 tabular-nums text-neutral-800">
-                          {formatDate(booking.checkInDate)} - {formatDate(booking.checkOutDate)}
+                          {formatDate(booking.checkInDate)} -{" "}
+                          {formatDate(booking.checkOutDate)}
                         </p>
                       </div>
                       <div>
                         <p className="font-medium">Nights</p>
                         <p className="mt-0.5 tabular-nums text-neutral-800">
-                          {getNightsCount(booking.checkInDate, booking.checkOutDate)} nights
+                          {getNightsCount(
+                            booking.checkInDate,
+                            booking.checkOutDate
+                          )}{" "}
+                          nights
                         </p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs text-neutral-500">
                       <div>
                         <p className="font-medium">Guests</p>
-                        <p className="mt-0.5 tabular-nums text-neutral-800">{booking.guestCount} guests</p>
+                        <p className="mt-0.5 tabular-nums text-neutral-800">
+                          {booking.guestCount} guests
+                        </p>
                       </div>
                       <div>
                         <p className="font-medium">Total paid</p>

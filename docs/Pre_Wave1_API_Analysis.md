@@ -473,8 +473,8 @@ interface Permissions {
   // Review Moderation
   canModerateReviews: boolean   // SuperAdmin only
 
-  // Areas & Amenities (write)
-  canManageAreas: boolean       // SuperAdmin only
+  // Projects & Amenities (write)
+  canManageProjects: boolean       // SuperAdmin only
   canManageAmenities: boolean   // SuperAdmin only
 }
 
@@ -490,7 +490,7 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permissions> = {
     canManageAdminUsers: true,
     canViewReports: true,
     canModerateReviews: true,
-    canManageAreas: true, canManageAmenities: true,
+    canManageProjects: true, canManageAmenities: true,
   },
   Sales: {
     canViewCRM: true, canManageCRM: true,
@@ -502,7 +502,7 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permissions> = {
     canManageAdminUsers: false,
     canViewReports: false,
     canModerateReviews: false,
-    canManageAreas: false, canManageAmenities: false,
+    canManageProjects: false, canManageAmenities: false,
   },
   Finance: {
     canViewCRM: false, canManageCRM: false,
@@ -514,7 +514,7 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permissions> = {
     canManageAdminUsers: false,
     canViewReports: true,
     canModerateReviews: false,
-    canManageAreas: false, canManageAmenities: false,
+    canManageProjects: false, canManageAmenities: false,
   },
   Tech: {
     canViewCRM: false, canManageCRM: false,
@@ -526,20 +526,20 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permissions> = {
     canManageAdminUsers: false,
     canViewReports: false,
     canModerateReviews: false,
-    canManageAreas: false, canManageAmenities: false,
+    canManageProjects: false, canManageAmenities: false,
   },
 }
 ```
 
 ---
 
-### Areas API (يُستخدم في Wave 1 لـ select dropdowns في forms)
+### Projects API (يُستخدم في Wave 1 لـ select dropdowns في forms)
 
 ```typescript
-// GET /api/areas
+// GET /api/projects
 // Query: { includeInactive?: boolean }
 // Response array item:
-interface AreaResponse {
+interface ProjectResponse {
   id: string
   name: string
   description: string | null

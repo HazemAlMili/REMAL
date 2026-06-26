@@ -402,10 +402,10 @@ DEPENDS ON: FE-0-INFRA-07, FE-1-UI-02
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-Dropdown selects appear throughout the admin panel — booking source, unit type, owner assignment, area filter, status filter. Two variants: `<Select>` (native HTML select, simpler, for forms) and `<Combobox>` (searchable dropdown, for long lists like owners or units). Both work with RHF.
+Dropdown selects appear throughout the admin panel — booking source, unit type, owner assignment, project filter, status filter. Two variants: `<Select>` (native HTML select, simpler, for forms) and `<Combobox>` (searchable dropdown, for long lists like owners or units). Both work with RHF.
 
 **Why NOW?**
-Admin forms in Wave 2 (create unit — needs owner dropdown, area dropdown) depend on these.
+Admin forms in Wave 2 (create unit — needs owner dropdown, project dropdown) depend on these.
 
 ---
 
@@ -537,7 +537,7 @@ interface ModalFooterProps {
 - [ ] Backdrop click closes modal
 - [ ] Escape key closes modal
 - [ ] Body scroll locked when modal is open
-- [ ] `Modal.Footer` renders in the footer area
+- [ ] `Modal.Footer` renders in the footer region
 - [ ] Framer Motion entrance animation works (respects `prefers-reduced-motion`)
 - [ ] No mock data
 
@@ -1029,7 +1029,7 @@ interface Permissions {
   canManageAdminUsers:    boolean  // SuperAdmin only
   canViewReports:         boolean  // SuperAdmin, Finance
   canModerateReviews:     boolean  // SuperAdmin only
-  canManageAreas:         boolean  // SuperAdmin only
+  canManageProjects:         boolean  // SuperAdmin only
   canManageAmenities:     boolean  // SuperAdmin only
   isOwner:                boolean  // subjectType === 'Owner'
   isClient:               boolean  // subjectType === 'Client'
@@ -1061,7 +1061,7 @@ export function usePermissions(): Permissions {
       canManageAdminUsers: isSuperAdmin,
       canViewReports:      isSuperAdmin || isFinance,
       canModerateReviews:  isSuperAdmin,
-      canManageAreas:      isSuperAdmin,
+      canManageProjects:      isSuperAdmin,
       canManageAmenities:  isSuperAdmin,
       isOwner:             subjectType === 'Owner',
       isClient:            subjectType === 'Client',

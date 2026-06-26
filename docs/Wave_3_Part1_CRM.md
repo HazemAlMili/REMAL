@@ -799,7 +799,7 @@ Build the Lead Detail page at `/admin/crm/leads/{id}` that displays the full lea
 - [ ] `GET /api/internal/crm/leads/{id}` — fetch lead details
 - [ ] Page sections:
   - **Header:** Contact name, phone, email (if set), source badge, current status badge, days in status
-  - **Unit Info:** Unit name, area, check-in/check-out, number of guests (if set)
+  - **Unit Info:** Unit name, project, check-in/check-out, number of guests (if set)
   - **Status & Actions:** Current status + transition buttons (built in FE-3-CRM-05)
   - **Notes:** Notes list + add note (built in FE-3-CRM-06)
   - **Assignment:** Assigned to + reassign (built in FE-3-CRM-07)

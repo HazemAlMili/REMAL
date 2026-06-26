@@ -14,7 +14,7 @@ public class UnitOfWork : IUnitOfWork
     private readonly AppDbContext _context;
 
     public IRepository<Amenity> Amenities { get; }
-    public IRepository<Area> Areas { get; }
+    public IRepository<Project> Projects { get; }
     public IRepository<AdminUser> AdminUsers { get; }
     public IRepository<RbacRoleTemplate> RbacRoleTemplates { get; }
     public IRepository<RbacRoleTemplatePermission> RbacRoleTemplatePermissions { get; }
@@ -70,7 +70,7 @@ public class UnitOfWork : IUnitOfWork
     {
         _context = context;
         Amenities = new Repository<Amenity>(_context);
-        Areas = new Repository<Area>(_context);
+        Projects = new Repository<Project>(_context);
         AdminUsers = new Repository<AdminUser>(_context);
         RbacRoleTemplates = new Repository<RbacRoleTemplate>(_context);
         RbacRoleTemplatePermissions = new Repository<RbacRoleTemplatePermission>(_context);

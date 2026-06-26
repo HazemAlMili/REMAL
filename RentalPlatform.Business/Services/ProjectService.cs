@@ -11,18 +11,18 @@ using RentalPlatform.Data.Entities;
 
 namespace RentalPlatform.Business.Services;
 
-public class AreaService : IAreaService
+public class ProjectService : IProjectService
 {
     private readonly IUnitOfWork _unitOfWork;
 
-    public AreaService(IUnitOfWork unitOfWork)
+    public ProjectService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IReadOnlyList<Area>> GetAllAsync(bool includeInactive = false, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Project>> GetAllAsync(bool includeInactive = false, CancellationToken cancellationToken = default)
     {
-        var query = _unitOfWork.Areas.Query();
+        var query = _unitOfWork.Projects.Query();
 
         if (!includeInactive)
         {
@@ -32,26 +32,26 @@ public class AreaService : IAreaService
         return await query.ToListAsync(cancellationToken);
     }
 
-    public async Task<Area?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Project?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _unitOfWork.Areas.GetByIdAsync(id, cancellationToken);
+        return await _unitOfWork.Projects.GetByIdAsync(id, cancellationToken);
     }
 
-    public async Task<Area> CreateAsync(string name, string? description, bool isActive = true, CancellationToken cancellationToken = default)
+    public async Task<Project> CreateAsync(string name, string? description, bool isActive = true, CancellationToken cancellationToken = default)
     {
         var trimmedName = name?.Trim();
         if (string.IsNullOrWhiteSpace(trimmedName))
         {
-            throw new BusinessValidationException("Area name cannot be empty.");
+            throw new BusinessValidationException("Project name cannot be empty.");
         }
 
-        var exists = await _unitOfWork.Areas.ExistsAsync(a => a.Name.ToLower() == trimmedName.ToLower(), cancellationToken);
+        var exists = await _unitOfWork.Projects.ExistsAsync(a => a.Name.ToLower() == trimmedName.ToLower(), cancellationToken);
         if (exists)
         {
-            throw new ConflictException($"Area with name '{trimmedName}' already exists.");
+            throw new ConflictException($"Project with name '{trimmedName}' already exists.");
         }
 
-        var area = new Area
+        var project = new Project
         {
             Id = Guid.NewGuid(),
             Name = trimmedName,
@@ -59,47 +59,47 @@ public class AreaService : IAreaService
             IsActive = isActive
         };
 
-        await _unitOfWork.Areas.AddAsync(area, cancellationToken);
+        await _unitOfWork.Projects.AddAsync(project, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return area;
+        return project;
     }
 
-    public async Task<Area> UpdateAsync(Guid id, string name, string? description, bool isActive, CancellationToken cancellationToken = default)
+    public async Task<Project> UpdateAsync(Guid id, string name, string? description, bool isActive, CancellationToken cancellationToken = default)
     {
         var trimmedName = name?.Trim();
         if (string.IsNullOrWhiteSpace(trimmedName))
         {
-            throw new BusinessValidationException("Area name cannot be empty.");
+            throw new BusinessValidationException("Project name cannot be empty.");
         }
 
-        var area = await _unitOfWork.Areas.GetByIdAsync(id, cancellationToken)
-            ?? throw new NotFoundException($"Area with ID {id} not found.");
+        var project = await _unitOfWork.Projects.GetByIdAsync(id, cancellationToken)
+            ?? throw new NotFoundException($"Project with ID {id} not found.");
 
-        var exists = await _unitOfWork.Areas.ExistsAsync(a => a.Name.ToLower() == trimmedName.ToLower() && a.Id != id, cancellationToken);
+        var exists = await _unitOfWork.Projects.ExistsAsync(a => a.Name.ToLower() == trimmedName.ToLower() && a.Id != id, cancellationToken);
         if (exists)
         {
-            throw new ConflictException($"Area with name '{trimmedName}' already exists.");
+            throw new ConflictException($"Project with name '{trimmedName}' already exists.");
         }
 
-        area.Name = trimmedName;
-        area.Description = description;
-        area.IsActive = isActive;
+        project.Name = trimmedName;
+        project.Description = description;
+        project.IsActive = isActive;
 
-        _unitOfWork.Areas.Update(area);
+        _unitOfWork.Projects.Update(project);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return area;
+        return project;
     }
 
     public async Task SetActiveAsync(Guid id, bool isActive, CancellationToken cancellationToken = default)
     {
-        var area = await _unitOfWork.Areas.GetByIdAsync(id, cancellationToken)
-            ?? throw new NotFoundException($"Area with ID {id} not found.");
+        var project = await _unitOfWork.Projects.GetByIdAsync(id, cancellationToken)
+            ?? throw new NotFoundException($"Project with ID {id} not found.");
 
-        area.IsActive = isActive;
+        project.IsActive = isActive;
 
-        _unitOfWork.Areas.Update(area);
+        _unitOfWork.Projects.Update(project);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

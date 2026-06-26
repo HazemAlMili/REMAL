@@ -187,9 +187,9 @@ export default function OwnerUnitDetailPage() {
               </dd>
             </div>
             <div className="flex justify-between text-sm">
-              <dt className="text-neutral-500">Area ID</dt>
+              <dt className="text-neutral-500">Project ID</dt>
               <dd className="font-mono text-xs text-neutral-600">
-                {unit.areaId}
+                {unit.projectId}
               </dd>
             </div>
           </dl>

@@ -1,8 +1,8 @@
 using System;
 
-namespace RentalPlatform.API.DTOs.Responses.Areas;
+namespace RentalPlatform.API.DTOs.Responses.Projects;
 
-public record AreaResponse(
+public record ProjectResponse(
     Guid Id,
     string Name,
     string? Description,

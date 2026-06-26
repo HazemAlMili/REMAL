@@ -89,7 +89,7 @@ export interface OwnerUnitResponse {
   id: string;
   name: string;
   unitType: string; // 'apartment' | 'villa' | 'chalet' | 'studio'
-  areaId: string;
+  projectId: string;
   bedrooms: number;
   bathrooms: number;
   maxGuests: number;

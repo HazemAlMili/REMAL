@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RentalPlatform.API.DTOs.Requests.Areas;
-using RentalPlatform.API.DTOs.Responses.Areas;
+using RentalPlatform.API.DTOs.Requests.Projects;
+using RentalPlatform.API.DTOs.Responses.Projects;
 using RentalPlatform.API.Models;
 using RentalPlatform.API.Authorization;
 using RentalPlatform.Business.Interfaces;
@@ -15,82 +15,82 @@ namespace RentalPlatform.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AreasController : ControllerBase
+public class ProjectsController : ControllerBase
 {
-    private readonly IAreaService _areaService;
+    private readonly IProjectService _projectService;
 
-    public AreasController(IAreaService areaService)
+    public ProjectsController(IProjectService projectService)
     {
-        _areaService = areaService;
+        _projectService = projectService;
     }
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<IReadOnlyList<AreaResponse>>>> GetAll([FromQuery] bool includeInactive = false)
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<ProjectResponse>>>> GetAll([FromQuery] bool includeInactive = false)
     {
-        // Only allow internal admins to see inactive areas
+        // Only allow internal admins to see inactive projects
         bool canSeeInactive = includeInactive && User.HasClaim("subjectType", "admin");
         
-        var areas = await _areaService.GetAllAsync(canSeeInactive);
-        var response = areas.Select(MapToResponse).ToList();
+        var projects = await _projectService.GetAllAsync(canSeeInactive);
+        var response = projects.Select(MapToResponse).ToList();
         
-        return Ok(ApiResponse<IReadOnlyList<AreaResponse>>.CreateSuccess(response));
+        return Ok(ApiResponse<IReadOnlyList<ProjectResponse>>.CreateSuccess(response));
     }
 
     [HttpGet("{id}")]
     [AllowAnonymous]
-    public async Task<ActionResult<ApiResponse<AreaResponse>>> GetById(Guid id)
+    public async Task<ActionResult<ApiResponse<ProjectResponse>>> GetById(Guid id)
     {
-        var area = await _areaService.GetByIdAsync(id);
+        var project = await _projectService.GetByIdAsync(id);
         
-        if (area == null)
-            return NotFound(ApiResponse.CreateFailure("Area not found."));
+        if (project == null)
+            return NotFound(ApiResponse.CreateFailure("Project not found."));
 
-        // If area is inactive, check if the caller is an admin
-        if (!area.IsActive && !User.HasClaim("subjectType", "admin"))
-            return NotFound(ApiResponse.CreateFailure("Area not found."));
+        // If project is inactive, check if the caller is an admin
+        if (!project.IsActive && !User.HasClaim("subjectType", "admin"))
+            return NotFound(ApiResponse.CreateFailure("Project not found."));
 
-        return Ok(ApiResponse<AreaResponse>.CreateSuccess(MapToResponse(area)));
+        return Ok(ApiResponse<ProjectResponse>.CreateSuccess(MapToResponse(project)));
     }
 
     [HttpPost]
-    [Authorize(Policy = PermissionKeys.AreasManage)]
-    public async Task<ActionResult<ApiResponse<AreaResponse>>> Create(CreateAreaRequest request)
+    [Authorize(Policy = PermissionKeys.ProjectsManage)]
+    public async Task<ActionResult<ApiResponse<ProjectResponse>>> Create(CreateProjectRequest request)
     {
-        var area = await _areaService.CreateAsync(request.Name, request.Description, request.IsActive);
-        return Ok(ApiResponse<AreaResponse>.CreateSuccess(MapToResponse(area), "Area created successfully."));
+        var project = await _projectService.CreateAsync(request.Name, request.Description, request.IsActive);
+        return Ok(ApiResponse<ProjectResponse>.CreateSuccess(MapToResponse(project), "Project created successfully."));
     }
 
     [HttpPut("{id}")]
-    [Authorize(Policy = PermissionKeys.AreasManage)]
-    public async Task<ActionResult<ApiResponse<AreaResponse>>> Update(Guid id, UpdateAreaRequest request)
+    [Authorize(Policy = PermissionKeys.ProjectsManage)]
+    public async Task<ActionResult<ApiResponse<ProjectResponse>>> Update(Guid id, UpdateProjectRequest request)
     {
-        var area = await _areaService.UpdateAsync(id, request.Name, request.Description, request.IsActive);
-        return Ok(ApiResponse<AreaResponse>.CreateSuccess(MapToResponse(area), "Area updated successfully."));
+        var project = await _projectService.UpdateAsync(id, request.Name, request.Description, request.IsActive);
+        return Ok(ApiResponse<ProjectResponse>.CreateSuccess(MapToResponse(project), "Project updated successfully."));
     }
 
     [HttpPatch("{id}/status")]
-    [Authorize(Policy = PermissionKeys.AreasManage)]
-    public async Task<ActionResult<ApiResponse<AreaResponse>>> UpdateStatus(Guid id, UpdateAreaStatusRequest request)
+    [Authorize(Policy = PermissionKeys.ProjectsManage)]
+    public async Task<ActionResult<ApiResponse<ProjectResponse>>> UpdateStatus(Guid id, UpdateProjectStatusRequest request)
     {
-        await _areaService.SetActiveAsync(id, request.IsActive);
-        var area = await _areaService.GetByIdAsync(id);
+        await _projectService.SetActiveAsync(id, request.IsActive);
+        var project = await _projectService.GetByIdAsync(id);
         
-        if (area == null)
-            return NotFound(ApiResponse.CreateFailure("Area not found after status update."));
+        if (project == null)
+            return NotFound(ApiResponse.CreateFailure("Project not found after status update."));
 
-        return Ok(ApiResponse<AreaResponse>.CreateSuccess(MapToResponse(area), $"Area {(request.IsActive ? "activated" : "deactivated")} successfully."));
+        return Ok(ApiResponse<ProjectResponse>.CreateSuccess(MapToResponse(project), $"Project {(request.IsActive ? "activated" : "deactivated")} successfully."));
     }
 
-    private static AreaResponse MapToResponse(Area area)
+    private static ProjectResponse MapToResponse(Project project)
     {
-        return new AreaResponse(
-            area.Id,
-            area.Name,
-            area.Description,
-            area.IsActive,
-            area.CreatedAt,
-            area.UpdatedAt
+        return new ProjectResponse(
+            project.Id,
+            project.Name,
+            project.Description,
+            project.IsActive,
+            project.CreatedAt,
+            project.UpdatedAt
         );
     }
 }

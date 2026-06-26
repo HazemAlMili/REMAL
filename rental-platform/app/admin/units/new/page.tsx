@@ -6,10 +6,10 @@ import { ChevronLeft } from "lucide-react";
 import { toastSuccess, toastError } from "@/lib/utils/toast";
 import { Button } from "@/components/ui/Button";
 import { usePermissions } from "@/lib/hooks/usePermissions";
-import { useAreasList } from "@/lib/hooks/useAreas";
+import { useProjectsList } from "@/lib/hooks/useProjects";
 import { useOwners } from "@/lib/hooks/useOwners";
 import { useCreateUnit } from "@/lib/hooks/useUnits";
-import { AreaResponse, OwnerListItemResponse } from "@/lib/types";
+import { ProjectResponse, OwnerListItemResponse } from "@/lib/types";
 
 import { UnitForm, UnitFormValues } from "@/components/admin/units/UnitForm";
 import { ROUTES } from "@/lib/constants/routes";
@@ -18,7 +18,8 @@ export default function CreateUnitPage() {
   const router = useRouter();
   const { canManageUnits } = usePermissions();
 
-  const { data: areasData, isLoading: isAreasLoading } = useAreasList(false); // only active areas
+  const { data: projectsData, isLoading: isProjectsLoading } =
+    useProjectsList(false); // only active projects
   const { data: ownersData, isLoading: isOwnersLoading } = useOwners({
     page: 1,
     pageSize: 100, // Just sufficient to populate a usable dropdown based on business logic constraints
@@ -41,12 +42,12 @@ export default function CreateUnitPage() {
     }));
   }, [ownersData]);
 
-  const areaOptions = React.useMemo(() => {
-    return (areasData || []).map((area: AreaResponse) => ({
-      label: area.name,
-      value: area.id,
+  const projectOptions = React.useMemo(() => {
+    return (projectsData || []).map((project: ProjectResponse) => ({
+      label: project.name,
+      value: project.id,
     }));
-  }, [areasData]);
+  }, [projectsData]);
 
   if (!canManageUnits) return null;
 
@@ -73,7 +74,7 @@ export default function CreateUnitPage() {
           onClick={() => router.push(ROUTES.admin.units.list)}
           disabled={isCreating}
         >
-        <ChevronLeft className="mr-1 h-4 w-4" />
+          <ChevronLeft className="mr-1 h-4 w-4" />
           Back to units
         </Button>
         <div>
@@ -92,11 +93,11 @@ export default function CreateUnitPage() {
           onSubmit={handleSubmit}
           isLoading={isCreating}
           mode="create"
-          isOwnerAreaEditable={true}
+          isOwnerProjectEditable={true}
           owners={ownerOptions}
-          areas={areaOptions}
+          projects={projectOptions}
           isOwnersLoading={isOwnersLoading}
-          isAreasLoading={isAreasLoading}
+          isProjectsLoading={isProjectsLoading}
         />
       </div>
     </div>

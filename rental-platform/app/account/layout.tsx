@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════
 // app/account/layout.tsx
-// Client account layout — sidebar + content area + auth guard
+// Client account layout - sidebar + content region + auth guard
 // ═══════════════════════════════════════════════════════════
 
 "use client";
@@ -69,7 +69,9 @@ export default function AccountLayout({
 
   // Authenticating / bootstrapping the account — branded loading handoff.
   if (!showApp) {
-    return <PortalSplash className="portal-client" label="Loading your account" />;
+    return (
+      <PortalSplash className="portal-client" label="Loading your account" />
+    );
   }
 
   return (
@@ -81,7 +83,7 @@ export default function AccountLayout({
             <AccountSidebar />
           </div>
 
-          {/* Content area */}
+          {/* Content region */}
           <div className="flex-1">
             {/* Mobile navigation */}
             <div className="mb-6 lg:hidden">

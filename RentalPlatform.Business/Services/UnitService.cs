@@ -36,9 +36,9 @@ public class UnitService : IUnitService
             .Include(u => u.UnitAmenities)
             .Where(u => u.IsActive);
 
-        if (filter.AreaId.HasValue)
+        if (filter.ProjectId.HasValue)
         {
-            query = query.Where(u => u.AreaId == filter.AreaId.Value);
+            query = query.Where(u => u.ProjectId == filter.ProjectId.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(filter.UnitType))
@@ -93,7 +93,7 @@ public class UnitService : IUnitService
     public async Task<IReadOnlyList<Unit>> GetAllAsync(bool includeInactive = true, Guid? ownerId = null, CancellationToken cancellationToken = default)
     {
         IQueryable<Unit> query = _unitOfWork.Units.Query()
-            .Include(u => u.Area)
+            .Include(u => u.Project)
             .Include(u => u.Owner);
         
         if (!includeInactive)
@@ -114,7 +114,7 @@ public class UnitService : IUnitService
         int pageSize = 20,
         bool includeInactive = true,
         Guid? ownerId = null,
-        Guid? areaId = null,
+        Guid? projectId = null,
         string? unitType = null,
         bool? isActive = null,
         string? search = null,
@@ -128,7 +128,7 @@ public class UnitService : IUnitService
 
         IQueryable<Unit> query = _unitOfWork.Units.Query()
             .AsNoTracking()
-            .Include(u => u.Area)
+            .Include(u => u.Project)
             .Include(u => u.Owner)
             .Include(u => u.UnitImages);
 
@@ -146,9 +146,9 @@ public class UnitService : IUnitService
             query = query.Where(u => u.OwnerId == ownerId.Value);
         }
 
-        if (areaId.HasValue)
+        if (projectId.HasValue)
         {
-            query = query.Where(u => u.AreaId == areaId.Value);
+            query = query.Where(u => u.ProjectId == projectId.Value);
         }
 
         if (!string.IsNullOrWhiteSpace(unitType))
@@ -167,7 +167,7 @@ public class UnitService : IUnitService
                 u.Name.ToLower().Contains(normalizedSearch) ||
                 (u.Address != null && u.Address.ToLower().Contains(normalizedSearch)) ||
                 (u.Description != null && u.Description.ToLower().Contains(normalizedSearch)) ||
-                (u.Area != null && u.Area.Name.ToLower().Contains(normalizedSearch)) ||
+                (u.Project != null && u.Project.Name.ToLower().Contains(normalizedSearch)) ||
                 (u.Owner != null && u.Owner.Name.ToLower().Contains(normalizedSearch)) ||
                 u.UnitAmenities.Any(ua => ua.Amenity.Name.ToLower().Contains(normalizedSearch)));
         }
@@ -254,7 +254,7 @@ public class UnitService : IUnitService
     public async Task<Unit?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _unitOfWork.Units.Query()
-            .Include(u => u.Area)
+            .Include(u => u.Project)
             .Include(u => u.Owner)
             .Include(u => u.UnitImages)
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
@@ -262,7 +262,7 @@ public class UnitService : IUnitService
 
     public async Task<Unit> CreateAsync(
         Guid ownerId, 
-        Guid areaId, 
+        Guid projectId,
         string name, 
         string? description, 
         string? address, 
@@ -280,14 +280,14 @@ public class UnitService : IUnitService
         if (!ownerExists)
             throw new NotFoundException($"Owner with ID {ownerId} not found");
 
-        var areaExists = await _unitOfWork.Areas.ExistsAsync(a => a.Id == areaId, cancellationToken);
-        if (!areaExists)
-            throw new NotFoundException($"Area with ID {areaId} not found");
+        var projectExists = await _unitOfWork.Projects.ExistsAsync(a => a.Id == projectId, cancellationToken);
+        if (!projectExists)
+            throw new NotFoundException($"Project with ID {projectId} not found");
 
         var unit = new Unit
         {
             OwnerId = ownerId,
-            AreaId = areaId,
+            ProjectId = projectId,
             Name = name.Trim(),
             Description = description?.Trim(),
             Address = address?.Trim(),
@@ -308,7 +308,7 @@ public class UnitService : IUnitService
     public async Task<Unit> UpdateAsync(
         Guid id, 
         Guid ownerId, 
-        Guid areaId, 
+        Guid projectId,
         string name, 
         string? description, 
         string? address, 
@@ -333,15 +333,15 @@ public class UnitService : IUnitService
                 throw new NotFoundException($"Owner with ID {ownerId} not found");
         }
 
-        if (unit.AreaId != areaId)
+        if (unit.ProjectId != projectId)
         {
-            var areaExists = await _unitOfWork.Areas.ExistsAsync(a => a.Id == areaId, cancellationToken);
-            if (!areaExists)
-                throw new NotFoundException($"Area with ID {areaId} not found");
+            var projectExists = await _unitOfWork.Projects.ExistsAsync(a => a.Id == projectId, cancellationToken);
+            if (!projectExists)
+                throw new NotFoundException($"Project with ID {projectId} not found");
         }
 
         unit.OwnerId = ownerId;
-        unit.AreaId = areaId;
+        unit.ProjectId = projectId;
         unit.Name = name.Trim();
         unit.Description = description?.Trim();
         unit.Address = address?.Trim();

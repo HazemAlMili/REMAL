@@ -26,7 +26,7 @@ Provided precise service behavior definitions (what the API controllers will ing
 #### [NEW] [IAuthService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/IAuthService.cs)
 #### [NEW] [IAdminUserService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/IAdminUserService.cs)
 #### [NEW] [IAmenityService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/IAmenityService.cs)
-#### [NEW] [IAreaService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/IAreaService.cs)
+#### [NEW] [IProjectService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/IProjectService.cs)
 #### [NEW] [IClientService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/IClientService.cs)
 #### [NEW] [IOwnerService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Interfaces/IOwnerService.cs)
 
@@ -53,12 +53,12 @@ Implemented explicit handling of master data processing relying strictly on the 
 Provides CRUD operations respecting business validations. Restricts duplicate entries by ignoring casing and effectively manages entity state entirely within the service boundary.
 #### [NEW] [AmenityService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/AmenityService.cs)
 
-#### 2. Area Service
-Supports business logic surrounding Areas specifically, such as checking for empty naming attempts and ignoring duplicate attempts. Implements soft-activation (`SetActiveAsync`) preserving deletion safety. 
-#### [NEW] [AreaService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/AreaService.cs)
+#### 2. Project Service
+Supports business logic surrounding Projects specifically, such as checking for empty naming attempts and ignoring duplicate attempts. Implements soft-activation (`SetActiveAsync`) preserving deletion safety.
+#### [NEW] [ProjectService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/ProjectService.cs)
 
 ### Tests Performed
-- **Isolated Smoke Tests:** Created an active localized execution harness over `InMemory` DbContext to exercise cases directly against `AmenityService` and `AreaService`. 
+- **Isolated Smoke Tests:** Created an active localized execution harness over `InMemory` DbContext to exercise cases directly against `AmenityService` and `ProjectService`.
 
 ### Validation Results
 - Empty spaces and null-strings successfully caught and blocked by `BusinessValidationException`.
@@ -70,7 +70,7 @@ Supports business logic surrounding Areas specifically, such as checking for emp
 
 ## Task 3: OwnerService Implementation (BZ-MD-03)
 
-Implemented the service managing `Owner` master data logic. Focused heavily on strict business restrictions, property hashing, and secure soft deletion rules without touching web, payout, or analytics areas.
+Implemented the service managing `Owner` master data logic. Focused heavily on strict business restrictions, property hashing, and secure soft deletion rules without touching web, payout, or analytics projects.
 
 ### Changes Made
 

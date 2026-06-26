@@ -5,7 +5,7 @@
 
 "use client";
 import dynamic from "next/dynamic";
-import { usePublicAreas } from "@/lib/hooks/usePublic";
+import { usePublicProjects } from "@/lib/hooks/usePublic";
 import { useFadeUp } from "@/lib/hooks/animations";
 import { Skeleton } from "@/components/ui/Skeleton";
 
@@ -23,13 +23,13 @@ const UnitsMap = dynamic(
 );
 
 export function MapSection() {
-  const { data: areas, isLoading } = usePublicAreas();
+  const { data: projects, isLoading } = usePublicProjects();
   const headingRef = useFadeUp<HTMLDivElement>();
 
-  const activeAreas = (areas ?? []).filter((area) => area.isActive);
+  const activeProjects = (projects ?? []).filter((project) => project.isActive);
 
-  // Hide section if no areas
-  if (!isLoading && activeAreas.length === 0) return null;
+  // Hide section if no projects
+  if (!isLoading && activeProjects.length === 0) return null;
 
   return (
     <section className="bg-neutral-50 py-20 lg:py-32">
@@ -56,7 +56,7 @@ export function MapSection() {
           {isLoading ? (
             <Skeleton className="h-[400px] w-full lg:h-[500px]" />
           ) : (
-            <UnitsMap areas={activeAreas} />
+            <UnitsMap projects={activeProjects} />
           )}
         </div>
       </div>

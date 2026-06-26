@@ -353,7 +353,7 @@ For couples and small families who want to book a premium stay in New Alamein/No
 |---|---|
 | Trust | شوف الوحدة بالفيديو قبل أي عربون |
 | Clarity | السعر والقواعد واضحين من الأول |
-| Premium | اختيارات في مناطق قوية زي مزارين وأبراج العلمين |
+| Premium | اختيارات في مشروعات قوية زي مزارين وأبراج العلمين |
 | Convenience | ابعت تاريخك ونرشحلك 3 وحدات مناسبة |
 | No Broker Chaos | من غير لف على الجروبات أو كلام سماسرة متضارب |
 | Support | متابعة من أول الاختيار لحد الوصول |
@@ -397,7 +397,7 @@ For couples and small families who want to book a premium stay in New Alamein/No
 3. عدد الأفراد؟
 4. نوع المجموعة: كابل / عائلة / شباب / غيره؟
 5. الميزانية المتوقعة في الليلة؟
-6. المنطقة المفضلة: أبراج / مزارين / ذا جيت / بالم هيلز / مش محدد؟
+6. المشروع المفضل: أبراج / مزارين / ذا جيت / بالم هيلز / مش محدد؟
 7. محتاج كام غرفة؟
 8. هل مستعد تدفع عربون لتأكيد الحجز بعد إرسال الفيديو والسياسة؟
 9. هل في أطفال؟
@@ -430,7 +430,7 @@ For couples and small families who want to book a premium stay in New Alamein/No
 | Campaign | Yes |
 | Ad / Creative ID | Yes |
 | Segment | Couple / Family / Premium / Youth / Abroad |
-| Desired Area | Yes |
+| Desired Project | Yes |
 | Dates | Yes |
 | Nights | Yes |
 | People Count | Yes |
@@ -453,7 +453,7 @@ For couples and small families who want to book a premium stay in New Alamein/No
 | Element | Decision |
 |---|---|
 | Segment | Couples / Honeymoon |
-| Areas | Abraj + The Gate selected units |
+| Projects | Abraj + The Gate selected units |
 | Price | 5–10k first، 10–15k premium retarget |
 | Message | Privacy + verified video + real view |
 | Funnel | Landing Page → WhatsApp |
@@ -466,7 +466,7 @@ For couples and small families who want to book a premium stay in New Alamein/No
 | Element | Decision |
 |---|---|
 | Segment | Small Families |
-| Areas | Mazarine + Palm Hills selected units |
+| Projects | Mazarine + Palm Hills selected units |
 | Price | 10–15k |
 | Message | Family comfort + clear rules + beach access |
 | Funnel | Landing Page → WhatsApp |
@@ -479,7 +479,7 @@ For couples and small families who want to book a premium stay in New Alamein/No
 | Element | Decision |
 |---|---|
 | Segment | Warm premium |
-| Areas | The Gate + Abraj + premium Mazarine |
+| Projects | The Gate + Abraj + premium Mazarine |
 | Price | 15k+ |
 | Message | Luxury you can verify |
 | Funnel | Retargeting → WhatsApp |

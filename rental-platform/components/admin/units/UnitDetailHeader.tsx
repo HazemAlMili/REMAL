@@ -72,9 +72,9 @@ export function UnitDetailHeader({
             </span>
           </span>
           <span>
-            Area ID{" "}
+            Project ID{" "}
             <span className="select-all font-mono text-neutral-700">
-              {unit.areaId}
+              {unit.projectId}
             </span>
           </span>
         </div>

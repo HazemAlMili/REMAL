@@ -349,7 +349,7 @@ internalNotes
 ```tsx
 clientName
 unitName
-areaName
+projectName
 ownerName
 assignedToName
 ```
@@ -482,7 +482,7 @@ minGuests
 minPrice
 maxPrice
 type
-areaId
+projectId
 ```
 
 إلا لو API Reference يوثقها صراحة.
@@ -506,7 +506,7 @@ areaId
 
 ## 4. Important API Contract Rules
 
-## 5. Known Risk Areas
+## 5. Known Risks
 
 ## 6. How I Will Execute Tickets Later
 

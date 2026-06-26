@@ -258,7 +258,7 @@
 ### 3. Public Unit Filters (P34)
 
 **Status:** ⚠️ NEEDS BACKEND CONFIRMATION  
-**Expected:** `areaId`, `unitType`, `minGuests`, `minPrice`, `maxPrice`, `sortBy`, `search`  
+**Expected:** `projectId`, `unitType`, `minGuests`, `minPrice`, `maxPrice`, `sortBy`, `search`
 **Current:** Only `page` + `pageSize` documented  
 **Impact:** Filter UI exists but may not work server-side  
 **Mitigation:** Flagged in types with ⚠️ comment, URL params work client-side
@@ -291,7 +291,7 @@ Exit Code: 0
 | FE-7-LP-02    | ✅ PASS | Hero search bar                      |
 | FE-7-LP-03    | ✅ PASS | Marquee banner (pure CSS)            |
 | FE-7-LP-04    | ✅ PASS | Brand story section                  |
-| FE-7-LP-05    | ✅ PASS | Areas section                        |
+| FE-7-LP-05    | ✅ PASS | Projects section                        |
 | FE-7-LP-06    | ✅ PASS | Featured units carousel              |
 | FE-7-LP-07    | ✅ PASS | Map section with Mapbox              |
 | FE-7-LP-08    | ✅ PASS | How It Works section                 |
@@ -339,7 +339,7 @@ Exit Code: 0
 - ✅ Parallax uses `transform: translateY` (GPU-composited)
 - ✅ `setInterval` in HeroCarousel cleaned up on unmount
 - ✅ Mapbox `map.remove()` on unmount
-- ✅ TanStack Query shared cache (areas fetched once, used by 3+ components)
+- ✅ TanStack Query shared cache (projects fetched once, used by 3+ components)
 - ✅ `placeholderData: keepPreviousData` on paginated queries
 - ✅ `staleTime: 0` on availability + pricing
 
@@ -362,7 +362,7 @@ None — all critical items resolved.
 - [ ] Hero carousel cycles every 7 seconds
 - [ ] Nav transitions at 80px scroll
 - [ ] Hero search pre-fills units listing URL params
-- [ ] Areas section hover effects work
+- [ ] Projects section hover effects work
 - [ ] Featured units carousel swipes smoothly
 - [ ] Map markers clickable with popups
 - [ ] Testimonials carousel autoplay works

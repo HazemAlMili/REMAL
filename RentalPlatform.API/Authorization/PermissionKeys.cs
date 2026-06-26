@@ -24,7 +24,7 @@ public static class PermissionKeys
     public const string ClientsWrite = "clients:write";
     public const string ClientsResetPassword = "clients:reset_password";
     public const string ReviewsModerate = "reviews:moderate";
-    public const string AreasManage = "areas:manage";
+    public const string ProjectsManage = "projects:manage";
     public const string AmenitiesManage = "amenities:manage";
     public const string AnalyticsRead = "analytics:read";
     public const string SettingsAdmin = "settings:admin";
@@ -48,7 +48,7 @@ public static class PermissionKeys
             new(ClientsWrite, "People", "Manage clients", "Create and update client profiles."),
             new(ClientsResetPassword, "People", "Reset client passwords", "Reset credentials for client accounts."),
             new(ReviewsModerate, "Operations", "Moderate reviews", "Approve, reject, and moderate reviews."),
-            new(AreasManage, "Configuration", "Manage areas", "Create and maintain resort areas."),
+            new(ProjectsManage, "Configuration", "Manage projects", "Create and maintain resort projects."),
             new(AmenitiesManage, "Configuration", "Manage amenities", "Create and maintain the amenity catalog."),
             new(AnalyticsRead, "Analytics", "View analytics", "View booking and finance reports."),
             new(SettingsAdmin, "Security", "Manage access", "Manage admin users, roles, and permission overrides.")

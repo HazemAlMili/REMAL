@@ -24,11 +24,11 @@
 
 ```
 1.  amenities          (no deps)
-2.  areas              (no deps)
+2.  projects              (no deps)
 3.  admin_users        (no deps)
 4.  clients            (no deps)
 5.  owners             (no deps)
-6.  units              (→ areas, owners)
+6.  units              (→ projects, owners)
 7.  unit_images        (→ units)
 8.  unit_amenities     (→ units, amenities)
 9.  seasonal_pricing   (→ units)
@@ -96,7 +96,7 @@
 
 │ ├──**Entities/**
 
-│ │ ├──Area.cs
+│ │ ├──Project.cs
 
 │ │ ├──Owner.cs
 
@@ -206,7 +206,7 @@
 
 │ ├──AuthController.cs
 
-│ ├──AreasController.cs
+│ ├──ProjectsController.cs
 
 │ ├──UnitsController.cs
 
@@ -250,12 +250,12 @@
 | POST | `/api/auth/admin/login` | Public | Admin login |
 | POST | `/api/auth/owner/login` | Public | Owner login |
 | POST | `/api/auth/refresh` | Any | Refresh JWT |
-| **AREAS** |  |  |  |
-| GET | `/api/areas` | Public | List all areas |
-| GET | `/api/areas/{id}` | Public | Area details + stats |
-| POST | `/api/areas` | SuperAdmin | Create area |
-| PUT | `/api/areas/{id}` | SuperAdmin | Update area |
-| DELETE | `/api/areas/{id}` | SuperAdmin | Soft delete |
+| **PROJECTS** |  |  |  |
+| GET | `/api/projects` | Public | List all projects |
+| GET | `/api/projects/{id}` | Public | Project details + stats |
+| POST | `/api/projects` | SuperAdmin | Create project |
+| PUT | `/api/projects/{id}` | SuperAdmin | Update project |
+| DELETE | `/api/projects/{id}` | SuperAdmin | Soft delete |
 | **UNITS** |  |  |  |
 | GET | `/api/units` | Public | Search + filter |
 | GET | `/api/units/{id}` | Public | Unit details |
@@ -489,7 +489,7 @@ CREATE INDEX idx_notifications_recipient
   ON notifications(recipient_type, recipient_id, is_read);
 
 -- Unit Search (public)
-CREATE INDEX idx_units_area_status ON units(area_id, status)
+CREATE INDEX idx_units_project_status ON units(project_id, status)
   WHERE deleted_at IS NULL;
 ```
 
@@ -584,7 +584,7 @@ Error response:
 ```mermaid
 erDiagram
 
-    areas {
+    projects {
         uuid id PK
         varchar name
         text description
@@ -608,7 +608,7 @@ erDiagram
 
     units {
         uuid id PK
-        uuid area_id FK
+        uuid project_id FK
         uuid owner_id FK
         varchar name
         varchar type
@@ -771,7 +771,7 @@ erDiagram
         timestamp sent_at
     }
 
-    areas            ||--o{ units                  : "contains"
+    projects            ||--o{ units                  : "contains"
     owners           ||--o{ units                  : "owns"
     units            ||--o{ unit_images            : "has"
     units            ||--o{ unit_guest             : "tagged with"

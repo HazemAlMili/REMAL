@@ -7,30 +7,30 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 
-export const areaFormSchema = z.object({
-  name: z.string().min(1, "Area name is required").max(100),
+export const projectFormSchema = z.object({
+  name: z.string().min(1, "Project name is required").max(100),
   description: z.string().max(500).optional(),
 });
 
-export type AreaFormValues = z.infer<typeof areaFormSchema>;
+export type ProjectFormValues = z.infer<typeof projectFormSchema>;
 
-export interface AreaFormProps {
-  defaultValues?: Partial<AreaFormValues>;
-  onSubmit: (data: AreaFormValues) => void;
+export interface ProjectFormProps {
+  defaultValues?: Partial<ProjectFormValues>;
+  onSubmit: (data: ProjectFormValues) => void;
   isLoading?: boolean;
 }
 
-export function AreaForm({
+export function ProjectForm({
   defaultValues,
   onSubmit,
   isLoading,
-}: AreaFormProps) {
+}: ProjectFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<AreaFormValues>({
-    resolver: zodResolver(areaFormSchema),
+  } = useForm<ProjectFormValues>({
+    resolver: zodResolver(projectFormSchema),
     defaultValues: {
       name: defaultValues?.name || "",
       description: defaultValues?.description || "",
@@ -41,7 +41,7 @@ export function AreaForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
         <label htmlFor="name" className="mb-1 block text-sm font-medium">
-          Name <span className="text-red-500">*</span>
+          Project name <span className="text-red-500">*</span>
         </label>
         <Input
           id="name"
@@ -61,7 +61,7 @@ export function AreaForm({
         <Textarea
           id="description"
           rows={3}
-          placeholder="Brief description of the area"
+          placeholder="Brief description of the project"
           {...register("description")}
           disabled={isLoading}
         />
@@ -74,7 +74,7 @@ export function AreaForm({
 
       <div className="flex justify-end pt-4">
         <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
-          {isLoading ? "Saving..." : "Save Area"}
+          {isLoading ? "Saving..." : "Save project"}
         </Button>
       </div>
     </form>

@@ -24,7 +24,7 @@ export default function SmarHomePage() {
               الرئيسية
             </Link>
             <Link href="#" className="transition-colors hover:text-blue-900">
-              المناطق
+              المشروعات
             </Link>
             <Link href="#" className="transition-colors hover:text-blue-900">
               إزاي بنشتغل
@@ -173,7 +173,7 @@ export default function SmarHomePage() {
 
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700">
-                  المنطقة المفضلة
+                  المشروع المفضل
                 </label>
                 <select className="w-full rounded-xl border border-gray-200 bg-[#F7F4EF]/50 p-4 text-gray-700 outline-none transition-all focus:ring-2 focus:ring-[#071321]">
                   <option>أبراج العلمين</option>
@@ -249,20 +249,20 @@ export default function SmarHomePage() {
         </div>
       </section>
 
-      {/* 6. FEATURED AREAS */}
+      {/* 6. FEATURED PROJECTS */}
       <section className="bg-[#FAF8F4] px-4 py-24">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 items-end justify-between md:flex">
             <div>
               <h2 className="mb-4 text-3xl font-bold text-[#071321]">
-                اختيارات في أهم مناطق العلمين والساحل
+                اختيارات في أهم مشروعات العلمين والساحل
               </h2>
               <p className="text-lg text-gray-600">
-                نرشح لك وحدات حسب تاريخك وميزانيتك من مناطق مختارة.
+                نرشح لك وحدات حسب تاريخك وميزانيتك من مشروعات مختارة.
               </p>
             </div>
             <button className="hidden border-b-2 border-[#071321] pb-1 font-semibold text-[#071321] md:block">
-              عرض كل المناطق
+              عرض كل المشروعات
             </button>
           </div>
 
@@ -288,20 +288,20 @@ export default function SmarHomePage() {
                 for: "Families • Chalets",
                 img: "https://images.unsplash.com/photo-1510798831971-661eb04b3739?q=80&w=600&auto=format&fit=crop",
               },
-            ].map((area, i) => (
+            ].map((project, i) => (
               <div
                 key={i}
                 className="group relative aspect-[4/5] cursor-pointer overflow-hidden rounded-3xl shadow-sm shadow-black/5"
               >
                 <img
-                  src={area.img}
-                  alt={area.name}
+                  src={project.img}
+                  alt={project.name}
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-0 w-full p-6 text-white">
-                  <h3 className="mb-2 text-2xl font-bold">{area.name}</h3>
-                  <p className="mb-4 text-sm text-white/80">{area.for}</p>
+                  <h3 className="mb-2 text-2xl font-bold">{project.name}</h3>
+                  <p className="mb-4 text-sm text-white/80">{project.for}</p>
                   <div className="inline-flex items-center gap-2 border-b border-white/40 pb-1 text-sm font-semibold transition-colors group-hover:border-white">
                     شوف المتاح <ArrowLeft className="h-4 w-4" />
                   </div>

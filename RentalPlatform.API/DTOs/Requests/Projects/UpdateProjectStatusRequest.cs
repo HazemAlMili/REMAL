@@ -1,5 +1,5 @@
-namespace RentalPlatform.API.DTOs.Requests.Areas;
+namespace RentalPlatform.API.DTOs.Requests.Projects;
 
-public record UpdateAreaStatusRequest(
+public record UpdateProjectStatusRequest(
     bool IsActive
 );

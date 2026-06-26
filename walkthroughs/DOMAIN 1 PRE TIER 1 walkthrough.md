@@ -19,7 +19,7 @@ The note establishes **6 enforceable rules**:
 
 ### Sensitive Fields Inventoried
 
-Based on analysis of all 5 current entities (`AdminUser`, `Client`, `Owner`, `Area`, `Amenity`):
+Based on analysis of all 5 current entities (`AdminUser`, `Client`, `Owner`, `Project`, `Amenity`):
 
 - **Category A (NEVER exposed):** `PasswordHash` — found in `AdminUser`, `Client`, `Owner`
 - **Category B (Internal by default):** `DeletedAt` — found in `Client`, `Owner`
@@ -55,41 +55,41 @@ Based on analysis of all 5 current entities (`AdminUser`, `Client`, `Owner`, `Ar
 
 ---
 
-# PRE-T4-02: Area Lifecycle Semantics — Activation, Not Deletion
+# PRE-T4-02: Project Lifecycle Semantics — Activation, Not Deletion
 
 ## What Was Done
 
-Created the architecture decision note [0003_area_lifecycle_semantics.md](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/architecture/0003_area_lifecycle_semantics.md) to resolve the ambiguity between the tech spec's `DELETE /api/areas/{id} → Soft delete` line and the actual implementation which uses `IsActive` toggling with no `DeletedAt` column.
+Created the architecture decision note [0003_project_lifecycle_semantics.md](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/architecture/0003_project_lifecycle_semantics.md) to resolve the ambiguity between the tech spec's `DELETE /api/projects/{id} → Soft delete` line and the actual implementation which uses `IsActive` toggling with no `DeletedAt` column.
 
 ## Key Decision
 
-**Area uses activation/deactivation — not soft delete, not physical delete.**
+**Project uses activation/deactivation — not soft delete, not physical delete.**
 
 | Aspect | Decision |
 |--------|----------|
 | Lifecycle mechanism | `IsActive` boolean toggle |
-| API endpoint | `PATCH /api/areas/{id}/status` (replaces `DELETE`) |
+| API endpoint | `PATCH /api/projects/{id}/status` (replaces `DELETE`) |
 | `DeletedAt` column | Does not exist — must not be added |
 | Physical delete | Forbidden — breaks FK integrity |
-| `DELETE /api/areas/{id}` | Not implemented — superseded by this ADR |
+| `DELETE /api/projects/{id}` | Not implemented — superseded by this ADR |
 
 ## Evidence Reviewed
 
-All layers confirmed no soft-delete support for Area:
+All layers confirmed no soft-delete support for Project:
 
-- **DB**: `0003_create_areas.sql` — no `deleted_at` column
-- **Entity**: `Area.cs` — `IsActive` field, no `DeletedAt`
-- **EF Config**: `AreaConfiguration.cs` — no global query filter
-- **Service**: `AreaService.SetActiveAsync()` — activation toggle, no delete method
-- **Interface**: `IAreaService` — no `DeleteAsync` in contract
+- **DB**: `0003_create_projects.sql` — no `deleted_at` column
+- **Entity**: `Project.cs` — `IsActive` field, no `DeletedAt`
+- **EF Config**: `ProjectConfiguration.cs` — no global query filter
+- **Service**: `ProjectService.SetActiveAsync()` — activation toggle, no delete method
+- **Interface**: `IProjectService` — no `DeleteAsync` in contract
 
 ## Verification
 
 | Criteria | Status |
 |----------|--------|
-| Document exists at `docs/architecture/0003_area_lifecycle_semantics.md` | ✅ |
+| Document exists at `docs/architecture/0003_project_lifecycle_semantics.md` | ✅ |
 | Explicitly chooses one lifecycle behavior (activation) | ✅ |
-| Aligned with current AreaService behavior | ✅ |
+| Aligned with current ProjectService behavior | ✅ |
 | Forbids hidden soft-delete reinterpretation | ✅ |
 | Forbids physical delete | ✅ |
 | Forbids inventing hidden lifecycle states | ✅ |
@@ -100,7 +100,7 @@ All layers confirmed no soft-delete support for Area:
 
 | File | Action |
 |------|--------|
-| [0003_area_lifecycle_semantics.md](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/architecture/0003_area_lifecycle_semantics.md) | **Created** — 147 lines |
+| [0003_project_lifecycle_semantics.md](file:///d:/Clinets/Kaza Booking/Kaza Booking/docs/architecture/0003_project_lifecycle_semantics.md) | **Created** — 147 lines |
 
 ---
 
@@ -121,7 +121,7 @@ Introduced a minimal `IUnitOfWork` interface and updated all 6 Business services
 |------|--------|
 | [UnitOfWork.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/UnitOfWork.cs) | Now implements `IUnitOfWork` |
 | [AmenityService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/AmenityService.cs) | `UnitOfWork` → `IUnitOfWork` |
-| [AreaService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/AreaService.cs) | `UnitOfWork` → `IUnitOfWork` |
+| [ProjectService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/ProjectService.cs) | `UnitOfWork` → `IUnitOfWork` |
 | [AdminUserService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/AdminUserService.cs) | `UnitOfWork` → `IUnitOfWork` |
 | [AuthService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/AuthService.cs) | `UnitOfWork` → `IUnitOfWork` |
 | [ClientService.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Business/Services/ClientService.cs) | `UnitOfWork` → `IUnitOfWork` |

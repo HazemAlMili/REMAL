@@ -22,7 +22,7 @@ export interface PaginatedResult<T> {
   pagination: PaginationMeta;
 }
 
-export interface CreateTestAreaInput {
+export interface CreateTestProjectInput {
   name: string;
   description: string;
   isActive: boolean;
@@ -129,8 +129,12 @@ export async function unwrapPaginatedResponse<T>(
 
   return {
     items: body.data ?? [],
-    pagination:
-      body.pagination ?? { totalCount: 0, page: 1, pageSize: 0, totalPages: 1 },
+    pagination: body.pagination ?? {
+      totalCount: 0,
+      page: 1,
+      pageSize: 0,
+      totalPages: 1,
+    },
   };
 }
 
@@ -172,48 +176,53 @@ export async function getOwnerApiToken(
   return body.accessToken;
 }
 
-export async function createTestArea(
+export async function createTestProject(
   request: APIRequestContext,
   token: string,
-  areaData: CreateTestAreaInput
+  projectData: CreateTestProjectInput
 ): Promise<{ id: string; name: string; isActive: boolean }> {
-  const response = await request.post(apiUrl("/api/areas"), {
+  const response = await request.post(apiUrl("/api/projects"), {
     headers: authHeaders(token),
-    data: areaData,
+    data: projectData,
   });
-  return unwrapResponse(response, "Create test area");
+  return unwrapResponse(response, "Create test project");
 }
 
-export async function getAreas<T>(
+export async function getProjects<T>(
   request: APIRequestContext,
   token: string,
   includeInactive = false
 ): Promise<T[]> {
   const response = await request.get(
-    apiUrl(`/api/areas?includeInactive=${includeInactive ? "true" : "false"}`),
+    apiUrl(
+      `/api/projects?includeInactive=${includeInactive ? "true" : "false"}`
+    ),
     { headers: authHeaders(token) }
   );
-  return unwrapResponse<T[]>(response, "Get areas");
+  return unwrapResponse<T[]>(response, "Get projects");
 }
 
-export async function deactivateTestArea(
+export async function deactivateTestProject(
   request: APIRequestContext,
   token: string,
-  areaId: string
+  projectId: string
 ): Promise<boolean> {
-  const response = await request.patch(apiUrl(`/api/areas/${areaId}/status`), {
-    headers: authHeaders(token),
-    data: { isActive: false },
-  });
+  const response = await request.patch(
+    apiUrl(`/api/projects/${projectId}/status`),
+    {
+      headers: authHeaders(token),
+      data: { isActive: false },
+    }
+  );
   return response.ok();
 }
 
-export async function deleteTestArea(
+export async function deleteTestProject(
   request: APIRequestContext,
   token: string,
-  areaId: string
+  projectId: string
 ): Promise<boolean> {
-  return deactivateTestArea(request, token, areaId);
+  return deactivateTestProject(request, token, projectId);
 }
 
 export async function createTestUnit<T = { id: string }>(
@@ -247,7 +256,10 @@ export async function getInternalUnits<T>(
   const response = await request.get(apiUrl(`/api/internal/units?${search}`), {
     headers: authHeaders(token),
   });
-  const result = await unwrapPaginatedResponse<T>(response, "Get internal units");
+  const result = await unwrapPaginatedResponse<T>(
+    response,
+    "Get internal units"
+  );
   return result.items;
 }
 
@@ -256,9 +268,12 @@ export async function deleteTestUnit(
   token: string,
   unitId: string
 ): Promise<boolean> {
-  const response = await request.delete(apiUrl(`/api/internal/units/${unitId}`), {
-    headers: authHeaders(token),
-  });
+  const response = await request.delete(
+    apiUrl(`/api/internal/units/${unitId}`),
+    {
+      headers: authHeaders(token),
+    }
+  );
   return response.ok() || response.status() === 404;
 }
 
@@ -315,11 +330,9 @@ export async function convertLeadToBooking<T = { id: string }>(
   return unwrapResponse<T>(response, "Convert lead to booking");
 }
 
-export async function markBookingBooked<T = { id: string; bookingStatus: string }>(
-  request: APIRequestContext,
-  token: string,
-  bookingId: string
-): Promise<T> {
+export async function markBookingBooked<
+  T = { id: string; bookingStatus: string },
+>(request: APIRequestContext, token: string, bookingId: string): Promise<T> {
   const response = await request.post(
     apiUrl(`/api/internal/bookings/${bookingId}/booked`),
     {
@@ -357,7 +370,9 @@ export async function cancelBooking(
       data: { notes: "Owner smoke test cleanup cancellation" },
     }
   );
-  return response.ok() || response.status() === 409 || response.status() === 404;
+  return (
+    response.ok() || response.status() === 409 || response.status() === 404
+  );
 }
 
 export async function createTestPayment<T>(
@@ -372,7 +387,9 @@ export async function createTestPayment<T>(
   return unwrapResponse<T>(response, "Create test payment");
 }
 
-export async function createOwnerPayout<T = { id: string; payoutAmount: number }>(
+export async function createOwnerPayout<
+  T = { id: string; payoutAmount: number },
+>(
   request: APIRequestContext,
   token: string,
   payoutData: CreateOwnerPayoutInput
@@ -396,7 +413,9 @@ export async function cancelOwnerPayout(
       data: { notes: "Owner smoke test cleanup cancellation" },
     }
   );
-  return response.ok() || response.status() === 409 || response.status() === 404;
+  return (
+    response.ok() || response.status() === 409 || response.status() === 404
+  );
 }
 
 export async function getOwnerDashboardSummary(
@@ -449,4 +468,3 @@ export async function checkOwnerAvailability<T>(
   );
   return unwrapResponse<T>(response, "Check owner unit availability");
 }
-

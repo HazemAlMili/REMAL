@@ -29,7 +29,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "Kaza Booking Platform API - Domain 1 & 2",
         Version = "v1",
-        Description = "Master Data (Amenities, Areas, Clients, Owners, AdminUsers) + Inventory (Units, Images, Seasonal Pricing, Date Blocks, Availability)"
+        Description = "Master Data (Amenities, Projects, Clients, Owners, AdminUsers) + Inventory (Units, Images, Seasonal Pricing, Date Blocks, Availability)"
     });
 
     // Add JWT Bearer authentication to Swagger
@@ -259,7 +259,7 @@ builder.Services.AddSingleton<IRbacPermissionRegistry, RentalPlatform.API.Author
 // Services
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
 builder.Services.AddScoped<IAmenityService, AmenityService>();
-builder.Services.AddScoped<IAreaService, AreaService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IOwnerService, OwnerService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IAdminUserService, AdminUserService>();

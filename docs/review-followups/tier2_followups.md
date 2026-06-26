@@ -129,7 +129,7 @@ Soft delete behavior (converting `EntityState.Deleted` into a `DeletedAt` timest
 | Entity | Soft Delete | Query Filter |
 |--------|-------------|--------------|
 | Amenity | ❌ No | ❌ No |
-| Area | ❌ No | ❌ No |
+| Project | ❌ No | ❌ No |
 | AdminUser | ❌ No | ❌ No |
 | Client | ✅ Yes | ✅ `DeletedAt == null` |
 | Owner | ✅ Yes | ✅ `DeletedAt == null` |
@@ -137,10 +137,10 @@ Soft delete behavior (converting `EntityState.Deleted` into a `DeletedAt` timest
 ### Why This Matters for Tier 3
 
 - Business services for `Client` and `Owner` must account for the query filter. Use `.IgnoreQueryFilters()` explicitly when needing to access soft-deleted records (e.g., admin audit views).
-- Business services for `Amenity`, `Area`, and `AdminUser` will perform **hard deletes** through `DbSet.Remove()`. If soft delete is ever needed for these entities, a new DB migration and configuration change must be created first.
+- Business services for `Amenity`, `Project`, and `AdminUser` will perform **hard deletes** through `DbSet.Remove()`. If soft delete is ever needed for these entities, a new DB migration and configuration change must be created first.
 
 > [!WARNING]
-> Do **not** add soft-delete logic to `Amenity`, `Area`, or `AdminUser` in Tier 3 without a dedicated ticket and DB migration. The current schema does not include `deleted_at` columns for these tables.
+> Do **not** add soft-delete logic to `Amenity`, `Project`, or `AdminUser` in Tier 3 without a dedicated ticket and DB migration. The current schema does not include `deleted_at` columns for these tables.
 
 ---
 
@@ -154,7 +154,7 @@ The `UnitOfWork` exposes exactly five repositories:
 
 ```csharp
 IRepository<Amenity>   Amenities
-IRepository<Area>      Areas
+IRepository<Project>      Projects
 IRepository<AdminUser> AdminUsers
 IRepository<Client>    Clients
 IRepository<Owner>     Owners
@@ -226,7 +226,7 @@ Any future enums stored as `VARCHAR` in the DB must follow this same pattern.
 > 1. **USE** explicit `ValueConverter` classes for any enum stored as string in DB — never `HasConversion<string>()`
 > 2. **DO NOT** add repositories for `Unit`, `Booking`, `Payment`, or other future entities to `UnitOfWork` until their DA tickets exist
 > 3. **DO NOT** add `SaveChanges` calls inside `Repository<T>` — always go through `UnitOfWork`
-> 4. **DO NOT** add soft-delete behavior to `Amenity`, `Area`, or `AdminUser` without a dedicated migration
+> 4. **DO NOT** add soft-delete behavior to `Amenity`, `Project`, or `AdminUser` without a dedicated migration
 > 5. **DO NOT** treat the placeholder `password_hash` on seeded owners as valid credentials — enforce real password creation
 > 6. **ALWAYS** use `.IgnoreQueryFilters()` when business logic needs to access soft-deleted `Client` or `Owner` records
 > 7. **DELETE** the orphaned root `Program.cs` before or during Tier 3 scaffolding

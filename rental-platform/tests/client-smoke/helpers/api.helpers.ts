@@ -1,5 +1,10 @@
 import { APIRequestContext, APIResponse, expect } from "@playwright/test";
-import { ADMIN_USERS, CLIENT_PASSWORD, OWNER_USERS, TEST_PREFIX } from "../fixtures/test-data";
+import {
+  ADMIN_USERS,
+  CLIENT_PASSWORD,
+  OWNER_USERS,
+  TEST_PREFIX,
+} from "../fixtures/test-data";
 import { apiUrl } from "./smoke-env";
 
 export interface ApiEnvelope<T> {
@@ -33,7 +38,7 @@ export interface GeneratedClient {
 export interface PublicUnitListItem {
   id: string;
   ownerId: string;
-  areaId: string;
+  projectId: string;
   name: string;
   unitType: string;
   bedrooms: number;
@@ -57,7 +62,7 @@ export interface UnitImageResponse {
   displayOrder: number;
 }
 
-export interface AreaResponse {
+export interface ProjectResponse {
   id: string;
   name: string;
   isActive: boolean;
@@ -215,8 +220,12 @@ export async function unwrapPaginatedResponse<T>(
 
   return {
     items: body.data ?? [],
-    pagination:
-      body.pagination ?? { totalCount: 0, page: 1, pageSize: 0, totalPages: 1 },
+    pagination: body.pagination ?? {
+      totalCount: 0,
+      page: 1,
+      pageSize: 0,
+      totalPages: 1,
+    },
   };
 }
 
@@ -299,31 +308,37 @@ export async function registerGeneratedClient(
   return { ...client, id: profile.id };
 }
 
-export async function createTestArea(
+export async function createTestProject(
   request: APIRequestContext,
   adminToken: string,
   name: string
-): Promise<AreaResponse> {
-  const response = await request.post(apiUrl("/api/areas"), {
+): Promise<ProjectResponse> {
+  const response = await request.post(apiUrl("/api/projects"), {
     headers: authHeaders(adminToken),
     data: {
       name,
-      description: "Client smoke generated area",
+      description: "Client smoke generated project",
       isActive: true,
     },
   });
-  return unwrapResponse<AreaResponse>(response, "Create client smoke area");
+  return unwrapResponse<ProjectResponse>(
+    response,
+    "Create client smoke project"
+  );
 }
 
-export async function deactivateArea(
+export async function deactivateProject(
   request: APIRequestContext,
   adminToken: string,
-  areaId: string
+  projectId: string
 ): Promise<boolean> {
-  const response = await request.patch(apiUrl(`/api/areas/${areaId}/status`), {
-    headers: authHeaders(adminToken),
-    data: { isActive: false },
-  });
+  const response = await request.patch(
+    apiUrl(`/api/projects/${projectId}/status`),
+    {
+      headers: authHeaders(adminToken),
+      data: { isActive: false },
+    }
+  );
   return response.ok() || response.status() === 404;
 }
 
@@ -344,9 +359,12 @@ export async function deleteUnit(
   adminToken: string,
   unitId: string
 ): Promise<boolean> {
-  const response = await request.delete(apiUrl(`/api/internal/units/${unitId}`), {
-    headers: authHeaders(adminToken),
-  });
+  const response = await request.delete(
+    apiUrl(`/api/internal/units/${unitId}`),
+    {
+      headers: authHeaders(adminToken),
+    }
+  );
   return response.ok() || response.status() === 404;
 }
 
@@ -389,7 +407,10 @@ export async function getPublicUnits(
   }
   const suffix = search.toString() ? `?${search}` : "";
   const response = await request.get(apiUrl(`/api/units${suffix}`));
-  return unwrapPaginatedResponse<PublicUnitListItem>(response, "Get public units");
+  return unwrapPaginatedResponse<PublicUnitListItem>(
+    response,
+    "Get public units"
+  );
 }
 
 export async function getPublicUnit(
@@ -405,7 +426,10 @@ export async function getUnitImages(
   unitId: string
 ): Promise<UnitImageResponse[]> {
   const response = await request.get(apiUrl(`/api/units/${unitId}/images`));
-  return unwrapResponse<UnitImageResponse[]>(response, "Get public unit images");
+  return unwrapResponse<UnitImageResponse[]>(
+    response,
+    "Get public unit images"
+  );
 }
 
 export async function getPublicReviewSummary(
@@ -426,7 +450,10 @@ export async function calculatePricing(
   unitId: string,
   startDate: string,
   endDate: string
-): Promise<{ totalPrice: number; nights: Array<{ date: string; pricePerNight: number }> }> {
+): Promise<{
+  totalPrice: number;
+  nights: Array<{ date: string; pricePerNight: number }>;
+}> {
   const response = await request.post(
     apiUrl(`/api/units/${unitId}/pricing/calculate`),
     { data: { startDate, endDate } }
@@ -466,9 +493,12 @@ export async function getClientBookingDetail(
   clientToken: string,
   bookingId: string
 ): Promise<BookingDetails> {
-  const response = await request.get(apiUrl(`/api/client/bookings/${bookingId}`), {
-    headers: authHeaders(clientToken),
-  });
+  const response = await request.get(
+    apiUrl(`/api/client/bookings/${bookingId}`),
+    {
+      headers: authHeaders(clientToken),
+    }
+  );
   return unwrapResponse<BookingDetails>(response, "Get client booking detail");
 }
 
@@ -477,9 +507,12 @@ export async function getInternalLead(
   adminToken: string,
   leadId: string
 ): Promise<CrmLeadDetails> {
-  const response = await request.get(apiUrl(`/api/internal/crm/leads/${leadId}`), {
-    headers: authHeaders(adminToken),
-  });
+  const response = await request.get(
+    apiUrl(`/api/internal/crm/leads/${leadId}`),
+    {
+      headers: authHeaders(adminToken),
+    }
+  );
   return unwrapResponse<CrmLeadDetails>(response, "Get internal CRM lead");
 }
 
@@ -509,9 +542,12 @@ export async function getInternalBookings(
     if (value !== undefined) search.set(key, String(value));
   }
   const suffix = search.toString() ? `?${search}` : "";
-  const response = await request.get(apiUrl(`/api/internal/bookings${suffix}`), {
-    headers: authHeaders(adminToken),
-  });
+  const response = await request.get(
+    apiUrl(`/api/internal/bookings${suffix}`),
+    {
+      headers: authHeaders(adminToken),
+    }
+  );
   return unwrapPaginatedResponse<BookingListItem>(
     response,
     "Get internal bookings"
@@ -549,7 +585,9 @@ export async function transitionBooking(
       data: { notes: "Client smoke cleanup/progression" },
     }
   );
-  return response.ok() || response.status() === 409 || response.status() === 404;
+  return (
+    response.ok() || response.status() === 409 || response.status() === 404
+  );
 }
 
 export async function createPayment<T = { id: string }>(
@@ -588,7 +626,9 @@ export async function cancelPayment(
       data: { notes: "Client smoke cleanup" },
     }
   );
-  return response.ok() || response.status() === 409 || response.status() === 404;
+  return (
+    response.ok() || response.status() === 409 || response.status() === 404
+  );
 }
 
 export async function deactivateClient(
@@ -596,10 +636,13 @@ export async function deactivateClient(
   adminToken: string,
   clientId: string
 ): Promise<boolean> {
-  const response = await request.patch(apiUrl(`/api/clients/${clientId}/status`), {
-    headers: authHeaders(adminToken),
-    data: { isActive: false },
-  });
+  const response = await request.patch(
+    apiUrl(`/api/clients/${clientId}/status`),
+    {
+      headers: authHeaders(adminToken),
+      data: { isActive: false },
+    }
+  );
   return response.ok() || response.status() === 404;
 }
 
@@ -635,14 +678,17 @@ export async function getInternalUnits(
   return result.items;
 }
 
-export async function getAreas(
+export async function getProjects(
   request: APIRequestContext,
   adminToken: string
-): Promise<AreaResponse[]> {
-  const response = await request.get(apiUrl("/api/areas?includeInactive=true"), {
-    headers: authHeaders(adminToken),
-  });
-  return unwrapResponse<AreaResponse[]>(response, "Get areas");
+): Promise<ProjectResponse[]> {
+  const response = await request.get(
+    apiUrl("/api/projects?includeInactive=true"),
+    {
+      headers: authHeaders(adminToken),
+    }
+  );
+  return unwrapResponse<ProjectResponse[]>(response, "Get projects");
 }
 
 export async function getClientReviewByBooking(
@@ -655,7 +701,10 @@ export async function getClientReviewByBooking(
     { headers: authHeaders(clientToken) }
   );
   if (response.status() === 404) return null;
-  return unwrapResponse<ReviewResponse>(response, "Get client review by booking");
+  return unwrapResponse<ReviewResponse>(
+    response,
+    "Get client review by booking"
+  );
 }
 
 export async function getClientNotifications(
@@ -695,7 +744,9 @@ export async function createClientBookingNotification(
   );
 }
 
-export async function assertForbiddenOrNotFound(response: APIResponse): Promise<void> {
+export async function assertForbiddenOrNotFound(
+  response: APIResponse
+): Promise<void> {
   expect([403, 404]).toContain(response.status());
   const body = (await response.json()) as ApiEnvelope<unknown>;
   expect(body.success).toBe(false);

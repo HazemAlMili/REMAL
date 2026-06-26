@@ -81,7 +81,7 @@ These timestamp fields must not be included in Response DTOs automatically. Each
 
 | Scenario | Include `CreatedAt`? | Include `UpdatedAt`? |
 |----------|---------------------|---------------------|
-| Public listing (e.g., areas, units for end users) | No | No |
+| Public listing (e.g., projects, units for end users) | No | No |
 | Admin detail view (e.g., owner profile for admin) | Yes — useful for audit | Yes — useful for audit |
 | Client-facing booking detail | Yes — when created | No — internal |
 
@@ -170,19 +170,19 @@ DTOs/
 ├── Requests/
 │   ├── CreateOwnerRequest.cs
 │   ├── UpdateOwnerRequest.cs
-│   ├── CreateAreaRequest.cs
+│   ├── CreateProjectRequest.cs
 │   └── ...
 └── Responses/
     ├── OwnerResponse.cs
     ├── OwnerListItemResponse.cs
-    ├── AreaResponse.cs
+    ├── ProjectResponse.cs
     ├── ClientResponse.cs
     └── ...
 ```
 
 **Pattern:**
-- Request DTOs: `{Action}{Entity}Request`  — e.g., `CreateOwnerRequest`, `UpdateAreaRequest`, `LoginAdminRequest`
-- Response DTOs: `{Entity}Response` — e.g., `OwnerResponse`, `AreaResponse`
+- Request DTOs: `{Action}{Entity}Request`  — e.g., `CreateOwnerRequest`, `UpdateProjectRequest`, `LoginAdminRequest`
+- Response DTOs: `{Entity}Response` — e.g., `OwnerResponse`, `ProjectResponse`
 - List-optimized DTOs: `{Entity}ListItemResponse` — e.g., `OwnerListItemResponse` (fewer fields for list endpoints)
 - All DTOs live in `RentalPlatform.API/DTOs/Requests/` and `RentalPlatform.API/DTOs/Responses/`
 

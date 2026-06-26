@@ -21,14 +21,15 @@ const SECTION_TITLES: Record<string, string> = {
   clients: "Clients",
   reviews: "Review moderation",
   notifications: "Notifications",
-  areas: "Resort areas",
+  projects: "Resort projects",
   amenities: "Amenities",
   settings: "Admin settings",
 };
 
 function deriveSectionTitle(pathname: string): string {
   const segments = pathname.split("/").filter(Boolean);
-  const key = (segments[0] === "admin" ? segments[1] : segments[0]) ?? "dashboard";
+  const key =
+    (segments[0] === "admin" ? segments[1] : segments[0]) ?? "dashboard";
   return SECTION_TITLES[key] ?? key.charAt(0).toUpperCase() + key.slice(1);
 }
 
@@ -39,8 +40,9 @@ export function AdminHeader() {
   const role = useAuthStore((s) => s.role);
   const roleName = useAuthStore((s) => s.roleName);
 
-  const roleLabel = roleName ?? (
-    role && role in ADMIN_ROLE_LABELS
+  const roleLabel =
+    roleName ??
+    (role && role in ADMIN_ROLE_LABELS
       ? ADMIN_ROLE_LABELS[role as keyof typeof ADMIN_ROLE_LABELS]
       : role);
 

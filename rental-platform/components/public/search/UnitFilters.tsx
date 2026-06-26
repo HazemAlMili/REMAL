@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════════
 
 "use client";
-import { usePublicAmenities, usePublicAreas } from "@/lib/hooks/usePublic";
+import { usePublicAmenities, usePublicProjects } from "@/lib/hooks/usePublic";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
@@ -17,12 +17,12 @@ interface UnitFiltersProps {
 }
 
 export function UnitFilters({ filters, onChange, onClear }: UnitFiltersProps) {
-  const { data: areas } = usePublicAreas();
+  const { data: projects } = usePublicProjects();
   const { data: amenities } = usePublicAmenities();
 
-  const areaOptions = [
-    { value: "", label: "All Areas" },
-    ...(areas?.map((a) => ({ value: a.id, label: a.name })) || []),
+  const projectOptions = [
+    { value: "", label: "All Projects" },
+    ...(projects?.map((a) => ({ value: a.id, label: a.name })) || []),
   ];
 
   const typeOptions = [
@@ -48,13 +48,13 @@ export function UnitFilters({ filters, onChange, onClear }: UnitFiltersProps) {
 
   return (
     <div className="space-y-6">
-      {/* Area Filter */}
+      {/* Project Filter */}
       <Select
-        label="Area"
-        options={areaOptions}
-        value={filters.areaId || ""}
+        label="Project"
+        options={projectOptions}
+        value={filters.projectId || ""}
         onChange={(val) =>
-          onChange({ areaId: String(val) || undefined, page: 1 })
+          onChange({ projectId: String(val) || undefined, page: 1 })
         }
       />
 

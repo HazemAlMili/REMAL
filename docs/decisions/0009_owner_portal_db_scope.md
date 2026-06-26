@@ -76,13 +76,13 @@ The following views will be created in Owner Portal Tier 1:
 
 ### `owner_portal_units_overview`
 
-**Purpose:** One row per unit owned by a given owner. Provides the portal's unit list display including current status, area name, and base pricing.
+**Purpose:** One row per unit owned by a given owner. Provides the portal's unit list display including current status, project name, and base pricing.
 
-**Source tables:** `units`, `areas`
+**Source tables:** `units`, `projects`
 
 **Key columns (illustrative):**
 - `unit_id`, `owner_id`, `title`, `unit_type`, `unit_status`
-- `area_id`, `area_name`
+- `project_id`, `project_name`
 - `base_price_per_night`
 - `created_at`
 

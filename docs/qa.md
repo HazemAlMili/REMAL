@@ -1050,7 +1050,7 @@ Files reviewed:
 
 ### B — `owner_portal_units_overview` (migration 0027)
 
-**Column contract (12 columns):** `owner_id`, `unit_id`, `area_id`, `unit_name`, `unit_type`, `is_active`, `bedrooms`, `bathrooms`, `max_guests`, `base_price_per_night`, `created_at`, `updated_at`
+**Column contract (12 columns):** `owner_id`, `unit_id`, `project_id`, `unit_name`, `unit_type`, `is_active`, `bedrooms`, `bathrooms`, `max_guests`, `base_price_per_night`, `created_at`, `updated_at`
 
 **Source:** `units u WHERE u.deleted_at IS NULL` — soft-delete exclusion correct
 
@@ -1203,8 +1203,8 @@ The view surfaces all statuses including `prospecting`, `no_answer`, `not_releva
 
 **M2 — Finance view `remaining_amount` can be negative if overpayment occurred**`remaining_amount = invoiced_amount - paid_amount` with no floor. If overpayment exists (edge case blocked by `PaymentService.MarkPaidAsync` at the application layer), the view would expose a negative value. No DB-level constraint prevents this in the view. Acceptable at the DB read-model level; the Business layer already prevents this state from being created.
 
-**M3 — `owner_portal_units_overview` does not surface `area_name`**
-The decision note §5 mentions "area name" as a key column, but the view only exposes `area_id`. Joining areas was deferred correctly (no join was specified in the ticket contract), but downstream layers will need to resolve the name themselves. Minor gap between the narrative note and the actual contract — note should say `area_id` not "area name".
+**M3 — `owner_portal_units_overview` does not surface `project_name`**
+The decision note §5 mentions "project name" as a key column, but the view only exposes `project_id`. Joining projects was deferred correctly (no join was specified in the ticket contract), but downstream layers will need to resolve the name themselves. Minor gap between the narrative note and the actual contract — note should say `project_id` not "project name".
 
 ---
 
@@ -1232,7 +1232,7 @@ Owner Portal Tier 1 (Database) has been reviewed against the frozen Business Req
 
 ## 2. Reviewer Verdict Interpreted
 
-Reviewer returned **PASS** with `READY FOR OWNER PORTAL TIER 2: YES`. Zero blockers, zero major issues. Three minor observations: all-status exposure in bookings view (filter responsibility delegated to service layer correctly), negative-remaining edge case in finance view (prevented at application layer), and area_name narrative vs area_id actual contract (cosmetic note inconsistency only).
+Reviewer returned **PASS** with `READY FOR OWNER PORTAL TIER 2: YES`. Zero blockers, zero major issues. Three minor observations: all-status exposure in bookings view (filter responsibility delegated to service layer correctly), negative-remaining edge case in finance view (prevented at application layer), and project_name narrative vs project_id actual contract (cosmetic note inconsistency only).
 
 ---
 
@@ -1265,7 +1265,7 @@ None.
 | --- | --- | --- |
 | FU-1 | Booking status filter for portal display | Tier 3 service implementing `GetOwnerBookingsAsync` must filter to `confirmed`, `check_in`, `completed` only |
 | FU-2 | Negative remaining_amount in finance view edge case | Already prevented by `PaymentService.MarkPaidAsync`; add note in Tier 2 data access mapping |
-| FU-3 | Decision note §5 says "area name" but view exposes `area_id` | Update note narrative to say `area_id` for accuracy; no code change needed |
+| FU-3 | Decision note §5 says "project name" but view exposes `project_id` | Update note narrative to say `project_id` for accuracy; no code change needed |
 
 ---
 
@@ -1304,7 +1304,7 @@ None required before Data Access. Track in backlog:
 - [PASS] Reviewer read Technical Requirements
 - [PASS] Reviewer considered Owner Portal Tier 1 DB tickets/specs
 - [PASS] Reviewer considered upstream domain contracts Owner Portal depends on
-- [PASS] Schema/view vs ticket mismatch explicitly called out (M3 — area_id vs area_name)
+- [PASS] Schema/view vs ticket mismatch explicitly called out (M3 — project_id vs project_name)
 
 **B. Scope Decision Quality**
 
@@ -1434,7 +1434,7 @@ public DbSet<OwnerPortalFinanceOverview>  OwnerPortalFinanceOverview  { get; set
 
 ### B — OwnerPortalUnitOverview (DA-OP-02)
 
-**Model:** 12 `init`-only properties — `OwnerId`, `UnitId`, `AreaId`, `UnitName`, `UnitType`, `IsActive`, `Bedrooms`, `Bathrooms`, `MaxGuests`, `BasePricePerNight`, `CreatedAt`, `UpdatedAt`. Sealed class.
+**Model:** 12 `init`-only properties — `OwnerId`, `UnitId`, `ProjectId`, `UnitName`, `UnitType`, `IsActive`, `Bedrooms`, `Bathrooms`, `MaxGuests`, `BasePricePerNight`, `CreatedAt`, `UpdatedAt`. Sealed class.
 
 **Configuration:** `ToView("owner_portal_units_overview")` + `HasNoKey()` + explicit `HasColumnName` for all 12 columns + `HasColumnType("decimal(12,2)")` for `BasePricePerNight` + `HasMaxLength(150)` on `UnitName`, `HasMaxLength(50)` on `UnitType`.
 
@@ -1767,7 +1767,7 @@ Files reviewed:
 | Outcome | Expected |
 | --- | --- |
 | A) Contracts and scope note | 4 interfaces, 2 result models, 1 decision note with 10 explicit rules |
-| B) Unit read behavior | Owner-scoped list + single-read, `isActive`/`areaId` filters |
+| B) Unit read behavior | Owner-scoped list + single-read, `isActive`/`projectId` filters |
 | C) Booking read behavior | Owner-scoped list + single-read, status/date filters, date-range guard |
 | D) Finance read behavior | Owner-scoped list + single-read + summary, no mutation |
 | E) Dashboard behavior | Derived aggregation from three component services, read-only |
@@ -1780,7 +1780,7 @@ Files reviewed:
 
 **Interfaces verified:**
 
-- `IOwnerPortalUnitService`: 2 methods — `GetAllByOwnerAsync(ownerId, bool? isActive, Guid? areaId, ct)`, `GetByOwnerAndUnitIdAsync(ownerId, unitId, ct)` — returns `OwnerPortalUnitOverview` (DA-OP read model). No write methods.
+- `IOwnerPortalUnitService`: 2 methods — `GetAllByOwnerAsync(ownerId, bool? isActive, Guid? projectId, ct)`, `GetByOwnerAndUnitIdAsync(ownerId, unitId, ct)` — returns `OwnerPortalUnitOverview` (DA-OP read model). No write methods.
 - `IOwnerPortalBookingService`: 2 methods — `GetAllByOwnerAsync(ownerId, string? bookingStatus, DateOnly? checkInFrom, DateOnly? checkInTo, ct)`, `GetByOwnerAndBookingIdAsync(ownerId, bookingId, ct)` — returns `OwnerPortalBookingOverview`. No write methods.
 - `IOwnerPortalFinanceService`: 3 methods — `GetAllByOwnerAsync`, `GetByOwnerAndBookingIdAsync`, `GetSummaryByOwnerAsync` — returns `OwnerPortalFinanceOverview` / `OwnerPortalFinanceSummaryResult`. No write methods.
 - `IOwnerPortalDashboardService`: 1 method — `GetSummaryAsync(ownerId, ct)` — returns `OwnerPortalDashboardSummaryResult`. No write methods.
@@ -1798,7 +1798,7 @@ Files reviewed:
 
 **Owner scoping:** `Where(u => u.OwnerId == ownerId)` applied immediately after validation before any filters.
 
-**Filters:** `isActive` → `Where(u => u.IsActive == isActive.Value)` (exact bool match); `areaId` → `Where(u => u.AreaId == areaId.Value)`.
+**Filters:** `isActive` → `Where(u => u.IsActive == isActive.Value)` (exact bool match); `projectId` → `Where(u => u.ProjectId == projectId.Value)`.
 
 **Ordering:** `OrderByDescending(u => u.CreatedAt)` — stable, deterministic.
 
@@ -1880,7 +1880,7 @@ Files reviewed:
 | `OwnerPortalUnitService` — owner validation in all methods | PASS |
 | `OwnerPortalUnitService` — hard owner scope before filters | PASS |
 | `OwnerPortalUnitService` — `isActive` filter correct | PASS |
-| `OwnerPortalUnitService` — `areaId` filter correct | PASS |
+| `OwnerPortalUnitService` — `projectId` filter correct | PASS |
 | `OwnerPortalUnitService` — cross-owner → `NotFoundException` | PASS |
 | `OwnerPortalUnitService` — no booking/finance/availability leakage | PASS |
 | `OwnerPortalBookingService` — owner validation in all methods | PASS |
@@ -2096,7 +2096,7 @@ Track in backlog:
 - [PASS] Owner-scoped list works
 - [PASS] Single-unit read works
 - [PASS] `isActive` filter works
-- [PASS] `areaId` filter works
+- [PASS] `projectId` filter works
 - [PASS] Inactive owner guard exists
 - [PASS] No booking/finance/availability leakage
 
@@ -2188,7 +2188,7 @@ Owner Portal — Tier 4 (API): DTOs, validators, and all 4 controllers.
 
 **DTOs — OwnerPortalRequests.cs**
 
-- `GetOwnerPortalUnitsRequest`: `IsActive?`, `AreaId?`, `Page=1`, `PageSize=20`. No `OwnerId`.
+- `GetOwnerPortalUnitsRequest`: `IsActive?`, `ProjectId?`, `Page=1`, `PageSize=20`. No `OwnerId`.
 - `GetOwnerPortalBookingsRequest`: `BookingStatus?`, `CheckInFrom?`, `CheckInTo?`, `Page=1`, `PageSize=20`. No `OwnerId`.
 - `GetOwnerPortalFinanceRequest`: `InvoiceStatus?`, `PayoutStatus?`, `Page=1`, `PageSize=20`. No `OwnerId`.
 
@@ -2216,7 +2216,7 @@ Owner Portal — Tier 4 (API): DTOs, validators, and all 4 controllers.
 **OwnerPortalUnitsController**
 
 - `GET /api/owner/units` + `GET /api/owner/units/{unitId}`.
-- Filters (`isActive`, `areaId`) passed to service, not re-implemented in controller.
+- Filters (`isActive`, `projectId`) passed to service, not re-implemented in controller.
 - In-memory pagination after service materialisation. `PaginationMeta` returned.
 - `MapToResponse(OwnerPortalUnitOverview)` → `OwnerPortalUnitResponse` — read model consumed privately, DTO returned.
 

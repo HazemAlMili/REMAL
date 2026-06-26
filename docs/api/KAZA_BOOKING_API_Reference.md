@@ -9,7 +9,7 @@
 
 1. [Auth](#1-auth)
 2. [Admin Users](#2-admin-users)
-3. [Areas](#3-areas)
+3. [Projects](#3-projects)
 4. [Amenities](#4-amenities)
 5. [Units](#5-units)
 6. [Unit Images](#6-unit-images)
@@ -258,17 +258,17 @@ Every endpoint returns this wrapper:
 
 ---
 
-## 3. Areas
+## 3. Projects
 
-### GET `/api/areas`
+### GET `/api/projects`
 **Access:** Public
-**Description:** List all areas. By default returns only active areas.
+**Description:** List all projects. By default returns only active projects.
 
 **Query Parameters:**
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `includeInactive` | boolean | false | Include inactive areas |
+| `includeInactive` | boolean | false | Include inactive projects |
 
 **Response `data`:** Array of:
 ```json
@@ -284,9 +284,9 @@ Every endpoint returns this wrapper:
 
 ---
 
-### POST `/api/areas`
+### POST `/api/projects`
 **Access:** Admin (SuperAdmin)
-**Description:** Create a new area.
+**Description:** Create a new project.
 
 **Request Body:**
 ```json
@@ -297,23 +297,23 @@ Every endpoint returns this wrapper:
 }
 ```
 
-**Response `data`:** Single area object.
+**Response `data`:** Single project object.
 
 ---
 
-### GET `/api/areas/{id}`
+### GET `/api/projects/{id}`
 **Access:** Public
-**Description:** Get a single area by ID.
+**Description:** Get a single project by ID.
 
 **Path Parameters:** `id` (uuid)
 
-**Response `data`:** Single area object.
+**Response `data`:** Single project object.
 
 ---
 
-### PUT `/api/areas/{id}`
+### PUT `/api/projects/{id}`
 **Access:** Admin
-**Description:** Update all fields of an area.
+**Description:** Update all fields of a project.
 
 **Path Parameters:** `id` (uuid)
 
@@ -326,13 +326,13 @@ Every endpoint returns this wrapper:
 }
 ```
 
-**Response `data`:** Updated area object.
+**Response `data`:** Updated project object.
 
 ---
 
-### PATCH `/api/areas/{id}/status`
+### PATCH `/api/projects/{id}/status`
 **Access:** Admin
-**Description:** Toggle area active/inactive status only.
+**Description:** Toggle project active/inactive status only.
 
 **Path Parameters:** `id` (uuid)
 
@@ -343,7 +343,7 @@ Every endpoint returns this wrapper:
 }
 ```
 
-**Response `data`:** Updated area object.
+**Response `data`:** Updated project object.
 
 ---
 
@@ -402,7 +402,7 @@ Every endpoint returns this wrapper:
 {
   "id": "uuid",
   "ownerId": "uuid",
-  "areaId": "uuid",
+  "projectId": "uuid",
   "name": "string",
   "unitType": "string",
   "bedrooms": 0,
@@ -427,7 +427,7 @@ Every endpoint returns this wrapper:
 {
   "id": "uuid",
   "ownerId": "uuid",
-  "areaId": "uuid",
+  "projectId": "uuid",
   "name": "string",
   "description": "string",
   "address": "string",
@@ -462,7 +462,7 @@ Every endpoint returns this wrapper:
 ```json
 {
   "ownerId": "uuid",          // required
-  "areaId": "uuid",           // required
+  "projectId": "uuid",           // required
   "name": "string",           // required
   "description": "string",    // optional
   "address": "string",        // optional
@@ -2261,7 +2261,7 @@ Every endpoint returns this wrapper:
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `IsActive` | boolean | — | Filter by active status |
-| `AreaId` | uuid | — | Filter by area |
+| `ProjectId` | uuid | — | Filter by project |
 | `Page` | integer | — | Page number |
 | `PageSize` | integer | — | Items per page |
 
@@ -2269,7 +2269,7 @@ Every endpoint returns this wrapper:
 ```json
 {
   "unitId": "uuid",
-  "areaId": "uuid",
+  "projectId": "uuid",
   "unitName": "string",
   "unitType": "string",
   "isActive": true,
@@ -2821,8 +2821,8 @@ Every endpoint returns this wrapper:
 | Endpoint Group | Public | Client | Owner | Sales | Finance | Tech | SuperAdmin |
 |---|---|---|---|---|---|---|---|
 | Auth | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Areas (read) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Areas (write) | — | — | — | — | — | — | ✓ |
+| Projects (read) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Projects (write) | — | — | — | — | — | — | ✓ |
 | Amenities (read) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | Amenities (write) | — | — | — | — | — | — | ✓ |
 | Units (read public) | ✓ | ✓ | — | ✓ | ✓ | ✓ | ✓ |

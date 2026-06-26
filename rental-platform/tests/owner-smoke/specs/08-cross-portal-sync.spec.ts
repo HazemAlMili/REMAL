@@ -6,10 +6,10 @@ import {
   confirmBooking,
   convertLeadToBooking,
   createOwnerPayout,
-  createTestArea,
+  createTestProject,
   createTestLead,
   createTestUnit,
-  deactivateTestArea,
+  deactivateTestProject,
   deleteTestUnit,
   getAdminApiToken,
   getOwnerApiToken,
@@ -20,10 +20,7 @@ import {
   qualifyLead,
 } from "../helpers/api.helpers";
 import { cleanupOwnerSmokeData } from "../helpers/cleanup.helpers";
-import {
-  formatExpectedCurrency,
-  pollUntil,
-} from "../helpers/assertions";
+import { formatExpectedCurrency, pollUntil } from "../helpers/assertions";
 import { MOCK_CLIENT, OWNER_USERS, TEST_PREFIX } from "../fixtures/test-data";
 
 interface CreatedUnit {
@@ -61,7 +58,7 @@ interface AvailabilityResponse {
 test.describe("Multi-Portal Cross-Role Synchronization Loop", () => {
   let adminToken = "";
   let ownerToken = "";
-  let areaId = "";
+  let projectId = "";
   let unitId = "";
   let leadId = "";
   let bookingId = "";
@@ -78,16 +75,16 @@ test.describe("Multi-Portal Cross-Role Synchronization Loop", () => {
     ownerToken = await getOwnerApiToken(request, "OwnerA");
 
     const unique = `${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-    const area = await createTestArea(request, adminToken, {
-      name: `${TEST_PREFIX}Area_${unique}`,
-      description: "Owner smoke sync test area",
+    const project = await createTestProject(request, adminToken, {
+      name: `${TEST_PREFIX}Project_${unique}`,
+      description: "Owner smoke sync test project",
       isActive: true,
     });
-    areaId = area.id;
+    projectId = project.id;
 
     const unit = await createTestUnit<CreatedUnit>(request, adminToken, {
       ownerId: OWNER_USERS.OwnerA.id,
-      areaId,
+      projectId,
       name: `${TEST_PREFIX}Unit_${unique}`,
       description: "Owner smoke sync test unit",
       address: "North Coast",
@@ -136,7 +133,7 @@ test.describe("Multi-Portal Cross-Role Synchronization Loop", () => {
     if (payoutId) await cancelOwnerPayout(request, adminToken, payoutId);
     if (bookingId) await cancelBooking(request, adminToken, bookingId);
     if (unitId) await deleteTestUnit(request, adminToken, unitId);
-    if (areaId) await deactivateTestArea(request, adminToken, areaId);
+    if (projectId) await deactivateTestProject(request, adminToken, projectId);
     if (adminToken) await cleanupOwnerSmokeData(request, adminToken);
   });
 
@@ -152,15 +149,11 @@ test.describe("Multi-Portal Cross-Role Synchronization Loop", () => {
     await markBookingBooked(request, adminToken, bookingId);
     await confirmBooking(request, adminToken, bookingId);
 
-    const payout = await createOwnerPayout<CreatedPayout>(
-      request,
-      adminToken,
-      {
-        bookingId,
-        commissionRate,
-        notes: "Owner smoke payout snapshot",
-      }
-    );
+    const payout = await createOwnerPayout<CreatedPayout>(request, adminToken, {
+      bookingId,
+      commissionRate,
+      notes: "Owner smoke payout snapshot",
+    });
     payoutId = payout.id;
     expect(payout.payoutAmount).toBe(expectedOwnerPayout);
 
@@ -189,7 +182,10 @@ test.describe("Multi-Portal Cross-Role Synchronization Loop", () => {
         summary.confirmedBookings >= preDashboard.confirmedBookings + 1 &&
         summary.totalPendingPayoutAmount >=
           preDashboard.totalPendingPayoutAmount + expectedOwnerPayout,
-      { description: "owner dashboard totals to include confirmed smoke booking" }
+      {
+        description:
+          "owner dashboard totals to include confirmed smoke booking",
+      }
     );
 
     expect(postDashboard.confirmedBookings).toBeGreaterThanOrEqual(
@@ -224,9 +220,7 @@ test.describe("Multi-Portal Cross-Role Synchronization Loop", () => {
     const pendingPayoutCard = ownerPageA
       .locator('div:has(> p:has-text("Total Pending Payout Amount"))')
       .last();
-    await expect(
-      pendingPayoutCard
-    ).toContainText(
+    await expect(pendingPayoutCard).toContainText(
       formatExpectedCurrency(postFinance.totalPendingPayoutAmount)
     );
 

@@ -11,7 +11,7 @@
 ## Wave 2 Overview
 
 **Track A — Admin Shell (FE-2-ADMIN-01 → 04):**
-The persistent admin layout (sidebar + header), the dashboard overview page, areas management, and amenities management. After Track A, the admin panel has a working navigation shell and the first two data-management modules.
+The persistent admin layout (sidebar + header), the dashboard overview page, projects management, and amenities management. After Track A, the admin panel has a working navigation shell and the first two data-management modules.
 
 **Track B — Units Domain (FE-2-UNITS-01 → 10):**
 Everything related to managing rental units: service layer + types, list with filters, create form, detail page, edit form, image management, amenities assignment, date blocking, seasonal pricing, and the availability calendar. After Track B, a SuperAdmin or Tech user can fully manage the property inventory.
@@ -44,7 +44,7 @@ NO INLINE STRINGS — endpoints from endpoints.ts, routes from routes.ts, enums 
 |---|-----------|-------|-------|----------|------------|
 | 1 | FE-2-ADMIN-01 | Build Admin Shell Layout (sidebar + header) | A | Critical | FE-1-AUTH-01, FE-1-AUTH-06, FE-1-UI-10 |
 | 2 | FE-2-ADMIN-02 | Build Admin Dashboard overview page | A | High | FE-2-ADMIN-01 |
-| 3 | FE-2-ADMIN-03 | Build Areas management (list + CRUD + status) | A | High | FE-2-ADMIN-01, FE-1-UI-01..04 |
+| 3 | FE-2-ADMIN-03 | Build Projects management (list + CRUD + status) | A | High | FE-2-ADMIN-01, FE-1-UI-01..04 |
 | 4 | FE-2-ADMIN-04 | Build Amenities management | A | Medium | FE-2-ADMIN-01 |
 | 5 | FE-2-UNITS-01 | Create Units service layer + TypeScript types | B | Critical | FE-0-INFRA-03, FE-0-INFRA-04 |
 | 6 | FE-2-UNITS-02 | Build Units list page (admin internal view) | B | Critical | FE-2-UNITS-01, FE-2-ADMIN-01 |
@@ -299,7 +299,7 @@ const NAV_ITEMS: NavItem[] = [
 ### Section 12 — Acceptance Criteria
 
 **Functionality:**
-- [ ] Admin layout renders sidebar + header + main content area
+- [ ] Admin layout renders sidebar + header + main content region
 - [ ] Nav items filtered by `usePermissions()` — unauthorized items NOT rendered
 - [ ] Active nav item highlighted using `usePathname()`
 - [ ] Sidebar collapses/expands via UIStore toggle
@@ -624,7 +624,7 @@ lib/types/report.types.ts                         ← all report response types
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 TICKET ID: FE-2-ADMIN-03
-TITLE: Build Areas management (list + CRUD + status toggle)
+TITLE: Build Projects management (list + CRUD + status toggle)
 WAVE: Wave 2 — Admin Shell + Units Domain
 DOMAIN: Admin
 PRIORITY: High
@@ -635,62 +635,62 @@ DEPENDS ON: FE-2-ADMIN-01, FE-1-UI-01..05, FE-1-UI-07, FE-1-UI-10
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-Areas are the geographic zones where rental units are located (Palm Hills, Abraj Al Alamein, etc.). This ticket builds the full areas management page at `/admin/areas`: a list of all areas, the ability to create new ones, edit existing ones, and toggle their active/inactive status. Only SuperAdmin can create/edit areas. All admin roles can view them.
+Projects are the geographic zones where rental units are located (Palm Hills, Abraj Al Alamein, etc.). This ticket builds the full projects management page at `/admin/projects`: a list of all projects, the ability to create new ones, edit existing ones, and toggle their active/inactive status. Only SuperAdmin can create/edit projects. All admin roles can view them.
 
 **Why NOW?**
-Area selection is required when creating a unit (FE-2-UNITS-03). The areas list must exist first.
+Project selection is required when creating a unit (FE-2-UNITS-03). The projects list must exist first.
 
 **What does success look like?**
-SuperAdmin opens `/admin/areas`, sees all areas in a table, creates a new area via a modal form, edits it inline, and can toggle its status between active and inactive.
+SuperAdmin opens `/admin/projects`, sees all projects in a table, creates a new project via a modal form, edits it inline, and can toggle its status between active and inactive.
 
 ---
 
 ### Section 2 — Objective
 
-Build the Areas management page at `/admin/areas` with full CRUD operations and status toggling, guarded by `canManageAreas` permission, using the Areas API endpoints.
+Build the Projects management page at `/admin/projects` with full CRUD operations and status toggling, guarded by `canManageProjects` permission, using the Projects API endpoints.
 
 ---
 
 ### Section 3 — User-Facing Outcome
 
 The SuperAdmin can:
-- View all areas in a table (name, description, status, created date)
-- Create a new area via a "New Area" button → modal form
-- Edit an area by clicking the edit button in the table row
-- Toggle an area's active/inactive status with a ConfirmDialog
-- See inactive areas in a muted style
+- View all projects in a table (name, description, status, created date)
+- Create a new project via a "New Project" button → modal form
+- Edit a project by clicking the edit button in the table row
+- Toggle a project's active/inactive status with a ConfirmDialog
+- See inactive projects in a muted style
 
 The Sales/Finance/Tech admin can:
-- View the areas list (read-only — no create/edit buttons visible)
+- View the projects list (read-only — no create/edit buttons visible)
 
 ---
 
 ### Section 4 — In Scope
 
-- [ ] Create `app/(admin)/areas/page.tsx`
-- [ ] Create `lib/api/services/areas.service.ts`
-- [ ] Create `lib/hooks/useAreas.ts`
-- [ ] Create `lib/types/area.types.ts`
-- [ ] `GET /api/areas` → list with `includeInactive: true` for admin view
-- [ ] `POST /api/areas` → create new area
-- [ ] `PUT /api/areas/{id}` → update area
-- [ ] `PATCH /api/areas/{id}/status` → toggle active/inactive
+- [ ] Create `app/(admin)/projects/page.tsx`
+- [ ] Create `lib/api/services/projects.service.ts`
+- [ ] Create `lib/hooks/useProjects.ts`
+- [ ] Create `lib/types/project.types.ts`
+- [ ] `GET /api/projects` → list with `includeInactive: true` for admin view
+- [ ] `POST /api/projects` → create new project
+- [ ] `PUT /api/projects/{id}` → update project
+- [ ] `PATCH /api/projects/{id}/status` → toggle active/inactive
 - [ ] Table columns: Name, Description, Status (Badge), Created At, Actions (edit, toggle status)
-- [ ] "New Area" button (visible only if `canManageAreas`)
+- [ ] "New Project" button (visible only if `canManageProjects`)
 - [ ] Create/Edit in `<Modal>` with form (shared form component)
 - [ ] Status toggle requires `<ConfirmDialog>`
-- [ ] Pagination: areas list may be small, but implement pagination support
+- [ ] Pagination: projects list may be small, but implement pagination support
 - [ ] Loading: `<SkeletonTable rows={5}>`
-- [ ] Empty: `<EmptyState>` with "No areas yet" + "Create Area" CTA (if `canManageAreas`)
+- [ ] Empty: `<EmptyState>` with "No projects yet" + "Create Project" CTA (if `canManageProjects`)
 
 **Files to create:**
-- `app/(admin)/areas/page.tsx`
-- `components/admin/areas/AreaTable.tsx`
-- `components/admin/areas/AreaForm.tsx` (shared create/edit form)
-- `components/admin/areas/AreaFormModal.tsx`
-- `lib/api/services/areas.service.ts`
-- `lib/hooks/useAreas.ts`
-- `lib/types/area.types.ts`
+- `app/(admin)/projects/page.tsx`
+- `components/admin/projects/ProjectTable.tsx`
+- `components/admin/projects/ProjectForm.tsx` (shared create/edit form)
+- `components/admin/projects/ProjectFormModal.tsx`
+- `lib/api/services/projects.service.ts`
+- `lib/hooks/useProjects.ts`
+- `lib/types/project.types.ts`
 
 ---
 
@@ -699,41 +699,41 @@ The Sales/Finance/Tech admin can:
 #### 6a. Component Props Interface
 
 ```typescript
-// AreaForm.tsx — shared for create and edit
-interface AreaFormProps {
-  defaultValues?: Partial<AreaFormValues>
-  onSubmit:       (data: AreaFormValues) => void
+// ProjectForm.tsx — shared for create and edit
+interface ProjectFormProps {
+  defaultValues?: Partial<ProjectFormValues>
+  onSubmit:       (data: ProjectFormValues) => void
   isLoading?:     boolean
 }
 
-// AreaFormModal.tsx
-interface AreaFormModalProps {
+// ProjectFormModal.tsx
+interface ProjectFormModalProps {
   isOpen:    boolean
   onClose:   () => void
-  area?:     AreaResponse   // if provided → edit mode; if undefined → create mode
+  project?:     ProjectResponse   // if provided → edit mode; if undefined → create mode
 }
 ```
 
 #### 6c. Zod Schema
 
 ```typescript
-const areaFormSchema = z.object({
-  name:        z.string().min(1, 'Area name is required').max(100),
+const projectFormSchema = z.object({
+  name:        z.string().min(1, 'Project name is required').max(100),
   description: z.string().max(500).optional(),
 })
 
-type AreaFormValues = z.infer<typeof areaFormSchema>
+type ProjectFormValues = z.infer<typeof projectFormSchema>
 ```
 
 #### 6d. Key Enums / Constants Used
 
 ```typescript
-endpoints.areas.list       // GET /api/areas
-endpoints.areas.create     // POST /api/areas
-endpoints.areas.update(id) // PUT /api/areas/{id}
-endpoints.areas.status(id) // PATCH /api/areas/{id}/status
+endpoints.projects.list       // GET /api/projects
+endpoints.projects.create     // POST /api/projects
+endpoints.projects.update(id) // PUT /api/projects/{id}
+endpoints.projects.status(id) // PATCH /api/projects/{id}/status
 
-ROUTES.admin.areas         // '/admin/areas'
+ROUTES.admin.projects         // '/admin/projects'
 ```
 
 ---
@@ -744,17 +744,17 @@ ROUTES.admin.areas         // '/admin/areas'
 
 | Method | Endpoint | Request Type | Response Type | When Called |
 |---|---|---|---|---|
-| GET | `/api/areas` | `{ includeInactive: true }` | `AreaResponse[]` | on page mount |
-| POST | `/api/areas` | `CreateAreaRequest` | `AreaResponse` | on create form submit |
-| PUT | `/api/areas/{id}` | `UpdateAreaRequest` | `AreaResponse` | on edit form submit |
-| PATCH | `/api/areas/{id}/status` | `UpdateAreaStatusRequest` | `AreaResponse` | on status toggle confirm |
+| GET | `/api/projects` | `{ includeInactive: true }` | `ProjectResponse[]` | on page mount |
+| POST | `/api/projects` | `CreateProjectRequest` | `ProjectResponse` | on create form submit |
+| PUT | `/api/projects/{id}` | `UpdateProjectRequest` | `ProjectResponse` | on edit form submit |
+| PATCH | `/api/projects/{id}/status` | `UpdateProjectStatusRequest` | `ProjectResponse` | on status toggle confirm |
 
 **Full API Contracts (from KAZA_BOOKING_API_Reference.md):**
 
 ```typescript
-// lib/types/area.types.ts
+// lib/types/project.types.ts
 
-interface AreaResponse {
+interface ProjectResponse {
   id:          string
   name:        string
   description: string | null
@@ -763,68 +763,68 @@ interface AreaResponse {
   updatedAt:   string
 }
 
-interface CreateAreaRequest {
+interface CreateProjectRequest {
   name:         string
   description?: string
 }
 
-interface UpdateAreaRequest {
+interface UpdateProjectRequest {
   name?:        string
   description?: string
 }
 
-interface UpdateAreaStatusRequest {
+interface UpdateProjectStatusRequest {
   isActive: boolean   // true = activate, false = deactivate
 }
 
-// lib/api/services/areas.service.ts
-export const areasService = {
-  getAll:      (includeInactive = false): Promise<AreaResponse[]> =>
-    api.get(endpoints.areas.list, { params: { includeInactive } }),
+// lib/api/services/projects.service.ts
+export const projectsService = {
+  getAll:      (includeInactive = false): Promise<ProjectResponse[]> =>
+    api.get(endpoints.projects.list, { params: { includeInactive } }),
 
-  getById:     (id: string): Promise<AreaResponse> =>
-    api.get(endpoints.areas.byId(id)),
+  getById:     (id: string): Promise<ProjectResponse> =>
+    api.get(endpoints.projects.byId(id)),
 
-  create:      (data: CreateAreaRequest): Promise<AreaResponse> =>
-    api.post(endpoints.areas.create, data),
+  create:      (data: CreateProjectRequest): Promise<ProjectResponse> =>
+    api.post(endpoints.projects.create, data),
 
-  update:      (id: string, data: UpdateAreaRequest): Promise<AreaResponse> =>
-    api.put(endpoints.areas.update(id), data),
+  update:      (id: string, data: UpdateProjectRequest): Promise<ProjectResponse> =>
+    api.put(endpoints.projects.update(id), data),
 
-  toggleStatus: (id: string, isActive: boolean): Promise<AreaResponse> =>
-    api.patch(endpoints.areas.status(id), { isActive }),
+  toggleStatus: (id: string, isActive: boolean): Promise<ProjectResponse> =>
+    api.patch(endpoints.projects.status(id), { isActive }),
 }
 ```
 
 #### 7b. TanStack Query Keys
 
 ```typescript
-queryKeys.areas.list()           // GET all areas
-queryKeys.areas.detail(id)       // GET single area
+queryKeys.projects.list()           // GET all projects
+queryKeys.projects.detail(id)       // GET single project
 
 // Invalidate after mutations:
-// create → invalidate queryKeys.areas.list()
-// update → invalidate queryKeys.areas.list() + queryKeys.areas.detail(id)
-// toggleStatus → invalidate queryKeys.areas.list() + queryKeys.areas.detail(id)
+// create → invalidate queryKeys.projects.list()
+// update → invalidate queryKeys.projects.list() + queryKeys.projects.detail(id)
+// toggleStatus → invalidate queryKeys.projects.list() + queryKeys.projects.detail(id)
 ```
 
 #### 7d. Mutation Side Effects
 
 ```typescript
 // After CREATE:
-toastSuccess('Area created successfully')
-queryClient.invalidateQueries({ queryKey: queryKeys.areas.list() })
+toastSuccess('Project created successfully')
+queryClient.invalidateQueries({ queryKey: queryKeys.projects.list() })
 closeModal()
 
 // After UPDATE:
-toastSuccess('Area updated successfully')
-queryClient.invalidateQueries({ queryKey: queryKeys.areas.list() })
-queryClient.invalidateQueries({ queryKey: queryKeys.areas.detail(id) })
+toastSuccess('Project updated successfully')
+queryClient.invalidateQueries({ queryKey: queryKeys.projects.list() })
+queryClient.invalidateQueries({ queryKey: queryKeys.projects.detail(id) })
 closeModal()
 
 // After STATUS TOGGLE:
-toastSuccess(isActive ? 'Area activated' : 'Area deactivated')
-queryClient.invalidateQueries({ queryKey: queryKeys.areas.list() })
+toastSuccess(isActive ? 'Project activated' : 'Project deactivated')
+queryClient.invalidateQueries({ queryKey: queryKeys.projects.list() })
 closeConfirmDialog()
 ```
 
@@ -834,10 +834,10 @@ closeConfirmDialog()
 
 | State | Where it lives | Why |
 |---|---|---|
-| Areas list | TanStack Query | server state |
+| Projects list | TanStack Query | server state |
 | Modal open state | `useState` in page | local — only one modal |
-| Editing area | `useState` in page | which area is being edited |
-| Confirm dialog state | `useState` in page | which area to toggle |
+| Editing project | `useState` in page | which project is being edited |
+| Confirm dialog state | `useState` in page | which project to toggle |
 | Form values | React Hook Form | form state |
 
 ---
@@ -845,16 +845,16 @@ closeConfirmDialog()
 ### Section 9 — Component & File Deliverables
 
 ```
-app/(admin)/areas/page.tsx                    ← page shell, orchestrates modal/confirm state
-components/admin/areas/AreaTable.tsx          ← table with edit/toggle actions
-components/admin/areas/AreaForm.tsx           ← RHF form (name + description)
-components/admin/areas/AreaFormModal.tsx      ← Modal wrapper for create/edit form
-lib/api/services/areas.service.ts             ← areas CRUD
-lib/hooks/useAreas.ts                         ← useAreasList, useCreateArea, useUpdateArea, useToggleAreaStatus
-lib/types/area.types.ts                       ← AreaResponse, CreateAreaRequest, UpdateAreaRequest
+app/(admin)/projects/page.tsx                    ← page shell, orchestrates modal/confirm state
+components/admin/projects/ProjectTable.tsx          ← table with edit/toggle actions
+components/admin/projects/ProjectForm.tsx           ← RHF form (name + description)
+components/admin/projects/ProjectFormModal.tsx      ← Modal wrapper for create/edit form
+lib/api/services/projects.service.ts             ← projects CRUD
+lib/hooks/useProjects.ts                         ← useProjectsList, useCreateProject, useUpdateProject, useToggleProjectStatus
+lib/types/project.types.ts                       ← ProjectResponse, CreateProjectRequest, UpdateProjectRequest
 ```
 
-`lib/types/index.ts` → add `export * from './area.types'`
+`lib/types/index.ts` → add `export * from './project.types'`
 
 ---
 
@@ -863,37 +863,37 @@ lib/types/area.types.ts                       ← AreaResponse, CreateAreaReques
 | State | Required? | Behavior |
 |---|---|---|
 | Loading list | ✓ REQUIRED | `<SkeletonTable rows={5} columns={5}>` |
-| Empty list | ✓ REQUIRED | `<EmptyState icon={MapPin} title="No areas yet" description="Create your first area to start adding units." action={{ label: 'Create Area', onClick: openCreateModal }}>` — action only if `canManageAreas` |
-| Error loading | ✓ REQUIRED | `<EmptyState icon={AlertCircle} title="Failed to load areas">` with retry button |
+| Empty list | ✓ REQUIRED | `<EmptyState icon={MapPin} title="No projects yet" description="Create your first project to start adding units." action={{ label: 'Create Project', onClick: openCreateModal }}>` — action only if `canManageProjects` |
+| Error loading | ✓ REQUIRED | `<EmptyState icon={AlertCircle} title="Failed to load projects">` with retry button |
 | Create/Edit loading | ✓ REQUIRED | Submit button spinner, form fields disabled |
-| Status toggle | ✓ REQUIRED | `<ConfirmDialog>` before executing. Message: "Deactivate [Area Name]? Units in this area will no longer appear publicly." |
-| Inactive area row | ✓ REQUIRED | Row rendered with muted text + `<Badge variant="neutral">Inactive</Badge>` |
+| Status toggle | ✓ REQUIRED | `<ConfirmDialog>` before executing. Message: "Deactivate [Project Name]? Units in this project will no longer appear publicly." |
+| Inactive project row | ✓ REQUIRED | Row rendered with muted text + `<Badge variant="neutral">Inactive</Badge>` |
 
 ---
 
 ### Section 11 — Verification Steps
 
-1. Log in as SuperAdmin → navigate to `/admin/areas`
-2. Expected: areas list loads with columns: Name, Description, Status, Created, Actions
-3. Click "New Area" → modal opens → fill name → submit → area appears in list, toast shown
-4. Click edit on existing area → modal pre-filled → change name → save → list updates
+1. Log in as SuperAdmin → navigate to `/admin/projects`
+2. Expected: projects list loads with columns: Name, Description, Status, Created, Actions
+3. Click "New Project" → modal opens → fill name → submit → project appears in list, toast shown
+4. Click edit on existing project → modal pre-filled → change name → save → list updates
 5. Click toggle status → ConfirmDialog appears → confirm → status badge changes
-6. Log in as Sales → navigate to `/admin/areas` → table visible, NO "New Area" button, NO edit/toggle actions
-7. Empty state: if no areas → EmptyState shown
+6. Log in as Sales → navigate to `/admin/projects` → table visible, NO "New Project" button, NO edit/toggle actions
+7. Empty state: if no projects → EmptyState shown
 
 **Edge cases:**
-1. Duplicate area name → 422 from API → error shown in form under name field
+1. Duplicate project name → 422 from API → error shown in form under name field
 2. Network error on create → toast from Axios interceptor, modal stays open
 
 ---
 
 ### Section 12 — Acceptance Criteria
 
-- [ ] `GET /api/areas` called with `{ includeInactive: true }` (not the public endpoint)
-- [ ] `canManageAreas` permission gates: "New Area" button, edit button, toggle status button
-- [ ] Status toggle uses `PATCH /api/areas/{id}/status` with `{ isActive: boolean }`
+- [ ] `GET /api/projects` called with `{ includeInactive: true }` (not the public endpoint)
+- [ ] `canManageProjects` permission gates: "New Project" button, edit button, toggle status button
+- [ ] Status toggle uses `PATCH /api/projects/{id}/status` with `{ isActive: boolean }`
 - [ ] Status toggle preceded by `<ConfirmDialog>`
-- [ ] Inactive areas shown with muted style + neutral Badge
+- [ ] Inactive projects shown with muted style + neutral Badge
 - [ ] 422 errors shown as field-level form errors
 - [ ] Query invalidated after every mutation
 - [ ] Loading skeleton shown while data fetches
@@ -905,10 +905,10 @@ lib/types/area.types.ts                       ← AreaResponse, CreateAreaReques
 ### Section 13 — Notes for AI / Common Mistakes
 
 **DO NOT:**
-- ⛔ NO MOCK DATA. No `const areas = [{ id: '1', name: 'Palm Hills' }]`.
-- Do NOT use the public `GET /api/areas` without `includeInactive: true` — admin needs to see inactive areas too
-- Do NOT inline permission checks (`role === 'SuperAdmin'`) — use `usePermissions().canManageAreas`
-- Do NOT skip the ConfirmDialog for status toggle — it's a destructive-ish action (deactivating an area removes it from public view)
+- ⛔ NO MOCK DATA. No `const projects = [{ id: '1', name: 'Palm Hills' }]`.
+- Do NOT use the public `GET /api/projects` without `includeInactive: true` — admin needs to see inactive projects too
+- Do NOT inline permission checks (`role === 'SuperAdmin'`) — use `usePermissions().canManageProjects`
+- Do NOT skip the ConfirmDialog for status toggle — it's a destructive-ish action (deactivating a project removes it from public view)
 
 ---
 
@@ -1065,7 +1065,7 @@ type UnitType = 'villa' | 'chalet' | 'studio'  // lowercase per API
 interface UnitListItemResponse {
   id:                 string
   ownerId:            string
-  areaId:             string
+  projectId:             string
   name:               string
   unitType:           UnitType
   bedrooms:           number
@@ -1080,7 +1080,7 @@ interface UnitListItemResponse {
 interface UnitDetailsResponse {
   id:                 string
   ownerId:            string
-  areaId:             string
+  projectId:             string
   name:               string
   description:        string | null
   address:            string | null
@@ -1097,7 +1097,7 @@ interface UnitDetailsResponse {
 // ── Create/Update Unit ──
 interface CreateUnitRequest {
   ownerId:           string
-  areaId:            string
+  projectId:            string
   name:              string
   unitType:          UnitType
   description?:      string
@@ -1111,7 +1111,7 @@ interface CreateUnitRequest {
 
 interface UpdateUnitRequest {
   ownerId?:           string
-  areaId?:            string
+  projectId?:            string
   name?:              string
   unitType?:          UnitType
   description?:       string
@@ -1377,13 +1377,13 @@ DEPENDS ON: FE-2-UNITS-01, FE-2-ADMIN-01, FE-1-UI-06, FE-1-UI-07
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-The units list at `/admin/units` is where the entire property inventory lives. Documented API query params for `GET /api/internal/units` are pagination only (`page`, `pageSize`). Area/type/status/owner/search controls are backend gaps unless formally documented.
+The units list at `/admin/units` is where the entire property inventory lives. Documented API query params for `GET /api/internal/units` are pagination only (`page`, `pageSize`). Project/type/status/owner/search controls are backend gaps unless formally documented.
 
 ---
 
 ### Section 2 — Objective
 
-Build the units list page at `/admin/units` using `GET /api/internal/units` with documented pagination (`page`, `pageSize`) and a "Create Unit" button for authorized users, while treating area/type/status/owner/search as backend gaps until documented.
+Build the units list page at `/admin/units` using `GET /api/internal/units` with documented pagination (`page`, `pageSize`) and a "Create Unit" button for authorized users, while treating project/type/status/owner/search as backend gaps until documented.
 
 ---
 
@@ -1391,8 +1391,8 @@ Build the units list page at `/admin/units` using `GET /api/internal/units` with
 
 - [ ] `app/(admin)/units/page.tsx`
 - [ ] `GET /api/internal/units` with documented query params: `page`, `pageSize`
-- [ ] **Backend gap:** Area/Owner/Type/Status/Search filtering is not documented for `GET /api/internal/units`; do not present it as supported contract.
-- [ ] Table columns: Unit Name, Area, Owner, Type, Status (StatusBadge), Price/night, Actions
+- [ ] **Backend gap:** Project/Owner/Type/Status/Search filtering is not documented for `GET /api/internal/units`; do not present it as supported contract.
+- [ ] Table columns: Unit Name, Project, Owner, Type, Status (StatusBadge), Price/night, Actions
 - [ ] Actions (row): View Details (→ `/admin/units/{id}`), Edit, Toggle Status (SuperAdmin/Tech only)
 - [ ] "Create Unit" button — visible only if `canManageUnits`
 - [ ] Pagination using `DataTable` + `Pagination` components
@@ -1415,7 +1415,7 @@ Build the units list page at `/admin/units` using `GET /api/internal/units` with
 interface UnitFiltersProps {
   filters:   UnitListFilters
   onChange:  (filters: UnitListFilters) => void
-  areas:     AreaResponse[]   // for area dropdown
+  projects:     ProjectResponse[]   // for project dropdown
   isLoading: boolean
 }
 ```
@@ -1450,7 +1450,7 @@ ROUTES.admin.units.create
 | Method | Endpoint | Query Params | Response | When |
 |---|---|---|---|---|
 | GET | `/api/internal/units` | `UnitListFilters` (`page`, `pageSize`) | `PaginatedUnits` | on page mount + page change |
-| GET | `/api/areas` | `{ includeInactive: false }` | `AreaResponse[]` | on page mount (for filter dropdown) |
+| GET | `/api/projects` | `{ includeInactive: false }` | `ProjectResponse[]` | on page mount (for filter dropdown) |
 
 **Pagination response from API:**
 ```typescript
@@ -1462,7 +1462,7 @@ ROUTES.admin.units.create
 
 ```typescript
 queryKeys.units.internalList(filters)
-queryKeys.areas.list()
+queryKeys.projects.list()
 
 // Invalidate after status change (from action button):
 queryKeys.units.internalList(filters)
@@ -1481,7 +1481,7 @@ staleTime: 1000 * 60 * 2
 
 ```
 app/(admin)/units/page.tsx             ← page with filter state + table
-components/admin/units/UnitFilters.tsx ← pagination controls + backend-gap placeholders (area/type/status/owner/search)
+components/admin/units/UnitFilters.tsx ← pagination controls + backend-gap placeholders (project/type/status/owner/search)
 components/admin/units/UnitTable.tsx   ← DataTable with unit columns + row actions
 ```
 
@@ -1529,13 +1529,13 @@ DEPENDS ON: FE-2-UNITS-01, FE-2-ADMIN-03, FE-2-ADMIN-04, FE-1-UI-01..04
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-Creating a new unit requires selecting: the owner (from owners list), the area (from areas list), a unit name, unit type (villa/chalet/studio), bedrooms, bathrooms, max guests, base price, and optional description/address. This page is the entry point for adding new properties to the platform. After creation, the user is redirected to the unit's detail page.
+Creating a new unit requires selecting: the owner (from owners list), the project (from projects list), a unit name, unit type (villa/chalet/studio), bedrooms, bathrooms, max guests, base price, and optional description/address. This page is the entry point for adding new properties to the platform. After creation, the user is redirected to the unit's detail page.
 
 ---
 
 ### Section 2 — Objective
 
-Build the Create Unit page at `/admin/units/new` with a form that calls `POST /api/internal/units`, requiring owner and area selections populated from their respective APIs.
+Build the Create Unit page at `/admin/units/new` with a form that calls `POST /api/internal/units`, requiring owner and project selections populated from their respective APIs.
 
 ---
 
@@ -1544,7 +1544,7 @@ Build the Create Unit page at `/admin/units/new` with a form that calls `POST /a
 - [ ] `app/(admin)/units/new/page.tsx`
 - [ ] Form fields:
   - `ownerId` — Combobox (searchable) from `GET /api/owners` — required
-  - `areaId` — Select from `GET /api/areas` — required
+  - `projectId` — Select from `GET /api/projects` — required
   - `name` — Input — required
   - `unitType` — Select (villa / chalet / studio) — required
   - `bedrooms` — Number Input — required, min 0
@@ -1555,7 +1555,7 @@ Build the Create Unit page at `/admin/units/new` with a form that calls `POST /a
   - `address` — Input — optional
   - `description` — Textarea — optional
 - [ ] Owners fetched from `GET /api/owners` (own service — `lib/api/services/owners.service.ts` stub)
-- [ ] Areas fetched from `GET /api/areas`
+- [ ] Projects fetched from `GET /api/projects`
 - [ ] On success: redirect to `ROUTES.admin.units.detail(newUnit.id)`
 - [ ] On cancel: navigate back to units list
 
@@ -1573,7 +1573,7 @@ Build the Create Unit page at `/admin/units/new` with a form that calls `POST /a
 ```typescript
 const unitFormSchema = z.object({
   ownerId:           z.string().min(1, 'Owner is required'),
-  areaId:            z.string().min(1, 'Area is required'),
+  projectId:            z.string().min(1, 'Project is required'),
   name:              z.string().min(1, 'Unit name is required').max(100),
   unitType:          z.enum(['villa', 'chalet', 'studio']),
   bedrooms:          z.number({ invalid_type_error: 'Bedrooms are required' }).min(0, 'Min 0 bedrooms'),
@@ -1595,7 +1595,7 @@ type UnitFormValues = z.infer<typeof unitFormSchema>
 | Method | Endpoint | Request | Response | When |
 |---|---|---|---|---|
 | GET | `/api/owners` | `{ page: 1, pageSize: 100 }` | `OwnerListItemResponse[]` | on form mount (for owner Combobox) |
-| GET | `/api/areas` | `{ includeInactive: false }` | `AreaResponse[]` | on form mount (for area Select) |
+| GET | `/api/projects` | `{ includeInactive: false }` | `ProjectResponse[]` | on form mount (for project Select) |
 | POST | `/api/internal/units` | `CreateUnitRequest` | `UnitDetailsResponse` | on form submit |
 
 #### 7d. Mutation Side Effects
@@ -1612,13 +1612,13 @@ router.push(ROUTES.admin.units.detail(newUnit.id))
 ### Section 12 — Acceptance Criteria
 
 - [ ] Owner dropdown populated from real API (no hardcoded owners)
-- [ ] Area dropdown populated from real API (no hardcoded areas)
+- [ ] Project dropdown populated from real API (no hardcoded projects)
 - [ ] `unitType` field uses lowercase values: 'villa', 'chalet', 'studio'
 - [ ] `bedrooms`, `bathrooms`, `maxGuests`, and `basePricePerNight` are numbers (not strings) in the request body
 - [ ] On success: redirect to unit detail page
 - [ ] 422 errors shown as field-level errors
 - [ ] `canManageUnits` gates this page (middleware + `usePermissions` guard)
-- [ ] No mock data (no hardcoded owner/area options)
+- [ ] No mock data (no hardcoded owner/project options)
 
 ---
 
@@ -1644,7 +1644,7 @@ The unit detail page at `/admin/units/{id}` is the hub for managing a specific p
 All the sub-feature tickets (FE-2-UNITS-05..10) need this page shell to exist first. They each add one tab to it.
 
 **What does success look like?**
-Clicking a unit in the list opens `/admin/units/{id}` with the unit name, ownerId/areaId, unitType, isActive badge, base price, bedrooms, bathrooms, and maxGuests in the overview. Tabs are visible (Image, Amenities, etc.) but empty until later tickets build them.
+Clicking a unit in the list opens `/admin/units/{id}` with the unit name, ownerId/projectId, unitType, isActive badge, base price, bedrooms, bathrooms, and maxGuests in the overview. Tabs are visible (Image, Amenities, etc.) but empty until later tickets build them.
 
 ---
 
@@ -1658,7 +1658,7 @@ Build the Unit Detail page shell at `/admin/units/{id}` with a header section (u
 
 - [ ] `app/(admin)/units/[id]/page.tsx`
 - [ ] `GET /api/internal/units/{id}` — fetch full unit details
-- [ ] Unit header: name, ownerId, areaId, unitType badge, active/inactive badge, base price, bedrooms, bathrooms, maxGuests
+- [ ] Unit header: name, ownerId, projectId, unitType badge, active/inactive badge, base price, bedrooms, bathrooms, maxGuests
 - [ ] Tab navigation: Overview | Images | Amenities | Date Blocks | Seasonal Pricing | Availability
 - [ ] Overview tab content: all basic info fields in a read-only layout
 - [ ] "Edit Unit" button in header (→ opens edit form or navigates to edit page) — FE-2-UNITS-05
@@ -1707,7 +1707,7 @@ queryKeys.units.internalList({})
 ### Section 12 — Acceptance Criteria
 
 - [ ] `GET /api/internal/units/{id}` fetches real data
-- [ ] Header shows: name, ownerId, areaId, unitType, isActive, basePricePerNight, bedrooms, bathrooms, maxGuests
+- [ ] Header shows: name, ownerId, projectId, unitType, isActive, basePricePerNight, bedrooms, bathrooms, maxGuests
 - [ ] Tab navigation renders all 6 tabs
 - [ ] Overview tab shows all basic fields
 - [ ] Status change goes through `<ConfirmDialog>` first
@@ -1733,7 +1733,7 @@ DEPENDS ON: FE-2-UNITS-04, FE-2-UNITS-03 (UnitForm shared component)
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-The Edit Unit form lets SuperAdmin and Tech users update a unit's name, unitType, description, address, bedrooms, bathrooms, maxGuests, basePricePerNight, and isActive. It can also update ownerId and areaId because the API `PUT /api/internal/units/{id}` accepts the full create contract. The form pre-fills with existing data from the unit detail query.
+The Edit Unit form lets SuperAdmin and Tech users update a unit's name, unitType, description, address, bedrooms, bathrooms, maxGuests, basePricePerNight, and isActive. It can also update ownerId and projectId because the API `PUT /api/internal/units/{id}` accepts the full create contract. The form pre-fills with existing data from the unit detail query.
 
 ---
 
@@ -1743,14 +1743,14 @@ The Edit Unit form lets SuperAdmin and Tech users update a unit's name, unitType
 - [ ] Reuses `<UnitForm>` from FE-2-UNITS-03 but with pre-filled values (edit mode)
 - [ ] `GET /api/internal/units/{id}` to pre-fill (cached from detail page)
 - [ ] `PUT /api/internal/units/{id}` on submit
-- [ ] Owner and Area fields shown as read-only text (not editable Combobox)
+- [ ] Owner and Project fields shown as read-only text (not editable Combobox)
 - [ ] On success: redirect back to unit detail page
 
 **Files to create:**
 - `app/(admin)/units/[id]/edit/page.tsx`
 
 **Files to modify:**
-- `components/admin/units/UnitForm.tsx` — add `mode: 'create' | 'edit'` prop + `isOwnerAreaEditable: boolean`
+- `components/admin/units/UnitForm.tsx` — add `mode: 'create' | 'edit'` prop + `isOwnerProjectEditable: boolean`
 
 ---
 
@@ -1763,7 +1763,7 @@ Same as FE-2-UNITS-03 (full contract):
 ```typescript
 const editUnitFormSchema = z.object({
   ownerId:           z.string().min(1),
-  areaId:            z.string().min(1),
+  projectId:            z.string().min(1),
   name:              z.string().min(1, 'Unit name is required'),
   unitType:          z.enum(['villa', 'chalet', 'studio']),
   bedrooms:          z.number().min(0),
@@ -1799,7 +1799,7 @@ router.push(ROUTES.admin.units.detail(id))
 ### Section 12 — Acceptance Criteria
 
 - [ ] Form pre-fills with existing unit data
-- [ ] Owner and Area shown as read-only (no edit capability)
+- [ ] Owner and Project shown as read-only (no edit capability)
 - [ ] `PUT /api/internal/units/{id}` called with changed fields only (partial update)
 - [ ] Query cache updated after edit
 - [ ] No mock data
@@ -2238,7 +2238,7 @@ grep -rn "mockData\|fakeUnit\|sampleUnit\|faker\|json-server\|msw" \
   --include="*.ts" --include="*.tsx" components/admin/ lib/api/services/
 
 grep -rn "const \w*Units\? = \[" --include="*.ts" --include="*.tsx" .
-grep -rn "const \w*Areas\? = \[" --include="*.ts" --include="*.tsx" .
+grep -rn "const \w*Projects\? = \[" --include="*.ts" --include="*.tsx" .
 grep -rn "const \w*Owners\? = \[" --include="*.ts" --include="*.tsx" .
 
 # Enum case violations:
@@ -2256,8 +2256,8 @@ grep -rn "pagination\.total[^C]" --include="*.ts" --include="*.tsx" .
 
 ### Units:
 - [ ] `GET /api/internal/units` used (not public `/api/units`) for admin list
-- [ ] `GET /api/areas` called with `{ includeInactive: true }` in admin context
-- [ ] `POST /api/internal/units` body has: ownerId, areaId, name, unitType, bedrooms, bathrooms, maxGuests, basePricePerNight
+- [ ] `GET /api/projects` called with `{ includeInactive: true }` in admin context
+- [ ] `POST /api/internal/units` body has: ownerId, projectId, name, unitType, bedrooms, bathrooms, maxGuests, basePricePerNight
 - [ ] `unitType` field is lowercase: 'villa' | 'chalet' | 'studio' (API design — lowercase)
 - [ ] `PUT /api/internal/units/{id}` used for edit (NOT POST or PATCH)
 - [ ] `PATCH /api/internal/units/{id}/status` used for status change with `{ isActive: boolean }` body
@@ -2277,7 +2277,7 @@ grep -rn "pagination\.total[^C]" --include="*.ts" --include="*.tsx" .
 ### Permissions:
 - [ ] Admin shell sidebar: each nav item shown only to authorized roles
 - [ ] "Create Unit" visible only to SuperAdmin + Tech (`canManageUnits`)
-- [ ] Area create/edit/delete visible only to SuperAdmin (`canManageAreas`)
+- [ ] Project create/edit/delete visible only to SuperAdmin (`canManageProjects`)
 - [ ] Amenity create visible only to SuperAdmin (`canManageAmenities`)
 - [ ] Status toggles hidden from unauthorized roles
 
@@ -2297,9 +2297,9 @@ grep -rn "pagination\.total[^C]" --include="*.ts" --include="*.tsx" .
 - [ ] `formatCurrency()` used for revenue display
 - [ ] Skeleton shown while loading
 
-### FE-2-ADMIN-03 — Areas
+### FE-2-ADMIN-03 — Projects
 - [ ] `includeInactive: true` passed when fetching for admin view
-- [ ] Status toggle uses `PATCH /api/areas/{id}/status` with `{ isActive: boolean }`
+- [ ] Status toggle uses `PATCH /api/projects/{id}/status` with `{ isActive: boolean }`
 - [ ] ConfirmDialog before status toggle
 - [ ] 422 errors displayed as field-level form errors
 - [ ] Query invalidated after all mutations
@@ -2319,7 +2319,7 @@ grep -rn "pagination\.total[^C]" --include="*.ts" --include="*.tsx" .
 
 ### FE-2-UNITS-03 — Create Unit
 - [ ] Owner dropdown from real `GET /api/owners` (no hardcoded)
-- [ ] Area dropdown from real `GET /api/areas`
+- [ ] Project dropdown from real `GET /api/projects`
 - [ ] `unitType` field sends lowercase value to API
 - [ ] `bedrooms`, `bathrooms`, `maxGuests`, and `basePricePerNight` sent as numbers (not strings)
 - [ ] Redirect to unit detail on success
@@ -2330,7 +2330,7 @@ grep -rn "pagination\.total[^C]" --include="*.ts" --include="*.tsx" .
 - [ ] Tabs visible for all 6 sections
 
 ### FE-2-UNITS-05 — Edit Unit
-- [ ] Owner and Area shown read-only
+- [ ] Owner and Project shown read-only
 - [ ] `PUT` used (not `POST` or `PATCH`)
 
 ### FE-2-UNITS-06 — Images
@@ -2405,8 +2405,8 @@ Manually test these scenarios:
 | Sales logs in → CRM visible, Finance NOT visible | | |
 | Finance logs in → Finance visible, CRM NOT visible | | |
 | Tech logs in → Units visible, Finance/CRM NOT visible | | |
-| SuperAdmin creates a new area → appears in list | | |
-| SuperAdmin creates a new unit (villa, owner X, area Y, 1500 EGP/night) | | |
+| SuperAdmin creates a new project → appears in list | | |
+| SuperAdmin creates a new unit (villa, owner X, project Y, 1500 EGP/night) | | |
 | Unit detail page shows all tabs | | |
 | SuperAdmin adds an image URL to a unit → thumbnail appears | | |
 | SuperAdmin blocks dates (maintenance) → reason shows correctly | | |
@@ -2425,7 +2425,7 @@ Manually test these scenarios:
 
 ### D. API Contract Sign-off
 - [ ] Admin internal endpoints used (not public) for admin views
-- [ ] `includeInactive: true` passed in admin area fetch
+- [ ] `includeInactive: true` passed in admin project fetch
 - [ ] Amenities assignment uses PUT (replace-all), not POST (add-one)
 - [ ] Availability check uses POST method (not GET)
 - [ ] Status changes via correct PATCH endpoints
@@ -2433,7 +2433,7 @@ Manually test these scenarios:
 ### E. Next Wave Readiness (Wave 3 — CRM + Bookings)
 - [ ] Admin shell layout available for CRM and Bookings pages to drop into
 - [ ] `usePermissions()` tested and working
-- [ ] Areas service available for booking forms that need area context
+- [ ] Projects service available for booking forms that need project context
 - [ ] Units service available for booking forms that reference units
 
 ### F. Mock Data Final Audit
@@ -2470,7 +2470,7 @@ grep -rn "pagination\.total[^C]" --include="*.ts" --include="*.tsx" .
 |---|---|---|---|
 | A | 1 | FE-2-ADMIN-01 | Admin shell (sidebar + header, role-filtered nav) |
 | A | 2 | FE-2-ADMIN-02 | Dashboard (stats from reporting API) |
-| A | 3 | FE-2-ADMIN-03 | Areas CRUD + status toggle |
+| A | 3 | FE-2-ADMIN-03 | Projects CRUD + status toggle |
 | A | 4 | FE-2-ADMIN-04 | Amenities management |
 | B | 5 | FE-2-UNITS-01 | Units service layer + all TypeScript types |
 | B | 6 | FE-2-UNITS-02 | Units list (filters, search, pagination) |

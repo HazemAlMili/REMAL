@@ -42,15 +42,15 @@ This document is a verbatim reflection of the current Controller implementations
 
 ---
 
-### Areas 📍
+### Projects 📍
 
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| `GET` | `/api/Areas` | Anonymous | List all areas |
-| `GET` | `/api/Areas/{id}` | Anonymous | Area detail |
-| `POST` | `/api/Areas` | SuperAdmin | Create area |
-| `PUT` | `/api/Areas/{id}` | SuperAdmin | Update area |
-| `PATCH` | `/api/Areas/{id}/status` | SuperAdmin | Toggle active status |
+| `GET` | `/api/Projects` | Anonymous | List all projects |
+| `GET` | `/api/Projects/{id}` | Anonymous | Project detail |
+| `POST` | `/api/Projects` | SuperAdmin | Create project |
+| `PUT` | `/api/Projects/{id}` | SuperAdmin | Update project |
+| `PATCH` | `/api/Projects/{id}/status` | SuperAdmin | Toggle active status |
 
 ---
 

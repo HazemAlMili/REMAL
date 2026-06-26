@@ -129,7 +129,7 @@ interface OwnerPortalDashboardSummaryResponse {
 // ── Unit (owner view — DIFFERENT from admin UnitDetailsResponse) ──
 interface OwnerPortalUnitResponse {
   unitId:             string
-  areaId:             string
+  projectId:             string
   unitName:           string
   unitType:           string
   isActive:           boolean
@@ -305,7 +305,7 @@ DEPENDS ON: FE-6-OWN-01, FE-1-AUTH-02, FE-1-AUTH-06, FE-0-INFRA-05
 The Owner Portal has its own layout — simpler than the admin shell, with a clean sidebar showing only the sections relevant to property owners: Dashboard, My Units, Bookings, Finance, Reviews, Notifications. The header shows the owner's name and a logout button.
 
 **Why a separate layout?**
-The admin layout (FE-2-ADMIN-01) is built for the admin team — it has role-based nav, complex filtering, and many sections. Owners need a simpler, cleaner experience — different branding area, fewer nav items, different color accent potentially.
+The admin layout (FE-2-ADMIN-01) is built for the admin team — it has role-based nav, complex filtering, and many sections. Owners need a simpler, cleaner experience — different branding project, fewer nav items, different color accent potentially.
 
 ---
 
@@ -499,9 +499,9 @@ Owners browse their own units at `/owner/units`. They can see each unit's name, 
 
 - [ ] `app/(owner)/units/page.tsx` — grid/list of owner's units
 - [ ] `app/(owner)/units/[unitId]/page.tsx` — unit detail (read-only)
-- [ ] Units list: card grid with unit image, name, area, type badge, price/night, status badge, booking count
+- [ ] Units list: card grid with unit image, name, project, type badge, price/night, status badge, booking count
 - [ ] Unit detail:
-  - Header: name, area, type, status, price/night
+  - Header: name, project, type, status, price/night
   - Amenities list (read-only)
   - Images gallery (thumbnails — no upload/edit)
   - "View Availability" button → navigates to `/owner/units/{unitId}/availability` (FE-6-OWN-12)

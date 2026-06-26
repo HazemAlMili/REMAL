@@ -479,7 +479,7 @@ Build the Booking Detail page shell at `/admin/bookings/{bookingId}` with Bookin
 - [ ] **Section 1 — Booking Header:**
   - Booking ID (truncated UUID), `bookingStatus` badge, source badge
   - Check-in → Check-out dates, nights count
-  - Unit name + area, type badge
+  - Unit name + project, type badge
   - "Back to Bookings" breadcrumb
 - [ ] **Section 2 — Client Info:**
   - Client name, phone (masked), email (if set)

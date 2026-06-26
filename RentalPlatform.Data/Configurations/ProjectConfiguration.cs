@@ -4,11 +4,11 @@ using RentalPlatform.Data.Entities;
 
 namespace RentalPlatform.Data.Configurations;
 
-public class AreaConfiguration : IEntityTypeConfiguration<Area>
+public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 {
-    public void Configure(EntityTypeBuilder<Area> builder)
+    public void Configure(EntityTypeBuilder<Project> builder)
     {
-        builder.ToTable("areas");
+        builder.ToTable("projects");
         builder.HasKey(x => x.Id);
         
         builder.Property(x => x.Id).HasColumnName("id");
@@ -18,6 +18,6 @@ public class AreaConfiguration : IEntityTypeConfiguration<Area>
         builder.Property(x => x.CreatedAt).HasColumnName("created_at").IsRequired();
         builder.Property(x => x.UpdatedAt).HasColumnName("updated_at").IsRequired();
 
-        builder.HasIndex(x => x.Name).IsUnique().HasDatabaseName("ux_areas_name");
+        builder.HasIndex(x => x.Name).IsUnique().HasDatabaseName("ux_projects_name");
     }
 }

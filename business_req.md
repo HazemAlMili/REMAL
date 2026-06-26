@@ -10,11 +10,11 @@
 
 ## 1. Business Overview
 
-المنصة دي بتخدم **broker/agent** عنده علاقات مع ملاك شقق في مناطق سياحية وسكنية مميزة. المشكلة الأساسية هي إن العمل كان قائم على سمسرة غير منظمة، والهدف هو تحويله لـ business منظم بالكامل.
+المنصة دي بتخدم **broker/agent** عنده علاقات مع ملاك شقق في مشروعات سياحية وسكنية مميزة. المشكلة الأساسية هي إن العمل كان قائم على سمسرة غير منظمة، والهدف هو تحويله لـ business منظم بالكامل.
 
 نموذج العمل: **Commission-based** — المنصة لا تشتري ولا تؤجر لنفسها، لكنها تجيب clients للملاك وتأخذ نسبة.
 
-المناطق الحالية: Palm Hills, Abraj Al Alamein, وغيرهم — وهذه المناطق كيان مستقل في النظام يمكن إضافته وإدارته.
+المشروعات الحالية: Palm Hills, Abraj Al Alamein, وغيرهم - وهذه المشروعات كيان مستقل في النظام يمكن إضافته وإدارته.
 
 ---
 
@@ -34,7 +34,7 @@
 ## 3. Core Entities in the System
 
 ```
-Areas (مناطق)
+Projects (مشروعات)
   └── Units / Properties (وحدات/شقق)
         └── Availability Calendar
               └── Bookings
@@ -62,7 +62,7 @@ Clients ←→ Bookings ←→ CRM Cases
 **Case Details (بطاقة كل client):**
 
 - اسم الـ client + بيانات التواصل
-- الوحدة المختارة + المنطقة + التواريخ
+- الوحدة المختارة + المشروع + التواريخ
 - Notes حرة (مزاج العميل، تفاصيل العيلة، ملاحظات خاصة)
 - تاريخ التعاملات السابقة مع نفس المنصة (retention view)
 - الدفعات المرتبطة بالحجز
@@ -73,7 +73,7 @@ Clients ←→ Bookings ←→ CRM Cases
 
 **إدارة الوحدات:**
 
-- كل وحدة تنتمي لـ **منطقة** (Area) وتنتمي لـ **owner**
+- كل وحدة تنتمي لـ **مشروع** (Project) وتنتمي لـ **owner**
 - بيانات الوحدة: صور، وصف، موقع، سعر
 - **التسعير:** يختلف حسب الوحدة والمالك — لا يوجد سعر موحد
 - **Seasonal Pricing:** ممكن — أسعار مختلفة حسب الشهر أو المناسبة (موسم عالي، أعياد)
@@ -125,9 +125,9 @@ Clients ←→ Bookings ←→ CRM Cases
 
 | Tab | المحتوى |
 | --- | --- |
-| **Dashboard** | Overview: revenue, active bookings, top areas, occupancy |
-| **Areas** | إدارة المناطق — إضافة، تعديل، عرض تحليلات لكل منطقة |
-| **Units** | كل الوحدات، فلترة بالمنطقة والـ owner والـ status |
+| **Dashboard** | Overview: revenue, active bookings, top projects, occupancy |
+| **Projects** | إدارة المشروعات — إضافة، تعديل، عرض تحليلات لكل مشروع |
+| **Units** | كل الوحدات، فلترة بالمشروع والـ owner والـ status |
 | **CRM** | Pipeline view لكل الـ leads والـ cases |
 | **Owners** | قائمة الملاك + profiles + payouts |
 | **Clients** | قائمة العملاء + profiles + تاريخ الحجوزات |
@@ -160,12 +160,12 @@ Clients ←→ Bookings ←→ CRM Cases
 
 ---
 
-## 11. Areas Module
+## 11. Projects Module
 
-- كل منطقة ليها: اسم، وصف، صور
+- كل مشروع ليه: اسم، وصف، صور
 - الوحدات بتنتمي للمناطق
-- على الـ dashboard: تحليل لكل منطقة (أكثر منطقة إيراداً، أعلى نسبة إشغال)
-- الـ end user يتصفح بالمنطقة
+- على الـ dashboard: تحليل لكل مشروع (أكثر مشروع إيراداً، أعلى نسبة إشغال)
+- الـ end user يتصفح بالمشروع
 
 ---
 
@@ -240,7 +240,7 @@ Clients ←→ Bookings ←→ CRM Cases
 ✓ Owner Access            Independent portal, view-only
 ✓ End User                Web + App (MVP)
 ✓ Admin Roles             4 roles with scoped permissions
-✓ Areas                   Core entity in system
+✓ Projects                   Core entity in system
 ✓ Payment Gateway         Placeholder architecture only
 ✓ WhatsApp                Phase 2
 ```
@@ -319,7 +319,7 @@ Owner يستلم: 2,400 جنيه (في batch شهرية)
 ## 2. System Entities
 
 ```
-Areas (مناطق)
+Projects (مشروعات)
   └── Units (وحدات: فيلا / شاليه / ستوديو)
         ├── Amenities
         ├── Pricing (base + seasonal)
@@ -401,7 +401,7 @@ Admin Users
 **Relevant**
 
 - Sales كلمه، مهتم فعلاً
-- يبدأ يتكلم عن وحدة معينة أو منطقة
+- يبدأ يتكلم عن وحدة معينة أو مشروع
 
 **No Answer** ← Exit مؤقت
 
@@ -465,7 +465,7 @@ Admin Users
 ### بيانات كل وحدة:
 
 - الاسم + النوع (فيلا / شاليه / ستوديو)
-- المنطقة (Area)
+- المشروع (Project)
 - المالك (Owner)
 - الطاقة الاستيعابية (عدد الأشخاص)
 - الوصف
@@ -535,7 +535,7 @@ Admin Users
 
 - اسم الـ Client + موبايل
 - مصدر الـ Lead (Website / App / WhatsApp / Phone Call / Referral)
-- الوحدة المختارة + المنطقة + التواريخ
+- الوحدة المختارة + المشروع + التواريخ
 - عدد الأشخاص
 - قيمة العربون (بعد الـ Confirmation)
 - Notes حرة (مزاج العميل، تفاصيل العيلة، طلبات خاصة)
@@ -591,15 +591,15 @@ Client يتصفح الموقع/الـ App
 
 ### Homepage:
 
-- Cards للـ Areas (مناطق) — الأكثر حجزاً تظهر أول
+- Cards للـ Projects (مشروعات) - الأكثر حجزاً تظهر أول
 - Featured Units
-- Search bar: المنطقة + التواريخ + عدد الأشخاص
+- Search bar: المشروع + التواريخ + عدد الأشخاص
 
 ### Search Results:
 
 **Filters:**
 
-- المنطقة
+- المشروع
 - التواريخ (Availability check فوري)
 - عدد الأشخاص (حسب الـ Capacity)
 - نوع الوحدة (فيلا / شاليه / ستوديو)
@@ -615,7 +615,7 @@ Client يتصفح الموقع/الـ App
 ### Unit Page:
 
 - الصور (Gallery)
-- الوصف + النوع + المنطقة
+- الوصف + النوع + المشروع
 - الطاقة الاستيعابية
 - Amenities
 - السعر (مع الـ Seasonal Pricing إن وُجد)
@@ -645,8 +645,8 @@ Client يتصفح الموقع/الـ App
 
 **Key Metrics:**
 
-- Occupancy Rate لكل وحدة ولكل منطقة
-- Revenue by Area / by Owner / by Month
+- Occupancy Rate لكل وحدة ولكل مشروع
+- Revenue by Project / by Owner / by Month
 - Top performing units
 - Conversion Rate (Prospecting → Confirmed)
 - Average Stay Duration
@@ -656,7 +656,7 @@ Client يتصفح الموقع/الـ App
 ## 13. MVP Scope — Locked
 
 **IN MVP:**
-Areas · Units (3 types) · Amenities · Availability Calendar · Seasonal Pricing · Date Blocking · Booking Flow (Web + App) · Seamless Account Creation · Search & Filter · CRM Pipeline · Case Details · Booking Source Tracking · Manual Payment Recording + Proof Upload · Auto Invoice · Finance Dashboard · Owner Payouts · Owner Portal · Admin Roles (4) · Client Profiles · Owner Profiles · Notifications (Email) · Reviews · Auto-Complete · Availability Conflict Protection · Commission per Owner
+Projects · Units (3 types) · Amenities · Availability Calendar · Seasonal Pricing · Date Blocking · Booking Flow (Web + App) · Seamless Account Creation · Search & Filter · CRM Pipeline · Case Details · Booking Source Tracking · Manual Payment Recording + Proof Upload · Auto Invoice · Finance Dashboard · Owner Payouts · Owner Portal · Admin Roles (4) · Client Profiles · Owner Profiles · Notifications (Email) · Reviews · Auto-Complete · Availability Conflict Protection · Commission per Owner
 
 **PHASE 2:**
 WhatsApp Integration · Payment Gateway · SMS Notifications · Advanced Analytics · Owner Earnings Forecast · Promo Codes · Referral System

@@ -2,13 +2,17 @@ import { APIRequestContext } from "@playwright/test";
 import fs from "fs";
 import path from "path";
 import {
-  deactivateTestArea,
+  deactivateTestProject,
   deleteTestUnit,
   getInternalUnits,
-  getAreas,
+  getProjects,
 } from "./api.helpers";
 
-const OWNER_SMOKE_PREFIXES = ["OWN_SMOKE_", "owner-smoke-", "test-owner-smoke-"];
+const OWNER_SMOKE_PREFIXES = [
+  "OWN_SMOKE_",
+  "owner-smoke-",
+  "test-owner-smoke-",
+];
 const UPLOAD_PREFIXES = ["OWN_SMOKE_", "owner-smoke-", "test-owner-smoke-"];
 
 type UnitListItem = {
@@ -18,7 +22,7 @@ type UnitListItem = {
   images?: Array<{ fileKey?: string | null }>;
 };
 
-type AreaListItem = {
+type ProjectListItem = {
   id: string;
   name: string;
   isActive?: boolean;
@@ -26,7 +30,7 @@ type AreaListItem = {
 
 export interface CleanupSummary {
   softDeletedUnits: string[];
-  deactivatedAreas: string[];
+  deactivatedProjects: string[];
   deletedUploads: string[];
   failures: string[];
 }
@@ -43,7 +47,7 @@ function isOwnerSmokeUpload(value: string): boolean {
 function createEmptySummary(): CleanupSummary {
   return {
     softDeletedUnits: [],
-    deactivatedAreas: [],
+    deactivatedProjects: [],
     deletedUploads: [],
     failures: [],
   };
@@ -83,23 +87,31 @@ export async function cleanupOwnerSmokeData(
   }
 
   try {
-    const areas = await getAreas<AreaListItem>(request, adminToken, true);
-    for (const area of areas) {
-      if (isOwnerSmokeName(area.name) && area.isActive !== false) {
-        const deactivated = await deactivateTestArea(
+    const projects = await getProjects<ProjectListItem>(
+      request,
+      adminToken,
+      true
+    );
+    for (const project of projects) {
+      if (isOwnerSmokeName(project.name) && project.isActive !== false) {
+        const deactivated = await deactivateTestProject(
           request,
           adminToken,
-          area.id
+          project.id
         );
         if (deactivated) {
-          summary.deactivatedAreas.push(area.id);
+          summary.deactivatedProjects.push(project.id);
         } else {
-          summary.failures.push(`Failed to deactivate smoke area ${area.id}`);
+          summary.failures.push(
+            `Failed to deactivate smoke project ${project.id}`
+          );
         }
       }
     }
   } catch (error) {
-    summary.failures.push(`Area cleanup failed: ${(error as Error).message}`);
+    summary.failures.push(
+      `Project cleanup failed: ${(error as Error).message}`
+    );
   }
 
   cleanupOwnerSmokeUploads(activeFileKeys, summary);
@@ -115,7 +127,9 @@ function cleanupOwnerSmokeUploads(
   const workspaceRoot = path.resolve(process.cwd(), "..");
 
   if (!uploadsDir.startsWith(workspaceRoot)) {
-    summary.failures.push(`Refused to scan uploads outside workspace: ${uploadsDir}`);
+    summary.failures.push(
+      `Refused to scan uploads outside workspace: ${uploadsDir}`
+    );
     return;
   }
 

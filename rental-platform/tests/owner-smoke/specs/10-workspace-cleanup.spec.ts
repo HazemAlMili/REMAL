@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import {
   getAdminApiToken,
-  getAreas,
+  getProjects,
   getInternalUnits,
 } from "../helpers/api.helpers";
 import {
@@ -15,7 +15,7 @@ type UnitListItem = {
   unitName?: string;
 };
 
-type AreaListItem = {
+type ProjectListItem = {
   id: string;
   name: string;
   isActive: boolean;
@@ -49,11 +49,14 @@ test.describe("Project Workspace & Database Sanitization", () => {
     );
     expect(activeSmokeUnits).toEqual([]);
 
-    const publicAreas = await getAreas<AreaListItem>(request, adminToken, false);
-    const publicSmokeAreas = publicAreas.filter((area) =>
-      isOwnerSmokeName(area.name)
+    const publicProjects = await getProjects<ProjectListItem>(
+      request,
+      adminToken,
+      false
     );
-    expect(publicSmokeAreas).toEqual([]);
+    const publicSmokeProjects = publicProjects.filter((project) =>
+      isOwnerSmokeName(project.name)
+    );
+    expect(publicSmokeProjects).toEqual([]);
   });
 });
-

@@ -1,24 +1,24 @@
-import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type ModalName =
-  | 'create-area'
-  | 'edit-area'
-  | 'create-unit'
-  | 'create-owner'
-  | 'create-payment'
-  | 'create-payout'
-  | 'confirm'
-  | null
+  | "create-project"
+  | "edit-project"
+  | "create-unit"
+  | "create-owner"
+  | "create-payment"
+  | "create-payout"
+  | "confirm"
+  | null;
 
 interface UIState {
-  isSidebarOpen: boolean
-  activeModal: ModalName
+  isSidebarOpen: boolean;
+  activeModal: ModalName;
 
-  toggleSidebar: () => void
-  setSidebarOpen: (open: boolean) => void
-  openModal: (name: Exclude<ModalName, null>) => void
-  closeModal: () => void
+  toggleSidebar: () => void;
+  setSidebarOpen: (open: boolean) => void;
+  openModal: (name: Exclude<ModalName, null>) => void;
+  closeModal: () => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -33,10 +33,12 @@ export const useUIStore = create<UIState>()(
       closeModal: () => set({ activeModal: null }),
     }),
     {
-      name: 'rental-ui-store',
-      storage: createJSONStorage(() => (typeof window !== 'undefined' ? localStorage : ({} as Storage))),
+      name: "rental-ui-store",
+      storage: createJSONStorage(() =>
+        typeof window !== "undefined" ? localStorage : ({} as Storage)
+      ),
       // ONLY persist sidebar state — never the modal state
       partialize: (state) => ({ isSidebarOpen: state.isSidebarOpen }),
     }
   )
-)
+);

@@ -8,7 +8,7 @@ import {
   usePublicUnitDetail,
   usePublicUnitImages,
   usePublicUnitAmenities,
-  usePublicAreas,
+  usePublicProjects,
 } from "@/lib/hooks/usePublic";
 import { UnitDetailInfo } from "@/components/public/unit/UnitDetailInfo";
 import { UnitBookingPanel } from "@/components/public/unit/UnitBookingPanel";
@@ -31,7 +31,7 @@ export default function UnitDetailPage({ params }: { params: { id: string } }) {
   } = usePublicUnitDetail(unitId);
   const { data: images } = usePublicUnitImages(unitId);
   const { data: amenities } = usePublicUnitAmenities(unitId);
-  const { data: areas } = usePublicAreas();
+  const { data: projects } = usePublicProjects();
 
   // Loading State
   if (unitLoading) {
@@ -74,8 +74,8 @@ export default function UnitDetailPage({ params }: { params: { id: string } }) {
     return a.displayOrder - b.displayOrder;
   });
 
-  // Get area name
-  const areaName = areas?.find((a) => a.id === unit.areaId)?.name;
+  // Get project name
+  const projectName = projects?.find((a) => a.id === unit.projectId)?.name;
 
   return (
     <div className="min-h-screen bg-white">
@@ -90,7 +90,7 @@ export default function UnitDetailPage({ params }: { params: { id: string } }) {
               {unit.name}
             </p>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-600">
-              A quick read before you choose dates: capacity, bedrooms, area,
+              A quick read before you choose dates: capacity, bedrooms, project,
               amenities, and guest feedback are grouped below.
             </p>
           </div>
@@ -101,9 +101,9 @@ export default function UnitDetailPage({ params }: { params: { id: string } }) {
             <span className="unit-detail-summary-stat px-3 py-1.5 text-sm font-medium text-neutral-700">
               {unit.bedrooms} bedrooms
             </span>
-            {areaName && (
+            {projectName && (
               <span className="unit-detail-summary-stat px-3 py-1.5 text-sm font-medium text-neutral-700">
-                {areaName}
+                {projectName}
               </span>
             )}
           </div>
@@ -112,7 +112,7 @@ export default function UnitDetailPage({ params }: { params: { id: string } }) {
         <div className="flex flex-col gap-8 lg:flex-row">
           <div className="unit-detail-summary-main flex-1 space-y-10">
             <div className="unit-detail-section">
-              <UnitDetailInfo unit={unit} areaName={areaName} />
+              <UnitDetailInfo unit={unit} projectName={projectName} />
             </div>
             <div className="unit-detail-section">
               <UnitAmenitiesGrid amenities={amenities || []} />

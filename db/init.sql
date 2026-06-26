@@ -162,5 +162,8 @@
 \echo '=== Running migration 0053: create dynamic RBAC ==='
 \i /docker-entrypoint-initdb.d/migrations/0053_create_dynamic_rbac.sql
 
+\echo '=== Running migration 0054: rename areas domain to projects ==='
+\i /docker-entrypoint-initdb.d/migrations/0054_rename_areas_to_projects.sql
+
 \echo '=== All migrations completed successfully ==='
 

@@ -5,7 +5,7 @@ namespace RentalPlatform.API.DTOs.Requests.Units;
 public record CreateUnitRequest
 {
     public Guid OwnerId { get; init; }
-    public Guid AreaId { get; init; }
+    public Guid ProjectId { get; init; }
     public string Name { get; init; } = string.Empty;
     public string? Description { get; init; }
     public string? Address { get; init; }

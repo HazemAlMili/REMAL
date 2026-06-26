@@ -105,8 +105,8 @@ Example: `FE-1-AUTH-01` = Wave 1, Auth domain, ticket 01
 **In Scope:**
 - All endpoints from TRD Section 11 (Admin) + 10 (Owner) + 11 (Guest)
 - Organize as nested object matching the API groups from the swagger
-- Dynamic endpoints as functions: `byId: (id: string) => /api/areas/${id}`
-- Cover all groups: auth, areas, units, unitImages, unitAmenities, seasonalPricing, dateBlocks, bookings, bookingLifecycle, crm, crmNotes, crmAssignments, clients, owners, payments, invoices, finance, reviews, reviewModeration, notifications, ownerPortal, adminUsers, amenities, reports
+- Dynamic endpoints as functions: `byId: (id: string) => /api/projects/${id}`
+- Cover all groups: auth, projects, units, unitImages, unitAmenities, seasonalPricing, dateBlocks, bookings, bookingLifecycle, crm, crmNotes, crmAssignments, clients, owners, payments, invoices, finance, reviews, reviewModeration, notifications, ownerPortal, adminUsers, amenities, reports
 
 **Out of Scope:** No service files yet.
 
@@ -149,7 +149,7 @@ UI store:
   - `retry: 1`
   - `refetchOnWindowFocus: false`
 - `QueryClientProvider` wrapped in root layout
-- `lib/utils/query-keys.ts`: full key factory for all entities (areas, units, bookings, crm, owners, clients, finance, reviews, notifications, reports)
+- `lib/utils/query-keys.ts`: full key factory for all entities (projects, units, bookings, crm, owners, clients, finance, reviews, notifications, reports)
 
 **Verification:** `useQuery` works in a test component. Query keys typed correctly.
 
@@ -392,36 +392,36 @@ Reads `role` from auth store. Returns:
 **Objective:** Build `AdminSidebar.tsx`, `AdminHeader.tsx`, `AdminShell.tsx`, and `app/(admin)/layout.tsx`.
 
 **In Scope:**
-- Sidebar: collapsible. Items: Dashboard, Areas, Units, CRM, Bookings, Finance, Owners, Clients, Reviews, Settings
+- Sidebar: collapsible. Items: Dashboard, Projects, Units, CRM, Bookings, Finance, Owners, Clients, Reviews, Settings
 - Each item rendered only if `usePermissions()` allows it
 - Active state on current route
 - Header: page title + user info + logout button
-- Shell: sidebar + header + `{children}` main area
+- Shell: sidebar + header + `{children}` main content region
 - Route group layout wraps all `/admin/*` pages
 
 **Verification:** Sidebar collapses. Navigation works. Permissions hide correct items for each role.
 
 ---
 
-### FE-2-ADMIN-02 — Areas list + CRUD
+### FE-2-ADMIN-02 — Projects list + CRUD
 
-**Objective:** Build `/admin/areas/page.tsx` with full CRUD.
+**Objective:** Build `/admin/projects/page.tsx` with full CRUD.
 
 **APIs:**
-- `GET /api/areas` → list
-- `POST /api/areas` → create (in modal)
-- `PUT /api/areas/{id}` → edit (in modal)
-- `PATCH /api/areas/{id}/status` → toggle active/inactive
+- `GET /api/projects` → list
+- `POST /api/projects` → create (in modal)
+- `PUT /api/projects/{id}` → edit (in modal)
+- `PATCH /api/projects/{id}/status` → toggle active/inactive
 
 **In Scope:**
 - Table: name, unit count (if available), status badge, actions
 - Create button → opens modal with form
 - Edit button per row → opens same modal pre-filled
 - Toggle status → ConfirmDialog → PATCH
-- Skeleton while loading. EmptyState if no areas.
+- Skeleton while loading. EmptyState if no projects.
 
-**Service:** `lib/api/services/areas.service.ts`
-**Hook:** `lib/hooks/useAreas.ts`
+**Service:** `lib/api/services/projects.service.ts`
+**Hook:** `lib/hooks/useProjects.ts`
 
 ---
 
@@ -439,11 +439,11 @@ Simple list with add form. No edit/delete in MVP.
 
 **Objective:** Build `/admin/units/page.tsx` — internal unit list with filters.
 
-**API:** `GET /api/internal/units` with filters: area, status, owner, type
+**API:** `GET /api/internal/units` with filters: project, status, owner, type
 
 **In Scope:**
-- Filter bar: area selector, status selector, unit type selector
-- Results table: unit name, type, area, owner, capacity, price, status, link to detail
+- Filter bar: project selector, status selector, unit type selector
+- Results table: unit name, type, project, owner, capacity, price, status, link to detail
 - Skeleton + EmptyState
 - "Create Unit" button → links to create form (or modal)
 
@@ -456,7 +456,7 @@ Simple list with add form. No edit/delete in MVP.
 **API:** `POST /api/internal/units` (CreateUnitRequest)
 
 **In Scope:**
-- Fields: name, type (select: villa/chalet/studio), area (select), owner (select), capacity, base price, description
+- Fields: name, type (select: villa/chalet/studio), project (select), owner (select), capacity, base price, description
 - Zod validation
 - On success: redirect to unit detail page
 
@@ -578,7 +578,7 @@ Simple list with add form. No edit/delete in MVP.
 **Objective:** Build `components/admin/crm/LeadCard.tsx`.
 
 **In Scope:**
-- Shows: client name, unit name (if assigned), area, days in current status, source badge
+- Shows: client name, unit name (if assigned), project, days in current status, source badge
 - Click → opens lead detail drawer (FE-3-CRM-03)
 - Status badge using StatusBadge component
 
@@ -1065,7 +1065,7 @@ Simpler layout than admin — no role-based hiding needed.
 
 **API:** `GET /api/owner/units` → `OwnerPortalUnitResponse[]`
 
-Read-only grid of owner's units. Name, type, area, status. Links to detail.
+Read-only grid of owner's units. Name, type, project, status. Links to detail.
 
 ---
 
@@ -1074,7 +1074,7 @@ Read-only grid of owner's units. Name, type, area, status. Links to detail.
 **API:** `GET /api/owner/units/{unitId}` → `OwnerPortalUnitResponse`
 
 **In Scope:**
-- Unit info: name, type, area, capacity, amenities
+- Unit info: name, type, project, capacity, amenities
 - Read-only availability calendar showing confirmed bookings
 - No edit controls whatsoever
 
@@ -1156,11 +1156,11 @@ Footer: simple links.
 
 **Objective:** Build `app/(public)/page.tsx`.
 
-**APIs:** `GET /api/areas`, `GET /api/units` (top 6, no filters)
+**APIs:** `GET /api/projects`, `GET /api/units` (top 6, no filters)
 
 **In Scope:**
-- Hero section with search bar (area + date range + guests)
-- Area cards grid (dynamic import for image-heavy grid)
+- Hero section with search bar (project + date range + guests)
+- Project cards grid (dynamic import for image-heavy grid)
 - Featured units section
 - Search submit → navigate to `/units` with query params
 
@@ -1174,7 +1174,7 @@ Footer: simple links.
 
 **In Scope:**
 - Reads filters from URL query params
-- Filter panel (left sidebar or drawer on mobile): area, dates, guests, type, amenities, price range
+- Filter panel (left sidebar or drawer on mobile): project, dates, guests, type, amenities, price range
 - Unit cards grid
 - Sort: cheapest, highest rated, most booked
 - Pagination with `keepPreviousData: true`
@@ -1186,7 +1186,7 @@ Footer: simple links.
 
 **Objective:** Build `components/public/search/FilterPanel.tsx`.
 
-Inputs: area multi-select, date range picker, guest count, unit type checkboxes, amenity checkboxes, price range slider.
+Inputs: project multi-select, date range picker, guest count, unit type checkboxes, amenity checkboxes, price range slider.
 On change: updates URL query params (no submit button — debounced).
 
 ---
@@ -1195,7 +1195,7 @@ On change: updates URL query params (no submit button — debounced).
 
 **Objective:** Build `components/public/search/UnitCard.tsx`.
 
-Shows: primary image, name, area, type, capacity, rating stars + count, price/night.
+Shows: primary image, name, project, type, capacity, rating stars + count, price/night.
 Click → navigate to `/units/{id}`.
 
 ---
@@ -1212,7 +1212,7 @@ Click → navigate to `/units/{id}`.
 
 **In Scope:**
 - Image gallery (dynamic import)
-- Info section: name, type, area, capacity, description
+- Info section: name, type, project, capacity, description
 - Amenities list
 - Pricing calculator panel (sticky on desktop):
   - Date range picker

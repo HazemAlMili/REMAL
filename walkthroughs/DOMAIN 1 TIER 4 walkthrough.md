@@ -43,14 +43,14 @@ This document provides a comprehensive technical breakdown of the Tier 4 impleme
 
 ---
 
-## ✅ [API-MD-04] Amenities & Areas Controllers
+## ✅ [API-MD-04] Amenities & Projects Controllers
 **Goal:** Implement public read and super-admin management endpoints.
 
 ### Key Deliverables:
 - **Amenities**: [AmenitiesController.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Controllers\AmenitiesController.cs) allows public `GET` and SuperAdmin-only `POST`.
-- **Areas (Resolved Semantics)**: [AreasController.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Controllers\AreasController.cs) implements the "No Delete" policy.
-    - **Privacy**: Public `GET` returns only `IsActive = true` areas.
-    - **Management**: SuperAdmins use `PATCH /status` to activate/deactivate areas.
+- **Projects (Resolved Semantics)**: [ProjectsController.cs](file:///d:/Clinets\Kaza Booking\Kaza Booking\RentalPlatform.API\Controllers\ProjectsController.cs) implements the "No Delete" policy.
+    - **Privacy**: Public `GET` returns only `IsActive = true` projects.
+    - **Management**: SuperAdmins use `PATCH /status` to activate/deactivate projects.
 
 ---
 

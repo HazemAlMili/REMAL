@@ -853,7 +853,7 @@ DEPENDS ON: FE-1-AUTH-01, FE-1-AUTH-04 (client register page must exist for the 
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-Clients (guests who book rentals) need their own login at `/auth/client/login`. Like owners, they use phone + password. Unlike admins and owners, they land on a client account area (`/account`) after login, not an admin panel or owner portal. The client login page is also the place where already-registered clients return after having created their account during the booking flow (FE-7-PUB-12). This ticket builds that page.
+Clients (guests who book rentals) need their own login at `/auth/client/login`. Like owners, they use phone + password. Unlike admins and owners, they land in a client account workspace (`/account`) after login, not an admin panel or owner portal. The client login page is also the place where already-registered clients return after having created their account during the booking flow (FE-7-PUB-12). This ticket builds that page.
 
 **Why does this ticket exist NOW?**
 The client booking flow (Wave 7) references the login page. The auth infrastructure is ready from FE-1-AUTH-01. Building this now means Wave 7 can link to it without building it from scratch mid-wave.
@@ -865,7 +865,7 @@ A client goes to `/auth/client/login`, enters their phone and password, and is r
 
 ### Section 2 — Objective
 
-Build the Client Login page at `/auth/client/login` that authenticates clients via phone + password using `POST /api/auth/client/login`, and redirects to the client account area.
+Build the Client Login page at `/auth/client/login` that authenticates clients via phone + password using `POST /api/auth/client/login`, and redirects to the client account workspace.
 
 ---
 
@@ -1016,7 +1016,7 @@ A new client fills in name, phone, optional email, and password. They click "Cre
 
 ### Section 2 — Objective
 
-Build the Client Registration page at `/auth/client/register` that registers a new client via `POST /api/auth/client/register` (which returns a profile, NOT a token), then automatically calls `POST /api/auth/client/login` to authenticate, and redirects to the client account area — making registration a single seamless experience.
+Build the Client Registration page at `/auth/client/register` that registers a new client via `POST /api/auth/client/register` (which returns a profile, NOT a token), then automatically calls `POST /api/auth/client/login` to authenticate, and redirects to the client account workspace - making registration a single seamless experience.
 
 ---
 

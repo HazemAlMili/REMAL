@@ -7,7 +7,7 @@ public class Unit
 {
     public Guid Id { get; set; }
     public Guid OwnerId { get; set; }
-    public Guid AreaId { get; set; }
+    public Guid ProjectId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
     public string? Address { get; set; }
@@ -22,7 +22,7 @@ public class Unit
     public DateTime? DeletedAt { get; set; }
 
     public Owner Owner { get; set; } = null!;
-    public Area Area { get; set; } = null!;
+    public Project Project { get; set; } = null!;
 
     public ICollection<UnitImage> UnitImages { get; set; } = new List<UnitImage>();
     public ICollection<UnitAmenity> UnitAmenities { get; set; } = new List<UnitAmenity>();

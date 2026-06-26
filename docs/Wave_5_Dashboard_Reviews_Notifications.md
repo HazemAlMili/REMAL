@@ -348,7 +348,7 @@ Two additional dashboard widgets: an occupancy rate indicator (% of days booked 
   - Displayed as a radial progress or horizontal bar
 - [ ] `components/admin/dashboard/TopUnitsWidget.tsx`
   - Fetches `GET /api/internal/units` sorted by most bookings (if sort param exists) OR derives from bookings daily data
-  - Shows top 5 units: name, area, booking count
+  - Shows top 5 units: name, project, booking count
 - [ ] Both placed on dashboard as a second row, beside or below the charts
 
 **Files to create:**

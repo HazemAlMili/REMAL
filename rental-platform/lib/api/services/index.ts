@@ -1,4 +1,4 @@
-export * from "./areas.service";
+export * from "./projects.service";
 export * from "./amenities.service";
 export * from "./auth.service";
 export * from "./crm.service";

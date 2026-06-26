@@ -36,7 +36,7 @@
 // POST /api/internal/units (create):
 {
   ownerId:           "uuid",
-  areaId:            "uuid",
+  projectId:            "uuid",
   name:              "string",
   unitType:          "villa | chalet | studio",  // ❌ كنا بنكتب "type"
   bedrooms:          2,
@@ -696,7 +696,7 @@
 ## 🟡 MEDIUM #25 — Public Units: No Filter Parameters Documented (يأثر على Wave 7)
 
 ### الملاحظة:
-`GET /api/units` في الـ API Reference يذكر فقط `page` و `pageSize` كـ query parameters. لا يوجد `areaId`, `type`, `minGuests`, `minPrice`, `maxPrice`, `sortBy` documented.
+`GET /api/units` في الـ API Reference يذكر فقط `page` و `pageSize` كـ query parameters. لا يوجد `projectId`, `type`, `minGuests`, `minPrice`, `maxPrice`, `sortBy` documented.
 
 **السؤال:** هل الـ backend يدعم الـ filters دي؟ لازم يتأكد من الـ backend team قبل بناء الـ filter UI في Wave 7.
 

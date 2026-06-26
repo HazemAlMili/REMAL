@@ -15,7 +15,7 @@ import type {
   PublicReviewSummary,
   PublicReviewFilters,
 } from "@/lib/types/public.types";
-import type { AreaResponse } from "@/lib/types/area.types";
+import type { ProjectResponse } from "@/lib/types/project.types";
 import type { AmenityResponse } from "@/lib/types/amenity.types";
 import type {
   UnitImageResponse,
@@ -42,8 +42,9 @@ function serializePublicUnitFilters(filters?: PublicUnitFilters): string {
 }
 
 export const publicService = {
-  // ── Areas (for landing page + search filters) ──
-  getAreas: (): Promise<AreaResponse[]> => api.get(endpoints.areas.list),
+  // ── Projects (for landing page + search filters) ──
+  getProjects: (): Promise<ProjectResponse[]> =>
+    api.get(endpoints.projects.list),
 
   // ── Amenities (for search filter chips) ──
   getAmenities: (): Promise<AmenityResponse[]> =>

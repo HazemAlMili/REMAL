@@ -1,27 +1,27 @@
 using FluentValidation;
-using RentalPlatform.API.DTOs.Requests.Areas;
+using RentalPlatform.API.DTOs.Requests.Projects;
 
 namespace RentalPlatform.API.Validators;
 
-public class CreateAreaRequestValidator : AbstractValidator<CreateAreaRequest>
+public class CreateProjectRequestValidator : AbstractValidator<CreateProjectRequest>
 {
-    public CreateAreaRequestValidator()
+    public CreateProjectRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required.");
     }
 }
 
-public class UpdateAreaRequestValidator : AbstractValidator<UpdateAreaRequest>
+public class UpdateProjectRequestValidator : AbstractValidator<UpdateProjectRequest>
 {
-    public UpdateAreaRequestValidator()
+    public UpdateProjectRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required.");
     }
 }
 
-public class UpdateAreaStatusRequestValidator : AbstractValidator<UpdateAreaStatusRequest>
+public class UpdateProjectStatusRequestValidator : AbstractValidator<UpdateProjectStatusRequest>
 {
-    public UpdateAreaStatusRequestValidator()
+    public UpdateProjectStatusRequestValidator()
     {
         RuleFor(x => x.IsActive).NotNull().WithMessage("IsActive status is required.");
     }

@@ -5,7 +5,7 @@ namespace RentalPlatform.API.DTOs.Responses.OwnerPortal;
 public record OwnerPortalUnitResponse
 {
     public Guid UnitId { get; init; }
-    public Guid AreaId { get; init; }
+    public Guid ProjectId { get; init; }
     public string UnitName { get; init; } = string.Empty;
     public string UnitType { get; init; } = string.Empty;
     public bool IsActive { get; init; }

@@ -1166,7 +1166,7 @@ The Axios instance does NOT render UI. The only "UX" it triggers is toasts (whic
 2. The backend API must be running at `NEXT_PUBLIC_API_URL` (or use a placeholder URL for unit testing)
 
 **Happy path:**
-1. In a temporary test file, import `api` and call `api.get<{areas: any[]}>('/api/areas')` → expected: returns the unwrapped `data` field, not the full envelope
+1. In a temporary test file, import `api` and call `api.get<{projects: any[]}>('/api/projects')` → expected: returns the unwrapped `data` field, not the full envelope
 2. Call any endpoint requiring auth without a token → expected: 401 response triggers refresh attempt
 3. Call an endpoint with a valid token → expected: token is attached to the request header
 4. Call an endpoint that returns 500 → expected: `ApiError(500, ...)` is thrown
@@ -1318,7 +1318,7 @@ The developer/AI implementer can:
 - [ ] Create `lib/api/endpoints.ts` with all 139 endpoints organized by domain
 - [ ] Use a nested const object structure: `endpoints.{domain}.{action}`
 - [ ] Use functions for endpoints with path parameters: `endpoints.units.byId(id: string) => '/api/units/${id}'`
-- [ ] Use plain strings for endpoints without parameters: `endpoints.areas.list = '/api/areas'`
+- [ ] Use plain strings for endpoints without parameters: `endpoints.projects.list = '/api/projects'`
 - [ ] Cover ALL 30 domains from the Swagger
 - [ ] Use `as const` to ensure literal string types where helpful
 - [ ] Export `endpoints` as a named export
@@ -1385,13 +1385,13 @@ export const endpoints = {
     create: '/api/amenities',
   },
 
-  // ──────────── AREAS ────────────
-  areas: {
-    list: '/api/areas',
-    create: '/api/areas',
-    byId: (id: string) => `/api/areas/${id}`,
-    update: (id: string) => `/api/areas/${id}`,
-    status: (id: string) => `/api/areas/${id}/status`,
+  // ──────────── PROJECTS ────────────
+  projects: {
+    list: '/api/projects',
+    create: '/api/projects',
+    byId: (id: string) => `/api/projects/${id}`,
+    update: (id: string) => `/api/projects/${id}`,
+    status: (id: string) => `/api/projects/${id}/status`,
   },
 
   // ──────────── UNITS (PUBLIC) ────────────
@@ -1679,7 +1679,7 @@ N/A.
 **Happy path:**
 1. Import `endpoints` in any file → expected: type-checks correctly
 2. Use `endpoints.units.publicById('abc')` → expected: returns `'/api/units/abc'`
-3. Use `endpoints.areas.list` → expected: returns `'/api/areas'`
+3. Use `endpoints.projects.list` → expected: returns `'/api/projects'`
 4. Use `endpoints.notifications.admin.read('xyz')` → expected: returns `'/api/internal/me/notifications/inbox/xyz/read'`
 5. Run `pnpm type-check` → expected: zero errors
 
@@ -1749,7 +1749,7 @@ N/A — endpoint constants don't enforce permissions; the backend does.
 - Do NOT create separate files per domain (one file is intentional — easier to grep)
 
 **WATCH OUT FOR:**
-- Some endpoints share URLs but different methods (e.g., `POST /api/areas` create vs `GET /api/areas` list) — both go in the registry under different keys (`create` vs `list`)
+- Some endpoints share URLs but different methods (e.g., `POST /api/projects` create vs `GET /api/projects` list) — both go in the registry under different keys (`create` vs `list`)
 - Some endpoints have DOUBLE path parameters (e.g., `/api/internal/units/{unitId}/images/{imageId}/cover`) — make sure the function takes both params in the right order
 - The CRM domain has BOTH `crm/leads` and `bookings` endpoints for similar concepts — keep them separate. The frontend uses leads endpoints in CRM context, bookings endpoints in admin booking management
 - The `/api/crm/leads` POST endpoint is PUBLIC (anonymous lead creation from the website) — clearly mark it
@@ -1888,8 +1888,8 @@ interface AuthState {
 ```typescript
 // useUIStore — Zustand hook signature
 type ModalName =
-  | 'create-area'
-  | 'edit-area'
+  | 'create-project'
+  | 'edit-project'
   | 'create-unit'
   | 'create-owner'
   | 'create-payment'
@@ -1995,8 +1995,8 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 export type ModalName =
-  | 'create-area'
-  | 'edit-area'
+  | 'create-project'
+  | 'edit-project'
   | 'create-unit'
   | 'create-owner'
   | 'create-payment'
@@ -2215,7 +2215,7 @@ The developer/AI implementer can:
 - [ ] Conditionally include `<ReactQueryDevtools />` only when `NODE_ENV === 'development'`
 - [ ] Create `lib/utils/query-keys.ts` with the full key factory for every domain
 - [ ] Use the canonical hierarchical pattern: `[domain] → [domain, 'list'] → [domain, 'list', filters] → [domain, 'detail', id]`
-- [ ] Cover ALL domains that will need queries: areas, units, bookings, crm, owners, clients, payments, invoices, finance, reports, reviews, notifications, ownerPortal, amenities
+- [ ] Cover ALL domains that will need queries: projects, units, bookings, crm, owners, clients, payments, invoices, finance, reports, reviews, notifications, ownerPortal, amenities
 
 **Files to create:**
 - `lib/providers/query-provider.tsx` — client component wrapping `QueryClientProvider`
@@ -2262,11 +2262,11 @@ The full `queryKeys` factory:
 
 ```typescript
 export const queryKeys = {
-  // ──────────── AREAS ────────────
-  areas: {
-    all: ['areas'] as const,
-    list: () => [...queryKeys.areas.all, 'list'] as const,
-    detail: (id: string) => [...queryKeys.areas.all, 'detail', id] as const,
+  // ──────────── PROJECTS ────────────
+  projects: {
+    all: ['projects'] as const,
+    list: () => [...queryKeys.projects.all, 'list'] as const,
+    detail: (id: string) => [...queryKeys.projects.all, 'detail', id] as const,
   },
 
   // ──────────── UNITS ────────────
@@ -2513,7 +2513,7 @@ N/A — UX state is per-query in consumer hooks (Wave 2+).
 **Happy path:**
 1. Run `pnpm dev` → expected: dev server starts
 2. Open the app in browser → expected: a small floating React Query DevTools button appears (only in dev)
-3. In a temporary test component, write `useQuery({ queryKey: queryKeys.areas.list(), queryFn: async () => [] })` → expected: query appears in DevTools panel
+3. In a temporary test component, write `useQuery({ queryKey: queryKeys.projects.list(), queryFn: async () => [] })` → expected: query appears in DevTools panel
 4. Run `pnpm build` → expected: production build succeeds and DevTools is NOT in the bundle
 
 **Edge cases:**
@@ -2919,7 +2919,7 @@ export const ROUTES = {
   admin: {
     root:     '/admin',
     dashboard:'/admin/dashboard',
-    areas:    '/admin/areas',
+    projects:    '/admin/projects',
     units: {
       list:   '/admin/units',
       detail: (id: string) => `/admin/units/${id}`,
@@ -4212,7 +4212,7 @@ The project has a strict NO MOCK DATA policy. In this wave specifically, verify:
 - No file uses `setQueryData()` to seed the cache with placeholder objects
 - No service file (if any exists prematurely) returns hardcoded responses
 - The `package.json` does NOT include `faker`, `msw`, or any mock library
-- Even commented-out mock data must be removed (e.g., `// const sampleAreas = [...]`)
+- Even commented-out mock data must be removed (e.g., `// const sampleProjects = [...]`)
 
 If you find ANY mock data, list it as a BLOCKER.
 

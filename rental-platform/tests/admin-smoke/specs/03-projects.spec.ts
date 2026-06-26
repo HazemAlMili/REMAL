@@ -1,38 +1,46 @@
 import { test, expect } from "../fixtures/auth.fixture";
 
-test.describe("Areas Management Module", () => {
-  test("Can create, edit, toggle status of an Area with persistence", async ({ superAdminPage }) => {
+test.describe("Projects Management Module", () => {
+  test("Can create, edit, toggle status of a Project with persistence", async ({
+    superAdminPage,
+  }) => {
     // Set higher timeout for DB mutation lag
     test.setTimeout(45000);
 
-    // 1. Navigate to Areas Page
-    await superAdminPage.goto("/admin/areas");
-    await expect(superAdminPage.locator("h1")).toHaveText(/Areas/i);
+    // 1. Navigate to Projects Page
+    await superAdminPage.goto("/admin/projects");
+    await expect(superAdminPage.locator("h1")).toHaveText(/Projects/i);
 
-    // 2. Create a new Area
-    const areaName = `Sahel_${Math.floor(Math.random() * 100000)}`;
-    const areaDesc = "Smoke test area description";
+    // 2. Create a new Project
+    const projectName = `Sahel_${Math.floor(Math.random() * 100000)}`;
+    const projectDesc = "Smoke test project description";
 
-    await superAdminPage.click('button:has-text("New Area")');
-    await superAdminPage.fill("#name", areaName);
-    await superAdminPage.fill("#description", areaDesc);
+    await superAdminPage.click('button:has-text("New Project")');
+    await superAdminPage.fill("#name", projectName);
+    await superAdminPage.fill("#description", projectDesc);
     await superAdminPage.click('button[type="submit"]');
 
     // Confirm success in the list
-    const areaRow = superAdminPage.locator(`tr:has-text("${areaName}")`);
-    await expect(areaRow).toBeVisible({ timeout: 15000 });
-    
-    const statusCell = areaRow.locator('td:nth-child(3)');
+    const projectRow = superAdminPage.locator(`tr:has-text("${projectName}")`);
+    await expect(projectRow).toBeVisible({ timeout: 15000 });
+
+    const statusCell = projectRow.locator("td:nth-child(3)");
     await expect(statusCell).toHaveText("Active");
 
     // 3. Toggle status to inactive
-    const toggleBtn = areaRow.locator('button[aria-label="Deactivate Area"]');
+    const toggleBtn = projectRow.locator(
+      'button[aria-label="Deactivate Project"]'
+    );
     await expect(toggleBtn).toBeVisible({ timeout: 5000 });
     await superAdminPage.waitForTimeout(1000);
     await toggleBtn.click({ force: true });
 
     // Confirm dialog
-    const confirmBtn = superAdminPage.locator('button:has-text("Deactivate Area"), button:has-text("Confirm")').first();
+    const confirmBtn = superAdminPage
+      .locator(
+        'button:has-text("Deactivate Project"), button:has-text("Confirm")'
+      )
+      .first();
     await expect(confirmBtn).toBeVisible({ timeout: 5000 });
     await confirmBtn.click({ force: true });
 
@@ -41,8 +49,12 @@ test.describe("Areas Management Module", () => {
 
     // 4. Reload page and check persistence
     await superAdminPage.reload();
-    const areaRowReloaded = superAdminPage.locator(`tr:has-text("${areaName}")`);
-    await expect(areaRowReloaded).toBeVisible({ timeout: 15000 });
-    await expect(areaRowReloaded.locator('td:nth-child(3)')).toHaveText("Inactive");
+    const projectRowReloaded = superAdminPage.locator(
+      `tr:has-text("${projectName}")`
+    );
+    await expect(projectRowReloaded).toBeVisible({ timeout: 15000 });
+    await expect(projectRowReloaded.locator("td:nth-child(3)")).toHaveText(
+      "Inactive"
+    );
   });
 });

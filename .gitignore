@@ -61,4 +61,11 @@ node_modules/
 .claude/
 # Test / browser-automation artifacts
 .playwright-mcp/
+playwright-report/
 test-results/
+
+# Generated local project-system and SQLite test artifacts
+*.lscache
+*_test.db
+*_test.db-shm
+*_test.db-wal

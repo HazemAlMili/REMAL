@@ -190,7 +190,7 @@ public class OwnersController : ControllerBase
             unit.Id,
             unit.Name,
             unit.UnitType,
-            unit.AreaId,
+            unit.ProjectId,
             unit.Bedrooms,
             unit.Bathrooms,
             unit.MaxGuests,

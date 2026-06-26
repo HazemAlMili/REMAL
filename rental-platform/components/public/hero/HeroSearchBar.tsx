@@ -6,7 +6,7 @@
 "use client";
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { usePublicAreas } from "@/lib/hooks/usePublic";
+import { usePublicProjects } from "@/lib/hooks/usePublic";
 import { ROUTES } from "@/lib/constants/routes";
 import { GuestSelector } from "./GuestSelector";
 import { Search } from "lucide-react";
@@ -19,11 +19,11 @@ import {
 export function HeroSearchBar() {
   const router = useRouter();
 
-  // Areas from API
-  const { data: areas, isLoading: areasLoading } = usePublicAreas();
+  // Projects from API
+  const { data: projects, isLoading: projectsLoading } = usePublicProjects();
 
   // Form state
-  const [areaId, setAreaId] = useState("");
+  const [projectId, setProjectId] = useState("");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(2);
@@ -49,7 +49,7 @@ export function HeroSearchBar() {
   // Submit → navigate to units listing with URL params
   const handleSearch = () => {
     const params = new URLSearchParams();
-    if (areaId) params.set("areaId", areaId);
+    if (projectId) params.set("projectId", projectId);
     if (checkIn) params.set("checkIn", checkIn);
     if (checkOut) params.set("checkOut", checkOut);
     if (guests !== 2) params.set("guests", String(guests)); // omit default
@@ -61,33 +61,33 @@ export function HeroSearchBar() {
   return (
     <div className="rounded-2xl border border-white/20 bg-white/10 p-2 backdrop-blur-md lg:p-3">
       <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-0">
-        {/* Location / Area */}
+        {/* Project */}
         <div className="flex-1 px-3 py-2 lg:border-r lg:border-white/10">
           <label className="mb-1 block font-body text-[10px] uppercase tracking-wider text-white/50">
-            Location
+            Project
           </label>
           <select
-            value={areaId}
-            onChange={(e) => setAreaId(e.target.value)}
+            value={projectId}
+            onChange={(e) => setProjectId(e.target.value)}
             className="w-full cursor-pointer appearance-none border-none bg-transparent text-sm text-white outline-none placeholder:text-white/40"
           >
             <option value="" className="text-neutral-800">
-              All Areas
+              All projects
             </option>
-            {areasLoading ? (
+            {projectsLoading ? (
               <option disabled className="text-neutral-800">
                 Loading...
               </option>
             ) : (
-              (areas ?? [])
-                .filter((area) => area.isActive)
-                .map((area) => (
+              (projects ?? [])
+                .filter((project) => project.isActive)
+                .map((project) => (
                   <option
-                    key={area.id}
-                    value={area.id}
+                    key={project.id}
+                    value={project.id}
                     className="text-neutral-800"
                   >
-                    {area.name}
+                    {project.name}
                   </option>
                 ))
             )}

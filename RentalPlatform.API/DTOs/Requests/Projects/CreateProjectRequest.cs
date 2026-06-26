@@ -1,6 +1,6 @@
-namespace RentalPlatform.API.DTOs.Requests.Areas;
+namespace RentalPlatform.API.DTOs.Requests.Projects;
 
-public record CreateAreaRequest(
+public record CreateProjectRequest(
     string Name,
     string? Description,
     bool IsActive

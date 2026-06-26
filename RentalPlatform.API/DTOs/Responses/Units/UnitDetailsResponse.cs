@@ -7,8 +7,8 @@ public record UnitDetailsResponse
     public Guid Id { get; init; }
     public Guid OwnerId { get; init; }
     public string OwnerName { get; init; } = string.Empty;
-    public Guid AreaId { get; init; }
-    public string AreaName { get; init; } = string.Empty;
+    public Guid ProjectId { get; init; }
+    public string ProjectName { get; init; } = string.Empty;
     public string Name { get; init; } = string.Empty;
     public string? Description { get; init; }
     public string? Address { get; init; }

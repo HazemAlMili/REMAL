@@ -22,7 +22,7 @@ export interface Permissions {
   canResetClientPasswords: boolean;
   canModerateReviews: boolean;
   canManageAdminUsers: boolean;
-  canManageAreas: boolean;
+  canManageProjects: boolean;
   canManageAmenities: boolean;
   canManageUnits: boolean;
   canViewReports: boolean;
@@ -64,7 +64,7 @@ export function usePermissions(): Permissions {
       canResetClientPasswords: has("clients:reset_password"),
       canModerateReviews: has("reviews:moderate"),
       canManageAdminUsers: has("settings:admin"),
-      canManageAreas: has("areas:manage"),
+      canManageProjects: has("projects:manage"),
       canManageAmenities: has("amenities:manage"),
       canManageUnits: has("units:manage"),
       canViewReports: has("analytics:read"),

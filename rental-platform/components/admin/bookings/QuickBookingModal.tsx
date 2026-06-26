@@ -16,7 +16,10 @@ interface QuickBookingModalProps {
   onClose: () => void;
 }
 
-const SOURCE_OPTIONS: Array<{ value: CreateBookingRequest["source"]; label: string }> = [
+const SOURCE_OPTIONS: Array<{
+  value: CreateBookingRequest["source"];
+  label: string;
+}> = [
   { value: "admin", label: "Admin" },
   { value: "direct", label: "Direct" },
   { value: "phone", label: "Phone" },
@@ -72,7 +75,7 @@ export function QuickBookingModal({ isOpen, onClose }: QuickBookingModalProps) {
     () =>
       (unitsData?.items ?? []).map((unit) => ({
         value: unit.id,
-        label: `${unit.name} - ${unit.areaName ?? "Unassigned area"}`,
+        label: `${unit.name} - ${unit.projectName ?? "Unassigned project"}`,
       })),
     [unitsData?.items]
   );
@@ -117,7 +120,9 @@ export function QuickBookingModal({ isOpen, onClose }: QuickBookingModalProps) {
                   clientId: value ? String(value) : "",
                 }))
               }
-              placeholder={clientsLoading ? "Loading clients..." : "Select client"}
+              placeholder={
+                clientsLoading ? "Loading clients..." : "Select client"
+              }
               disabled={clientsLoading || createMutation.isPending}
               searchable
             />

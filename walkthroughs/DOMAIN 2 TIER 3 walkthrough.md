@@ -13,7 +13,7 @@ Below is a detailed breakdown of what was accomplished explicitly across every t
 
 ### Ticket [BZ-UA-02]: Unit Inventory Management Service (`UnitService`)
 **Goal:** Implement safe property CRUD avoiding impossible logic variables or orphan bindings. 
-* **Database Relational Safeguards:** Overrode implicit relationship error-throwing by proactively fetching `ExistsAsync()` on `OwnerId` and `AreaId` raising explicit `NotFoundException`s directly within the Business Tier.
+* **Database Relational Safeguards:** Overrode implicit relationship error-throwing by proactively fetching `ExistsAsync()` on `OwnerId` and `ProjectId` raising explicit `NotFoundException`s directly within the Business Tier.
 * **Positive Restrictions:** Guaranteed basic scalar parameters explicitly remain positive or strictly within logical bounds (`Bedrooms >= 0`, `Bathrooms >= 0`, `MaxGuests > 0`, `BasePricePerNight >= 0`). 
 * **State Operations:** Mapped visibility modes directly (`SetActiveAsync`) and secured soft-delete interactions via the internal repository (`SoftDeleteAsync`) handling rows correctly.
 * **Enum-like Checks:** Explicitly enforces string variants against accepted architectural types exactly natively filtering via: `apartment`, `villa`, `chalet`, `studio`.

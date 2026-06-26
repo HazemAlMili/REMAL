@@ -8,9 +8,9 @@ Created the `units` table as the **inventory anchor** for Domain 2 (Units & Avai
 ### [NEW] [0010_create_units.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0010_create_units.sql)
 Up migration creating the `units` table with:
 - 15 columns matching the exact schema contract
-- 2 foreign keys (`fk_units_owner_id`, `fk_units_area_id`) with `ON DELETE RESTRICT`
+- 2 foreign keys (`fk_units_owner_id`, `fk_units_project_id`) with `ON DELETE RESTRICT`
 - 5 check constraints (unit_type, bedrooms, bathrooms, max_guests, base_price)
-- 2 indexes (`ix_units_owner_id`, `ix_units_area_id`)
+- 2 indexes (`ix_units_owner_id`, `ix_units_project_id`)
 
 ### [NEW] [0010_create_units_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0010_create_units_rollback.sql)
 Rollback drops indexes first, then the table.
@@ -29,7 +29,7 @@ Added migration 0010 entry for fresh DB provisioning.
 |---|---|---|---|---|
 | `id` | UUID PK | NO | `DEFAULT gen_random_uuid()` | ✅ |
 | `owner_id` | UUID FK | NO | `fk_units_owner_id` → owners(id) RESTRICT | ✅ |
-| `area_id` | UUID FK | NO | `fk_units_area_id` → areas(id) RESTRICT | ✅ |
+| `project_id` | UUID FK | NO | `fk_units_project_id` → projects(id) RESTRICT | ✅ |
 | `name` | VARCHAR(150) | NO | — | ✅ |
 | `description` | TEXT | YES | — | ✅ |
 | `address` | VARCHAR(255) | YES | — | ✅ |
@@ -67,9 +67,9 @@ Added migration 0010 entry for fresh DB provisioning.
 | 11 | Negative base_price → rejected | ✅ PASS |
 | 12 | Invalid unit_type `'penthouse'` → rejected | ✅ PASS |
 | 13 | Non-existing owner_id → FK violation | ✅ PASS |
-| 14 | Non-existing area_id → FK violation | ✅ PASS |
+| 14 | Non-existing project_id → FK violation | ✅ PASS |
 | 15 | Owner deletion restricted when linked | ✅ PASS |
-| 16 | Area deletion restricted when linked | ✅ PASS |
+| 16 | Project deletion restricted when linked | ✅ PASS |
 | 17 | Soft delete works (deleted_at set) | ✅ PASS |
 | 18 | `is_active` defaults to TRUE | ✅ PASS |
 | 19 | All 4 unit_type values accepted | ✅ PASS |
@@ -90,7 +90,7 @@ Added migration 0010 entry for fresh DB provisioning.
 - ❌ No `slug`, `unit_code`, `created_by`, `updated_by`
 - ❌ No `lat`/`long` or geo fields
 - ❌ No cloud upload metadata
-- ❌ No modifications to `owners` or `areas` tables
+- ❌ No modifications to `owners` or `projects` tables
 - ❌ No EF Core entities, configurations, services, or controllers
 
 ---

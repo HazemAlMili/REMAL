@@ -14,23 +14,23 @@ Base Route: `/api/auth`
 | **POST** | `/refresh` | Any | **Enforced:** Refresh access token using `refresh_token` cookie. |
 | **POST** | `/logout` | Any | Clear the refresh token cookie. |
 
-## 🏘️ Areas (AreasController)
-Base Route: `/api/areas`
+## 🏘️ Projects (ProjectsController)
+Base Route: `/api/projects`
 
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| **GET** | `/` | Public | List all geographic areas. |
-| **GET** | `/{id}` | Public | Get details for a specific area. |
-| **POST** | `/` | Admin | Create a new area. |
-| **PUT** | `/{id}` | Admin | Update area details. |
-| **DELETE** | `/{id}` | SuperAdmin | Soft delete an area. |
+| **GET** | `/` | Public | List all geographic projects. |
+| **GET** | `/{id}` | Public | Get details for a specific project. |
+| **POST** | `/` | Admin | Create a new project. |
+| **PUT** | `/{id}` | Admin | Update project details. |
+| **DELETE** | `/{id}` | SuperAdmin | Soft delete a project. |
 
 ## 🏠 Units (UnitsController)
 Base Route: `/api/units`
 
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| **GET** | `/` | Public | Search and filter units by area, type, and dates. |
+| **GET** | `/` | Public | Search and filter units by project, type, and dates. |
 | **GET** | `/{id}` | Public | Get full unit details (amenities, pricing, description). |
 
 ## 👤 Admin & User Management

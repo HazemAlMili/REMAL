@@ -26,8 +26,8 @@ public sealed class OwnerPortalUnitOverviewConfiguration
             .HasColumnName("unit_id")
             .IsRequired();
 
-        builder.Property(x => x.AreaId)
-            .HasColumnName("area_id")
+        builder.Property(x => x.ProjectId)
+            .HasColumnName("project_id")
             .IsRequired();
 
         builder.Property(x => x.UnitName)

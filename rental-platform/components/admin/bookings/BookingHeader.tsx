@@ -12,57 +12,64 @@ interface BookingHeaderProps {
 }
 
 export function BookingHeader({ booking }: BookingHeaderProps) {
-  const { data: unit, isLoading: isUnitLoading } = useInternalUnitDetail(booking.unitId);
+  const { data: unit, isLoading: isUnitLoading } = useInternalUnitDetail(
+    booking.unitId
+  );
   const nights = getNights(booking.checkInDate, booking.checkOutDate);
 
   return (
     <div className="space-y-4">
       <Link
         href={ROUTES.admin.bookings.list}
-        className="inline-flex items-center text-sm font-medium text-neutral-500 hover:text-neutral-700 transition"
+        className="inline-flex items-center text-sm font-medium text-neutral-500 transition hover:text-neutral-700"
       >
-        <ArrowLeft className="h-4 w-4 mr-2" />
+        <ArrowLeft className="mr-2 h-4 w-4" />
         Back to Bookings
       </Link>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold text-neutral-900">
               Booking {booking?.id?.split("-")[0]?.toUpperCase()}
             </h1>
             <StatusBadge status={booking.bookingStatus} />
-            <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+            <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
               {booking.source}
             </span>
           </div>
-          
-          <div className="flex flex-wrap items-center mt-2 text-sm text-neutral-500 gap-x-4 gap-y-2">
+
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-neutral-500">
             <div>
-              {formatDate(booking.checkInDate)} — {formatDate(booking.checkOutDate)}
+              {formatDate(booking.checkInDate)} —{" "}
+              {formatDate(booking.checkOutDate)}
               <span className="mx-2 text-neutral-300">•</span>
               {nights} night{nights !== 1 ? "s" : ""}
             </div>
-            
+
             {isUnitLoading ? (
               <div className="flex items-center">
-                <span className="mx-2 hidden md:inline text-neutral-300">|</span>
+                <span className="mx-2 hidden text-neutral-300 md:inline">
+                  |
+                </span>
                 <Skeleton className="h-4 w-32" />
               </div>
             ) : unit ? (
               <div className="flex items-center">
-                <span className="mx-2 hidden md:inline text-neutral-300">|</span>
+                <span className="mx-2 hidden text-neutral-300 md:inline">
+                  |
+                </span>
                 <Link
                   href={ROUTES.admin.units.detail(unit.id)}
-                  className="font-medium text-neutral-700 hover:text-black hover:underline mr-2"
+                  className="mr-2 font-medium text-neutral-700 hover:text-black hover:underline"
                 >
                   Unit {unit.name}
                 </Link>
-                <span className="text-xs px-2 py-[2px] bg-neutral-100 rounded-full border border-neutral-200">
+                <span className="rounded-full border border-neutral-200 bg-neutral-100 px-2 py-[2px] text-xs">
                   {unit.unitType}
                 </span>
-                <span className="text-xs ml-2 px-2 py-[2px] bg-neutral-50 rounded-full border border-neutral-200 text-neutral-600">
-                  {unit.areaName ?? "Unassigned area"}
+                <span className="ml-2 rounded-full border border-neutral-200 bg-neutral-50 px-2 py-[2px] text-xs text-neutral-600">
+                  {unit.projectName ?? "Unassigned project"}
                 </span>
               </div>
             ) : null}

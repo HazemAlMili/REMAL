@@ -12,7 +12,7 @@ export const SELECTORS = {
     clients: 'nav a:has-text("Clients")',
     reviews: 'nav a:has-text("Reviews")',
     notifications: 'nav a:has-text("Notifications")',
-    areas: 'nav a:has-text("Areas")',
+    projects: 'nav a:has-text("Projects")',
     amenities: 'nav a:has-text("Amenities")',
     adminUsers: 'nav a:has-text("Admin Users")',
   },

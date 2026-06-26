@@ -1,37 +1,41 @@
 "use client";
 
 import { Modal } from "@/components/ui/Modal";
-import { AreaForm, AreaFormValues } from "./AreaForm";
-import { AreaResponse } from "@/lib/types/area.types";
-import { useCreateArea, useUpdateArea } from "@/lib/hooks/useAreas";
+import { ProjectForm, ProjectFormValues } from "./ProjectForm";
+import { ProjectResponse } from "@/lib/types/project.types";
+import { useCreateProject, useUpdateProject } from "@/lib/hooks/useProjects";
 import { toastSuccess, toastError } from "@/lib/utils/toast";
 
-export interface AreaFormModalProps {
+export interface ProjectFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  area?: AreaResponse;
+  project?: ProjectResponse;
 }
 
-export function AreaFormModal({ isOpen, onClose, area }: AreaFormModalProps) {
-  const isEditing = !!area;
+export function ProjectFormModal({
+  isOpen,
+  onClose,
+  project,
+}: ProjectFormModalProps) {
+  const isEditing = !!project;
 
-  const createArea = useCreateArea();
-  const updateArea = useUpdateArea();
+  const createProject = useCreateProject();
+  const updateProject = useUpdateProject();
 
-  const isLoading = createArea.isPending || updateArea.isPending;
+  const isLoading = createProject.isPending || updateProject.isPending;
 
-  const handleSubmit = async (data: AreaFormValues) => {
+  const handleSubmit = async (data: ProjectFormValues) => {
     try {
-      if (isEditing && area) {
-        await updateArea.mutateAsync({ id: area.id, data });
-        toastSuccess("Area updated successfully");
+      if (isEditing && project) {
+        await updateProject.mutateAsync({ id: project.id, data });
+        toastSuccess("Project updated successfully");
       } else {
-        await createArea.mutateAsync(data);
-        toastSuccess("Area created successfully");
+        await createProject.mutateAsync(data);
+        toastSuccess("Project created successfully");
       }
       onClose();
     } catch (e: unknown) {
-      const msg = (e as Error)?.message || "Could not save area";
+      const msg = (e as Error)?.message || "Could not save project";
       toastError(msg);
     }
   };
@@ -40,18 +44,20 @@ export function AreaFormModal({ isOpen, onClose, area }: AreaFormModalProps) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? "Edit Area" : "New Area"}
+      title={isEditing ? "Edit project" : "New project"}
     >
       <div className="mb-4">
         <p className="text-sm text-neutral-500">
           {isEditing
-            ? "Update the details for this area."
-            : "Create a new area zone."}
+            ? "Update the details for this project."
+            : "Create a resort project for unit assignment and client search."}
         </p>
       </div>
-      <AreaForm
+      <ProjectForm
         defaultValues={
-          area ? { name: area.name, description: area.description } : {}
+          project
+            ? { name: project.name, description: project.description }
+            : {}
         }
         onSubmit={handleSubmit}
         isLoading={isLoading}

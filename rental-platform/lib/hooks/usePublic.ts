@@ -19,12 +19,12 @@ import type { CreateClientBookingRequest } from "@/lib/types/booking.types";
 // QUERIES — Server data fetching
 // ═══════════════════════════════════════════
 
-// ── Areas ──
-export function usePublicAreas() {
+// ── Projects ──
+export function usePublicProjects() {
   return useQuery({
-    queryKey: queryKeys.areas.all,
-    queryFn: publicService.getAreas,
-    staleTime: 5 * 60 * 1000, // 5 min — areas rarely change
+    queryKey: queryKeys.projects.all,
+    queryFn: publicService.getProjects,
+    staleTime: 5 * 60 * 1000, // 5 min — projects rarely change
   });
 }
 

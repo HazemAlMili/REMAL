@@ -5,7 +5,7 @@ namespace RentalPlatform.API.DTOs.Requests.OwnerPortal;
 public record GetOwnerPortalUnitsRequest
 {
     public bool? IsActive { get; init; }
-    public Guid? AreaId { get; init; }
+    public Guid? ProjectId { get; init; }
     public int Page { get; init; } = 1;
     public int PageSize { get; init; } = 20;
 }

@@ -4,7 +4,7 @@ The `AppDbContext` and initial Master Data entities have been successfully creat
 
 ## Accomplishments
 
-1. **Entities Created**: We created the five required entities (`Amenity`, `Area`, `AdminUser`, `Client`, `Owner`) with `Guid Id`s and Timestamp (`CreatedAt`, `UpdatedAt`), and conditionally `DeletedAt` for `Client` and `Owner` only.
+1. **Entities Created**: We created the five required entities (`Amenity`, `Project`, `AdminUser`, `Client`, `Owner`) with `Guid Id`s and Timestamp (`CreatedAt`, `UpdatedAt`), and conditionally `DeletedAt` for `Client` and `Owner` only.
 2. **Configurations Created**: We generated EF Core Fluent API Configurations for each entity using `IEntityTypeConfiguration`, mapping properties explicitly to DB snake_case columns. We also applied `QueryFilters` on the soft-delete participants.
 3. **AppDbContext Implemented**: The context properly registers DbSets and automatically applies `Assembly` configurations.
 4. **Timestamp & Soft-delete Interception**: Overrode `SaveChanges()` & `SaveChangesAsync()`. It effectively listens to `Added`, `Modified`, and `Deleted` states to mutate timestamps appropriately, and intercept deletes for `Client` and `Owner` to transition them to `Modified` + sets `DeletedAt`.
@@ -20,7 +20,7 @@ Tests successfully validated that:
 ## Project File Modifcations
 
 #### [NEW] [Amenity.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Amenity.cs)
-#### [NEW] [Area.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Area.cs)
+#### [NEW] [Project.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Project.cs)
 #### [NEW] [AdminUser.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/AdminUser.cs)
 #### [NEW] [Client.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Client.cs)
 #### [NEW] [Owner.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Entities/Owner.cs)
@@ -67,13 +67,13 @@ Tests successfully validated using the `SQLite` EF provider strictly validating 
 
 ---
 
-# DA-MD-03: Implement Area entity and EF Core configuration
+# DA-MD-03: Implement Project entity and EF Core configuration
 
-We've finalized the `Area` representation aligning the backend Entity mapping identically to the physical Database architecture.
+We've finalized the `Project` representation aligning the backend Entity mapping identically to the physical Database architecture.
 
 ## Accomplishments
 
-1. **Entity State Finalized**: The `Area` entity encapsulates the mandated scope containing:
+1. **Entity State Finalized**: The `Project` entity encapsulates the mandated scope containing:
     - `Guid Id`
     - `string Name`
     - `string? Description`
@@ -83,22 +83,22 @@ We've finalized the `Area` representation aligning the backend Entity mapping id
     
     *Validating DB constraints natively without injecting implicit navigation extensions to children like `Units` or adding out-of-scope fields.*
 
-2. **Fluent Configuration Aligned**: Generated EF Configuration binding specifically to `"areas"`:
+2. **Fluent Configuration Aligned**: Generated EF Configuration binding specifically to `"projects"`:
     - Property limits injected securely (`Name` mapped to `"name"` scaled smoothly to `HasMaxLength(150)` and marked `.IsRequired()`).
     - Explicit configuration of SQLite-compatible Boolean behavior over `IsActive` mapping directly to `"is_active"`.
     - Handled nullable mappings properly across `Description`.
-    - Declared `.HasIndex(x => x.Name).IsUnique().HasDatabaseName("ux_areas_name")`.
+    - Declared `.HasIndex(x => x.Name).IsUnique().HasDatabaseName("ux_projects_name")`.
 
 ## Verification Results
 
 A successful compilation translated into the execution of test harnesses executing isolated constraints over the Entity Core:
-- Queried EF Model context validating strictly `0 navigations present on the Area scope` dynamically.
+- Queried EF Model context validating strictly `0 navigations present on the Project scope` dynamically.
 - Simulated creation enforcing values explicitly (`IsActive == true`).
-- Fired sequential redundant Inserts proving our unique Index handles collisions by trapping `SQLite Error 19: UNIQUE constraint failed: areas.name`.
+- Fired sequential redundant Inserts proving our unique Index handles collisions by trapping `SQLite Error 19: UNIQUE constraint failed: projects.name`.
 
 ## Project File Modifcations
 
-#### [MODIFY] [AreaConfiguration.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Configurations/AreaConfiguration.cs)
+#### [MODIFY] [ProjectConfiguration.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/RentalPlatform.Data/Configurations/ProjectConfiguration.cs)
 #### [MODIFY] [Program.cs](file:///d:/Clinets/Kaza Booking/Kaza Booking/Program.cs) (for manual constraint testing)
 
 ---
@@ -246,7 +246,7 @@ The master Data Access layer has been completely orchestrated within a bounding 
 ## Accomplishments
 
 1. **Integrated Wrapper Core**: The `UnitOfWork` orchestrator is implemented isolating DbContext directly allocating memory spaces:
-    - Automatically instantiated explicit scopes over standard tracking parameters exposing strictly `Amenities`, `Areas`, `AdminUsers`, `Clients`, and `Owners` readably.
+    - Automatically instantiated explicit scopes over standard tracking parameters exposing strictly `Amenities`, `Projects`, `AdminUsers`, `Clients`, and `Owners` readably.
     - Verified constraints confirming zero leakages mapping future variables inside `UnitRepository` bounds or equivalent speculative orchestrations.
 2. **Context Synchronization Centralized**: 
     - Forced all database commitments to execute uniformly translating bounds down exclusively mapping `.SaveChanges()` / `.SaveChangesAsync()` correctly directly toward the `AppDbContext`.
@@ -254,7 +254,7 @@ The master Data Access layer has been completely orchestrated within a bounding 
 
 ## Verification Results
 
-Simulated advanced transactional executions executing concurrent `Amenities` / `Areas` mapping synchronously avoiding separate database locks properly:
+Simulated advanced transactional executions executing concurrent `Amenities` / `Projects` mapping synchronously avoiding separate database locks properly:
 - Passed operations utilizing context pooling executing successfully resolving two Entity writes mapping safely upon a single explicit `.SaveChangesAsync()` boundary. 
 - Integrated overriding execution checks isolating `Client` abstractions enforcing Soft Delete context mappings effectively intercepting logic boundaries passing natively up into `UnitOfWork`.
 - Verified context logic accurately filtering `.GetProperties()` proving all properties map accurately matching restricted Tier logic efficiently!

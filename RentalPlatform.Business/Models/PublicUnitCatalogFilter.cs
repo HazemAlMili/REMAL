@@ -3,7 +3,7 @@ namespace RentalPlatform.Business.Models;
 public sealed record PublicUnitCatalogFilter(
     int Page,
     int PageSize,
-    Guid? AreaId,
+    Guid? ProjectId,
     string? UnitType,
     int? MinGuests,
     decimal? MinPrice,

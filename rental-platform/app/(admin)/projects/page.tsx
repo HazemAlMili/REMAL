@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, MapPin, AlertCircle } from "lucide-react";
+import { Plus, Building2, AlertCircle } from "lucide-react";
 import { usePermissions } from "@/lib/hooks/usePermissions";
-import { useAreasList, useToggleAreaStatus } from "@/lib/hooks/useAreas";
-import { AreaResponse } from "@/lib/types/area.types";
+import {
+  useProjectsList,
+  useToggleProjectStatus,
+} from "@/lib/hooks/useProjects";
+import { ProjectResponse } from "@/lib/types/project.types";
 
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -12,48 +15,50 @@ import { SkeletonTable } from "@/components/ui/SkeletonTable";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { toastSuccess, toastError } from "@/lib/utils/toast";
 
-import { AreaTable } from "@/components/admin/areas/AreaTable";
-import { AreaFormModal } from "@/components/admin/areas/AreaFormModal";
+import { ProjectTable } from "@/components/admin/projects/ProjectTable";
+import { ProjectFormModal } from "@/components/admin/projects/ProjectFormModal";
 
-export default function AreasPage() {
-  const { canManageAreas } = usePermissions();
-  const { data: areas, isLoading, isError } = useAreasList(true);
-  const toggleAreaStatus = useToggleAreaStatus();
+export default function ProjectsPage() {
+  const { canManageProjects } = usePermissions();
+  const { data: projects, isLoading, isError } = useProjectsList(true);
+  const toggleProjectStatus = useToggleProjectStatus();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingArea, setEditingArea] = useState<AreaResponse | undefined>();
-  const [statusConfirmArea, setStatusConfirmArea] = useState<
-    AreaResponse | undefined
+  const [editingProject, setEditingProject] = useState<
+    ProjectResponse | undefined
+  >();
+  const [statusConfirmProject, setStatusConfirmProject] = useState<
+    ProjectResponse | undefined
   >();
 
   const handleCreate = () => {
-    setEditingArea(undefined);
+    setEditingProject(undefined);
     setIsModalOpen(true);
   };
 
-  const handleEdit = (area: AreaResponse) => {
-    setEditingArea(area);
+  const handleEdit = (project: ProjectResponse) => {
+    setEditingProject(project);
     setIsModalOpen(true);
   };
 
-  const handleToggleStatusClick = (area: AreaResponse) => {
-    setStatusConfirmArea(area);
+  const handleToggleStatusClick = (project: ProjectResponse) => {
+    setStatusConfirmProject(project);
   };
 
   const handleConfirmToggle = async () => {
-    if (!statusConfirmArea) return;
+    if (!statusConfirmProject) return;
 
-    const newStatus = !statusConfirmArea.isActive;
+    const newStatus = !statusConfirmProject.isActive;
     try {
-      await toggleAreaStatus.mutateAsync({
-        id: statusConfirmArea.id,
+      await toggleProjectStatus.mutateAsync({
+        id: statusConfirmProject.id,
         data: { isActive: newStatus },
       });
-      toastSuccess(newStatus ? "Area activated" : "Area deactivated");
+      toastSuccess(newStatus ? "Project activated" : "Project deactivated");
     } catch (e: unknown) {
-      toastError((e as Error)?.message || "Could not update area status");
+      toastError((e as Error)?.message || "Could not update project status");
     } finally {
-      setStatusConfirmArea(undefined);
+      setStatusConfirmProject(undefined);
     }
   };
 
@@ -62,8 +67,8 @@ export default function AreasPage() {
       <div className="p-6">
         <EmptyState
           icon={<AlertCircle className="h-10 w-10" />}
-          title="Could not load resort areas"
-          description="We could not load resort areas. Retry the page before editing area setup."
+          title="Could not load resort projects"
+          description="We could not load resort projects. Retry the page before editing project setup."
         />
       </div>
     );
@@ -74,20 +79,21 @@ export default function AreasPage() {
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
-            Resort areas
+            Resort projects
           </h1>
           <p className="text-sm text-neutral-500">
-            Manage the North Coast areas used for unit setup and client search.
+            Manage the North Coast projects used for unit setup and client
+            search.
           </p>
         </div>
 
-        {canManageAreas && (
+        {canManageProjects && (
           <Button
             onClick={handleCreate}
             className="w-full sm:w-auto"
             leftIcon={<Plus className="h-4 w-4" />}
           >
-            Create area
+            Create project
           </Button>
         )}
       </div>
@@ -95,24 +101,24 @@ export default function AreasPage() {
       <div>
         {isLoading ? (
           <SkeletonTable rows={5} columns={5} />
-        ) : areas && areas.length > 0 ? (
-          <AreaTable
-            areas={areas}
+        ) : projects && projects.length > 0 ? (
+          <ProjectTable
+            projects={projects}
             onEdit={handleEdit}
             onToggleStatus={handleToggleStatusClick}
           />
         ) : (
           <EmptyState
-            icon={<MapPin className="h-10 w-10" />}
-            title="Resort area catalog is empty"
-            description="Create an area before assigning units to a resort or zone."
+            icon={<Building2 className="h-10 w-10" />}
+            title="Resort project catalog is empty"
+            description="Create a project before assigning units to a resort development."
             action={
-              canManageAreas ? (
+              canManageProjects ? (
                 <Button
                   onClick={handleCreate}
                   leftIcon={<Plus className="h-4 w-4" />}
                 >
-                  Create area
+                  Create project
                 </Button>
               ) : undefined
             }
@@ -120,30 +126,34 @@ export default function AreasPage() {
         )}
       </div>
 
-      {isModalOpen && canManageAreas && (
-        <AreaFormModal
+      {isModalOpen && canManageProjects && (
+        <ProjectFormModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          area={editingArea}
+          project={editingProject}
         />
       )}
 
-      {statusConfirmArea && canManageAreas && (
+      {statusConfirmProject && canManageProjects && (
         <ConfirmDialog
-          isOpen={!!statusConfirmArea}
-          onCancel={() => setStatusConfirmArea(undefined)}
+          isOpen={!!statusConfirmProject}
+          onCancel={() => setStatusConfirmProject(undefined)}
           title={
-            statusConfirmArea.isActive ? "Deactivate Area" : "Activate Area"
+            statusConfirmProject.isActive
+              ? "Deactivate project"
+              : "Activate project"
           }
           description={
-            statusConfirmArea.isActive
-              ? `Deactivate "${statusConfirmArea.name}"? Operators will not be able to assign new units to this area.`
-              : `Activate "${statusConfirmArea.name}"? Operators can assign new units to this area again.`
+            statusConfirmProject.isActive
+              ? `Deactivate "${statusConfirmProject.name}"? Operators will not be able to assign new units to this project.`
+              : `Activate "${statusConfirmProject.name}"? Operators can assign new units to this project again.`
           }
           confirmLabel={
-            statusConfirmArea.isActive ? "Deactivate area" : "Activate area"
+            statusConfirmProject.isActive
+              ? "Deactivate project"
+              : "Activate project"
           }
-          variant={statusConfirmArea.isActive ? "danger" : "primary"}
+          variant={statusConfirmProject.isActive ? "danger" : "primary"}
           onConfirm={handleConfirmToggle}
         />
       )}

@@ -15,12 +15,12 @@ public interface IOwnerPortalUnitService
 {
     /// <summary>
     /// Returns all units belonging to <paramref name="ownerId"/>.
-    /// Optionally filtered by active state and/or area.
+    /// Optionally filtered by active state and/or project.
     /// </summary>
     Task<IReadOnlyList<OwnerPortalUnitOverview>> GetAllByOwnerAsync(
         Guid ownerId,
         bool? isActive = null,
-        Guid? areaId = null,
+        Guid? projectId = null,
         CancellationToken cancellationToken = default);
 
     /// <summary>

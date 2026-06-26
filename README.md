@@ -43,7 +43,7 @@ Foundational migration to enable `pgcrypto` extension and document all frozen DB
 ### DB-MD-02 to DB-MD-06: Core Master Tables
 Created the primary master tables enforcing rigorous constraints, unique partial indexes for emails, and strict domain boundaries (no soft delete for admins, explicit soft deletes for clients/owners):
 - `amenities` (Unique names)
-- `areas` (Unique names, Activation flags)
+- `projects` (Unique names, Activation flags)
 - `admin_users` (Role check constraints, Case-insensitive unique emails)
 - `clients` (Unique phones, Soft delete limits)
 - `owners` (Commission rate boundaries 0-100%, Soft limits)
@@ -90,7 +90,7 @@ Processed native credential integrations cleanly returning structured `Authentic
 
 Established key governance checks prior to opening external network ports:
 - **API Response Boundary:** Banned raw Database Entities leaving controllers, restricted `PasswordHash` definitively, structured `DTO` mappings.
-- **Area Lifecycle:** Swapped soft-deletions conceptually out for standard `.IsActive` activation toggles preventing missing constraint chains definitively.
+- **Project Lifecycle:** Swapped soft-deletions conceptually out for standard `.IsActive` activation toggles preventing missing constraint chains definitively.
 - **UnitOfWork Interfaces:** Bound abstraction boundaries solidly eliminating raw EF structures bleeding into domain logics.
 - **Index Ownership:** Officially delegated heavy uniqueness checks to DB SQL scripts avoiding soft EF Core emulation risks purely.
 
@@ -112,7 +112,7 @@ Constructed endpoint clusters enforcing `[Authorize]` mappings securely shieldin
 ## Domain 2, Tier 1: Database Migrations
 
 ### DB-UA-01 & DB-UA-02: Units & Unit Images
-Created the inventory anchor `units` applying foreign constraints scaling properly mapping relationships to owners and areas structurally. Ensured relational media blocks dynamically matching cascades across `unit_images`.
+Created the inventory anchor `units` applying foreign constraints scaling properly mapping relationships to owners and projects structurally. Ensured relational media blocks dynamically matching cascades across `unit_images`.
 
 ### DB-UA-03: Unit Amenities
 Applied strict many-to-many composites avoiding surrogate identity wrappers securing database unique linkings natively via composite primary key constraints.

@@ -8,8 +8,8 @@ public record UnitListItemResponse
     public Guid Id { get; init; }
     public Guid OwnerId { get; init; }
     public string OwnerName { get; init; } = string.Empty;
-    public Guid AreaId { get; init; }
-    public string AreaName { get; init; } = string.Empty;
+    public Guid ProjectId { get; init; }
+    public string ProjectName { get; init; } = string.Empty;
     public string Name { get; init; } = string.Empty;
     public string UnitType { get; init; } = string.Empty;
     public int Bedrooms { get; init; }

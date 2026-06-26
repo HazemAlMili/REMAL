@@ -11,7 +11,7 @@ namespace RentalPlatform.Data;
 public interface IUnitOfWork
 {
     IRepository<Amenity> Amenities { get; }
-    IRepository<Area> Areas { get; }
+    IRepository<Project> Projects { get; }
     IRepository<AdminUser> AdminUsers { get; }
     IRepository<RbacRoleTemplate> RbacRoleTemplates { get; }
     IRepository<RbacRoleTemplatePermission> RbacRoleTemplatePermissions { get; }

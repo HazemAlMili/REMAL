@@ -45,7 +45,7 @@ function UnitsPageContent() {
 
   const page = Number(searchParams.get("page")) || DEFAULT_PAGE;
   const pageSize = Number(searchParams.get("pageSize")) || DEFAULT_PAGE_SIZE;
-  const areaId = searchParams.get("areaId") || undefined;
+  const projectId = searchParams.get("projectId") || undefined;
   const unitType = (searchParams.get("unitType") ||
     undefined) as UnitListFilters["unitType"];
   const amenityId = searchParams.get("amenityId") || undefined;
@@ -58,13 +58,13 @@ function UnitsPageContent() {
     () => ({
       page,
       pageSize,
-      areaId,
+      projectId,
       unitType,
       amenityId,
       isActive,
       search,
     }),
-    [amenityId, areaId, isActive, page, pageSize, search, unitType]
+    [amenityId, projectId, isActive, page, pageSize, search, unitType]
   );
 
   const {
@@ -95,7 +95,7 @@ function UnitsPageContent() {
       params.set("pageSize", String(newFilters.pageSize ?? pageSize));
 
       const filterKeys: Array<keyof UnitListFilters> = [
-        "areaId",
+        "projectId",
         "unitType",
         "amenityId",
         "search",
@@ -161,7 +161,11 @@ function UnitsPageContent() {
   }
 
   const hasFilters = Boolean(
-    areaId || unitType || amenityId || typeof isActive === "boolean" || search
+    projectId ||
+    unitType ||
+    amenityId ||
+    typeof isActive === "boolean" ||
+    search
   );
   const noUnitsAtAll =
     !isLoading &&

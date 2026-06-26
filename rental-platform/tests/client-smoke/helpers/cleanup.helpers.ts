@@ -3,11 +3,11 @@ import fs from "fs";
 import path from "path";
 import {
   cancelPayment,
-  deactivateArea,
+  deactivateProject,
   deactivateClient,
   deleteUnit,
   deleteUnitImage,
-  getAreas,
+  getProjects,
   getClients,
   getInternalUnits,
   transitionBooking,
@@ -22,7 +22,7 @@ const CLIENT_UPLOAD_PREFIXES = [
 ];
 
 export interface CleanupRegistry {
-  areaIds: string[];
+  projectIds: string[];
   unitIds: string[];
   imageIds: Array<{ unitId: string; imageId: string }>;
   leadIds: string[];
@@ -33,7 +33,7 @@ export interface CleanupRegistry {
 }
 
 export interface CleanupSummary {
-  deactivatedAreas: string[];
+  deactivatedProjects: string[];
   deactivatedClients: string[];
   deletedUnits: string[];
   deletedImages: string[];
@@ -46,7 +46,7 @@ export interface CleanupSummary {
 
 export function createCleanupRegistry(): CleanupRegistry {
   return {
-    areaIds: [],
+    projectIds: [],
     unitIds: [],
     imageIds: [],
     leadIds: [],
@@ -59,7 +59,7 @@ export function createCleanupRegistry(): CleanupRegistry {
 
 function emptySummary(): CleanupSummary {
   return {
-    deactivatedAreas: [],
+    deactivatedProjects: [],
     deactivatedClients: [],
     deletedUnits: [],
     deletedImages: [],
@@ -116,7 +116,9 @@ export async function cleanupClientSmokeData(
         summary.cancelledPayments.push(paymentId);
       }
     } catch (error) {
-      summary.failures.push(`Payment cleanup failed for ${paymentId}: ${(error as Error).message}`);
+      summary.failures.push(
+        `Payment cleanup failed for ${paymentId}: ${(error as Error).message}`
+      );
     }
   }
 
@@ -126,7 +128,9 @@ export async function cleanupClientSmokeData(
         summary.cancelledBookings.push(bookingId);
       }
     } catch (error) {
-      summary.failures.push(`Booking cleanup failed for ${bookingId}: ${(error as Error).message}`);
+      summary.failures.push(
+        `Booking cleanup failed for ${bookingId}: ${(error as Error).message}`
+      );
     }
   }
 
@@ -136,17 +140,23 @@ export async function cleanupClientSmokeData(
         summary.lostLeads.push(leadId);
       }
     } catch (error) {
-      summary.failures.push(`Lead cleanup failed for ${leadId}: ${(error as Error).message}`);
+      summary.failures.push(
+        `Lead cleanup failed for ${leadId}: ${(error as Error).message}`
+      );
     }
   }
 
   for (const image of registry.imageIds) {
     try {
-      if (await deleteUnitImage(request, adminToken, image.unitId, image.imageId)) {
+      if (
+        await deleteUnitImage(request, adminToken, image.unitId, image.imageId)
+      ) {
         summary.deletedImages.push(image.imageId);
       }
     } catch (error) {
-      summary.failures.push(`Image cleanup failed for ${image.imageId}: ${(error as Error).message}`);
+      summary.failures.push(
+        `Image cleanup failed for ${image.imageId}: ${(error as Error).message}`
+      );
     }
   }
 
@@ -168,21 +178,23 @@ export async function cleanupClientSmokeData(
   }
 
   try {
-    const areas = await getAreas(request, adminToken);
-    const areaIds = new Set(registry.areaIds);
-    for (const area of areas) {
-      if (isClientSmokeName(area.name) && area.isActive !== false) {
-        areaIds.add(area.id);
+    const projects = await getProjects(request, adminToken);
+    const projectIds = new Set(registry.projectIds);
+    for (const project of projects) {
+      if (isClientSmokeName(project.name) && project.isActive !== false) {
+        projectIds.add(project.id);
       }
     }
 
-    for (const areaId of areaIds) {
-      if (await deactivateArea(request, adminToken, areaId)) {
-        summary.deactivatedAreas.push(areaId);
+    for (const projectId of projectIds) {
+      if (await deactivateProject(request, adminToken, projectId)) {
+        summary.deactivatedProjects.push(projectId);
       }
     }
   } catch (error) {
-    summary.failures.push(`Area cleanup failed: ${(error as Error).message}`);
+    summary.failures.push(
+      `Project cleanup failed: ${(error as Error).message}`
+    );
   }
 
   try {
@@ -216,7 +228,9 @@ function cleanupClientSmokeUploads(
   const workspaceRoot = path.resolve(process.cwd(), "..");
 
   if (!uploadsDir.startsWith(workspaceRoot)) {
-    summary.failures.push(`Refused to scan uploads outside workspace: ${uploadsDir}`);
+    summary.failures.push(
+      `Refused to scan uploads outside workspace: ${uploadsDir}`
+    );
     return;
   }
 

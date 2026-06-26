@@ -36,7 +36,7 @@ export interface OwnerProfileResponse {
 // From API Reference Section 35
 export interface OwnerPortalUnitResponse {
   unitId: string;
-  areaId: string;
+  projectId: string;
   unitName: string;
   unitType: string;
   isActive: boolean;

@@ -2,11 +2,11 @@ using RentalPlatform.Data.Entities;
 
 namespace RentalPlatform.Business.Interfaces;
 
-public interface IAreaService
+public interface IProjectService
 {
-    Task<IReadOnlyList<Area>> GetAllAsync(bool includeInactive = false, CancellationToken cancellationToken = default);
-    Task<Area?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<Area> CreateAsync(string name, string? description, bool isActive = true, CancellationToken cancellationToken = default);
-    Task<Area> UpdateAsync(Guid id, string name, string? description, bool isActive, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Project>> GetAllAsync(bool includeInactive = false, CancellationToken cancellationToken = default);
+    Task<Project?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Project> CreateAsync(string name, string? description, bool isActive = true, CancellationToken cancellationToken = default);
+    Task<Project> UpdateAsync(Guid id, string name, string? description, bool isActive, CancellationToken cancellationToken = default);
     Task SetActiveAsync(Guid id, bool isActive, CancellationToken cancellationToken = default);
 }

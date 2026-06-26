@@ -109,10 +109,10 @@ const NAV_GROUPS: NavGroup[] = [
     label: "Setup",
     items: [
       {
-        label: "Resort areas",
+        label: "Resort projects",
         icon: MapPin,
-        href: "/admin/areas",
-        requiredPermission: "canManageAreas",
+        href: "/admin/projects",
+        requiredPermission: "canManageProjects",
       },
       {
         label: "Amenities",

@@ -48,7 +48,7 @@ export function UnitOverviewTab({ unit }: UnitOverviewTabProps) {
             value={unit.isActive ? "Active" : "Inactive"}
           />
           <OverviewField label="Owner ID" value={unit.ownerId} />
-          <OverviewField label="Area ID" value={unit.areaId} />
+          <OverviewField label="Project ID" value={unit.projectId} />
           <OverviewField
             label="Base price/night"
             value={formatCurrency(unit.basePricePerNight)}

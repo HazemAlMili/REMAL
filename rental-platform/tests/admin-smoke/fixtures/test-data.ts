@@ -33,9 +33,9 @@ export const MOCK_CLIENT = {
   password: "Admin@1234",
 };
 
-export const TEST_AREA = {
-  name: "SMOKE_TEST_AREA",
-  description: "Area created for E2E smoke tests",
+export const TEST_PROJECT = {
+  name: "SMOKE_TEST_PROJECT",
+  description: "Project created for E2E smoke tests",
   isActive: true,
 };
 
@@ -47,7 +47,7 @@ export const TEST_UNIT = {
   bedrooms: 4,
   bathrooms: 3,
   maxGuests: 8,
-  basePricePerNight: 5000.00,
+  basePricePerNight: 5000.0,
   isActive: true,
 };
 

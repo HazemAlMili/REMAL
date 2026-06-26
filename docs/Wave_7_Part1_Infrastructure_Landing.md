@@ -76,7 +76,7 @@ All 24 Wave 7 tickets need typed public API contracts. The public endpoints use 
 ### Section 4 — In Scope
 
 - [ ] `lib/types/public.types.ts` — all public-facing types
-- [ ] `lib/api/services/public.service.ts` — all public API calls (units, areas, amenities, availability, pricing, reviews, CRM lead)
+- [ ] `lib/api/services/public.service.ts` — all public API calls (units, projects, amenities, availability, pricing, reviews, CRM lead)
 - [ ] `lib/hooks/usePublic.ts` — TanStack Query hooks for public data
 
 **Files to create:**
@@ -100,7 +100,7 @@ All 24 Wave 7 tickets need typed public API contracts. The public endpoints use 
 interface PublicUnitListItem {
   id:                 string      // public uses 'id' not 'unitId'
   ownerId:            string
-  areaId:             string
+  projectId:             string
   name:               string
   unitType:           string
   bedrooms:           number
@@ -116,7 +116,7 @@ interface PublicUnitListItem {
 interface PublicUnitDetail {
   id:                 string
   ownerId:            string
-  areaId:             string
+  projectId:             string
   name:               string
   unitType:           string
   description:        string | null
@@ -188,9 +188,9 @@ interface PublicCreateCrmLeadResponse {
 ```typescript
 // lib/api/services/public.service.ts
 export const publicService = {
-  // ── Areas (for landing page + search filters) ──
-  getAreas:          (): Promise<AreaResponse[]> =>
-    api.get(endpoints.areas.list),
+  // ── Projects (for landing page + search filters) ──
+  getProjects:          (): Promise<ProjectResponse[]> =>
+    api.get(endpoints.projects.list),
 
   // ── Amenities (for search filter chips) ──
   getAmenities:      (): Promise<AmenityResponse[]> =>
@@ -525,7 +525,7 @@ Every public page (landing, units listing, unit detail, booking, account) shares
 - [ ] `app/(public)/layout.tsx` — public route group layout (wraps all guest pages)
 - [ ] `components/public/layout/PublicNav.tsx` — navigation header
   - Logo/brand name on left
-  - Nav links: Home, Units, Areas
+  - Nav links: Home, Units, Projects
   - Right side: Login link (if not logged in) or Account link (if logged in as client)
   - On scroll past hero: transitions from `bg-transparent` → `bg-white/95 backdrop-blur-md shadow-nav`
   - Uses scroll position from `window.__lenis.scroll` or `window.scrollY`
@@ -699,7 +699,7 @@ DEPENDS ON: FE-7-LP-01, FE-7-INFRA-01
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-The search bar floating over the hero — the primary conversion tool on the entire site. Clone.md specifies glass morphism styling: `backdrop-blur`, semi-transparent background, warm-toned border. Fields: location (area), check-in, check-out, guests. On submit, it navigates to `/units` with the search params in the URL.
+The search bar floating over the hero — the primary conversion tool on the entire site. Clone.md specifies glass morphism styling: `backdrop-blur`, semi-transparent background, warm-toned border. Fields: location (project), check-in, check-out, guests. On submit, it navigates to `/units` with the search params in the URL.
 
 ---
 
@@ -708,13 +708,13 @@ The search bar floating over the hero — the primary conversion tool on the ent
 - [ ] `components/public/hero/HeroSearchBar.tsx`
 - [ ] Glass morphism: `bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl`
 - [ ] Fields:
-  - Location/Area — Select (from `GET /api/areas`)
+  - Location/Project — Select (from `GET /api/projects`)
   - Check-in Date — DatePicker (styled for dark background)
   - Check-out Date — DatePicker
   - Guests — Number selector (+ / − buttons, min 1 max 20)
 - [ ] "Search" button — primary, large
-- [ ] On submit: `router.push('/units?areaId=...&checkIn=...&checkOut=...&guests=...')`
-- [ ] Areas loaded from API on component mount
+- [ ] On submit: `router.push('/units?projectId=...&checkIn=...&checkOut=...&guests=...')`
+- [ ] Projects loaded from API on component mount
 - [ ] Inline validation: checkOut must be after checkIn
 
 **Files to create:**
@@ -727,14 +727,14 @@ The search bar floating over the hero — the primary conversion tool on the ent
 
 | Method | Endpoint | Response | When |
 |---|---|---|---|
-| GET | `/api/areas` | `AreaResponse[]` | on component mount |
+| GET | `/api/projects` | `ProjectResponse[]` | on component mount |
 
 ---
 
 ### Section 12 — Acceptance Criteria
 
 - [ ] Glass morphism styling matches Clone.md Section 4.2 CSS specs
-- [ ] Areas from real API (no hardcoded "Palm Hills", "NEOM", etc.)
+- [ ] Projects from real API (no hardcoded "Palm Hills", "NEOM", etc.)
 - [ ] checkOut > checkIn validated before submit
 - [ ] Submit navigates to `/units` with URL query params
 - [ ] Works on dark hero background (white text, light borders)
@@ -835,7 +835,7 @@ A split-layout section: text on the left (heading + paragraph describing the pla
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 TICKET ID: FE-7-LP-05
-TITLE: Build Landing Areas section (tabs + cards + hover effects)
+TITLE: Build Landing Projects section (tabs + cards + hover effects)
 WAVE: Wave 7 — Guest App
 DOMAIN: GuestApp / Landing Page
 PRIORITY: Critical
@@ -846,28 +846,28 @@ DEPENDS ON: FE-7-INFRA-01, FE-7-INFRA-02
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-A section showing available areas with tabs for filtering (All / Coastal / Mountain / etc.). Each area is a card with a background image, the area name overlaid, and the unit count. On hover, the overlay darkens and the count slides up. The cards link to `/units?areaId=...`.
+A section showing available projects with tabs for filtering (All / Coastal / Mountain / etc.). Each project is a card with a background image, the project name overlaid, and the unit count. On hover, the overlay darkens and the count slides up. The cards link to `/units?projectId=...`.
 
 ---
 
 ### Section 4 — In Scope
 
-- [ ] `components/public/sections/AreasSection.tsx`
-- [ ] `GET /api/areas` — fetch areas list
-- [ ] Area card: `components/public/cards/AreaCard.tsx`
-  - Full-bleed background image (each area needs an image — use area.id to map to `/public/images/areas/{id}.jpg` or a placeholder)
+- [ ] `components/public/sections/ProjectsSection.tsx`
+- [ ] `GET /api/projects` — fetch projects list
+- [ ] Project card: `components/public/cards/ProjectCard.tsx`
+  - Full-bleed background image (each project needs an image — use project.id to map to `/public/images/projects/{id}.jpg` or a placeholder)
   - Gradient overlay on card
-  - Area name: `font-display text-white`
+  - Project name: `font-display text-white`
   - Unit count: `text-white/70`
   - On hover: overlay `opacity` increases, count slides up (`transform: translateY`)
-  - Click: navigate to `/units?areaId={area.id}`
+  - Click: navigate to `/units?projectId={project.id}`
 - [ ] Card grid: `grid-cols-2 lg:grid-cols-3 gap-4`
 - [ ] Section heading + subheading (static copy)
 - [ ] `useStaggerCards()` on the grid
 
 **Files to create:**
-- `components/public/sections/AreasSection.tsx`
-- `components/public/cards/AreaCard.tsx`
+- `components/public/sections/ProjectsSection.tsx`
+- `components/public/cards/ProjectCard.tsx`
 
 ---
 
@@ -875,18 +875,18 @@ A section showing available areas with tabs for filtering (All / Coastal / Mount
 
 | Method | Endpoint | Response | When |
 |---|---|---|---|
-| GET | `/api/areas` | `AreaResponse[]` | on section mount |
+| GET | `/api/projects` | `ProjectResponse[]` | on section mount |
 
 ---
 
 ### Section 12 — Acceptance Criteria
 
-- [ ] Area cards from real API (no hardcoded areas)
+- [ ] Project cards from real API (no hardcoded projects)
 - [ ] Hover effects: overlay + count slide using pure CSS/Tailwind transitions
-- [ ] Cards link to units list with `areaId` filter
+- [ ] Cards link to units list with `projectId` filter
 - [ ] `useStaggerCards()` entrance animation
 - [ ] Loading: skeleton card placeholders
-- [ ] Empty: if 0 areas → section hidden (not empty state)
+- [ ] Empty: if 0 projects → section hidden (not empty state)
 - [ ] No mock data
 
 ---
@@ -990,7 +990,7 @@ DEPENDS ON: FE-7-INFRA-01, FE-7-LP-05
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-An interactive Mapbox map showing where the platform's units are located. Each area is a cluster marker. Clicking a marker opens a popup with the area name and unit count, with a "Browse Units" link. Loaded via `dynamic({ ssr: false })` because Mapbox is client-only.
+An interactive Mapbox map showing where the platform's units are located. Each project is a cluster marker. Clicking a marker opens a popup with the project name and unit count, with a "Browse Units" link. Loaded via `dynamic({ ssr: false })` because Mapbox is client-only.
 
 **Prerequisites:**
 - `NEXT_PUBLIC_MAPBOX_TOKEN` must be set in `.env.local`
@@ -1003,9 +1003,9 @@ An interactive Mapbox map showing where the platform's units are located. Each a
 - [ ] `components/public/sections/MapSection.tsx` — section wrapper
 - [ ] `components/public/map/UnitsMap.tsx` — Mapbox GL component (dynamic loaded)
 - [ ] Map centered on Egypt: `{ lng: 30.8025, lat: 26.8206 }`, zoom 5
-- [ ] Markers per area (use area coordinates — hardcoded or from area data)
+- [ ] Markers per project (use project coordinates — hardcoded or from project data)
 - [ ] Marker: custom terracotta circle pin (`bg-primary-500`)
-- [ ] Click marker → popup: area name, unit count, "Browse {Area}" link → `/units?areaId=...`
+- [ ] Click marker → popup: project name, unit count, "Browse {Project}" link → `/units?projectId=...`
 - [ ] Map style: warm/muted (not satellite) — `mapbox://styles/mapbox/light-v11` as default
 
 **Files to create:**
@@ -1018,14 +1018,14 @@ An interactive Mapbox map showing where the platform's units are located. Each a
 
 | Method | Endpoint | Response | When |
 |---|---|---|---|
-| GET | `/api/areas` | `AreaResponse[]` | on map mount |
+| GET | `/api/projects` | `ProjectResponse[]` | on map mount |
 
-**Area coordinates:**
-Area data from API does NOT include lat/lng. The map section uses either:
-1. A hardcoded coordinate mapping: `const AREA_COORDINATES: Record<string, [number, number]> = { ... }` keyed by area ID
+**Project coordinates:**
+Project data from API does NOT include lat/lng. The map section uses either:
+1. A hardcoded coordinate mapping: `const AREA_COORDINATES: Record<string, [number, number]> = { ... }` keyed by project ID
 2. OR geocoding — out of scope for MVP
 
-For MVP: use option 1. This is acceptable because areas are admin-managed and rarely change.
+For MVP: use option 1. This is acceptable because projects are admin-managed and rarely change.
 
 ---
 
@@ -1033,10 +1033,10 @@ For MVP: use option 1. This is acceptable because areas are admin-managed and ra
 
 - [ ] Mapbox loaded via `dynamic({ ssr: false })` with skeleton loading
 - [ ] `NEXT_PUBLIC_MAPBOX_TOKEN` used (not hardcoded token)
-- [ ] Areas from real API (no hardcoded area names)
-- [ ] Marker popup links to `/units?areaId=...` using real area IDs
+- [ ] Projects from real API (no hardcoded project names)
+- [ ] Marker popup links to `/units?projectId=...` using real project IDs
 - [ ] Skeleton: rectangular `<Skeleton height={400}>` while loading
-- [ ] No mock data (areas from API, coordinates from hardcoded mapping)
+- [ ] No mock data (projects from API, coordinates from hardcoded mapping)
 
 ---
 

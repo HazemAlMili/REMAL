@@ -1,10 +1,10 @@
 ﻿export const queryKeys = {
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ AREAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  areas: {
-    all: ["areas"] as const,
+  // Projects
+  projects: {
+    all: ["projects"] as const,
     list: (includeInactive?: boolean) =>
-      [...queryKeys.areas.all, "list", includeInactive] as const,
-    detail: (id: string) => [...queryKeys.areas.all, "detail", id] as const,
+      [...queryKeys.projects.all, "list", includeInactive] as const,
+    detail: (id: string) => [...queryKeys.projects.all, "detail", id] as const,
   },
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ UNITS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

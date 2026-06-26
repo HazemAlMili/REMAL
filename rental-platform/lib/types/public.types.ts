@@ -10,7 +10,7 @@ import type { PaginationMeta } from "@/lib/types/common.types";
 export interface PublicUnitListItem {
   id: string; // public uses 'id' (NOT 'unitId' — that's owner portal per P30)
   ownerId: string;
-  areaId: string;
+  projectId: string;
   name: string; // public uses 'name' (NOT 'unitName' — that's owner portal per P30)
   unitType: string; // 'villa' | 'chalet' | 'studio' (LOWERCASE per enum rules)
   bedrooms: number;
@@ -27,7 +27,7 @@ export interface PublicUnitListItem {
 export interface PublicUnitDetail {
   id: string;
   ownerId: string;
-  areaId: string;
+  projectId: string;
   name: string;
   description: string | null; // optional at creation — may be null
   address: string | null; // optional at creation — may be null
@@ -45,7 +45,7 @@ export interface PublicUnitDetail {
 export interface PublicUnitFilters {
   page?: number;
   pageSize?: number;
-  areaId?: string;
+  projectId?: string;
   unitType?: string; // 'villa' | 'chalet' | 'studio'
   minGuests?: number;
   minPrice?: number;

@@ -4,8 +4,8 @@ export interface UnitListItemResponse {
   id: string;
   ownerId: string;
   ownerName: string;
-  areaId: string;
-  areaName: string;
+  projectId: string;
+  projectName: string;
   name: string;
   unitType: UnitType;
   bedrooms: number;
@@ -20,8 +20,8 @@ export interface UnitDetailsResponse {
   id: string;
   ownerId: string;
   ownerName: string;
-  areaId: string;
-  areaName: string;
+  projectId: string;
+  projectName: string;
   name: string;
   description?: string | null;
   address?: string | null;
@@ -42,7 +42,7 @@ export interface UnitListFilters {
   pageSize?: number;
   includeInactive?: boolean;
   ownerId?: string;
-  areaId?: string;
+  projectId?: string;
   unitType?: UnitType;
   amenityId?: string;
   isActive?: boolean;
@@ -53,7 +53,7 @@ export interface UnitListFilters {
 
 export interface CreateUnitRequest {
   ownerId: string;
-  areaId: string;
+  projectId: string;
   name: string;
   description?: string;
   address?: string;
@@ -67,7 +67,7 @@ export interface CreateUnitRequest {
 
 export interface UpdateUnitRequest {
   ownerId?: string;
-  areaId?: string;
+  projectId?: string;
   name?: string;
   description?: string;
   address?: string;

@@ -1,7 +1,7 @@
 import { test, expect } from "../fixtures/auth.fixture";
 import {
   getAdminApiToken,
-  getAreas,
+  getProjects,
   getClients,
   getPublicUnits,
 } from "../helpers/api.helpers";
@@ -21,11 +21,15 @@ test.describe("Client smoke safe cleanup verification", () => {
       page: 1,
       pageSize: 100,
     });
-    expect(publicUnits.items.filter((unit) => unit.name.startsWith(TEST_PREFIX))).toEqual([]);
-
-    const areas = await getAreas(request, adminToken);
     expect(
-      areas.filter((area) => area.name.startsWith(TEST_PREFIX) && area.isActive)
+      publicUnits.items.filter((unit) => unit.name.startsWith(TEST_PREFIX))
+    ).toEqual([]);
+
+    const projects = await getProjects(request, adminToken);
+    expect(
+      projects.filter(
+        (project) => project.name.startsWith(TEST_PREFIX) && project.isActive
+      )
     ).toEqual([]);
 
     const clients = await getClients(request, adminToken, TEST_PREFIX);

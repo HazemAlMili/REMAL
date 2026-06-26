@@ -44,11 +44,11 @@ export function UnitTable({
         header: "Name",
       },
       {
-        accessorKey: "areaName",
-        header: "Area",
+        accessorKey: "projectName",
+        header: "Project",
         cell: ({ row }) => (
           <span className="text-sm text-neutral-700">
-            {row.getValue("areaName") || "[Unassigned Area]"}
+            {row.getValue("projectName") || "[Unassigned Project]"}
           </span>
         ),
       },
@@ -67,7 +67,8 @@ export function UnitTable({
         cell: ({ row }) => {
           const t: UnitType = row.getValue("unitType");
           return (
-            UNIT_TYPE_LABELS[t] || `${String(t).charAt(0).toUpperCase()}${String(t).slice(1)}`
+            UNIT_TYPE_LABELS[t] ||
+            `${String(t).charAt(0).toUpperCase()}${String(t).slice(1)}`
           );
         },
       },
@@ -121,7 +122,9 @@ export function UnitTable({
                     size="sm"
                     className="h-8 w-8 px-0 text-neutral-500"
                     title="Edit unit"
-                    onClick={() => router.push(ROUTES.admin.units.edit(unit.id))}
+                    onClick={() =>
+                      router.push(ROUTES.admin.units.edit(unit.id))
+                    }
                   >
                     <Pencil className="h-4 w-4" />
                     <span className="sr-only">Edit</span>

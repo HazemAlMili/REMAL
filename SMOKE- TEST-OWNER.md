@@ -32,7 +32,7 @@ Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQL
 
 *   **Dashboard Summary Metrics (GET /api/owner/dashboard):** Compiles portfolio aggregates: totalUnits, activeUnits, totalBookings, confirmedBookings, completedBookings, totalPaidAmount, totalPendingPayoutAmount, and totalPaidPayoutAmount\[cite: 4, 5\].
     
-*   **Owned Units View (GET /api/owner/units):** Lists authorized rows belonging exclusively to the authenticated partner session\[cite: 2, 4, 5\]. Renders view-only attributes (unitId, areaId, unitName, unitType as lowercase string enums, isActive, bedrooms, bathrooms, maxGuests, basePricePerNight)\[cite: 1, 4, 5\]. Modifying units is barred from this channel.
+*   **Owned Units View (GET /api/owner/units):** Lists authorized rows belonging exclusively to the authenticated partner session\[cite: 2, 4, 5\]. Renders view-only attributes (unitId, projectId, unitName, unitType as lowercase string enums, isActive, bedrooms, bathrooms, maxGuests, basePricePerNight)\[cite: 1, 4, 5\]. Modifying units is barred from this channel.
     
 *   **Bookings Roster (GET /api/owner/bookings):** Lists past or incoming stays matching the owner's unit IDs (bookingId, unitId, clientId, assignedAdminUserId, bookingStatus, checkInDate, checkOutDate, guestCount, finalAmount, source)\[cite: 1, 4, 5\]. Critically restricts visibility of raw user communication nodes (phone, email).
     

@@ -12,7 +12,7 @@ This wave delivers the public-facing revenue-generating part of the platform.
 ## MOCK DATA AUDIT — HARD GATE
 
 ```bash
-# ── Hardcoded unit/area/client names ──
+# ── Hardcoded unit/project/client names ──
 grep -rn "Palm Hills\|NEOM\|Ain Sokhna\|Villa Sunset\|Chalet Blue\|Ahmed Mohamed\|Sara Mohamed" \
   --include="*.ts" --include="*.tsx" components/public/ app/\(public\)/
 # ↑ Zero matches expected — all names from API
@@ -228,7 +228,7 @@ grep -rn "useEffect.*gsap\.\|useEffect.*ScrollTrigger" \
 ### Public Unit Filters (P34):
 
 - [ ]  `PublicUnitFilters` only has `page` + `pageSize` (documented params)
-- [ ]  URL params `areaId`, `checkIn`, `checkOut`, `guests` are router-level only
+- [ ]  URL params `projectId`, `checkIn`, `checkOut`, `guests` are router-level only
 - [ ]  ⚠️ Backend confirmation needed for server-side filtering
 
 ### Pagination:
@@ -299,8 +299,8 @@ grep -rn "useEffect.*gsap\.\|useEffect.*ScrollTrigger" \
 ### FE-7-LP-02 — Hero Search Bar
 
 - [ ]  Glass morphism: `bg-white/10 backdrop-blur-md border-white/20 rounded-2xl`
-- [ ]  Areas from `usePublicAreas()` (real API)
-- [ ]  Only active areas in dropdown
+- [ ]  Projects from `usePublicProjects()` (real API)
+- [ ]  Only active projects in dropdown
 - [ ]  Check-in min: today | Check-out min: checkIn + 1 day
 - [ ]  Check-out disabled until check-in selected
 - [ ]  Check-out resets when check-in invalidates it
@@ -327,14 +327,14 @@ grep -rn "useEffect.*gsap\.\|useEffect.*ScrollTrigger" \
 - [ ]  CTA → `/units` via `ROUTES.public.unitsList`
 - [ ]  `motion-safe:opacity-0` on all animated elements
 
-### FE-7-LP-05 — Areas Section
+### FE-7-LP-05 — Projects Section
 
-- [ ]  Areas from `usePublicAreas()` | Only active areas
+- [ ]  Projects from `usePublicProjects()` | Only active projects
 - [ ]  Section hidden if 0 active or API error
 - [ ]  Skeleton: 6 cards | `useStaggerCards({ stagger: 0.15 })`
 - [ ]  Card: image + gradient + name + description (NOT `unitCount` — backend gap)
-- [ ]  Image from `/public/images/areas/{area.id}.jpg` with `onError` fallback
-- [ ]  Hover: zoom + darken + shift | Click → `/units?areaId={area.id}`
+- [ ]  Image from `/public/images/projects/{project.id}.jpg` with `onError` fallback
+- [ ]  Hover: zoom + darken + shift | Click → `/units?projectId={project.id}`
 - [ ]  Grid: `cols-1 sm:cols-2 lg:cols-3`
 
 ### FE-7-LP-06 — Featured Units Carousel
@@ -354,11 +354,11 @@ grep -rn "useEffect.*gsap\.\|useEffect.*ScrollTrigger" \
 - [ ]  Mapbox: `dynamic({ ssr: false })`, CSS imported only in `UnitsMap.tsx`
 - [ ]  `NEXT_PUBLIC_MAPBOX_TOKEN` from env (never hardcoded)
 - [ ]  Style: `light-v11` | Center: Egypt | `scrollZoom: false`
-- [ ]  Areas from `usePublicAreas()` (shared cache)
-- [ ]  Coordinates from `lib/constants/area-coordinates.ts`
-- [ ]  Areas without coordinates gracefully skipped
+- [ ]  Projects from `usePublicProjects()` (shared cache)
+- [ ]  Coordinates from `lib/constants/project-coordinates.ts`
+- [ ]  Projects without coordinates gracefully skipped
 - [ ]  Terracotta markers + `animate-ping` + `motion-reduce:animate-none`
-- [ ]  Popup: name + description + “Browse {name}” link → `/units?areaId=...`
+- [ ]  Popup: name + description + “Browse {name}” link → `/units?projectId=...`
 - [ ]  Cleanup: `map.remove()` + markers removed on unmount
 
 ### FE-7-LP-08 — How It Works
@@ -406,7 +406,7 @@ Use these as a starting checklist — corrections may be applied.
 - [ ]  `keepPreviousData: true` for smooth pagination
 - [ ]  URL params sync on filter/page change
 - [ ]  Pre-populates from hero search URL params
-- [ ]  `usePublicAreas()` for filter dropdown
+- [ ]  `usePublicProjects()` for filter dropdown
 - [ ]  Empty state + “Clear all filters”
 
 ### FE-7-UNITS-02 — Unit Detail
@@ -504,14 +504,14 @@ Use these as a starting checklist — corrections may be applied.
 | --- | --- |
 | Hero loads on desktop | Cinematic full-viewport, Playfair Display heading, GSAP reveal |
 | Scroll down hero | Nav transitions transparent → solid at 80px |
-| Hero search: select dates + area → submit | Lands on `/units` with URL params pre-filled |
-| Areas section: hover card | Overlay darkens, text shifts up |
+| Hero search: select dates + project → submit | Lands on `/units` with URL params pre-filled |
+| Projects section: hover card | Overlay darkens, text shifts up |
 | Featured units: hover card | Lifts + image zooms + CTA appears |
-| Map section loads | Terracotta markers visible, click → popup with area link |
+| Map section loads | Terracotta markers visible, click → popup with project link |
 | How It Works: scroll into view | Steps stagger in (if motion enabled) |
 | Testimonials carousel | Autoplay 4s, dots pagination, real review content |
 | Newsletter CTA: submit email | Success message, no network request |
-| Units listing: filter by area | URL updates, cards re-render |
+| Units listing: filter by project | URL updates, cards re-render |
 | Unit detail: select dates | Pricing calculates immediately |
 | Unit detail: unavailable dates | Error shown, “Book Now” disabled |
 | Booking form: anonymous user | Step 2 shows register + login tabs |
@@ -529,7 +529,7 @@ Use these as a starting checklist — corrections may be applied.
 - [ ]  Parallax uses `transform: translateY` (GPU-composited)
 - [ ]  `setInterval` in HeroCarousel cleaned up on unmount
 - [ ]  Mapbox `map.remove()` on unmount
-- [ ]  TanStack Query shared cache: areas fetched once (used by 3+ components)
+- [ ]  TanStack Query shared cache: projects fetched once (used by 3+ components)
 - [ ]  `placeholderData: keepPreviousData` on paginated queries
 - [ ]  `staleTime: 0` on availability + pricing
 - [ ]  Lightbox: body scroll locked, restored on close

@@ -36,7 +36,7 @@ Every service method in this tier returns data exclusively for the authenticated
 
 | Service | Responsibility |
 |---|---|
-| `IOwnerPortalUnitService` | Owner-scoped unit inventory reads with optional `isActive` and `areaId` filtering |
+| `IOwnerPortalUnitService` | Owner-scoped unit inventory reads with optional `isActive` and `projectId` filtering |
 | `IOwnerPortalBookingService` | Owner-scoped booking reads with optional status and check-in date range filtering |
 | `IOwnerPortalFinanceService` | Owner-scoped finance snapshot reads and aggregated finance summary |
 | `IOwnerPortalDashboardService` | Aggregated dashboard summary derived from the other three services' data |

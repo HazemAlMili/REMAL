@@ -21,7 +21,7 @@ DEPENDS ON: FE-7-INFRA-01, FE-7-INFRA-03, FE-7-LP-06 (UnitCard component)
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-The units listing page at `/units` is where visitors browse available properties. `GET /api/units` supports pagination plus public catalog filters for area, unit type, guests, price, amenities, search, and safe sort keys.
+The units listing page at `/units` is where visitors browse available properties. `GET /api/units` supports pagination plus public catalog filters for project, unit type, guests, price, amenities, search, and safe sort keys.
 
 ---
 
@@ -34,7 +34,7 @@ Build the units listing page at `/units` using `GET /api/units` with documented 
 ### Section 4 — In Scope
 
 - [ ] `app/(public)/units/page.tsx`
-- [ ] **Documented query params:** `page`, `pageSize`, `areaId`, `unitType`, `minGuests`, `minPrice`, `maxPrice`, `search`, `sortBy`, and repeated `amenityIds`.
+- [ ] **Documented query params:** `page`, `pageSize`, `projectId`, `unitType`, `minGuests`, `minPrice`, `maxPrice`, `search`, `sortBy`, and repeated `amenityIds`.
 - [ ] **Results grid:** `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`
 - [ ] **URL sync:** `useSearchParams()` + `router.push()` on filter change
 - [ ] **Pagination:** Prev/Next + page numbers
@@ -72,7 +72,7 @@ export function usePublicUnits(filters: PublicUnitFilters) {
 | Method | Endpoint | Query | Response | When |
 |---|---|---|---|---|
 | GET | `/api/units` | documented params (`page`, `pageSize`) | `PaginatedPublicUnits` | on mount + page change |
-| GET | `/api/areas` | — | `AreaResponse[]` | on mount (for filter) |
+| GET | `/api/projects` | — | `ProjectResponse[]` | on mount (for filter) |
 
 **Documented query params sent to API:**
 ```
@@ -95,7 +95,7 @@ export function usePublicUnits(filters: PublicUnitFilters) {
 ### Section 12 — Acceptance Criteria
 
 - [ ] Filters from hero search pre-populate from URL params on page load
-- [ ] All filter changes update URL params (shareable links)
+- [ ] All filter changes update URL params (shprojectble links)
 - [ ] `unit.id` used for card navigation (public API field is `id`)
 - [ ] Advanced sort options treated as backend gap until API documents sort params
 - [ ] `keepPreviousData: true` for smooth pagination
@@ -121,7 +121,7 @@ DEPENDS ON: FE-7-INFRA-01, FE-7-INFRA-02, FE-7-INFRA-03
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-The unit detail page at `/units/{id}` is where a visitor decides whether to book. It shows: image gallery (fullscreen), unit name + area reference, unitType + maxGuests, full description, amenities list, pricing calculator, availability calendar (read-only), and reviews section. The sticky "Book Now" CTA panel on the right drives the conversion.
+The unit detail page at `/units/{id}` is where a visitor decides whether to book. It shows: image gallery (fullscreen), unit name + project reference, unitType + maxGuests, full description, amenities list, pricing calculator, availability calendar (read-only), and reviews section. The sticky "Book Now" CTA panel on the right drives the conversion.
 
 **Note from validation report:** This was identified as the highest-risk ticket in the entire implementation (`FE-3-BOOK-02` equivalent in Guest App context). Multiple API calls, complex layout.
 
@@ -133,7 +133,7 @@ The unit detail page at `/units/{id}` is where a visitor decides whether to book
 - [ ] **Gallery section:** first image full-width, rest as thumbnails below. Click opens fullscreen. (FE-7-UNITS-03)
 - [ ] **Info section:**
   - Unit name (`font-display text-h1`)
-  - Area reference + unitType badge + maxGuests
+  - Project reference + unitType badge + maxGuests
   - Tagline/description (full text)
   - Amenities grid: icon + name for each
 - [ ] **Sticky booking panel (right side, desktop):**
@@ -197,7 +197,7 @@ export function usePricingCalculate(
 | Loading | ✓ REQUIRED | Skeleton: gallery placeholder + heading skeleton + booking panel skeleton |
 | 404 | ✓ REQUIRED | EmptyState "Property not found" + "Browse all properties" link |
 | Dates not selected | ✓ REQUIRED | Booking panel shows "Select dates to see price" |
-| Dates selected, calculating | ✓ REQUIRED | Pricing area shows spinner while calculating |
+| Dates selected, calculating | ✓ REQUIRED | Pricing project shows spinner while calculating |
 | Not available | ✓ REQUIRED | "Not available for selected dates" + red indicator |
 
 ---
@@ -297,7 +297,7 @@ This ticket builds Step 1 and the overall page structure. Steps 2-3 are in FE-7-
 - [ ] `app/(public)/units/[id]/book/page.tsx`
 - [ ] Multi-step progress indicator (Step 1/3 → 2/3 → 3/3)
 - [ ] **Step 1 — Booking Details:**
-  - Unit summary card (image, name, area, type, price/night)
+  - Unit summary card (image, name, project, type, price/night)
   - Date confirmation (pre-filled from URL params or editable DateRangePicker)
   - Guest count selector
   - Availability check: `POST /api/units/{id}/availability/operational-check`
@@ -447,7 +447,7 @@ Step 3 — the final review and submission step. Shows a complete summary: unit,
 
 - [ ] `components/public/booking/BookingStep3Review.tsx`
 - [ ] **Summary display:**
-  - Unit: image, name, area, type
+  - Unit: image, name, project, type
   - Dates: check-in, check-out, nights
   - Guests
   - Pricing: total amount, deposit note ("A deposit will be required upon confirmation")
@@ -562,7 +562,7 @@ DEPENDS ON: FE-7-INFRA-03, FE-1-AUTH-03
 ### Section 1 — Walkthrough
 
 **What is this ticket about?**
-Logged-in clients have a simple account area at `/account`. It has a minimal sidebar (Bookings, Reviews, Notifications, Logout) and a dashboard showing their recent bookings and notifications. Much simpler than the admin panel.
+Logged-in clients have a simple account workspace at `/account`. It has a minimal sidebar (Bookings, Reviews, Notifications, Logout) and a dashboard showing their recent bookings and notifications. Much simpler than the admin panel.
 
 ---
 
@@ -809,7 +809,7 @@ You are a senior QA engineer reviewing Wave 7 — the Guest App.
 ## MOCK DATA AUDIT — HARD GATE
 
 ```bash
-# Hardcoded unit/area names:
+# Hardcoded unit/project names:
 grep -rn "Palm Hills\|NEOM\|Ain Sokhna\|Ahmed Mohamed" \
   --include="*.ts" --include="*.tsx" components/public/ app/\(public\)/
 
@@ -888,14 +888,14 @@ grep -rn "^import.*mapbox-gl\|^import.*gsap\|^import.*Swiper" \
 - [ ] `prefers-reduced-motion`: no carousel, no animation
 
 ### FE-7-LP-02 — Hero Search
-- [ ] Areas from real API (not hardcoded)
+- [ ] Projects from real API (not hardcoded)
 - [ ] Glass morphism CSS correct
 - [ ] checkOut > checkIn validation
 - [ ] Submit → URL params to `/units`
 
-### FE-7-LP-05 — Areas Section
-- [ ] Area cards from real API
-- [ ] Click → `/units` (area prefilter via query string is Backend Gap until documented for `GET /api/units`)
+### FE-7-LP-05 — Projects Section
+- [ ] Project cards from real API
+- [ ] Click → `/units` (project prefilter via query string is Backend Gap until documented for `GET /api/units`)
 
 ### FE-7-LP-06 — Featured Units
 - [ ] Units from real API
@@ -905,7 +905,7 @@ grep -rn "^import.*mapbox-gl\|^import.*gsap\|^import.*Swiper" \
 ### FE-7-LP-07 — Map
 - [ ] Mapbox: `dynamic({ ssr: false })`
 - [ ] `NEXT_PUBLIC_MAPBOX_TOKEN` from env (not hardcoded)
-- [ ] Area markers from real API
+- [ ] Project markers from real API
 
 ### FE-7-LP-09 — Testimonials
 - [ ] Review content from real API (no hardcoded text)
@@ -913,7 +913,7 @@ grep -rn "^import.*mapbox-gl\|^import.*gsap\|^import.*Swiper" \
 - [ ] Empty state if no reviews
 
 ### FE-7-UNITS-01 — Units Listing
-- [ ] URL params sync (shareable links)
+- [ ] URL params sync (shprojectble links)
 - [ ] Pre-populates from hero search
 - [ ] `keepPreviousData: true`
 
@@ -948,10 +948,10 @@ grep -rn "^import.*mapbox-gl\|^import.*gsap\|^import.*Swiper" \
 |---|---|
 | Hero loads on desktop | Cinematic full-viewport, Playfair Display heading, GSAP reveal |
 | Scroll down hero | Nav transitions transparent → solid |
-| Hero search: select dates + area → submit | Lands on /units with URL params pre-filled |
-| Areas section: hover card | Overlay darkens, count slides up |
+| Hero search: select dates + project → submit | Lands on /units with URL params pre-filled |
+| Projects section: hover card | Overlay darkens, count slides up |
 | Featured units: hover card | Lifts + image zooms + CTA appears |
-| Map section loads | Markers visible, click → popup with area link |
+| Map section loads | Markers visible, click → popup with project link |
 | How It Works: scroll into view | Steps stagger in (if motion enabled) |
 | Unit detail: select dates | Pricing calculates immediately |
 | Unit detail: unavailable dates | Error shown, Book Now disabled |
@@ -1000,8 +1000,8 @@ Reviewed by: _______________
 | Step | Action | Expected | Tested | Pass |
 |---|---|---|---|---|
 | 1 | Anonymous visitor opens the website | Cinematic landing page loads, hero animation plays | | |
-| 2 | Visitor browses areas section | Real areas from API shown as cards | | |
-| 3 | Visitor clicks area card | Units listing filtered by that area | | |
+| 2 | Visitor browses projects section | Real projects from API shown as cards | | |
+| 3 | Visitor clicks project card | Units listing filtered by that project | | |
 | 4 | Visitor uses hero search (dates + guests) | Units listing with URL params pre-filled | | |
 | 5 | Visitor clicks a unit | Unit detail page loads with real data | | |
 | 6 | Visitor selects dates on unit detail | Pricing calculates from real API | | |
@@ -1082,10 +1082,10 @@ grep -rn "pagination\.total[^C]" --include="*.ts" --include="*.tsx" .
 | INFRA | 2 | FE-7-INFRA-02 | GSAP + Lenis sync + 6 animation hooks |
 | INFRA | 3 | FE-7-INFRA-03 | Public nav (transparent→solid) + footer |
 | LP | 4 | FE-7-LP-01 | Hero (GSAP timeline + SplitType + carousel) |
-| LP | 5 | FE-7-LP-02 | Hero search (glass morphism + real areas) |
+| LP | 5 | FE-7-LP-02 | Hero search (glass morphism + real projects) |
 | LP | 6 | FE-7-LP-03 | Marquee banner (CSS infinite loop) |
 | LP | 7 | FE-7-LP-04 | Brand story (parallax + text reveal) |
-| LP | 8 | FE-7-LP-05 | Areas section (real areas, hover effects) |
+| LP | 8 | FE-7-LP-05 | Projects section (real projects, hover effects) |
 | LP | 9 | FE-7-LP-06 | Featured units Swiper (UnitCard component) |
 | LP | 10 | FE-7-LP-07 | Mapbox map (dynamic, NEXT_PUBLIC_MAPBOX_TOKEN) |
 | LP | 11 | FE-7-LP-08 | How It Works (stagger animation) |

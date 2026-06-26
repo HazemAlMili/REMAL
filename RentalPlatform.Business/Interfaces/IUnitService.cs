@@ -16,7 +16,7 @@ public interface IUnitService
         int pageSize = 20,
         bool includeInactive = true,
         Guid? ownerId = null,
-        Guid? areaId = null,
+        Guid? projectId = null,
         string? unitType = null,
         bool? isActive = null,
         string? search = null,
@@ -26,8 +26,8 @@ public interface IUnitService
         CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Unit>> GetAllAsync(bool includeInactive = true, Guid? ownerId = null, CancellationToken cancellationToken = default);
     Task<Unit?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<Unit> CreateAsync(Guid ownerId, Guid areaId, string name, string? description, string? address, string unitType, int bedrooms, int bathrooms, int maxGuests, decimal basePricePerNight, bool isActive = true, CancellationToken cancellationToken = default);
-    Task<Unit> UpdateAsync(Guid id, Guid ownerId, Guid areaId, string name, string? description, string? address, string unitType, int bedrooms, int bathrooms, int maxGuests, decimal basePricePerNight, bool isActive, CancellationToken cancellationToken = default);
+    Task<Unit> CreateAsync(Guid ownerId, Guid projectId, string name, string? description, string? address, string unitType, int bedrooms, int bathrooms, int maxGuests, decimal basePricePerNight, bool isActive = true, CancellationToken cancellationToken = default);
+    Task<Unit> UpdateAsync(Guid id, Guid ownerId, Guid projectId, string name, string? description, string? address, string unitType, int bedrooms, int bathrooms, int maxGuests, decimal basePricePerNight, bool isActive, CancellationToken cancellationToken = default);
     Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken = default);
     Task SetActiveAsync(Guid id, bool isActive, CancellationToken cancellationToken = default);
 }

@@ -36,13 +36,13 @@ export const endpoints = {
     status: (id: string) => `/api/amenities/${id}/status`,
   },
 
-  // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ AREAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  areas: {
-    list: "/api/areas",
-    create: "/api/areas",
-    byId: (id: string) => `/api/areas/${id}`,
-    update: (id: string) => `/api/areas/${id}`,
-    status: (id: string) => `/api/areas/${id}/status`,
+  // Projects
+  projects: {
+    list: "/api/projects",
+    create: "/api/projects",
+    byId: (id: string) => `/api/projects/${id}`,
+    update: (id: string) => `/api/projects/${id}`,
+    status: (id: string) => `/api/projects/${id}/status`,
   },
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ UNITS (PUBLIC) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -266,7 +266,8 @@ export const endpoints = {
   clientReviews: {
     create: "/api/client/reviews",
     update: (reviewId: string) => `/api/client/reviews/${reviewId}`,
-    byBooking: (bookingId: string) => `/api/client/reviews/by-booking/${bookingId}`,
+    byBooking: (bookingId: string) =>
+      `/api/client/reviews/by-booking/${bookingId}`,
   },
 
   // ── REVIEW MODERATION ──

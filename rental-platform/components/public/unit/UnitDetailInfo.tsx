@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════
 // components/public/unit/UnitDetailInfo.tsx
-// Unit name, area, type, capacity, bedrooms, bathrooms, description
+// Unit name, project, type, capacity, bedrooms, bathrooms, description
 // ═══════════════════════════════════════════════════════════
 
 "use client";
@@ -16,10 +16,10 @@ const UNIT_TYPE_LABELS: Record<string, string> = {
 
 interface UnitDetailInfoProps {
   unit: PublicUnitDetail;
-  areaName?: string;
+  projectName?: string;
 }
 
-export function UnitDetailInfo({ unit, areaName }: UnitDetailInfoProps) {
+export function UnitDetailInfo({ unit, projectName }: UnitDetailInfoProps) {
   const ref = useFadeUp<HTMLDivElement>();
 
   return (
@@ -33,10 +33,10 @@ export function UnitDetailInfo({ unit, areaName }: UnitDetailInfoProps) {
           <span className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700">
             {UNIT_TYPE_LABELS[unit.unitType] ?? unit.unitType}
           </span>
-          {areaName && (
+          {projectName && (
             <div className="flex items-center gap-1.5 text-sm text-neutral-600">
               <MapPin className="h-4 w-4" />
-              <span>{areaName}</span>
+              <span>{projectName}</span>
             </div>
           )}
         </div>

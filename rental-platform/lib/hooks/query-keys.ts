@@ -31,11 +31,11 @@ export const queryKeys = {
     pricing: (unitId: string, filters: object) =>
       ["units", unitId, "pricing", filters] as const,
   },
-  areas: {
-    all: ["areas"] as const,
+  projects: {
+    all: ["projects"] as const,
     list: (includeInactive: boolean) =>
-      ["areas", "list", { includeInactive }] as const,
-    detail: (id: string) => ["areas", "detail", id] as const,
+      ["projects", "list", { includeInactive }] as const,
+    detail: (id: string) => ["projects", "detail", id] as const,
   },
   owners: {
     all: ["owners"] as const,

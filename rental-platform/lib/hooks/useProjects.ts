@@ -1,54 +1,68 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { areasService } from "../api/services/areas.service";
+import { projectsService } from "../api/services/projects.service";
 import { queryKeys } from "./query-keys";
 import {
-  CreateAreaRequest,
-  UpdateAreaRequest,
-  UpdateAreaStatusRequest,
-} from "../types/area.types";
+  CreateProjectRequest,
+  UpdateProjectRequest,
+  UpdateProjectStatusRequest,
+} from "../types/project.types";
 
-export const useAreasList = (includeInactive: boolean = true) => {
+export const useProjectsList = (includeInactive: boolean = true) => {
   return useQuery({
-    queryKey: queryKeys.areas.list(includeInactive),
-    queryFn: () => areasService.getAreas(includeInactive),
+    queryKey: queryKeys.projects.list(includeInactive),
+    queryFn: () => projectsService.getProjects(includeInactive),
   });
 };
 
-export const useCreateArea = () => {
+export const useCreateProject = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateAreaRequest) => areasService.createArea(data),
+    mutationFn: (data: CreateProjectRequest) =>
+      projectsService.createProject(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.areas.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.projects.all });
     },
   });
 };
 
-export const useUpdateArea = () => {
+export const useUpdateProject = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateAreaRequest }) =>
-      areasService.updateArea(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateProjectRequest }) =>
+      projectsService.updateProject(id, data),
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.areas.list(true) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.areas.list(false) });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.areas.detail(variables.id),
+        queryKey: queryKeys.projects.list(true),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.list(false),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.detail(variables.id),
       });
     },
   });
 };
 
-export const useToggleAreaStatus = () => {
+export const useToggleProjectStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateAreaStatusRequest }) =>
-      areasService.toggleStatus(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: UpdateProjectStatusRequest;
+    }) => projectsService.toggleStatus(id, data),
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.areas.list(true) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.areas.list(false) });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.areas.detail(variables.id),
+        queryKey: queryKeys.projects.list(true),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.list(false),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.projects.detail(variables.id),
       });
     },
   });

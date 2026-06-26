@@ -17,7 +17,10 @@ import { Button } from "@/components/ui/Button";
 import { Filter, X } from "lucide-react";
 import type { PublicUnitFilters } from "@/lib/types/public.types";
 
-function getArrayParam(params: URLSearchParams, key: string): string[] | undefined {
+function getArrayParam(
+  params: URLSearchParams,
+  key: string
+): string[] | undefined {
   const values = params
     .getAll(key)
     .flatMap((value) => value.split(","))
@@ -31,7 +34,7 @@ function filtersFromSearchParams(params: URLSearchParams): PublicUnitFilters {
   return {
     page: Number(params.get("page")) || 1,
     pageSize: 12,
-    areaId: params.get("areaId") || undefined,
+    projectId: params.get("projectId") || undefined,
     unitType: params.get("unitType") || undefined,
     minGuests: Number(params.get("minGuests")) || undefined,
     minPrice: Number(params.get("minPrice")) || undefined,
@@ -145,7 +148,7 @@ function UnitsPageContent() {
           </aside>
 
           {/* Main Content */}
-          <div className="flex-1 units-results">
+          <div className="units-results flex-1">
             <div className="units-results-toolbar mb-5 flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex min-w-0 items-center gap-3">
                 {!isLoading && pagination.totalCount > 0 && (

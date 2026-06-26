@@ -12,7 +12,7 @@ import { Combobox } from "@/components/ui/Combobox";
 
 const unitFormSchema = z.object({
   ownerId: z.string().min(1, "Owner is required"),
-  areaId: z.string().min(1, "Area is required"),
+  projectId: z.string().min(1, "Project is required"),
   name: z.string().min(1, "Unit name is required").max(100),
   unitType: z.enum(["villa", "chalet", "studio"]),
   bedrooms: z.coerce
@@ -39,14 +39,14 @@ interface UnitFormProps {
   onSubmit: (values: UnitFormValues) => void;
   isLoading?: boolean;
   mode: "create" | "edit";
-  isOwnerAreaEditable: boolean;
+  isOwnerProjectEditable: boolean;
   owners?: SelectOption<string>[];
-  areas?: SelectOption<string>[];
+  projects?: SelectOption<string>[];
   isOwnersLoading?: boolean;
-  isAreasLoading?: boolean;
-  /** Read-only display labels used when isOwnerAreaEditable is false */
+  isProjectsLoading?: boolean;
+  /** Read-only display labels used when isOwnerProjectEditable is false */
   ownerDisplayName?: string;
-  areaDisplayName?: string;
+  projectDisplayName?: string;
 }
 
 export function UnitForm({
@@ -54,13 +54,13 @@ export function UnitForm({
   onSubmit,
   isLoading = false,
   mode,
-  isOwnerAreaEditable,
+  isOwnerProjectEditable,
   owners = [],
-  areas = [],
+  projects = [],
   isOwnersLoading = false,
-  isAreasLoading = false,
+  isProjectsLoading = false,
   ownerDisplayName,
-  areaDisplayName,
+  projectDisplayName,
 }: UnitFormProps) {
   const {
     register,
@@ -79,7 +79,7 @@ export function UnitForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="space-y-4">
-          {isOwnerAreaEditable ? (
+          {isOwnerProjectEditable ? (
             <Controller
               control={control}
               name="ownerId"
@@ -108,20 +108,22 @@ export function UnitForm({
             </div>
           )}
 
-          {isOwnerAreaEditable ? (
+          {isOwnerProjectEditable ? (
             <Controller
               control={control}
-              name="areaId"
+              name="projectId"
               render={({ field }) => (
                 <Select
-                  label="Area"
-                  options={areas}
+                  label="Project"
+                  options={projects}
                   value={field.value || ""}
                   onChange={field.onChange}
-                  error={errors.areaId?.message}
-                  disabled={isLoading || isAreasLoading}
+                  error={errors.projectId?.message}
+                  disabled={isLoading || isProjectsLoading}
                   placeholder={
-                    isAreasLoading ? "Loading areas..." : "Select an area"
+                    isProjectsLoading
+                      ? "Loading projects..."
+                      : "Select a project"
                   }
                 />
               )}
@@ -129,10 +131,10 @@ export function UnitForm({
           ) : (
             <div className="space-y-1">
               <span className="block text-sm font-medium text-neutral-700">
-                Area
+                Project
               </span>
               <p className="h-10 rounded-lg border border-neutral-200 bg-neutral-50 px-3.5 py-2 text-sm text-neutral-500">
-                {areaDisplayName ?? defaultValues?.areaId ?? "—"}
+                {projectDisplayName ?? defaultValues?.projectId ?? "—"}
               </p>
             </div>
           )}

@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════
 // lib/hooks/animations/useStaggerCards.ts
-// Staggered children entrance — used for card grids (areas,
+// Staggered children entrance — used for card grids (projects,
 // how-it-works steps, featured units when NOT in Swiper)
 // ═══════════════════════════════════════════════════════════
 

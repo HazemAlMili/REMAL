@@ -71,7 +71,7 @@ export default function EditUnitPage({ params }: EditUnitPageProps) {
 
   const defaultValues: Partial<UnitFormValues> = {
     ownerId: unit.ownerId,
-    areaId: unit.areaId,
+    projectId: unit.projectId,
     name: unit.name,
     unitType: unit.unitType,
     bedrooms: unit.bedrooms,
@@ -103,7 +103,7 @@ export default function EditUnitPage({ params }: EditUnitPageProps) {
           onClick={() => router.push(ROUTES.admin.units.detail(id))}
           disabled={isUpdating}
         >
-        <ChevronLeft className="mr-1 h-4 w-4" />
+          <ChevronLeft className="mr-1 h-4 w-4" />
           Back to unit
         </Button>
         <div>
@@ -113,7 +113,7 @@ export default function EditUnitPage({ params }: EditUnitPageProps) {
           <p className="text-sm text-neutral-500">
             Update core details for{" "}
             <span className="font-medium text-neutral-700">{unit.name}</span>.
-            Owner and area assignment cannot be changed here.
+            Owner and project assignment cannot be changed here.
           </p>
         </div>
       </div>
@@ -121,12 +121,12 @@ export default function EditUnitPage({ params }: EditUnitPageProps) {
       <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
         <UnitForm
           mode="edit"
-          isOwnerAreaEditable={false}
+          isOwnerProjectEditable={false}
           defaultValues={defaultValues}
           onSubmit={handleSubmit}
           isLoading={isUpdating}
           ownerDisplayName={unit.ownerId}
-          areaDisplayName={unit.areaId}
+          projectDisplayName={unit.projectId}
         />
       </div>
     </div>

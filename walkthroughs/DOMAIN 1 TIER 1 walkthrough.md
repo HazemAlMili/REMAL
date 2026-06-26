@@ -97,23 +97,23 @@ CREATE UNIQUE INDEX ux_amenities_name ON amenities (name);
 
 ---
 
-## DB-MD-03: Create Areas Table
+## DB-MD-03: Create Projects Table
 
 ### Ticket Summary
-Create the `areas` master table representing geographic/resort zones with UUID PK, activation flag, timestamps, and unique name.
+Create the `projects` master table representing geographic/resort zones with UUID PK, activation flag, timestamps, and unique name.
 
 ### Files Created
 
 | File | Purpose |
 |------|---------|
-| [0003_create_areas.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0003_create_areas.sql) | **UP** — creates areas table + unique index |
-| [0003_create_areas_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0003_create_areas_rollback.sql) | **DOWN** — drops index + table |
-| [0003_create_areas_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0003_create_areas_verify.sql) | **Verify** — tests schema, uniqueness, defaults, inserts |
+| [0003_create_projects.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0003_create_projects.sql) | **UP** — creates projects table + unique index |
+| [0003_create_projects_rollback.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0003_create_projects_rollback.sql) | **DOWN** — drops index + table |
+| [0003_create_projects_verify.sql](file:///d:/Clinets/Kaza Booking/Kaza Booking/db/migrations/0003_create_projects_verify.sql) | **Verify** — tests schema, uniqueness, defaults, inserts |
 
 ### Schema
 
 ```sql
-CREATE TABLE areas (
+CREATE TABLE projects (
     id           UUID            PRIMARY KEY DEFAULT gen_random_uuid(),
     name         VARCHAR(150)    NOT NULL,
     description  TEXT            NULL,
@@ -121,7 +121,7 @@ CREATE TABLE areas (
     created_at   TIMESTAMP       NOT NULL,
     updated_at   TIMESTAMP       NOT NULL
 );
-CREATE UNIQUE INDEX ux_areas_name ON areas (name);
+CREATE UNIQUE INDEX ux_projects_name ON projects (name);
 ```
 
 ### Verification Results
@@ -130,7 +130,7 @@ CREATE UNIQUE INDEX ux_areas_name ON areas (name);
 |---|-------|--------|
 | 1 | Table has exactly 6 columns | ✅ id, name, description, is_active, created_at, updated_at |
 | 2 | `is_active` default = `true` | ✅ Confirmed in column_default |
-| 3 | Unique index `ux_areas_name` exists | ✅ Confirmed |
+| 3 | Unique index `ux_projects_name` exists | ✅ Confirmed |
 | 4 | Insert `Palm Hills` | ✅ `INSERT 0 1` |
 | 5 | Insert `Abraj Al Alamein` | ✅ `INSERT 0 1` |
 | 6 | Duplicate `Palm Hills` rejected | ✅ `unique_violation` |
@@ -357,7 +357,7 @@ Ensure master data purity. Validate existing structure exactly matches schema co
 
 ```sql
 ALTER TABLE amenities RENAME CONSTRAINT amenities_pkey TO pk_amenities;
-ALTER TABLE areas RENAME CONSTRAINT areas_pkey TO pk_areas;
+ALTER TABLE projects RENAME CONSTRAINT projects_pkey TO pk_projects;
 ALTER TABLE admin_users RENAME CONSTRAINT admin_users_pkey TO pk_admin_users;
 ALTER TABLE clients RENAME CONSTRAINT clients_pkey TO pk_clients;
 ALTER TABLE owners RENAME CONSTRAINT owners_pkey TO pk_owners;
@@ -388,7 +388,7 @@ ALTER TABLE owners RENAME CONSTRAINT owners_pkey TO pk_owners;
 ## DB-MD-08: Seed Minimal Development Master Data
 
 ### Ticket Summary
-Bootstrap minimal essential master data (admin users, amenities, areas) ensuring immediate local DB utility. Includes deterministic conflict-safe inserts (`ON CONFLICT DO NOTHING`) and strictly leverages secure B-Crypt hashes in place of plain-text passwords.
+Bootstrap minimal essential master data (admin users, amenities, projects) ensuring immediate local DB utility. Includes deterministic conflict-safe inserts (`ON CONFLICT DO NOTHING`) and strictly leverages secure B-Crypt hashes in place of plain-text passwords.
 
 ### Files Created
 
@@ -402,7 +402,7 @@ Bootstrap minimal essential master data (admin users, amenities, areas) ensuring
 
 - **Admin Users (4):** `superadmin`, `sales`, `finance`, `tech`.
 - **Amenities (5):** Pool, Parking, Sea View, Gym, Kitchen.
-- **Areas (3):** Palm Hills, Abraj Al Alamein, Sample Area.
+- **Projects (3):** Palm Hills, Abraj Al Alamein, Sample Project.
 - **Password Scheme:** `Admin@1234` generated exclusively as BCrypt factor-12 (`$2a$12...`).
 
 ### Verification Results
@@ -410,7 +410,7 @@ Bootstrap minimal essential master data (admin users, amenities, areas) ensuring
 | # | Check | Result |
 |---|-------|--------|
 | 1 | Amenities Seeded | ✅ 5 Expected. Confirmed |
-| 2 | Areas Seeded | ✅ 3 Expected. Confirmed |
+| 2 | Projects Seeded | ✅ 3 Expected. Confirmed |
 | 3 | Admin Users Seeded | ✅ 4 Expected. Confirmed |
 | 4 | Plaintext Password Audit | ✅ ZERO illegal plaintext hits found |
 | 5 | Deterministic BCrypt Integrity | ✅ All admin signatures assert correctly formatted hashing |

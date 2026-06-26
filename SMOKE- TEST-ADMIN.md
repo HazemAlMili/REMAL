@@ -16,7 +16,7 @@ Integrated Test Engineering / QA Architecture
 Scope
 =====
 
-Full End-to-End (E2E) automated verification of the Kaza Booking Admin Dashboard Portal, covering all 8 functional segments (Dashboard Overview, Areas, Units, CRM Pipeline, Owners Profiles, Clients Profiles, Finance Ledger, and System Settings), role authorization boundaries, contract schema compliance, and cross-portal operational state sync loops.
+Full End-to-End (E2E) automated verification of the Kaza Booking Admin Dashboard Portal, covering all 8 functional segments (Dashboard Overview, Projects, Units, CRM Pipeline, Owners Profiles, Clients Profiles, Finance Ledger, and System Settings), role authorization boundaries, contract schema compliance, and cross-portal operational state sync loops.
 
 Objective
 =========
@@ -32,9 +32,9 @@ Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQL
 
 ### 1\. Tab-by-Tab Functional Map & State Triggers
 
-*   **Dashboard Overview:** Aggregates multi-module metrics (Occupancy Rate, Revenue metrics, Top Performing Areas/Owners)\[cite: 2, 12\]. Validates dynamic chart scaling based on datetime filter queries.
+*   **Dashboard Overview:** Aggregates multi-module metrics (Occupancy Rate, Revenue metrics, Top Performing Projects/Owners)\[cite: 2, 12\]. Validates dynamic chart scaling based on datetime filter queries.
     
-*   **Areas Management:** Controls regional structural scopes. Operations include Area creation, configuration edits, and toggle shifts (isActive: boolean) impacting down-stream unit discovery.
+*   **Projects Management:** Controls regional structural scopes. Operations include Project creation, configuration edits, and toggle shifts (isActive: boolean) impacting down-stream unit discovery.
     
 *   **Units Inventory:** Manages property data blocks. Tracks base parameters (unitType, maxGuests, bedrooms, bathrooms, basePricePerNight, isActive), image arrays (fileKey, isCover, displayOrder), seasonal modifications, and dynamic schedule closures (DateBlocks).
     
@@ -59,14 +59,14 @@ This plan isolates test operations into three distinct horizons: Sectional Valid
 
 ### A. Dashboard Overview Section
 
-*   **Test Case Details:** Load explicit metrics values via seed files. Confirm cards display Revenue sums, Occupancy counts, and Area indexes perfectly\[cite: 2, 12\].
+*   **Test Case Details:** Load explicit metrics values via seed files. Confirm cards display Revenue sums, Occupancy counts, and Project indexes perfectly\[cite: 2, 12\].
     
 *   **UI/UX Scan Assertion:** Ensure no values display as empty, blank code strings, or truncated metrics parameters.
     
 *   **Interaction Verification:** Shift date filters from daily to monthly scopes\[cite: 2, 12\]. Assert that TanStack Query fetches fresh envelopes and charts re-render cleanly without component unmounting\[cite: 1, 8\].
     
 
-### B. Areas Module Section
+### B. Projects Module Section
 
 *   **Test Case Details:** Create a new region structure. Assert that the POST payload strictly matches unique alphanumeric constraints.
     
@@ -126,7 +126,7 @@ This plan isolates test operations into three distinct horizons: Sectional Valid
         
     *   Log in as Finance: Assert write access to payout inputs; assert total UI lockouts on CRM lead tracking actions.
         
-    *   Log in as Tech: Assert full access to Area/Unit parameter setup forms; assert complete restriction from all financial records.
+    *   Log in as Tech: Assert full access to Project/Unit parameter setup forms; assert complete restriction from all financial records.
         
     *   Log in as SuperAdmin: Assert unfettered structural read/write execution across all system segments.
         

@@ -5,7 +5,7 @@ import { LoaderCircle, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
-import { useAreasList } from "@/lib/hooks/useAreas";
+import { useProjectsList } from "@/lib/hooks/useProjects";
 import { useAmenities } from "@/lib/hooks/useAmenities";
 import type { UnitListFilters, UnitType } from "@/lib/types";
 
@@ -35,7 +35,7 @@ export function UnitFilters({
   onChange,
   isFetching,
 }: UnitFiltersProps) {
-  const { data: areas = [] } = useAreasList(true);
+  const { data: projects = [] } = useProjectsList(true);
   const { amenities, isLoading: isLoadingAmenities } = useAmenities();
   const [search, setSearch] = React.useState(filters.search ?? "");
 
@@ -54,12 +54,15 @@ export function UnitFilters({
     [filters, onChange]
   );
 
-  const areaOptions = React.useMemo(
+  const projectOptions = React.useMemo(
     () => [
-      { value: "", label: "All areas" },
-      ...areas.map((area) => ({ value: area.id, label: area.name })),
+      { value: "", label: "All projects" },
+      ...projects.map((project) => ({
+        value: project.id,
+        label: project.name,
+      })),
     ],
-    [areas]
+    [projects]
   );
 
   const amenityOptions = React.useMemo(
@@ -99,7 +102,7 @@ export function UnitFilters({
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_160px_140px_180px_140px_auto] xl:items-end">
       <Input
         label="Search"
-        placeholder="Name, area, owner, address, amenity"
+        placeholder="Name, project, owner, address, amenity"
         value={search}
         leftAddon={<Search className="h-4 w-4" />}
         rightAddon={
@@ -114,11 +117,11 @@ export function UnitFilters({
       />
 
       <Select
-        label="Area"
-        value={filters.areaId ?? ""}
-        options={areaOptions}
+        label="Project"
+        value={filters.projectId ?? ""}
+        options={projectOptions}
         onChange={(value) =>
-          emit({ areaId: value ? String(value) : undefined })
+          emit({ projectId: value ? String(value) : undefined })
         }
       />
 
@@ -160,7 +163,7 @@ export function UnitFilters({
           type="button"
           variant="ghost"
           disabled={
-            !filters.areaId &&
+            !filters.projectId &&
             !filters.unitType &&
             !filters.amenityId &&
             typeof filters.isActive !== "boolean" &&

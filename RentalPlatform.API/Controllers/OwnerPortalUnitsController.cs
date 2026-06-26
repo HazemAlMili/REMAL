@@ -36,7 +36,7 @@ public class OwnerPortalUnitsController : ControllerBase
         var units = await _unitService.GetAllByOwnerAsync(
             ownerId,
             isActive: request.IsActive,
-            areaId: request.AreaId,
+            projectId: request.ProjectId,
             cancellationToken: cancellationToken);
 
         var totalCount = units.Count;
@@ -78,7 +78,7 @@ public class OwnerPortalUnitsController : ControllerBase
         new()
         {
             UnitId             = unit.UnitId,
-            AreaId             = unit.AreaId,
+            ProjectId             = unit.ProjectId,
             UnitName           = unit.UnitName,
             UnitType           = unit.UnitType,
             IsActive           = unit.IsActive,

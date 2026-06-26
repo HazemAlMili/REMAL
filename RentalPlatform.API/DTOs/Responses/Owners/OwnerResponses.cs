@@ -30,7 +30,7 @@ public record OwnerUnitResponse(
     Guid Id,
     string Name,
     string UnitType,
-    Guid AreaId,
+    Guid ProjectId,
     int Bedrooms,
     int Bathrooms,
     int MaxGuests,

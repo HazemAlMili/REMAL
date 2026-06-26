@@ -511,7 +511,7 @@ export function mapIsActiveToStatus(isActive: boolean): UnitStatus {
 interface Unit {
   id: string;
   ownerId: string;
-  areaId: string;
+  projectId: string;
   name: string;
   description: string;
   address: string;
@@ -544,8 +544,8 @@ interface Amenity {
   updatedAt: string;
 }
 
-// Area Entity - Maps to GET /api/areas/{id}
-interface Area {
+// Project Entity - Maps to GET /api/projects/{id}
+interface Project {
   id: string;
   name: string;
   description: string;
@@ -707,8 +707,8 @@ interface UnitCardProps {
   id: string;
   unitName: string;
   unitType: UnitType;
-  areaId: string;
-  areaName?: string; // Optional joined data
+  projectId: string;
+  projectName?: string; // Optional joined data
 
   // Pricing - Uses basePricePerNight (API key)
   basePricePerNight: number;
@@ -783,7 +783,7 @@ interface LeadCardProps {
   // Unit info
   unitId: string | null;
   unitName?: string;
-  areaName?: string;
+  projectName?: string;
 
   // Assignment
   assignedAdminUserId: string | null;
@@ -1037,7 +1037,7 @@ const sizes = {
 
 #### 1. 🌐 Landing Page / Guest App (`/`, `/search`, `/units/*`)
 
-**Routes:** `/`, `/search`, `/areas`, `/units/{id}`, `/checkout`  
+**Routes:** `/`, `/search`, `/projects`, `/units/{id}`, `/checkout`
 **User Type:** Public visitors (unauthenticated)  
 **Purpose:** Property discovery, search, booking
 
@@ -1069,7 +1069,7 @@ const sizes = {
 | Tab   | Label (AR) | Route    | Description           |
 | ----- | ---------- | -------- | --------------------- |
 | Home  | الرئيسية   | `/`      | Hero + featured units |
-| Areas | الوجهات    | `/areas` | Browse by location    |
+| Projects | الوجهات    | `/projects` | Browse by location    |
 | About | كيف نعمل   | `/about` | About the service     |
 
 **Key Components Used:**
@@ -1134,7 +1134,7 @@ const sizes = {
 | CRM       | CRM        | `/crm`       | ✗ (in drawer)  | Lead management Kanban      |
 | Bookings  | الحجوزات   | `/bookings`  | ✓              | Booking management          |
 | Units     | الوحدات    | `/units`     | ✓              | Property inventory          |
-| Areas     | المناطق    | `/areas`     | ✗ (in drawer)  | Location management         |
+| Projects     | المشروعات    | `/projects`     | ✗ (in drawer)  | Project management         |
 | Clients   | العملاء    | `/clients`   | ✓              | Customer database           |
 | Owners    | الملاك     | `/owners`    | ✗ (in drawer)  | Property owner management   |
 | Finance   | الماليات   | `/finance`   | ✗ (in drawer)  | Payments, invoices, payouts |
@@ -1156,7 +1156,7 @@ enum AdminRole {
 const PERMISSIONS = {
   SUPER_ADMIN: [
     "dashboard",
-    "areas",
+    "projects",
     "units",
     "crm",
     "bookings",
@@ -1303,7 +1303,7 @@ interface LeadCaptureForm {
   guestCount: number;
 
   // Optional - Preferences
-  preferredAreaId?: string;
+  preferredProjectId?: string;
   preferredUnitType?: UnitType;
   budgetRange?: string;
 
@@ -1790,7 +1790,7 @@ const paddings = {
 | CRM       | `KanbanSquare`    | CRM nav          |
 | Calendar  | `CalendarDays`    | Bookings nav     |
 | Building  | `Building2`       | Units nav        |
-| Map Pin   | `MapPinned`       | Areas nav        |
+| Map Pin   | `MapPinned`       | Projects nav        |
 | Users     | `UsersRound`      | Clients nav      |
 | User      | `UserRound`       | Owners nav       |
 | Wallet    | `Wallet`          | Finance nav      |
@@ -1907,7 +1907,7 @@ interface UnitCardProps {
     basePricePerNight: number;
     images: string[];
     rating?: number;
-    areaName?: string;
+    projectName?: string;
   };
 }
 
@@ -2157,7 +2157,7 @@ demo/
 │   │   │   ├── crm/          # CRM pages
 │   │   │   ├── bookings/     # Bookings pages
 │   │   │   ├── units/        # Units pages
-│   │   │   ├── areas/        # Areas pages
+│   │   │   ├── projects/        # Projects pages
 │   │   │   ├── clients/      # Clients pages
 │   │   │   ├── owners/       # Owners pages
 │   │   │   ├── finance/      # Finance pages

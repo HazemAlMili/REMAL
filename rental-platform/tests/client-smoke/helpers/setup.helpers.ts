@@ -2,20 +2,17 @@ import { APIRequestContext } from "@playwright/test";
 import { OWNER_USERS, TEST_PREFIX } from "../fixtures/test-data";
 import {
   addUnitImage,
-  createTestArea,
+  createTestProject,
   createTestUnit,
   PublicUnitDetail,
   UnitImageResponse,
   uniqueRunId,
 } from "./api.helpers";
-import {
-  CleanupRegistry,
-  createClientSmokeUpload,
-} from "./cleanup.helpers";
+import { CleanupRegistry, createClientSmokeUpload } from "./cleanup.helpers";
 
 export interface SmokeUnitSetup {
   runId: string;
-  areaId: string;
+  projectId: string;
   unit: PublicUnitDetail;
   image: UnitImageResponse;
   fileKey: string;
@@ -33,16 +30,16 @@ export async function createSmokePublicUnit(
   }
 ): Promise<SmokeUnitSetup> {
   const runId = uniqueRunId();
-  const area = await createTestArea(
+  const project = await createTestProject(
     request,
     adminToken,
-    `${TEST_PREFIX}Area_${runId}`
+    `${TEST_PREFIX}Project_${runId}`
   );
-  registry.areaIds.push(area.id);
+  registry.projectIds.push(project.id);
 
   const unit = await createTestUnit<PublicUnitDetail>(request, adminToken, {
     ownerId: OWNER_USERS.OwnerA.id,
-    areaId: area.id,
+    projectId: project.id,
     name: `${options?.namePrefix ?? `${TEST_PREFIX}Unit`}_${runId}`,
     description: "Client smoke generated public unit",
     address: "North Coast Smoke Test",
@@ -61,5 +58,5 @@ export async function createSmokePublicUnit(
   const image = await addUnitImage(request, adminToken, unit.id, fileKey);
   registry.imageIds.push({ unitId: unit.id, imageId: image.id });
 
-  return { runId, areaId: area.id, unit, image, fileKey };
+  return { runId, projectId: project.id, unit, image, fileKey };
 }

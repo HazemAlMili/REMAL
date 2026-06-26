@@ -23,7 +23,7 @@ public class OwnerPortalUnitService : IOwnerPortalUnitService
     public async Task<IReadOnlyList<OwnerPortalUnitOverview>> GetAllByOwnerAsync(
         Guid ownerId,
         bool? isActive = null,
-        Guid? areaId = null,
+        Guid? projectId = null,
         CancellationToken cancellationToken = default)
     {
         await ValidateOwnerAsync(ownerId, cancellationToken);
@@ -34,8 +34,8 @@ public class OwnerPortalUnitService : IOwnerPortalUnitService
         if (isActive.HasValue)
             query = query.Where(u => u.IsActive == isActive.Value);
 
-        if (areaId.HasValue)
-            query = query.Where(u => u.AreaId == areaId.Value);
+        if (projectId.HasValue)
+            query = query.Where(u => u.ProjectId == projectId.Value);
 
         return await query
             .OrderByDescending(u => u.CreatedAt)

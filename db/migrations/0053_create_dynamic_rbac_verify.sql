@@ -60,7 +60,7 @@ BEGIN
             'units:read', 'units:manage',
             'owners:read', 'owners:manage',
             'clients:read', 'clients:write', 'clients:reset_password',
-            'reviews:moderate', 'areas:manage', 'amenities:manage',
+            'reviews:moderate', 'projects:manage', 'amenities:manage',
             'analytics:read', 'settings:admin'
         )
     ) THEN

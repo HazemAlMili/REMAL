@@ -20,8 +20,8 @@ public class UnitConfiguration : IEntityTypeConfiguration<Unit>
             .HasColumnName("owner_id")
             .IsRequired();
 
-        builder.Property(x => x.AreaId)
-            .HasColumnName("area_id")
+        builder.Property(x => x.ProjectId)
+            .HasColumnName("project_id")
             .IsRequired();
 
         builder.Property(x => x.Name)
@@ -81,10 +81,10 @@ public class UnitConfiguration : IEntityTypeConfiguration<Unit>
             .OnDelete(DeleteBehavior.Restrict)
             .HasConstraintName("fk_units_owner_id");
 
-        builder.HasOne(x => x.Area)
+        builder.HasOne(x => x.Project)
             .WithMany()
-            .HasForeignKey(x => x.AreaId)
+            .HasForeignKey(x => x.ProjectId)
             .OnDelete(DeleteBehavior.Restrict)
-            .HasConstraintName("fk_units_area_id");
+            .HasConstraintName("fk_units_project_id");
     }
 }

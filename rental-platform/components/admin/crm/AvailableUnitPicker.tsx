@@ -29,7 +29,7 @@ interface AvailableUnitPickerProps {
 /**
  * Inline, always-visible picker for available units. Replaces the closed
  * combobox so the operator can see and compare the facts that decide the pick
- * (type, area, capacity, price) and select with one click. Selection uses the
+ * (type, project, capacity, price) and select with one click. Selection uses the
  * terracotta spotlight (primary) per the admin design system.
  */
 export function AvailableUnitPicker({
@@ -50,7 +50,7 @@ export function AvailableUnitPicker({
     return units.filter(
       (u) =>
         u.name.toLowerCase().includes(q) ||
-        u.areaName.toLowerCase().includes(q)
+        u.projectName.toLowerCase().includes(q)
     );
   }, [units, query]);
 
@@ -103,7 +103,7 @@ export function AvailableUnitPicker({
           type="text"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search units by name or area"
+          placeholder="Search units by name or project"
           disabled={disabled || (units.length === 0 && !query)}
           className="h-[var(--portal-control-height)] w-full rounded-[var(--portal-radius-control)] border border-neutral-300 bg-white pe-3 ps-9 text-sm text-neutral-800 placeholder:text-neutral-500 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-neutral-50"
         />
@@ -162,7 +162,7 @@ export function AvailableUnitPicker({
                     {UNIT_TYPE_LABELS[unit.unitType]}
                   </span>
                   <span className="truncate text-xs text-neutral-500">
-                    {unit.areaName}
+                    {unit.projectName}
                   </span>
                 </div>
                 <p className="text-xs text-neutral-600">
