@@ -3,6 +3,7 @@ import { Cairo } from "next/font/google";
 import "./globals.css";
 import { BottomNav } from '@/components/ui/BottomNav';
 import { Toaster } from 'sonner';
+import { AuthProvider } from '@/lib/auth/AuthProvider';
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
@@ -23,8 +24,10 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body className={`${cairo.variable} font-sans antialiased bg-background text-foreground`}>
-        {children}
-        <BottomNav />
+        <AuthProvider>
+          {children}
+          <BottomNav />
+        </AuthProvider>
         <Toaster position="top-center" richColors theme="light" dir="rtl" />
       </body>
     </html>

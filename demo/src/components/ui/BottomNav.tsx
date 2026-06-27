@@ -5,20 +5,31 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Search, Heart, User } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/lib/auth/AuthProvider';
+import { platformAuthUrl } from '@/lib/auth/platform';
+
+const PLATFORM_URL = (process.env.NEXT_PUBLIC_PLATFORM_URL ?? '').replace(/\/+$/, '');
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { isAuthenticated } = useAuth();
 
   // Don't show bottom nav on owner/admin pages
   if (pathname.includes('/admin') || pathname.includes('/owner') || pathname.includes('/dashboard')) {
     return null;
   }
 
+  // Account & favorites live on the platform (the storefront stays anonymous).
+  // Authenticated → platform account; otherwise hand off to platform login.
+  const handleAccount = () => {
+    window.location.assign(
+      isAuthenticated && PLATFORM_URL ? `${PLATFORM_URL}/account` : platformAuthUrl('login')
+    );
+  };
+
   const navItems = [
     { name: 'الرئيسية', path: '/', icon: Home },
     { name: 'البحث', path: '/search', icon: Search },
-    { name: 'المفضلة', path: '/auth/client/login', icon: Heart }, // Mock flow
-    { name: 'حسابي', path: '/auth', icon: User },
   ];
 
   return (
@@ -26,15 +37,15 @@ export function BottomNav() {
       <div className="flex justify-around items-center px-2 py-3">
         {navItems.map((item) => {
           const isActive = pathname === item.path || (item.path !== '/' && pathname.startsWith(item.path));
-          
+
           return (
-            <Link 
-              key={item.name} 
+            <Link
+              key={item.name}
               href={item.path}
               className={`flex flex-col items-center justify-center w-full relative ${isActive ? 'text-brand-950' : 'text-gray-400 hover:text-gray-600'}`}
             >
               {isActive && (
-                <motion.div 
+                <motion.div
                   layoutId="bottom-nav-indicator"
                   className="absolute -top-3 w-10 h-1 bg-brand-950 rounded-b-full"
                 />
@@ -44,6 +55,24 @@ export function BottomNav() {
             </Link>
           );
         })}
+
+        <button
+          type="button"
+          onClick={handleAccount}
+          className="flex flex-col items-center justify-center w-full text-gray-400 hover:text-gray-600"
+        >
+          <Heart size={22} />
+          <span className="text-[10px] mt-1 font-bold">المفضلة</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={handleAccount}
+          className="flex flex-col items-center justify-center w-full text-gray-400 hover:text-gray-600"
+        >
+          <User size={22} />
+          <span className="text-[10px] mt-1 font-bold">حسابي</span>
+        </button>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { useAuthStore } from '@/lib/stores/auth.store'
 import { ApiError } from '@/lib/api/api-error'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/lib/constants/routes'
+import { getReturnUrlFromLocation } from '@/lib/utils/return-url'
 
 // ── Admin Login ──
 
@@ -84,7 +85,14 @@ export function useClientLogin(): UseClientLoginReturn {
         user: response.user,
         role: null,
       })
-      router.push(ROUTES.client.account)
+      // If the storefront handed us a valid returnUrl, send the client back
+      // there (cross-origin → window.location); otherwise go to the account.
+      const returnUrl = getReturnUrlFromLocation()
+      if (returnUrl) {
+        window.location.assign(returnUrl)
+      } else {
+        router.push(ROUTES.client.account)
+      }
     },
   })
 
@@ -126,7 +134,14 @@ export function useClientRegister(): UseClientRegisterReturn {
         role: null,
       })
 
-      router.push(ROUTES.client.account)
+      // Return the new client to the storefront if it handed us a valid
+      // returnUrl; otherwise land on the account.
+      const returnUrl = getReturnUrlFromLocation()
+      if (returnUrl) {
+        window.location.assign(returnUrl)
+      } else {
+        router.push(ROUTES.client.account)
+      }
     } catch (err) {
       // Rethrow so the form can handle field-level 422 errors.
       // The hook's isLoading will be reset in finally.

@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
 import {
   CheckCircle2,
   Send,
@@ -12,27 +13,80 @@ import {
   Wallet,
   Home,
   MessageSquare,
+  Loader2,
 } from "lucide-react";
+import { leadsService } from "@/lib/api/services";
+import { leadSchema, sanitizePhoneInput } from "@/lib/validation";
+import { ApiError } from "@/lib/api/api-error";
+
+const INITIAL = {
+  name: "",
+  phone: "",
+  checkIn: "",
+  checkOut: "",
+  guests: "2",
+  tripType: "عائلة",
+  budget: "10–15k",
+  project: "مش محدد",
+  notes: "",
+};
 
 export function LeadForm() {
   const [step, setStep] = useState<"form" | "success">("form");
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    checkIn: "",
-    checkOut: "",
-    guests: "2",
-    tripType: "عائلة",
-    budget: "10–15k",
-    project: "مش محدد",
-    rooms: "1BR",
-    readyToDeposit: "نعم",
-    notes: "",
-  });
+  const [formData, setFormData] = useState(INITIAL);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStep("success");
+    if (isSubmitting) return; // double-submit guard
+
+    const parsed = leadSchema.safeParse(formData);
+    if (!parsed.success) {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const key = issue.path[0];
+        if (typeof key === "string" && !fieldErrors[key]) {
+          fieldErrors[key] = issue.message;
+        }
+      }
+      setErrors(fieldErrors);
+      return;
+    }
+    setErrors({});
+    setIsSubmitting(true);
+
+    const data = parsed.data;
+    const composedNotes = [
+      data.notes?.trim(),
+      `نوع الرحلة: ${data.tripType}`,
+      `الميزانية: ${data.budget}`,
+      data.project !== "مش محدد" ? `المشروع المفضل: ${data.project}` : null,
+    ]
+      .filter(Boolean)
+      .join(" • ");
+
+    try {
+      await leadsService.create({
+        contactName: data.name,
+        contactPhone: sanitizePhoneInput(data.phone),
+        desiredCheckInDate: data.checkIn,
+        desiredCheckOutDate: data.checkOut,
+        guestCount: Number(data.guests) || null,
+        source: "website",
+        notes: composedNotes,
+      });
+      setStep("success");
+      setFormData(INITIAL);
+    } catch (err) {
+      const message =
+        err instanceof ApiError
+          ? err.message
+          : "تعذر إرسال الطلب. حاول مرة أخرى.";
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (step === "success") {
@@ -72,39 +126,38 @@ export function LeadForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-8 space-y-6">
+      <form onSubmit={handleSubmit} className="p-8 space-y-6" noValidate>
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Name & Phone */}
+          {/* Name */}
           <div className="space-y-2">
             <label className="text-sm font-bold text-brand-950 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-500" /> الاسم
             </label>
             <input
-              required
               type="text"
               className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-brand-950 transition-colors"
               placeholder="مثال: محمد أحمد"
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
+            {errors.name && <p className="text-xs text-red-600 font-medium">{errors.name}</p>}
           </div>
+          {/* Phone */}
           <div className="space-y-2">
             <label className="text-sm font-bold text-brand-950 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent-500" /> رقم
-              الواتساب
+              <span className="w-1.5 h-1.5 rounded-full bg-accent-500" /> رقم الواتساب
             </label>
             <input
-              required
               type="tel"
+              dir="ltr"
               className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-brand-950 transition-colors text-left"
               placeholder="+20 100 000 0000"
               value={formData.phone}
               onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
+                setFormData({ ...formData, phone: sanitizePhoneInput(e.target.value) })
               }
             />
+            {errors.phone && <p className="text-xs text-red-600 font-medium">{errors.phone}</p>}
           </div>
 
           {/* Dates */}
@@ -113,28 +166,24 @@ export function LeadForm() {
               <Calendar className="w-4 h-4 text-accent-500" /> تاريخ الوصول
             </label>
             <input
-              required
               type="date"
               className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-brand-950 transition-colors"
               value={formData.checkIn}
-              onChange={(e) =>
-                setFormData({ ...formData, checkIn: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, checkIn: e.target.value })}
             />
+            {errors.checkIn && <p className="text-xs text-red-600 font-medium">{errors.checkIn}</p>}
           </div>
           <div className="space-y-2">
             <label className="text-sm font-bold text-brand-950 flex items-center gap-2">
               <Calendar className="w-4 h-4 text-accent-500" /> تاريخ الخروج
             </label>
             <input
-              required
               type="date"
               className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-brand-950 transition-colors"
               value={formData.checkOut}
-              onChange={(e) =>
-                setFormData({ ...formData, checkOut: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, checkOut: e.target.value })}
             />
+            {errors.checkOut && <p className="text-xs text-red-600 font-medium">{errors.checkOut}</p>}
           </div>
 
           {/* Guests & Trip Type */}
@@ -145,9 +194,7 @@ export function LeadForm() {
             <select
               className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-brand-950 transition-colors appearance-none"
               value={formData.guests}
-              onChange={(e) =>
-                setFormData({ ...formData, guests: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
             >
               <option value="1">1 فرد</option>
               <option value="2">2 أفراد</option>
@@ -162,9 +209,7 @@ export function LeadForm() {
             <select
               className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-brand-950 transition-colors appearance-none"
               value={formData.tripType}
-              onChange={(e) =>
-                setFormData({ ...formData, tripType: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, tripType: e.target.value })}
             >
               <option value="كابل">كابل</option>
               <option value="هاني مون">هاني مون</option>
@@ -176,15 +221,12 @@ export function LeadForm() {
           {/* Budget & Project */}
           <div className="space-y-2">
             <label className="text-sm font-bold text-brand-950 flex items-center gap-2">
-              <Wallet className="w-4 h-4 text-accent-500" /> الميزانية (في
-              الليلة)
+              <Wallet className="w-4 h-4 text-accent-500" /> الميزانية (في الليلة)
             </label>
             <select
               className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-brand-950 transition-colors appearance-none"
               value={formData.budget}
-              onChange={(e) =>
-                setFormData({ ...formData, budget: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
             >
               <option value="5–10k">5–10k EGP</option>
               <option value="10–15k">10–15k EGP</option>
@@ -198,9 +240,7 @@ export function LeadForm() {
             <select
               className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-brand-950 transition-colors appearance-none"
               value={formData.project}
-              onChange={(e) =>
-                setFormData({ ...formData, project: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, project: e.target.value })}
             >
               <option value="مش محدد">مش محدد</option>
               <option value="أبراج العلمين">أبراج العلمين</option>
@@ -221,19 +261,26 @@ export function LeadForm() {
             className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:border-brand-950 transition-colors"
             placeholder="أي تفاصيل أخرى حابب توضحها..."
             value={formData.notes}
-            onChange={(e) =>
-              setFormData({ ...formData, notes: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
           />
         </div>
 
         <Button
           type="submit"
           size="lg"
+          disabled={isSubmitting}
           className="w-full rounded-xl py-6 bg-brand-950 text-white hover:bg-brand-800 font-bold gap-2 text-lg"
         >
-          <Send size={18} />
-          ابعتلي الترشيحات المناسبة
+          {isSubmitting ? (
+            <>
+              <Loader2 size={18} className="animate-spin" /> جارٍ الإرسال…
+            </>
+          ) : (
+            <>
+              <Send size={18} />
+              ابعتلي الترشيحات المناسبة
+            </>
+          )}
         </Button>
       </form>
     </div>

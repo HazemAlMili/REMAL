@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ClientLoginForm } from '@/components/auth/ClientLoginForm'
 import { useAuthStore } from '@/lib/stores/auth.store'
 import { ROUTES } from '@/lib/constants/routes'
+import { getReturnUrlFromLocation } from '@/lib/utils/return-url'
 
 export default function ClientLoginPage() {
   const router = useRouter()
@@ -25,8 +26,13 @@ export default function ClientLoginPage() {
     } else if (subjectType === 'Owner') {
       router.replace(ROUTES.owner.dashboard)
     } else {
-      // Client (or any other session) → account
-      router.replace(ROUTES.client.account)
+      // Client: honor a storefront handoff returnUrl, else go to the account.
+      const returnUrl = getReturnUrlFromLocation()
+      if (returnUrl) {
+        window.location.assign(returnUrl)
+      } else {
+        router.replace(ROUTES.client.account)
+      }
     }
   }, [mounted, accessToken, subjectType, router])
 

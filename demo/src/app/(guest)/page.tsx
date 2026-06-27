@@ -1,24 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { MOCK_UNITS, MOCK_PROJECTS } from "@/lib/mock-data";
+import React from "react";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { FeaturedUnits } from "@/components/sections/FeaturedUnits";
 import {
   MapPin,
-  Users,
-  Search,
   ArrowRight,
-  Heart,
-  Star,
   Video,
   ShieldCheck,
-  CheckCircle2,
-  PlayCircle,
-  Info,
-  User,
   Wallet,
-  Calendar,
   Sparkles,
   MessageSquare,
   Shield,
@@ -281,8 +271,8 @@ export default function HomePage() {
               />
               <div className="absolute -bottom-6 -left-6 bg-accent-500 text-white p-6 rounded-3xl shadow-xl max-w-xs">
                 <p className="font-bold text-sm">
-                  "كنا قلقانين من صور السوشيال ميديا، بس Kaza Booking بعتتلنا
-                  فيديو فعلي وريحونا جداً."
+                  «كنا قلقانين من صور السوشيال ميديا، بس Kaza Booking بعتتلنا
+                  فيديو فعلي وريحونا جداً.»
                 </p>
                 <p className="text-[10px] uppercase tracking-widest font-black mt-2 opacity-80">
                   — عميل موثق
@@ -479,11 +469,7 @@ export default function HomePage() {
           <h2 className="text-3xl md:text-5xl font-black text-brand-950 mb-16">
             وحدات مختارة وجاهزة للحجز
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {MOCK_UNITS.map((unit) => (
-              <UnitCard key={unit.id} unit={unit} />
-            ))}
-          </div>
+          <FeaturedUnits />
         </div>
       </section>
 
@@ -544,7 +530,7 @@ export default function HomePage() {
                 إيه هو Trust Pack؟
               </h2>
               <p className="text-gray-500 text-lg leading-relaxed mb-8">
-                قبل ما تدفع أي عربون، Kaza Booking بتبعتلك "Trust Pack" كامل
+                قبل ما تدفع أي عربون، Kaza Booking بتبعتلك «Trust Pack» كامل
                 للوحدة المناسبة لك. ده بيحتوي على كل المعلومات الأساسية اللي
                 تخليك تختار وأنت مطمّن تماماً.
               </p>
@@ -679,107 +665,5 @@ export default function HomePage() {
         </div>
       </section>
     </div>
-  );
-}
-
-function UnitCard({ unit }: { unit: any }) {
-  const [currentImageIdx, setCurrentImageIdx] = useState(0);
-
-  const nextImage = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (currentImageIdx < (unit.images?.length || 1) - 1)
-      setCurrentImageIdx((prev) => prev + 1);
-  };
-
-  const prevImage = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (currentImageIdx > 0) setCurrentImageIdx((prev) => prev - 1);
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, ease: "easeOut" as const }}
-    >
-      <Link href={`/units/${unit.id}`} className="group block text-right">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] mb-5 bg-gray-100 group-hover:-translate-y-1 group-hover:shadow-premium transition-all duration-300 shadow-soft">
-          <div
-            className="flex transition-transform duration-500 ease-out h-full"
-            style={{ transform: `translateX(${currentImageIdx * 100}%)` }}
-          >
-            {unit.images?.map((img: string, idx: number) => (
-              <img
-                key={idx}
-                src={img}
-                className="w-full h-full object-cover shrink-0"
-                alt="Unit"
-              />
-            ))}
-          </div>
-
-          {unit.images && unit.images.length > 1 && (
-            <>
-              {currentImageIdx > 0 && (
-                <button
-                  onClick={prevImage}
-                  className="absolute top-1/2 -translate-y-1/2 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-brand-950 shadow-md opacity-0 group-hover:opacity-100 transition-all z-20"
-                >
-                  <ArrowRight size={16} />
-                </button>
-              )}
-              {currentImageIdx < unit.images.length - 1 && (
-                <button
-                  onClick={nextImage}
-                  className="absolute top-1/2 -translate-y-1/2 left-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-brand-950 shadow-md opacity-0 group-hover:opacity-100 transition-all z-20"
-                >
-                  <ArrowRight size={16} className="rotate-180" />
-                </button>
-              )}
-            </>
-          )}
-
-          <div className="absolute top-4 left-4 z-20">
-            <Badge className="bg-brand-950/80 backdrop-blur-md text-white border-none text-[10px] py-1 px-3">
-              فيديو فعلي متاح
-            </Badge>
-          </div>
-
-          <div className="absolute top-4 right-4 p-2 bg-white/50 backdrop-blur-md rounded-full text-gray-500">
-            <Heart size={16} />
-          </div>
-        </div>
-
-        <div className="px-1 space-y-1">
-          <div className="flex justify-between items-start">
-            <h3 className="font-black text-lg text-brand-950 truncate">
-              {unit.name}
-            </h3>
-            <div className="flex items-center gap-1 font-bold text-sm">
-              <Star size={14} className="fill-brand-950" /> 4.9
-            </div>
-          </div>
-          <p className="text-gray-400 text-xs font-bold">
-            {unit.type} —{" "}
-            {MOCK_PROJECTS.find((a) => a.id === unit.projectId)?.name}
-          </p>
-          <p className="text-gray-500 text-xs font-medium line-clamp-1">
-            {unit.description}
-          </p>
-          <div className="pt-2">
-            <span className="text-brand-950 font-black text-lg">
-              EGP {unit.basePrice.toLocaleString()}
-            </span>
-            <span className="text-gray-400 text-xs font-bold">
-              {" "}
-              / ليلة أو حسب التاريخ
-            </span>
-          </div>
-        </div>
-      </Link>
-    </motion.div>
   );
 }

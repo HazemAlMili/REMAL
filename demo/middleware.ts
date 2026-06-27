@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AUTH_ROLE_COOKIE, isDemoRole, ROLE_HOME_ROUTES, ROLE_LOGIN_ROUTES, type DemoRole } from './src/lib/auth';
 
+// NOTE: '/units' is intentionally NOT guarded here — the public unit-detail
+// page lives at '/units/{id}', and a prefix guard would wrongly bounce visitors
+// to the (demo) admin login. The storefront's real client auth is handled by
+// the Kaza platform handoff, not this demo cookie.
 const PROTECTED_ROUTES: Array<{ prefix: string; role: DemoRole }> = [
   { prefix: '/dashboard', role: 'admin' },
   { prefix: '/crm', role: 'admin' },
   { prefix: '/finance', role: 'admin' },
-  { prefix: '/units', role: 'admin' },
   { prefix: '/owner-dashboard', role: 'owner' },
   { prefix: '/owner-calendar', role: 'owner' },
   { prefix: '/owner-earnings', role: 'owner' },
-  { prefix: '/client-dashboard', role: 'client' },
 ];
 
 function getMatchedProtectedRole(pathname: string) {
@@ -43,5 +45,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/auth', '/auth/:path*', '/dashboard/:path*', '/crm/:path*', '/finance/:path*', '/units/:path*', '/owner-dashboard/:path*', '/owner-calendar/:path*', '/owner-earnings/:path*', '/client-dashboard/:path*'],
+  matcher: ['/auth', '/auth/:path*', '/dashboard/:path*', '/crm/:path*', '/finance/:path*', '/owner-dashboard/:path*', '/owner-calendar/:path*', '/owner-earnings/:path*'],
 };

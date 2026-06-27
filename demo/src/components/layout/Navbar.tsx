@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ROUTES } from "@/lib/constants/routes";
-import { Button } from "@/components/ui/Button";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, MessageCircle } from "lucide-react";
+import { Menu, X, MessageCircle, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { useAuth } from "@/lib/auth/AuthProvider";
+import { platformAuthUrl } from "@/lib/auth/platform";
 
 const NAV_LINKS = [
   { href: "/", label: "الرئيسية" },
@@ -16,15 +16,12 @@ const NAV_LINKS = [
 ];
 
 export function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { isAuthenticated, user, logout } = useAuth();
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Hand off to the platform login, carrying the current page as returnUrl.
+  const goToLogin = () => window.location.assign(platformAuthUrl("login"));
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -93,11 +90,30 @@ export function Navbar() {
 
             <div className="w-px h-6 bg-gray-300 opacity-100" />
 
-            <Link href={ROUTES.authClientLogin}>
-              <button className="text-[15px] font-bold px-6 py-2.5 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 bg-brand-950 text-white">
+            {isAuthenticated ? (
+              <div className="flex items-center gap-3">
+                <span
+                  dir="auto"
+                  className="max-w-[10rem] truncate text-[15px] font-bold text-brand-950"
+                >
+                  {user?.name || "حسابي"}
+                </span>
+                <button
+                  onClick={() => void logout()}
+                  className="flex items-center gap-2 text-[15px] font-bold px-5 py-2.5 rounded-full transition-all duration-300 bg-gray-100 text-brand-950 hover:bg-gray-200"
+                >
+                  <LogOut className="w-4 h-4" />
+                  خروج
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={goToLogin}
+                className="text-[15px] font-bold px-6 py-2.5 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 bg-brand-950 text-white"
+              >
                 تسجيل الدخول
               </button>
-            </Link>
+            )}
           </div>
 
           {/* Hamburger */}
@@ -201,13 +217,28 @@ export function Navbar() {
                   <MessageCircle className="w-5 h-5" />
                   تواصل عبر واتساب
                 </Link>
-                <Link
-                  href={ROUTES.authClientLogin}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center w-full py-4 rounded-2xl font-bold text-brand-950 bg-gray-100 hover:bg-gray-200 transition-colors"
-                >
-                  تسجيل الدخول
-                </Link>
+                {isAuthenticated ? (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      void logout();
+                    }}
+                    className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-bold text-brand-950 bg-gray-100 hover:bg-gray-200 transition-colors"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    تسجيل الخروج ({user?.name || "حسابي"})
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      goToLogin();
+                    }}
+                    className="flex items-center justify-center w-full py-4 rounded-2xl font-bold text-brand-950 bg-gray-100 hover:bg-gray-200 transition-colors"
+                  >
+                    تسجيل الدخول
+                  </button>
+                )}
               </div>
             </motion.div>
           </>

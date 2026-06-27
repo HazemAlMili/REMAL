@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ClientRegisterForm } from '@/components/auth/ClientRegisterForm'
 import { useAuthStore } from '@/lib/stores/auth.store'
 import { ROUTES } from '@/lib/constants/routes'
+import { getReturnUrlFromLocation } from '@/lib/utils/return-url'
 
 export default function ClientRegisterPage() {
   const router = useRouter()
@@ -24,7 +25,12 @@ export default function ClientRegisterPage() {
     } else if (subjectType === 'Owner') {
       router.replace(ROUTES.owner.dashboard)
     } else {
-      router.replace(ROUTES.client.account)
+      const returnUrl = getReturnUrlFromLocation()
+      if (returnUrl) {
+        window.location.assign(returnUrl)
+      } else {
+        router.replace(ROUTES.client.account)
+      }
     }
   }, [mounted, accessToken, subjectType, router])
 
