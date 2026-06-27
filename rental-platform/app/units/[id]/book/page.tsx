@@ -53,7 +53,10 @@ function BookingPageContent({ unitId }: { unitId: string }) {
     isLoading: unitLoading,
     isError,
   } = usePublicUnitDetail(unitId);
-  const { data: images } = usePublicUnitImages(unitId);
+  const { data: images } = usePublicUnitImages(
+    unitId,
+    Boolean(unit && unit.isActive && unit.isVisibleInPortfolio)
+  );
 
   // Handlers
   const handleDatesChange = (start: string | null, end: string | null) => {
@@ -103,12 +106,12 @@ function BookingPageContent({ unitId }: { unitId: string }) {
   }
 
   // 404 / Error State
-  if (isError || !unit) {
+  if (isError || !unit || !unit.isActive || !unit.isVisibleInPortfolio) {
     return (
       <div className="mx-auto max-w-container px-6 py-20">
         <EmptyState
           title="Property not found"
-          description="This property may no longer be available."
+          description="This property is not currently available in the public catalog. Browse the latest available properties instead."
           action={
             <Button
               variant="outline"

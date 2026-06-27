@@ -17,6 +17,7 @@ public class Unit
     public int MaxGuests { get; set; }
     public decimal BasePricePerNight { get; set; }
     public bool IsActive { get; set; } = true;
+    public bool IsVisibleInPortfolio { get; set; } = true;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }

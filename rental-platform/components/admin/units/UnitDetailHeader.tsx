@@ -43,6 +43,9 @@ export function UnitDetailHeader({
           <Badge variant={unit.isActive ? "success" : "neutral"}>
             {unit.isActive ? "Active" : "Inactive"}
           </Badge>
+          <Badge variant={unit.isVisibleInPortfolio ? "info" : "neutral"}>
+            {unit.isVisibleInPortfolio ? "Portfolio visible" : "Portfolio hidden"}
+          </Badge>
         </div>
 
         <div className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-1.5 text-sm">

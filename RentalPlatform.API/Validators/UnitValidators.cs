@@ -79,3 +79,11 @@ public class UpdateUnitStatusRequestValidator : AbstractValidator<UpdateUnitStat
         // No explicit rules for IsActive, as boolean is self-validating
     }
 }
+
+public class UpdateUnitPortfolioVisibilityRequestValidator : AbstractValidator<UpdateUnitPortfolioVisibilityRequest>
+{
+    public UpdateUnitPortfolioVisibilityRequestValidator()
+    {
+        // No explicit rules for IsVisibleInPortfolio, as boolean is self-validating.
+    }
+}

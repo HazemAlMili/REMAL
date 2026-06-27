@@ -29,8 +29,17 @@ export default function UnitDetailPage({ params }: { params: { id: string } }) {
     isLoading: unitLoading,
     isError,
   } = usePublicUnitDetail(unitId);
-  const { data: images } = usePublicUnitImages(unitId);
-  const { data: amenities } = usePublicUnitAmenities(unitId);
+  const canLoadPublicUnitChildren = Boolean(
+    unit && unit.isActive && unit.isVisibleInPortfolio
+  );
+  const { data: images } = usePublicUnitImages(
+    unitId,
+    canLoadPublicUnitChildren
+  );
+  const { data: amenities } = usePublicUnitAmenities(
+    unitId,
+    canLoadPublicUnitChildren
+  );
   const { data: projects } = usePublicProjects();
 
   // Loading State
@@ -51,12 +60,12 @@ export default function UnitDetailPage({ params }: { params: { id: string } }) {
   }
 
   // 404 / Error State
-  if (isError || !unit || !unit.isActive) {
+  if (isError || !unit || !unit.isActive || !unit.isVisibleInPortfolio) {
     return (
       <div className="mx-auto max-w-container px-6 py-20">
         <EmptyState
           title="Property not found"
-          description="This property may no longer be available or the link is incorrect."
+          description="This property is not currently available in the public catalog. Browse the latest available properties instead."
           action={
             <Button variant="outline" onClick={() => router.push("/units")}>
               Browse all properties

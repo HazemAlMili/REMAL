@@ -38,7 +38,7 @@ public class UnitAvailabilityController : ControllerBase
             return NotFound(ApiResponse.CreateFailure("Unit not found."));
 
         bool isAdmin = User.HasClaim("subjectType", "admin");
-        if (!unit.IsActive && !isAdmin)
+        if ((!unit.IsActive || !unit.IsVisibleInPortfolio) && !isAdmin)
             return NotFound(ApiResponse.CreateFailure("Unit not found."));
 
         var result = await _availabilityService.CheckOperationalAvailabilityAsync(
@@ -60,7 +60,7 @@ public class UnitAvailabilityController : ControllerBase
             return NotFound(ApiResponse.CreateFailure("Unit not found."));
 
         bool isAdmin = User.HasClaim("subjectType", "admin");
-        if (!unit.IsActive && !isAdmin)
+        if ((!unit.IsActive || !unit.IsVisibleInPortfolio) && !isAdmin)
             return NotFound(ApiResponse.CreateFailure("Unit not found."));
 
         var result = await _availabilityService.CalculatePricingAsync(

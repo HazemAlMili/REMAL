@@ -17,6 +17,7 @@ public record UnitListItemResponse
     public int MaxGuests { get; init; }
     public decimal BasePricePerNight { get; init; }
     public bool IsActive { get; init; }
+    public bool IsVisibleInPortfolio { get; init; }
     public DateTime CreatedAt { get; init; }
     public IReadOnlyList<UnitImageResponse> Images { get; init; } = Array.Empty<UnitImageResponse>();
 }

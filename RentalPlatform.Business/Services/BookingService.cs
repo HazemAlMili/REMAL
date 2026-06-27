@@ -127,6 +127,7 @@ public class BookingService : IBookingService
         Guid? assignedAdminUserId,
         string? internalNotes,
         BookingStatus? initialStatus = null,
+        bool requirePortfolioVisibility = false,
         CancellationToken cancellationToken = default)
     {
         // --- Input validation ---
@@ -141,9 +142,15 @@ public class BookingService : IBookingService
             throw new NotFoundException($"Active client with ID {clientId} not found");
 
         var unit = await _unitOfWork.Units.FirstOrDefaultAsync(
-            u => u.Id == unitId && u.IsActive && u.DeletedAt == null, cancellationToken);
+            u => u.Id == unitId
+                && u.IsActive
+                && (!requirePortfolioVisibility || u.IsVisibleInPortfolio)
+                && u.DeletedAt == null,
+            cancellationToken);
         if (unit == null)
-            throw new NotFoundException($"Active unit with ID {unitId} not found");
+            throw new NotFoundException(requirePortfolioVisibility
+                ? $"Public unit with ID {unitId} not found"
+                : $"Active unit with ID {unitId} not found");
 
         if (assignedAdminUserId.HasValue)
         {
@@ -228,6 +235,7 @@ public class BookingService : IBookingService
         string source,
         Guid? assignedAdminUserId,
         string? internalNotes,
+        bool requirePortfolioVisibility = false,
         CancellationToken cancellationToken = default)
     {
         await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
@@ -267,6 +275,7 @@ public class BookingService : IBookingService
                 assignedAdminUserId,
                 internalNotes,
                 BookingStatus.Prospecting,
+                requirePortfolioVisibility,
                 cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);

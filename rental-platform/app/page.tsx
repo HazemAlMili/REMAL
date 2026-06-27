@@ -6,6 +6,7 @@ import {
   ShieldCheck,
   ArrowLeft,
 } from "lucide-react";
+import { FeaturedUnitsSection } from "@/components/public/sections/FeaturedUnitsSection";
 
 export default function SmarHomePage() {
   return (
@@ -100,6 +101,8 @@ export default function SmarHomePage() {
           </div>
         </div>
       </section>
+
+      <FeaturedUnitsSection />
 
       {/* 3. QUICK QUALIFICATION FORM */}
       <section className="bg-[#FAF8F4] px-4 py-24">

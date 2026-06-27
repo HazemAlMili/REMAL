@@ -168,5 +168,8 @@
 \echo '=== Running migration 0055: date block approvals ==='
 \i /docker-entrypoint-initdb.d/migrations/0055_date_block_approvals.sql
 
+\echo '=== Running migration 0056: add unit portfolio visibility ==='
+\i /docker-entrypoint-initdb.d/migrations/0056_add_unit_portfolio_visibility.sql
+
 \echo '=== All migrations completed successfully ==='
 

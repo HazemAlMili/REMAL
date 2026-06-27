@@ -107,6 +107,7 @@ public class ClientBookingsController : ControllerBase
             source: "website",
             assignedAdminUserId: null,
             internalNotes: null,
+            requirePortfolioVisibility: true,
             cancellationToken);
 
         return Ok(ApiResponse<BookingDetailsResponse>.CreateSuccess(

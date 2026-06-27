@@ -47,6 +47,10 @@ export function UnitOverviewTab({ unit }: UnitOverviewTabProps) {
             label="Status"
             value={unit.isActive ? "Active" : "Inactive"}
           />
+          <OverviewField
+            label="Portfolio visibility"
+            value={unit.isVisibleInPortfolio ? "Visible publicly" : "Hidden publicly"}
+          />
           <OverviewField label="Owner ID" value={unit.ownerId} />
           <OverviewField label="Project ID" value={unit.projectId} />
           <OverviewField

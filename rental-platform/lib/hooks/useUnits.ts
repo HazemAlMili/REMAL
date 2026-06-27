@@ -178,6 +178,31 @@ export function useUpdateUnitStatus() {
   });
 }
 
+export function useUpdateUnitPortfolioVisibility() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      id,
+      isVisibleInPortfolio,
+    }: {
+      id: string;
+      isVisibleInPortfolio: boolean;
+    }) =>
+      unitsService.updatePortfolioVisibility(id, {
+        isVisibleInPortfolio,
+      }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.units.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.units.internalDetail(variables.id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.units.publicDetail(variables.id),
+      });
+    },
+  });
+}
+
 // ========================================
 // IMAGE MUTATIONS
 // ========================================

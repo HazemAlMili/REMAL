@@ -6,6 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/ui/DataTable";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Switch } from "@/components/ui/Switch";
 import { Eye, Pencil, Power, PowerOff } from "lucide-react";
 import { UnitListItemResponse, UnitType } from "@/lib/types";
 import { usePermissions } from "@/lib/hooks/usePermissions";
@@ -19,6 +20,11 @@ interface UnitTableProps {
   isLoading: boolean;
   onPageChange: (page: number) => void;
   onToggleStatus: (unit: UnitListItemResponse) => void;
+  onTogglePortfolioVisibility: (
+    unit: UnitListItemResponse,
+    isVisibleInPortfolio: boolean
+  ) => void;
+  portfolioVisibilityUpdatingId?: string | null;
 }
 
 const UNIT_TYPE_LABELS: Record<UnitType, string> = {
@@ -33,6 +39,8 @@ export function UnitTable({
   isLoading,
   onPageChange,
   onToggleStatus,
+  onTogglePortfolioVisibility,
+  portfolioVisibilityUpdatingId,
 }: UnitTableProps) {
   const router = useRouter();
   const { canManageUnits } = usePermissions();
@@ -74,13 +82,38 @@ export function UnitTable({
       },
       {
         accessorKey: "isActive",
-        header: "Status",
+        header: "Active Status",
         cell: ({ row }) => {
           const isActive: boolean = row.getValue("isActive");
           return (
             <Badge variant={isActive ? "success" : "neutral"}>
               {isActive ? "Active" : "Inactive"}
             </Badge>
+          );
+        },
+      },
+      {
+        accessorKey: "isVisibleInPortfolio",
+        header: "Show in Portfolio",
+        cell: ({ row }) => {
+          const unit = row.original;
+          const isVisible: boolean = row.getValue("isVisibleInPortfolio");
+          const isUpdating = portfolioVisibilityUpdatingId === unit.id;
+
+          return (
+            <div className="flex min-w-[156px] items-center gap-2">
+              <Switch
+                checked={isVisible}
+                onCheckedChange={(checked) =>
+                  onTogglePortfolioVisibility(unit, checked)
+                }
+                disabled={!canManageUnits || isUpdating}
+                aria-label={`Show ${unit.name} in public portfolio`}
+              />
+              <span className="text-xs font-medium text-neutral-600">
+                {isVisible ? "Visible" : "Hidden"}
+              </span>
+            </div>
           );
         },
       },
@@ -152,7 +185,13 @@ export function UnitTable({
     ];
 
     return cols;
-  }, [canManageUnits, onToggleStatus, router]);
+  }, [
+    canManageUnits,
+    onTogglePortfolioVisibility,
+    onToggleStatus,
+    portfolioVisibilityUpdatingId,
+    router,
+  ]);
 
   return (
     <div className="[--portal-row-height:47px]">

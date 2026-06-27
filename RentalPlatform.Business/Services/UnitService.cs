@@ -34,7 +34,7 @@ public class UnitService : IUnitService
             .AsNoTracking()
             .Include(u => u.UnitImages)
             .Include(u => u.UnitAmenities)
-            .Where(u => u.IsActive);
+            .Where(u => u.IsActive && u.IsVisibleInPortfolio);
 
         if (filter.ProjectId.HasValue)
         {
@@ -271,7 +271,8 @@ public class UnitService : IUnitService
         int bathrooms, 
         int maxGuests, 
         decimal basePricePerNight, 
-        bool isActive = true, 
+        bool isActive = true,
+        bool isVisibleInPortfolio = true,
         CancellationToken cancellationToken = default)
     {
         ValidateUnitData(name, unitType, bedrooms, bathrooms, maxGuests, basePricePerNight);
@@ -296,7 +297,8 @@ public class UnitService : IUnitService
             Bathrooms = bathrooms,
             MaxGuests = maxGuests,
             BasePricePerNight = basePricePerNight,
-            IsActive = isActive
+            IsActive = isActive,
+            IsVisibleInPortfolio = isVisibleInPortfolio
         };
 
         await _unitOfWork.Units.AddAsync(unit, cancellationToken);
@@ -317,7 +319,8 @@ public class UnitService : IUnitService
         int bathrooms, 
         int maxGuests, 
         decimal basePricePerNight, 
-        bool isActive, 
+        bool isActive,
+        bool isVisibleInPortfolio,
         CancellationToken cancellationToken = default)
     {
         var unit = await _unitOfWork.Units.GetByIdAsync(id, cancellationToken);
@@ -351,6 +354,7 @@ public class UnitService : IUnitService
         unit.MaxGuests = maxGuests;
         unit.BasePricePerNight = basePricePerNight;
         unit.IsActive = isActive;
+        unit.IsVisibleInPortfolio = isVisibleInPortfolio;
 
         _unitOfWork.Units.Update(unit);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -375,6 +379,17 @@ public class UnitService : IUnitService
             throw new NotFoundException($"Unit with ID {id} not found");
 
         unit.IsActive = isActive;
+        _unitOfWork.Units.Update(unit);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task SetPortfolioVisibilityAsync(Guid id, bool isVisibleInPortfolio, CancellationToken cancellationToken = default)
+    {
+        var unit = await _unitOfWork.Units.GetByIdAsync(id, cancellationToken);
+        if (unit == null)
+            throw new NotFoundException($"Unit with ID {id} not found");
+
+        unit.IsVisibleInPortfolio = isVisibleInPortfolio;
         _unitOfWork.Units.Update(unit);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
     }

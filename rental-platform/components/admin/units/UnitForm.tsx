@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Select, SelectOption } from "@/components/ui/Select";
 import { Combobox } from "@/components/ui/Combobox";
+import { Switch } from "@/components/ui/Switch";
 
 const unitFormSchema = z.object({
   ownerId: z.string().min(1, "Owner is required"),
@@ -28,6 +29,7 @@ const unitFormSchema = z.object({
     .number({ invalid_type_error: "Price is required" })
     .min(0, "Price cannot be negative"),
   isActive: z.boolean().optional(),
+  isVisibleInPortfolio: z.boolean().optional(),
   address: z.string().max(300).optional(),
   description: z.string().max(1000).optional(),
 });
@@ -71,6 +73,7 @@ export function UnitForm({
     resolver: zodResolver(unitFormSchema),
     defaultValues: {
       isActive: true,
+      isVisibleInPortfolio: true,
       ...defaultValues,
     },
   });
@@ -226,20 +229,68 @@ export function UnitForm({
           rows={4}
         />
 
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="isActive"
-            {...register("isActive")}
-            disabled={isLoading}
-            className="h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Controller
+            control={control}
+            name="isActive"
+            render={({ field }) => (
+              <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-neutral-50 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <label
+                      htmlFor="isActive"
+                      className="text-sm font-medium text-neutral-800"
+                    >
+                      Active for operations
+                    </label>
+                    <p className="mt-1 text-xs leading-5 text-neutral-500">
+                      Allows admin bookings, CRM assignment, owner tracking,
+                      and internal availability checks.
+                    </p>
+                  </div>
+                  <Switch
+                    id="isActive"
+                    checked={field.value ?? true}
+                    onCheckedChange={field.onChange}
+                    disabled={isLoading}
+                    aria-label="Active for operations"
+                    className="mt-0.5"
+                  />
+                </div>
+              </div>
+            )}
           />
-          <label
-            htmlFor="isActive"
-            className="text-sm font-medium text-neutral-700"
-          >
-            Active status (visible to users)
-          </label>
+
+          <Controller
+            control={control}
+            name="isVisibleInPortfolio"
+            render={({ field }) => (
+              <div className="rounded-[var(--portal-radius-card)] border border-neutral-200 bg-neutral-50 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <label
+                      htmlFor="isVisibleInPortfolio"
+                      className="text-sm font-medium text-neutral-800"
+                    >
+                      Show in public portfolio
+                    </label>
+                    <p className="mt-1 text-xs leading-5 text-neutral-500">
+                      Displays active units on the storefront catalog and
+                      featured property sections.
+                    </p>
+                  </div>
+                  <Switch
+                    id="isVisibleInPortfolio"
+                    checked={field.value ?? true}
+                    onCheckedChange={field.onChange}
+                    disabled={isLoading}
+                    aria-label="Show in public portfolio"
+                    className="mt-0.5"
+                  />
+                </div>
+              </div>
+            )}
+          />
         </div>
       </div>
 

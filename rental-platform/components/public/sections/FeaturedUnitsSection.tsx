@@ -47,15 +47,15 @@ export function FeaturedUnitsSection() {
           ref={headingRef}
           className="mb-12 px-6 text-center motion-safe:opacity-0 lg:mb-16"
         >
-          <span className="font-body text-sm font-medium uppercase tracking-wider text-primary-500">
-            Properties
+          <span className="font-body text-sm font-medium text-primary-500">
+            اختيارات جاهزة للحجز
           </span>
           <h2 className="mt-3 font-display text-3xl font-bold text-neutral-900 md:text-4xl lg:text-5xl">
-            Featured Properties
+            وحدات مختارة وجاهزة للحجز
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base text-neutral-600 lg:text-lg">
-            Handpicked properties across Egypt&apos;s finest destinations — each
-            one personally vetted for quality and comfort.
+            قائمة مباشرة من الوحدات المفعلة للعرض العام فقط، مع إخفاء أي وحدة
+            مخصصة للبيع الداخلي أو حجوزات الهاتف.
           </p>
         </div>
 

@@ -18,6 +18,7 @@ export interface PublicUnitListItem {
   maxGuests: number; // NOT 'capacity' or 'numberOfGuests' per P01
   basePricePerNight: number;
   isActive: boolean; // NOT 'status: UnitStatus' per P01
+  isVisibleInPortfolio: boolean;
   createdAt: string;
   images?: UnitImage[];
 }
@@ -37,6 +38,7 @@ export interface PublicUnitDetail {
   maxGuests: number;
   basePricePerNight: number;
   isActive: boolean;
+  isVisibleInPortfolio: boolean;
   createdAt: string;
   updatedAt: string;
 }

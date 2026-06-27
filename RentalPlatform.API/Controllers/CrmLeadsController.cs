@@ -40,7 +40,8 @@ public class CrmLeadsController : ControllerBase
             request.DesiredCheckOutDate,
             request.GuestCount,
             request.Source,
-            request.Notes
+            request.Notes,
+            requirePortfolioVisibility: true
         );
 
         return Ok(ApiResponse<CrmLeadDetailsResponse>.CreateSuccess(MapToDetailsResponse(lead), "Lead captured successfully."));

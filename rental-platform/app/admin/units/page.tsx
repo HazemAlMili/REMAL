@@ -14,6 +14,7 @@ import { UnitListItemResponse, UnitListFilters } from "@/lib/types";
 
 import {
   useInternalUnitsList,
+  useUpdateUnitPortfolioVisibility,
   useUpdateUnitStatus,
 } from "@/lib/hooks/useUnits";
 import { UnitFilters } from "@/components/admin/units/UnitFilters";
@@ -28,7 +29,7 @@ export default function UnitsPage() {
     <React.Suspense
       fallback={
         <div className="p-6">
-          <SkeletonTable columns={6} rows={8} />
+          <SkeletonTable columns={7} rows={8} />
         </div>
       }
     >
@@ -75,11 +76,15 @@ function UnitsPageContent() {
     error,
   } = useInternalUnitsList(filters);
   const { mutateAsync: updateStatus } = useUpdateUnitStatus();
+  const { mutateAsync: updatePortfolioVisibility } =
+    useUpdateUnitPortfolioVisibility();
 
   // Status toggle confirmation
   const [statusConfirmUnit, setStatusConfirmUnit] = React.useState<
     UnitListItemResponse | undefined
   >();
+  const [portfolioVisibilityUpdatingId, setPortfolioVisibilityUpdatingId] =
+    React.useState<string | null>(null);
 
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -119,6 +124,32 @@ function UnitsPageContent() {
 
   const handleToggleStatusRequest = (unit: UnitListItemResponse) => {
     setStatusConfirmUnit(unit);
+  };
+
+  const handleTogglePortfolioVisibility = async (
+    unit: UnitListItemResponse,
+    isVisibleInPortfolio: boolean
+  ) => {
+    if (!canManageUnits) return;
+
+    setPortfolioVisibilityUpdatingId(unit.id);
+    try {
+      await updatePortfolioVisibility({
+        id: unit.id,
+        isVisibleInPortfolio,
+      });
+      toastSuccess(
+        isVisibleInPortfolio
+          ? "Unit added to public portfolio"
+          : "Unit hidden from public portfolio"
+      );
+    } catch (e: unknown) {
+      toastError(
+        (e as Error)?.message || "Could not update portfolio visibility"
+      );
+    } finally {
+      setPortfolioVisibilityUpdatingId(null);
+    }
   };
 
   const confirmToggleStatus = async () => {
@@ -203,7 +234,7 @@ function UnitsPageContent() {
       />
 
       {isLoading ? (
-        <SkeletonTable columns={6} rows={8} />
+        <SkeletonTable columns={7} rows={8} />
       ) : noUnitsAtAll ? (
         <EmptyState
           icon={<Building2 className="h-10 w-10 text-neutral-400" />}
@@ -231,6 +262,8 @@ function UnitsPageContent() {
           isLoading={isLoading}
           onPageChange={handlePageChange}
           onToggleStatus={handleToggleStatusRequest}
+          onTogglePortfolioVisibility={handleTogglePortfolioVisibility}
+          portfolioVisibilityUpdatingId={portfolioVisibilityUpdatingId}
         />
       )}
 
@@ -244,8 +277,8 @@ function UnitsPageContent() {
           }
           description={
             statusConfirmUnit?.isActive
-              ? `Deactivate "${statusConfirmUnit?.name}"? Guests will no longer see it in the storefront.`
-              : `Activate "${statusConfirmUnit?.name}"? Guests can see it again when it is otherwise available.`
+              ? `Deactivate "${statusConfirmUnit?.name}"? It will be unavailable for public and internal booking workflows.`
+              : `Activate "${statusConfirmUnit?.name}"? It becomes operational internally; public visibility still follows the portfolio switch.`
           }
           confirmLabel={
             statusConfirmUnit?.isActive ? "Deactivate unit" : "Activate unit"

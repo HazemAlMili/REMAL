@@ -14,5 +14,6 @@ public record UpdateUnitRequest
     public int Bathrooms { get; init; }
     public int MaxGuests { get; init; }
     public decimal BasePricePerNight { get; init; }
-    public bool IsActive { get; init; }
+    public bool IsActive { get; init; } = true;
+    public bool IsVisibleInPortfolio { get; init; } = true;
 }

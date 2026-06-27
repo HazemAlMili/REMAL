@@ -37,7 +37,7 @@ public class UnitAmenitiesController : ControllerBase
 
         // Enforce public read restrictions
         bool isAdmin = User.HasClaim("subjectType", "admin");
-        if (!unit.IsActive && !isAdmin)
+        if ((!unit.IsActive || !unit.IsVisibleInPortfolio) && !isAdmin)
             return NotFound(ApiResponse.CreateFailure("Unit not found."));
 
         var amenities = await _unitAmenityService.GetAmenitiesAsync(unitId);

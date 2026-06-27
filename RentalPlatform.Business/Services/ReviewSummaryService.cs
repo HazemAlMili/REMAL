@@ -25,7 +25,7 @@ public class ReviewSummaryService : IReviewSummaryService
         Guid unitId,
         CancellationToken cancellationToken = default)
     {
-        await EnsureUnitExistsAsync(unitId, cancellationToken);
+        await EnsurePublicUnitExistsAsync(unitId, cancellationToken);
 
         var summary = await _unitOfWork.UnitReviewSummaries.GetByIdAsync(unitId, cancellationToken);
 
@@ -60,7 +60,7 @@ public class ReviewSummaryService : IReviewSummaryService
         if (pageSize < 1 || pageSize > 100)
             throw new BusinessValidationException("PageSize must be between 1 and 100.");
 
-        await EnsureUnitExistsAsync(unitId, cancellationToken);
+        await EnsurePublicUnitExistsAsync(unitId, cancellationToken);
 
         var reviews = await _unitOfWork.Reviews.Query()
             .Include(r => r.Client)
@@ -106,7 +106,7 @@ public class ReviewSummaryService : IReviewSummaryService
         Guid reviewId,
         CancellationToken cancellationToken = default)
     {
-        await EnsureUnitExistsAsync(unitId, cancellationToken);
+        await EnsurePublicUnitExistsAsync(unitId, cancellationToken);
 
         var review = await _unitOfWork.Reviews.Query()
             .Include(r => r.Client)
@@ -166,10 +166,10 @@ public class ReviewSummaryService : IReviewSummaryService
         return $"{firstName} {char.ToUpper(lastPart[0])}.";  // e.g. "Ahmed G."
     }
 
-    private async Task EnsureUnitExistsAsync(Guid unitId, CancellationToken cancellationToken)
+    private async Task EnsurePublicUnitExistsAsync(Guid unitId, CancellationToken cancellationToken)
     {
         var unitExists = await _unitOfWork.Units.ExistsAsync(
-            u => u.Id == unitId, cancellationToken);
+            u => u.Id == unitId && u.IsActive && u.IsVisibleInPortfolio, cancellationToken);
         if (!unitExists)
             throw new NotFoundException($"Unit with ID {unitId} not found");
     }

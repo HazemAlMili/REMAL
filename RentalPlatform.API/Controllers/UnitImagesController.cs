@@ -35,10 +35,11 @@ public class UnitImagesController : ControllerBase
         if (unit == null)
             return NotFound(ApiResponse.CreateFailure("Unit not found."));
 
-        // Check if unauthenticated/non-admin public caller is trying to access inactive unit
+        // Check if unauthenticated/non-admin public caller is trying to access
+        // a unit outside the public marketing catalog.
         bool isAdmin = User.HasClaim("subjectType", "admin");
-        if (!unit.IsActive && !isAdmin)
-            return NotFound(ApiResponse.CreateFailure("Unit not found.")); // Hide inactive units from public
+        if ((!unit.IsActive || !unit.IsVisibleInPortfolio) && !isAdmin)
+            return NotFound(ApiResponse.CreateFailure("Unit not found."));
 
         var images = await _unitImageService.GetByUnitIdAsync(unitId);
         var response = images.Select(MapToResponse).ToList();

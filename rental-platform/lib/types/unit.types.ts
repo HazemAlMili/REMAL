@@ -13,6 +13,7 @@ export interface UnitListItemResponse {
   maxGuests: number;
   basePricePerNight: number;
   isActive: boolean;
+  isVisibleInPortfolio: boolean;
   createdAt: string;
 }
 
@@ -31,6 +32,7 @@ export interface UnitDetailsResponse {
   maxGuests: number;
   basePricePerNight: number;
   isActive: boolean;
+  isVisibleInPortfolio: boolean;
   createdAt: string;
   updatedAt: string;
   images?: UnitImageResponse[];
@@ -63,6 +65,7 @@ export interface CreateUnitRequest {
   maxGuests: number;
   basePricePerNight: number;
   isActive?: boolean;
+  isVisibleInPortfolio?: boolean;
 }
 
 export interface UpdateUnitRequest {
@@ -77,6 +80,11 @@ export interface UpdateUnitRequest {
   maxGuests?: number;
   basePricePerNight?: number;
   isActive?: boolean;
+  isVisibleInPortfolio?: boolean;
+}
+
+export interface UpdateUnitPortfolioVisibilityRequest {
+  isVisibleInPortfolio: boolean;
 }
 
 export interface UnitImageResponse {

@@ -63,7 +63,7 @@ public class UnitsController : ControllerBase
     {
         var unit = await _unitService.GetByIdAsync(id);
         
-        if (unit == null || !unit.IsActive)
+        if (unit == null || !unit.IsActive || !unit.IsVisibleInPortfolio)
             return NotFound(ApiResponse.CreateFailure("Active unit not found."));
 
         return Ok(ApiResponse<UnitDetailsResponse>.CreateSuccess(MapToDetailsResponse(unit)));
@@ -140,7 +140,8 @@ public class UnitsController : ControllerBase
             request.Bathrooms,
             request.MaxGuests,
             request.BasePricePerNight,
-            request.IsActive
+            request.IsActive,
+            request.IsVisibleInPortfolio
         );
         
         return Ok(ApiResponse<UnitDetailsResponse>.CreateSuccess(MapToDetailsResponse(unit), "Unit created successfully."));
@@ -163,7 +164,8 @@ public class UnitsController : ControllerBase
             request.Bathrooms,
             request.MaxGuests,
             request.BasePricePerNight,
-            request.IsActive
+            request.IsActive,
+            request.IsVisibleInPortfolio
         );
         
         return Ok(ApiResponse<UnitDetailsResponse>.CreateSuccess(MapToDetailsResponse(unit), "Unit updated successfully."));
@@ -183,7 +185,25 @@ public class UnitsController : ControllerBase
         return Ok(ApiResponse<UnitDetailsResponse>.CreateSuccess(MapToDetailsResponse(unit), $"Unit status updated to {(request.IsActive ? "active" : "inactive")}."));
     }
 
-    // 8. DELETE /api/internal/units/{id}
+    // 8. PATCH /api/internal/units/{id}/portfolio-visibility
+    [HttpPatch("api/internal/units/{id}/portfolio-visibility")]
+    [Authorize(Policy = PermissionKeys.UnitsManage)]
+    public async Task<ActionResult<ApiResponse<UnitDetailsResponse>>> UpdateUnitPortfolioVisibility(Guid id, UpdateUnitPortfolioVisibilityRequest request)
+    {
+        await _unitService.SetPortfolioVisibilityAsync(id, request.IsVisibleInPortfolio);
+
+        var unit = await _unitService.GetByIdAsync(id);
+        if (unit == null)
+            return NotFound(ApiResponse.CreateFailure("Unit not found after portfolio visibility update."));
+
+        var message = request.IsVisibleInPortfolio
+            ? "Unit is now visible in the public portfolio."
+            : "Unit is now hidden from the public portfolio.";
+
+        return Ok(ApiResponse<UnitDetailsResponse>.CreateSuccess(MapToDetailsResponse(unit), message));
+    }
+
+    // 9. DELETE /api/internal/units/{id}
     [HttpDelete("api/internal/units/{id}")]
     [Authorize(Policy = PermissionKeys.UnitsManage)]
     public async Task<ActionResult<ApiResponse>> DeleteUnit(Guid id)
@@ -209,6 +229,7 @@ public class UnitsController : ControllerBase
             MaxGuests = unit.MaxGuests,
             BasePricePerNight = unit.BasePricePerNight,
             IsActive = unit.IsActive,
+            IsVisibleInPortfolio = unit.IsVisibleInPortfolio,
             CreatedAt = unit.CreatedAt,
             Images = unit.UnitImages
                 .OrderByDescending(image => image.IsCover)
@@ -276,6 +297,7 @@ public class UnitsController : ControllerBase
             MaxGuests = unit.MaxGuests,
             BasePricePerNight = unit.BasePricePerNight,
             IsActive = unit.IsActive,
+            IsVisibleInPortfolio = unit.IsVisibleInPortfolio,
             CreatedAt = unit.CreatedAt,
             UpdatedAt = unit.UpdatedAt
         };

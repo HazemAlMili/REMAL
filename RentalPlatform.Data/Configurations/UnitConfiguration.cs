@@ -62,6 +62,11 @@ public class UnitConfiguration : IEntityTypeConfiguration<Unit>
             .HasColumnName("is_active")
             .IsRequired();
 
+        builder.Property(x => x.IsVisibleInPortfolio)
+            .HasColumnName("is_visible_in_portfolio")
+            .HasDefaultValue(true)
+            .IsRequired();
+
         builder.Property(x => x.CreatedAt)
             .HasColumnName("created_at")
             .IsRequired();

@@ -79,6 +79,7 @@ export default function EditUnitPage({ params }: EditUnitPageProps) {
     maxGuests: unit.maxGuests,
     basePricePerNight: unit.basePricePerNight,
     isActive: unit.isActive,
+    isVisibleInPortfolio: unit.isVisibleInPortfolio,
     address: unit.address ?? undefined,
     description: unit.description ?? undefined,
   };

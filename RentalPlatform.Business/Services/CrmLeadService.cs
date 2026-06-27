@@ -114,6 +114,7 @@ public class CrmLeadService : ICrmLeadService
         int? guestCount,
         string source,
         string? notes,
+        bool requirePortfolioVisibility = false,
         CancellationToken cancellationToken = default)
     {
         ValidateContactInfo(contactName, contactPhone);
@@ -125,6 +126,7 @@ public class CrmLeadService : ICrmLeadService
             targetUnitId,
             assignedAdminUserId,
             guestCount,
+            requirePortfolioVisibility,
             cancellationToken);
         await EnsureDesiredDatesAvailableAsync(targetUnitId, desiredCheckInDate, desiredCheckOutDate, cancellationToken);
         await EnsureNoDuplicateOpenLeadAsync(
@@ -189,7 +191,8 @@ public class CrmLeadService : ICrmLeadService
             targetUnitId,
             assignedAdminUserId,
             guestCount,
-            cancellationToken);
+            requirePortfolioVisibility: false,
+            cancellationToken: cancellationToken);
         await EnsureDesiredDatesAvailableAsync(targetUnitId, desiredCheckInDate, desiredCheckOutDate, cancellationToken);
 
         lead.ClientId = clientId;
@@ -381,6 +384,7 @@ public class CrmLeadService : ICrmLeadService
         Guid? targetUnitId,
         Guid? assignedAdminUserId,
         int? guestCount,
+        bool requirePortfolioVisibility,
         CancellationToken cancellationToken)
     {
         if (clientId.HasValue)
@@ -398,12 +402,15 @@ public class CrmLeadService : ICrmLeadService
                 .Where(u =>
                     u.Id == targetUnitId.Value &&
                     u.IsActive &&
+                    (!requirePortfolioVisibility || u.IsVisibleInPortfolio) &&
                     u.DeletedAt == null)
                 .Select(u => new { u.Name, u.MaxGuests })
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (unit == null)
-                throw new NotFoundException($"Active unit with ID {targetUnitId.Value} not found");
+                throw new NotFoundException(requirePortfolioVisibility
+                    ? $"Public unit with ID {targetUnitId.Value} not found"
+                    : $"Active unit with ID {targetUnitId.Value} not found");
 
             if (guestCount.HasValue && guestCount.Value > unit.MaxGuests)
             {

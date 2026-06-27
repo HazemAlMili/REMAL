@@ -70,22 +70,22 @@ export function useUnitImages(unitId: string, enabled = true) {
 }
 
 // Alias for consistency
-export function usePublicUnitImages(unitId: string) {
-  return useUnitImages(unitId);
+export function usePublicUnitImages(unitId: string, enabled = true) {
+  return useUnitImages(unitId, enabled);
 }
 
 // ── Unit Amenities ──
-export function useUnitAmenities(unitId: string) {
+export function useUnitAmenities(unitId: string, enabled = true) {
   return useQuery({
     queryKey: queryKeys.units.amenities(unitId),
     queryFn: () => publicService.getUnitAmenities(unitId),
-    enabled: !!unitId,
+    enabled: !!unitId && enabled,
   });
 }
 
 // Alias for consistency
-export function usePublicUnitAmenities(unitId: string) {
-  return useUnitAmenities(unitId);
+export function usePublicUnitAmenities(unitId: string, enabled = true) {
+  return useUnitAmenities(unitId, enabled);
 }
 
 // ── Unit Reviews (paginated) ──

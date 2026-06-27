@@ -65,6 +65,8 @@ export const endpoints = {
     update: (id: string) => `/api/internal/units/${id}`,
     delete: (id: string) => `/api/internal/units/${id}`,
     status: (id: string) => `/api/internal/units/${id}/status`,
+    portfolioVisibility: (id: string) =>
+      `/api/internal/units/${id}/portfolio-visibility`,
   },
 
   // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ UNIT IMAGES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

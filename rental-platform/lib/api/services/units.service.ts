@@ -8,6 +8,7 @@ import {
   UnitListFilters,
   CreateUnitRequest,
   UpdateUnitRequest,
+  UpdateUnitPortfolioVisibilityRequest,
   AddUnitImageRequest,
   ReorderUnitImagesRequest,
   UnitAmenityResponse,
@@ -62,6 +63,12 @@ export const unitsService = {
     isActive: boolean
   ): Promise<UnitDetailsResponse> =>
     api.patch(endpoints.internalUnits.status(id), { isActive }),
+
+  updatePortfolioVisibility: (
+    id: string,
+    dataPayload: UpdateUnitPortfolioVisibilityRequest
+  ): Promise<UnitDetailsResponse> =>
+    api.patch(endpoints.internalUnits.portfolioVisibility(id), dataPayload),
 
   // Images
   addImage: (
