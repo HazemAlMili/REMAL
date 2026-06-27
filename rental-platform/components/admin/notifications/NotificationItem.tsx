@@ -8,6 +8,7 @@ import {
 } from "@/lib/constants/notification-channels";
 import type { NotificationListItemResponse } from "@/lib/types/notification.types";
 import { NotificationBodyRenderer } from "@/lib/utils/notification-body";
+import { cn } from "@/lib/utils/cn";
 
 interface NotificationItemProps {
   notification: NotificationListItemResponse;
@@ -26,9 +27,7 @@ export function NotificationItem({
   const isUnread = notification.readAt === null;
 
   const handleClick = () => {
-    // Always open the detail drawer
     onSelect(notification);
-    // Also mark as read if currently unread (idempotent on the server)
     if (isUnread) {
       onMarkRead(notification.notificationId);
     }
@@ -40,55 +39,51 @@ export function NotificationItem({
       type="button"
       onClick={handleClick}
       disabled={isMarkingRead}
-      className={`
-        relative w-full rounded-lg border p-4 text-left transition-colors
-        ${
-          isUnread
-            ? "border-primary-100 bg-primary-50 hover:bg-primary-100"
-            : "border-neutral-200 bg-white hover:bg-neutral-50"
-        }
-        ${isMarkingRead ? "cursor-wait opacity-70" : "cursor-pointer"}
-      `}
+      aria-label={`${isUnread ? "Unread notification" : "Notification"}: ${notification.subject}`}
+      className={cn(
+        "group relative flex w-full items-start gap-3 overflow-hidden rounded-[var(--portal-radius-control)] border border-neutral-200 bg-white p-4 text-start transition-colors",
+        "hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+        isMarkingRead ? "cursor-wait opacity-70" : "cursor-pointer"
+      )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          {/* Subject — NOT "title" per P27 */}
-          <p
-            dir="rtl"
-            className={`text-sm text-right ${isUnread ? "font-semibold text-neutral-800" : "font-normal text-neutral-600"}`}
-          >
-            {notification.subject}
-          </p>
-          {/* Body preview — BiDi-safe, truncated to 2 lines */}
-          <div dir="rtl" className="mt-1 line-clamp-2 text-right">
-            <NotificationBodyRenderer
-              body={notification.body}
-              structured={false}
-              className="text-xs text-neutral-500"
-            />
-          </div>
-          {/* Sender label */}
-          <p className="mt-1 text-[11px] text-neutral-400">
-            من: {notification.senderLabel}
-          </p>
-        </div>
-        <div className="flex shrink-0 flex-col items-end gap-1">
-          {/* Channel badge */}
-          <Badge variant={NOTIFICATION_CHANNEL_BADGE[notification.channel]}>
-            {NOTIFICATION_CHANNEL_LABELS[notification.channel]}
-          </Badge>
-          {/* Timestamp */}
-          <span className="text-[11px] text-neutral-400">
-            {format(new Date(notification.createdAt), "dd MMM, HH:mm")}
-          </span>
-        </div>
+      {/* Unread spotlight: a terracotta bar on the inline-start edge */}
+      {isUnread && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-y-0 start-0 w-1 bg-primary-500"
+        />
+      )}
+
+      {/* Content */}
+      <div className="min-w-0 flex-1">
+        <p
+          dir="auto"
+          className={cn(
+            "text-sm text-neutral-900",
+            isUnread ? "font-semibold" : "font-medium"
+          )}
+        >
+          {notification.subject}
+        </p>
+        <NotificationBodyRenderer
+          body={notification.body}
+          structured={false}
+          className="mt-1 line-clamp-2 text-xs text-neutral-500"
+        />
+        <p className="mt-1.5 text-[11px] text-neutral-400">
+          From {notification.senderLabel}
+        </p>
       </div>
 
-      {/* Unread indicator dot */}
-      {isUnread && (
-        <div className="absolute right-4 top-4 h-2 w-2 rounded-full bg-primary-500" />
-      )}
+      {/* Meta */}
+      <div className="flex shrink-0 flex-col items-end gap-1.5">
+        <Badge variant={NOTIFICATION_CHANNEL_BADGE[notification.channel]} size="sm">
+          {NOTIFICATION_CHANNEL_LABELS[notification.channel]}
+        </Badge>
+        <span className="text-[11px] tabular-nums text-neutral-400">
+          {format(new Date(notification.createdAt), "dd MMM, HH:mm")}
+        </span>
+      </div>
     </button>
   );
 }
-
