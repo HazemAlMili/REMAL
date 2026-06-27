@@ -60,7 +60,7 @@ export function BookingFilters({ filters, onChange }: BookingFiltersProps) {
       <div className="flex flex-1 flex-wrap items-center gap-4">
         <div className="w-full sm:w-64">
           <Input
-            placeholder="Search bookings..."
+            placeholder="Search name, unit, or reference…"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

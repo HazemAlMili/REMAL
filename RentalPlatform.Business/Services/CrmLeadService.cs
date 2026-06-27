@@ -276,6 +276,26 @@ public class CrmLeadService : ICrmLeadService
                 throw new ConflictException(
                     $"CRM lead {leadId} is already linked to unit {lead.TargetUnitId.Value}, but conversion was requested for unit {unitId}");
 
+            // Date integrity guard — symmetric to the unit guard above.
+            // The lead's desired dates are the availability-validated terms agreed at
+            // qualification. Conversion must materialize them faithfully: silently
+            // swapping them for a different range at convert time would create a booking
+            // on dates the deal was never validated for. If genuinely different dates are
+            // needed, the lead must be edited (re-validating availability) before convert.
+            if (lead.DesiredCheckInDate.HasValue && lead.DesiredCheckInDate.Value != checkInDate)
+                throw new ConflictException(
+                    $"CRM lead {leadId} was qualified for check-in {lead.DesiredCheckInDate.Value:yyyy-MM-dd}, " +
+                    $"but conversion requested {checkInDate:yyyy-MM-dd}. Update the lead's dates before converting.");
+
+            if (lead.DesiredCheckOutDate.HasValue && lead.DesiredCheckOutDate.Value != checkOutDate)
+                throw new ConflictException(
+                    $"CRM lead {leadId} was qualified for check-out {lead.DesiredCheckOutDate.Value:yyyy-MM-dd}, " +
+                    $"but conversion requested {checkOutDate:yyyy-MM-dd}. Update the lead's dates before converting.");
+
+            // Availability is then re-validated inside BookingService.CreateAsync
+            // (operational date-blocks + confirmed-booking overlap) while we still hold
+            // the per-unit advisory lock acquired above, so a range that went stale since
+            // the lead was created is rejected atomically here, not silently booked.
             var booking = await _bookingService.CreateAsync(
                 clientId: clientId,
                 unitId: unitId,

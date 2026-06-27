@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useConvertToBooking } from "@/lib/hooks/useCrm";
 import { useCreateClient } from "@/lib/hooks/useClients";
+import { useAvailabilityCheck } from "@/lib/hooks/usePublic";
 import { clientsService } from "@/lib/api/services/clients.service";
 import { toastSuccess } from "@/lib/utils/toast";
 import { usePermissions } from "@/lib/hooks/usePermissions";
@@ -16,23 +17,15 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { formatDateRange, getNights } from "@/lib/utils/format";
-import type {
-  CrmLeadDetailsResponse,
-  ConvertLeadToBookingRequest,
-} from "@/lib/types/crm.types";
+import type { CrmLeadDetailsResponse } from "@/lib/types/crm.types";
 import type { CreateClientRequest } from "@/lib/types";
-import { Check, Copy } from "lucide-react";
-
-const convertSchema = z.object({
-  clientId: z.string().min(1, "Please select a client"),
-  unitId: z.string().min(1, "Please select a unit"),
-  checkInDate: z.string().min(1, "Please enter the check-in date"),
-  checkOutDate: z.string().min(1, "Please enter the check-out date"),
-  guestCount: z
-    .number({ invalid_type_error: "Please enter the guest count" })
-    .min(1, "Guest count must be at least 1"),
-  internalNotes: z.string().optional(),
-});
+import {
+  Check,
+  CircleAlert,
+  Copy,
+  Loader2,
+  PencilLine,
+} from "lucide-react";
 
 const newClientSchema = z.object({
   name: z.string().min(1, "Please enter the client name"),
@@ -59,32 +52,25 @@ export function ConvertToBookingPanel({
   const { canManageCRM } = usePermissions();
   const convertMutation = useConvertToBooking(leadId);
   const createClientMutation = useCreateClient();
+
+  // The lead is already linked to a client → the backend forces that client, so the
+  // choice is locked. Otherwise the team creates/attaches one during conversion.
+  const clientLocked = Boolean(lead.clientId);
+
   const [showNewClientForm, setShowNewClientForm] = useState(false);
   const [temporaryPassword, setTemporaryPassword] = useState<string | null>(null);
   const [passwordCopied, setPasswordCopied] = useState(false);
+  const [clientId, setClientId] = useState<string>(lead.clientId ?? "");
   const [attachedClient, setAttachedClient] = useState<{
     name: string;
     phone: string;
-  } | null>(null);
+  } | null>(
+    // A pre-linked client is shown by the lead's own contact identity — never a raw ID.
+    lead.clientId ? { name: lead.contactName, phone: lead.contactPhone } : null
+  );
 
-  const leadBookingDefaults = {
-    clientId: lead.clientId ?? "",
-    unitId: lead.targetUnitId ?? "",
-    checkInDate: lead.desiredCheckInDate ?? "",
-    checkOutDate: lead.desiredCheckOutDate ?? "",
-    guestCount: lead.guestCount ?? 1,
-  };
-
-  const {
-    register,
-    handleSubmit,
-    reset: resetConvertForm,
-    getValues,
-    formState: { errors },
-  } = useForm<ConvertLeadToBookingRequest>({
-    resolver: zodResolver(convertSchema),
-    defaultValues: { ...leadBookingDefaults, internalNotes: "" },
-  });
+  const [guestCount, setGuestCount] = useState<number>(lead.guestCount ?? 1);
+  const [internalNotes, setInternalNotes] = useState("");
 
   const {
     register: registerClient,
@@ -100,29 +86,42 @@ export function ConvertToBookingPanel({
     },
   });
 
-  const onSubmit = (data: ConvertLeadToBookingRequest) => {
-    convertMutation.mutate(data);
-  };
+  // ── Agreed deal terms (the lead is the source of truth — these are NOT editable here) ──
+  const checkIn = lead.desiredCheckInDate;
+  const checkOut = lead.desiredCheckOutDate;
+  const hasCompleteDeal = Boolean(lead.targetUnitId && checkIn && checkOut);
+  const nights = checkIn && checkOut ? getNights(checkIn, checkOut) : 0;
 
-  // Populate the whole convert form in one shot — the new/existing client's ID plus
-  // the unit, dates, and guests carried over from the lead — and collapse the create
-  // form, so converting is ready without any manual entry. Using reset() (not setValue)
-  // reliably re-syncs the uncontrolled inputs. Any notes already typed are preserved.
+  // Live re-validation: the agreed dates were available when the lead was created, but
+  // a block or another booking may have landed since. Re-check now; block convert if so.
+  const {
+    data: availability,
+    isLoading: isCheckingAvailability,
+  } = useAvailabilityCheck(lead.targetUnitId ?? "", checkIn, checkOut);
+  const hasDateConflict = availability?.isAvailable === false;
+
   const attachClient = (id: string, name: string, phone: string) => {
-    resetConvertForm({
-      ...leadBookingDefaults,
-      clientId: id,
-      internalNotes: getValues("internalNotes") ?? "",
-    });
+    setClientId(id);
     setAttachedClient({ name, phone });
     setShowNewClientForm(false);
-    resetClientForm();
   };
 
-  // Look up an existing client by phone, then by email, via the admin clients search.
-  // The backend enforces uniqueness on BOTH phone and email, so a match on either means
-  // a new client can't be created — we attach that client instead. Phone identity
-  // ignores a leading "+", matching how the backend dedupes.
+  const clearClient = () => {
+    setClientId("");
+    setAttachedClient(null);
+    setTemporaryPassword(null);
+    setPasswordCopied(false);
+    setShowNewClientForm(true);
+    resetClientForm({
+      name: lead.contactName ?? "",
+      phone: lead.contactPhone ?? "",
+      email: lead.contactEmail ?? "",
+    });
+  };
+
+  // Look up an existing client by phone, then email, via the admin clients search.
+  // The backend enforces uniqueness on BOTH, so a match on either means we attach that
+  // client instead of failing on a duplicate. Phone identity ignores a leading "+".
   const findExistingClient = async (phone: string, email?: string) => {
     const normalizedPhone = phone.replace(/\+/g, "");
     const byPhone = await clientsService.getAll({
@@ -155,8 +154,8 @@ export function ConvertToBookingPanel({
     const phone = data.phone.trim();
     const email = data.email?.trim() || undefined;
 
-    // If this phone OR email already belongs to a client, attach them directly instead
-    // of failing with a duplicate error and forcing a manual ID paste.
+    // Attach an existing client on a phone/email match rather than failing with a
+    // duplicate error and forcing a manual ID paste.
     try {
       const existing = await findExistingClient(phone, email);
       if (existing) {
@@ -185,125 +184,169 @@ export function ConvertToBookingPanel({
     );
   };
 
-  const nights =
-    lead.desiredCheckInDate && lead.desiredCheckOutDate
-      ? getNights(lead.desiredCheckInDate, lead.desiredCheckOutDate)
-      : 0;
+  const handleConvert = () => {
+    if (!hasCompleteDeal || !checkIn || !checkOut) return;
+    convertMutation.mutate({
+      clientId,
+      unitId: lead.targetUnitId!,
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
+      guestCount,
+      internalNotes: internalNotes.trim() || undefined,
+    });
+  };
 
+  // ── Gating ──
   if (CRM_CLOSED_STATUSES.includes(lead.leadStatus)) {
     return null;
   }
 
   if (lead.leadStatus !== "Booked") {
     return (
-      <div className="grid gap-3 rounded-[var(--portal-radius-card)] border border-warning-bg bg-warning-bg p-4 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
-        <h3 className="text-sm font-semibold text-amber-800">
-          Convert to booking
-        </h3>
+      <div className="grid gap-3 rounded-[var(--portal-radius-card,8px)] border border-warning-bg bg-warning-bg p-4 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
+        <h3 className="text-sm font-semibold text-warning">Convert to booking</h3>
         <div className="space-y-1">
-          <p className="text-sm text-amber-700">
-            This lead must be moved to <strong>Booked</strong> status before
-            it can be converted to a booking.
+          <p className="text-sm text-warning">
+            This lead must be moved to <strong>Booked</strong> status before it
+            can be converted to a booking.
           </p>
-          <p className="text-xs text-amber-600">
+          <p className="text-xs text-warning/80">
             Current status:{" "}
-            <strong>{CRM_STATUS_LABELS[lead.leadStatus] ?? lead.leadStatus}</strong>
+            <strong>
+              {CRM_STATUS_LABELS[lead.leadStatus] ?? lead.leadStatus}
+            </strong>
           </p>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="bg-primary-50/30 space-y-4 rounded-lg border border-primary-200 p-4">
-      <h3 className="text-sm font-semibold text-primary-800">
-        Convert to booking
-      </h3>
+  // Conversion materializes the lead's agreed terms verbatim. If the unit or dates are
+  // missing, there is nothing validated to convert — direct the team to set them first.
+  if (!hasCompleteDeal) {
+    const missing = [
+      !lead.targetUnitId && "a target unit",
+      !(checkIn && checkOut) && "stay dates",
+    ].filter(Boolean);
+    return (
+      <div className="space-y-2 rounded-[var(--portal-radius-card,8px)] border border-warning-bg bg-warning-bg p-4">
+        <h3 className="text-sm font-semibold text-warning">Convert to booking</h3>
+        <p className="text-sm text-warning">
+          Add {missing.join(" and ")} to this lead before converting. The booking
+          is created from the lead&apos;s agreed details, so they must be set —
+          and availability validated — on the lead first.
+        </p>
+      </div>
+    );
+  }
 
-      {/* Summary */}
-      {lead.targetUnitId && (
-        <div className="text-sm text-neutral-600">
-          <p>Unit: {lead.targetUnitName || lead.targetUnitId}</p>
-          {lead.desiredCheckInDate && lead.desiredCheckOutDate && (
-            <p>
-              Dates:{" "}
-              {formatDateRange(
-                lead.desiredCheckInDate,
-                lead.desiredCheckOutDate
-              )}{" "}
-              ({nights} nights)
+  const availabilityChip = isCheckingAvailability ? (
+    <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-500">
+      <Loader2 className="h-3 w-3 animate-spin" /> Checking
+    </span>
+  ) : hasDateConflict ? (
+    <span className="inline-flex items-center gap-1 rounded-full bg-error-bg px-2 py-0.5 text-[11px] font-medium text-error">
+      <CircleAlert className="h-3 w-3" /> Unavailable
+    </span>
+  ) : availability?.isAvailable ? (
+    <span className="inline-flex items-center gap-1 rounded-full bg-success-bg px-2 py-0.5 text-[11px] font-medium text-success">
+      <Check className="h-3 w-3" /> Available
+    </span>
+  ) : null;
+
+  const canConvert =
+    canManageCRM &&
+    Boolean(clientId) &&
+    !hasDateConflict &&
+    !isCheckingAvailability &&
+    guestCount >= 1 &&
+    !convertMutation.isPending;
+
+  return (
+    <section className="space-y-5 rounded-[var(--portal-radius-card,8px)] border border-neutral-200 bg-white p-5">
+      <div>
+        <h3 className="text-sm font-semibold text-neutral-900">
+          Convert to booking
+        </h3>
+        <p className="mt-0.5 text-xs text-neutral-500">
+          Confirm the agreed terms and create the booking. Unit and dates are
+          locked to this lead.
+        </p>
+      </div>
+
+      {/* Agreed deal — read-only. Dates are not editable here by design. */}
+      <dl className="divide-y divide-neutral-200/70 overflow-hidden rounded-[var(--portal-radius-control,6px)] bg-neutral-50">
+        <div className="flex items-center justify-between gap-4 px-3.5 py-2.5">
+          <dt className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
+            Unit
+          </dt>
+          <dd className="text-right text-sm font-medium text-neutral-900">
+            {lead.targetUnitName ?? "Linked unit"}
+          </dd>
+        </div>
+        <div className="flex items-center justify-between gap-4 px-3.5 py-2.5">
+          <dt className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
+            Stay
+          </dt>
+          <dd className="flex flex-wrap items-center justify-end gap-2">
+            <span className="text-sm font-medium tabular-nums text-neutral-900">
+              {formatDateRange(checkIn!, checkOut!)}
+            </span>
+            <span className="text-xs tabular-nums text-neutral-500">
+              {nights} {nights === 1 ? "night" : "nights"}
+            </span>
+            {availabilityChip}
+          </dd>
+        </div>
+      </dl>
+
+      {hasDateConflict && (
+        <div className="flex items-start gap-2.5 rounded-[var(--portal-radius-control,6px)] border border-error-bg bg-error-bg p-3 text-sm text-error">
+          <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" />
+          <div>
+            <p className="font-medium">These dates are no longer available.</p>
+            <p className="mt-0.5 text-error/90">
+              They were blocked or booked after this lead was created. Update the
+              stay dates on the lead — which re-checks availability — then convert.
+              {availability?.blockedDates?.length
+                ? ` Conflicting: ${availability.blockedDates.join(", ")}.`
+                : ""}
             </p>
-          )}
-          {lead.guestCount && <p>Guests: {lead.guestCount}</p>}
+          </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-        {temporaryPassword && (
-          <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
-            <p className="text-xs font-medium text-amber-800">
-              Temporary password
-            </p>
-            <div className="mt-2 flex items-center gap-2">
-              <code className="min-w-0 flex-1 break-all font-mono text-sm text-neutral-900">
-                {temporaryPassword}
-              </code>
+      {/* Client */}
+      <div className="space-y-2">
+        <p className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
+          Client
+        </p>
+
+        {attachedClient ? (
+          <div className="flex items-center justify-between gap-3 rounded-[var(--portal-radius-control,6px)] border border-success-bg bg-success-bg px-3.5 py-2.5">
+            <span className="flex min-w-0 items-center gap-2 text-sm font-medium text-success">
+              <Check className="h-4 w-4 shrink-0" />
+              <span className="truncate">
+                {attachedClient.name}
+                <span className="text-success/70"> · {attachedClient.phone}</span>
+              </span>
+            </span>
+            {!clientLocked && (
               <button
                 type="button"
-                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-amber-300 bg-white text-amber-800 hover:bg-amber-100"
-                aria-label="Copy temporary password"
-                title="Copy temporary password"
-                onClick={async () => {
-                  await navigator.clipboard.writeText(temporaryPassword);
-                  setPasswordCopied(true);
-                }}
+                onClick={clearClient}
+                className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-neutral-500 transition-colors hover:text-neutral-800"
               >
-                {passwordCopied ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
+                <PencilLine className="h-3.5 w-3.5" /> Change
               </button>
-            </div>
-            <p className="mt-2 text-xs text-amber-700">
-              This password is returned once. Give it to the client securely.
-            </p>
+            )}
           </div>
-        )}
-
-        {/* Client ID field + create toggle */}
-        <div className="space-y-1">
-          <Input
-            label="Client ID"
-            {...register("clientId")}
-            error={errors.clientId?.message}
-            required
-            disabled={convertMutation.isPending}
-            placeholder="Paste client ID or create one below"
-          />
-          <button
-            type="button"
-            className="text-xs text-primary-600 hover:underline"
-            onClick={() => setShowNewClientForm((v) => !v)}
-          >
-            {showNewClientForm
-              ? "Hide new client form"
-              : "Lead is not a client yet? Create one"}
-          </button>
-          {attachedClient && (
-            <p className="flex items-center gap-1.5 text-xs font-medium text-emerald-700">
-              <Check className="h-3.5 w-3.5 shrink-0" />
-              Client attached: {attachedClient.name} ({attachedClient.phone})
-            </p>
-          )}
-        </div>
-
-        {/* Inline new client form */}
-        {showNewClientForm && (
-          <div className="space-y-3 rounded-md border border-neutral-200 bg-white p-3">
-            <p className="text-xs font-medium text-neutral-600">
-              Create a client — or, if this phone already exists, attach that
-              client — and fill the client ID automatically.
+        ) : (
+          <div className="space-y-3 rounded-[var(--portal-radius-control,6px)] border border-neutral-200 bg-neutral-50 p-3.5">
+            <p className="text-xs text-neutral-600">
+              This lead isn&apos;t a client yet. Create one from the contact
+              details below — if the phone or email already exists, we&apos;ll
+              attach that client instead.
             </p>
             <Input
               label="Full name"
@@ -326,6 +369,15 @@ export function ConvertToBookingPanel({
               error={clientErrors.email?.message}
               disabled={createClientMutation.isPending}
             />
+            {showNewClientForm && (
+              <button
+                type="button"
+                onClick={() => setShowNewClientForm(false)}
+                className="text-xs font-medium text-neutral-400 hover:text-neutral-600"
+              >
+                Cancel
+              </button>
+            )}
             <Button
               type="button"
               variant="outline"
@@ -333,65 +385,85 @@ export function ConvertToBookingPanel({
               isLoading={isCreatingClient || createClientMutation.isPending}
               disabled={isCreatingClient || createClientMutation.isPending}
               onClick={handleClientSubmit(onCreateClient)}
+              className="w-full"
             >
               Create or attach client
             </Button>
           </div>
         )}
 
-        <Input
-          label="Unit ID"
-          {...register("unitId")}
-          error={errors.unitId?.message}
-          required
-          disabled={convertMutation.isPending}
-        />
-        <div className="grid grid-cols-2 gap-3">
-          <Input
-            label="Check-in date"
-            type="date"
-            {...register("checkInDate")}
-            error={errors.checkInDate?.message}
-            required
-            disabled={convertMutation.isPending}
-          />
-          <Input
-            label="Check-out date"
-            type="date"
-            {...register("checkOutDate")}
-            error={errors.checkOutDate?.message}
-            required
-            disabled={convertMutation.isPending}
-          />
-        </div>
-        <Input
-          label="Guest count"
-          type="number"
-          {...register("guestCount", { valueAsNumber: true })}
-          error={errors.guestCount?.message}
-          required
-          disabled={convertMutation.isPending}
-        />
-        <div className="w-full">
-          <textarea
-            {...register("internalNotes")}
-            placeholder="Add booking context for operations or finance"
-            className="h-20 w-full resize-none rounded-md border border-neutral-200 p-2 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:text-neutral-400"
-            disabled={convertMutation.isPending}
-          />
-        </div>
-
-        {canManageCRM && (
-          <Button
-            type="submit"
-            isLoading={convertMutation.isPending}
-            disabled={convertMutation.isPending}
-            className="w-full"
-          >
-            Convert lead to booking
-          </Button>
+        {temporaryPassword && (
+          <div className="rounded-[var(--portal-radius-control,6px)] border border-warning-bg bg-warning-bg p-3">
+            <p className="text-xs font-medium text-warning">Temporary password</p>
+            <div className="mt-2 flex items-center gap-2">
+              <code className="min-w-0 flex-1 break-all font-mono text-sm text-neutral-900">
+                {temporaryPassword}
+              </code>
+              <button
+                type="button"
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--portal-radius-control,6px)] border border-warning bg-white text-warning hover:bg-warning-bg"
+                aria-label="Copy temporary password"
+                title="Copy temporary password"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(temporaryPassword);
+                  setPasswordCopied(true);
+                }}
+              >
+                {passwordCopied ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-warning/80">
+              This password is returned once. Give it to the client securely.
+            </p>
+          </div>
         )}
-      </form>
-    </div>
+      </div>
+
+      {/* Guests + notes */}
+      <div className="space-y-3">
+        <Input
+          label="Guests"
+          type="number"
+          min={1}
+          value={guestCount}
+          onChange={(e) => setGuestCount(Number(e.target.value))}
+          disabled={convertMutation.isPending}
+          required
+        />
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-neutral-700">
+            Internal notes{" "}
+            <span className="font-normal text-neutral-400">(optional)</span>
+          </label>
+          <textarea
+            value={internalNotes}
+            onChange={(e) => setInternalNotes(e.target.value)}
+            placeholder="Add booking context for operations or finance"
+            className="h-20 w-full resize-none rounded-[var(--portal-radius-control,6px)] border border-neutral-300 p-2.5 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:cursor-not-allowed disabled:bg-neutral-50 disabled:text-neutral-400"
+            disabled={convertMutation.isPending}
+          />
+        </div>
+      </div>
+
+      {canManageCRM && (
+        <Button
+          type="button"
+          onClick={handleConvert}
+          isLoading={convertMutation.isPending}
+          disabled={!canConvert}
+          className="w-full"
+        >
+          {hasDateConflict
+            ? "Dates unavailable"
+            : !clientId
+              ? "Attach a client to continue"
+              : "Convert lead to booking"}
+        </Button>
+      )}
+    </section>
   );
 }

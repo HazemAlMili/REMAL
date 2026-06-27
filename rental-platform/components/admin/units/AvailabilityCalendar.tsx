@@ -1,13 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  format,
-  getDaysInMonth,
-  startOfWeek,
-  subDays,
-  addDays,
-} from "date-fns";
+import { format, getDaysInMonth, subDays, addDays } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import {
@@ -58,7 +52,8 @@ export function AvailabilityCalendar({
   };
 
   const daysInMonth = getDaysInMonth(currentMonthDate);
-  const startDayOfWeek = startOfWeek(currentMonthDate).getDay(); // 0 is Sunday
+  // Weekday the 1st falls on (0 = Sunday) → number of blank cells before day 1.
+  const startDayOfWeek = currentMonthDate.getDay();
 
   // Helper arrays for calendar grid
   const leadingEmptyDays = Array.from({ length: startDayOfWeek }).map(

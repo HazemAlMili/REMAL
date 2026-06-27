@@ -1,10 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useOwnerUnit } from "@/lib/hooks/useOwnerPortal";
 import { Button } from "@/components/ui/Button";
-import { formatCurrency } from "@/lib/utils/format";
+import { formatCurrency, referenceCode } from "@/lib/utils/format";
 import { ROUTES } from "@/lib/constants/routes";
+import { Check, Copy } from "lucide-react";
+
+function formatDay(value: string): string {
+  return new Date(value).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 
 export default function OwnerUnitDetailPage() {
   const params = useParams();
@@ -12,6 +22,7 @@ export default function OwnerUnitDetailPage() {
   const unitId = params.unitId as string;
 
   const { data: unit, isLoading, error, refetch } = useOwnerUnit(unitId);
+  const [copied, setCopied] = useState(false);
 
   // Loading state
   if (isLoading) {
@@ -168,28 +179,72 @@ export default function OwnerUnitDetailPage() {
           <h2 className="text-lg font-semibold text-neutral-900">
             Status & Info
           </h2>
-          <dl className="mt-4 space-y-3">
+          <dl className="mt-4 space-y-4">
+            {/* Listing state — plain language, not a raw flag */}
+            <div className="flex items-start justify-between gap-3 text-sm">
+              <dt className="text-neutral-500">Listing</dt>
+              <dd className="text-right">
+                <span
+                  className={[
+                    "inline-flex items-center gap-1.5 font-medium",
+                    unit.isActive ? "text-green-700" : "text-neutral-600",
+                  ].join(" ")}
+                >
+                  <span
+                    className={[
+                      "h-2 w-2 rounded-full",
+                      unit.isActive ? "bg-green-500" : "bg-neutral-400",
+                    ].join(" ")}
+                  />
+                  {unit.isActive ? "Live" : "Hidden"}
+                </span>
+                <p className="mt-0.5 text-xs text-neutral-400">
+                  {unit.isActive
+                    ? "Visible to guests and accepting bookings"
+                    : "Not visible to guests"}
+                </p>
+              </dd>
+            </div>
+
+            {/* Reference — replaces the raw unit/project GUIDs */}
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <dt className="text-neutral-500">Reference</dt>
+              <dd className="flex items-center gap-1.5">
+                <span className="font-mono text-xs font-medium text-neutral-700">
+                  {referenceCode("UNIT", unit.unitId)}
+                </span>
+                <button
+                  type="button"
+                  aria-label="Copy reference"
+                  title="Copy reference"
+                  className="inline-flex h-6 w-6 items-center justify-center rounded text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-700"
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(
+                      referenceCode("UNIT", unit.unitId)
+                    );
+                    setCopied(true);
+                    window.setTimeout(() => setCopied(false), 1500);
+                  }}
+                >
+                  {copied ? (
+                    <Check className="h-3.5 w-3.5 text-green-600" />
+                  ) : (
+                    <Copy className="h-3.5 w-3.5" />
+                  )}
+                </button>
+              </dd>
+            </div>
+
             <div className="flex justify-between text-sm">
-              <dt className="text-neutral-500">Status</dt>
-              <dd
-                className={[
-                  "font-medium",
-                  unit.isActive ? "text-green-600" : "text-neutral-600",
-                ].join(" ")}
-              >
-                {unit.isActive ? "Active" : "Inactive"}
+              <dt className="text-neutral-500">Listed since</dt>
+              <dd className="font-medium text-neutral-900">
+                {formatDay(unit.createdAt)}
               </dd>
             </div>
             <div className="flex justify-between text-sm">
-              <dt className="text-neutral-500">Unit ID</dt>
-              <dd className="font-mono text-xs text-neutral-600">
-                {unit.unitId}
-              </dd>
-            </div>
-            <div className="flex justify-between text-sm">
-              <dt className="text-neutral-500">Project ID</dt>
-              <dd className="font-mono text-xs text-neutral-600">
-                {unit.projectId}
+              <dt className="text-neutral-500">Last updated</dt>
+              <dd className="font-medium text-neutral-900">
+                {formatDay(unit.updatedAt)}
               </dd>
             </div>
           </dl>
@@ -222,28 +277,6 @@ export default function OwnerUnitDetailPage() {
         >
           View Availability
         </Button>
-      </div>
-
-      {/* Timestamps */}
-      <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-        <div className="flex flex-wrap gap-6 text-xs text-neutral-500">
-          <div>
-            <span className="font-medium">Created:</span>{" "}
-            {new Date(unit.createdAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </div>
-          <div>
-            <span className="font-medium">Last Updated:</span>{" "}
-            {new Date(unit.updatedAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -1,13 +1,19 @@
 import type { OwnerPortalBookingResponse } from "@/lib/types/owner-portal.types";
-import { formatCurrency } from "@/lib/utils/format";
+import { formatCurrency, referenceCode } from "@/lib/utils/format";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 
 interface OwnerBookingRowProps {
   booking: OwnerPortalBookingResponse;
+  /** Resolved from the owner's units list; falls back to a reference if absent. */
+  unitName?: string;
   onClick: () => void;
 }
 
-export function OwnerBookingRow({ booking, onClick }: OwnerBookingRowProps) {
+export function OwnerBookingRow({
+  booking,
+  unitName,
+  onClick,
+}: OwnerBookingRowProps) {
   const checkInDate = new Date(booking.checkInDate);
   const checkOutDate = new Date(booking.checkOutDate);
 
@@ -25,14 +31,12 @@ export function OwnerBookingRow({ booking, onClick }: OwnerBookingRowProps) {
       className="cursor-pointer border-b border-neutral-200 transition-colors hover:bg-neutral-50"
     >
       <td className="px-4 py-3 text-sm">
-        <span className="font-mono text-xs text-neutral-600">
-          {booking.bookingId.slice(0, 8)}...
+        <span className="font-mono text-xs font-medium text-neutral-500">
+          {referenceCode("BKG", booking.bookingId)}
         </span>
       </td>
-      <td className="px-4 py-3 text-sm">
-        <span className="font-mono text-xs text-neutral-600">
-          {booking.unitId.slice(0, 8)}...
-        </span>
+      <td className="px-4 py-3 text-sm font-medium text-neutral-900">
+        {unitName ?? referenceCode("UNIT", booking.unitId)}
       </td>
       <td className="px-4 py-3 text-sm text-neutral-900">
         {formatDate(checkInDate)}

@@ -65,11 +65,30 @@ public class BookingService : IBookingService
         if (!string.IsNullOrWhiteSpace(search))
         {
             var s = search.Trim().ToLower();
+
+            // Reference lookup: the portals show a booking/unit handle (BKG-xxxxxx /
+            // UNIT-xxxxxx) that is just the tail of the GUID. Strip the cosmetic prefix
+            // so the remaining hex can be matched against the id text — a "bkg" prefix
+            // targets the booking id, "unit" the unit id, and a bare code matches either.
+            var isUnitRef = s.StartsWith("unit");
+            var isBookingRef = s.StartsWith("bkg");
+            var code = s.TrimStart('#');
+            if (isUnitRef) code = code.Substring(4);
+            else if (isBookingRef) code = code.Substring(3);
+            code = code.TrimStart('-', ' ');
+
+            // Only treat the term as an id when there's a meaningful hex tail, so a stray
+            // "unit" or a short name fragment never matches every row.
+            var matchId = code.Length >= 4 &&
+                code.All(ch => (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || ch == '-');
+
             query = query.Where(b =>
                 b.Client.Name.ToLower().Contains(s) ||
                 b.Client.Phone.ToLower().Contains(s) ||
                 b.Unit.Name.ToLower().Contains(s) ||
-                (b.AssignedAdminUser != null && b.AssignedAdminUser.Name.ToLower().Contains(s)));
+                (b.AssignedAdminUser != null && b.AssignedAdminUser.Name.ToLower().Contains(s)) ||
+                (matchId && !isUnitRef && b.Id.ToString().Contains(code)) ||
+                (matchId && !isBookingRef && b.Unit.Id.ToString().Contains(code)));
         }
 
         if (checkInFrom.HasValue)

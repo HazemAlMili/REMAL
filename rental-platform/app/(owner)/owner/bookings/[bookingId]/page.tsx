@@ -1,10 +1,11 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useOwnerBooking } from "@/lib/hooks/useOwnerPortal";
+import { useOwnerBooking, useOwnerUnits } from "@/lib/hooks/useOwnerPortal";
 import { OwnerBookingDetail } from "@/components/owner/bookings/OwnerBookingDetail";
 import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/lib/constants/routes";
+import { referenceCode } from "@/lib/utils/format";
 
 export default function OwnerBookingDetailPage() {
   const params = useParams();
@@ -17,6 +18,12 @@ export default function OwnerBookingDetailPage() {
     error,
     refetch,
   } = useOwnerBooking(bookingId);
+
+  // Resolve the unit id to a name from the owner's own units.
+  const { data: unitsData } = useOwnerUnits({ pageSize: 100 });
+  const unitName = booking
+    ? unitsData?.items.find((u) => u.unitId === booking.unitId)?.unitName
+    : undefined;
 
   // Loading state
   if (isLoading) {
@@ -88,17 +95,17 @@ export default function OwnerBookingDetailPage() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-neutral-800">
-              Booking Details
+              {unitName ?? "Booking Details"}
             </h1>
             <p className="mt-1 text-sm text-neutral-500">
-              View booking information
+              {referenceCode("BKG", booking.bookingId)}
             </p>
           </div>
         </div>
       </div>
 
       {/* Booking detail component */}
-      <OwnerBookingDetail booking={booking} />
+      <OwnerBookingDetail booking={booking} unitName={unitName} />
 
       {/* Quick actions */}
       <div className="flex flex-wrap gap-3">

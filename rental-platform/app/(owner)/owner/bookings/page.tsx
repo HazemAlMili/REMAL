@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useOwnerBookings } from "@/lib/hooks/useOwnerPortal";
+import { useOwnerBookings, useOwnerUnits } from "@/lib/hooks/useOwnerPortal";
 import { OwnerBookingRow } from "@/components/owner/bookings/OwnerBookingRow";
 import { Button } from "@/components/ui/Button";
 import { ROUTES } from "@/lib/constants/routes";
@@ -20,6 +20,15 @@ export default function OwnerBookingsPage() {
     page,
     pageSize,
   });
+
+  // The bookings API returns unit ids only — resolve them to names from the
+  // owner's own units list so the table shows units, not GUIDs.
+  const { data: unitsData } = useOwnerUnits({ pageSize: 100 });
+  const unitNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    (unitsData?.items ?? []).forEach((u) => map.set(u.unitId, u.unitName));
+    return map;
+  }, [unitsData?.items]);
 
   // Loading state
   if (isLoading) {
@@ -179,10 +188,10 @@ export default function OwnerBookingsPage() {
                 <thead className="bg-neutral-50">
                   <tr>
                     <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
-                      Booking ID
+                      Reference
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
-                      Unit ID
+                      Unit
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500">
                       Check-in
@@ -209,6 +218,7 @@ export default function OwnerBookingsPage() {
                     <OwnerBookingRow
                       key={booking.bookingId}
                       booking={booking}
+                      unitName={unitNameById.get(booking.unitId)}
                       onClick={() =>
                         router.push(
                           ROUTES.owner.bookingDetail(booking.bookingId)

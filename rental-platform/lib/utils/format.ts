@@ -9,6 +9,14 @@ export function formatCurrency(amount: number | null | undefined): string {
   })} EGP`;
 }
 
+// A short, human-friendly handle derived from a GUID (e.g. "UNIT-85A9B2").
+// Lets owners quote a unit/booking to support without exposing the full
+// internal id. Same input always yields the same code.
+export function referenceCode(prefix: string, id: string | null | undefined): string {
+  if (!id) return "—";
+  return `${prefix}-${id.replace(/-/g, "").slice(-6).toUpperCase()}`;
+}
+
 // Keep only digits and a single optional leading '+'.
 export function sanitizePhoneInput(value: string): string {
   const plus = value.trimStart().startsWith("+") ? "+" : "";

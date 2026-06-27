@@ -191,8 +191,10 @@ export function UnitDateBlocksTab({ unitId }: UnitDateBlocksTabProps) {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         title={editingBlock ? "Edit date block" : "Add date block"}
+        size="lg"
       >
         <DateBlockForm
+          unitId={unitId}
           defaultValues={editingBlock}
           onSubmit={handleFormSubmit}
           isLoading={isFormLoading}

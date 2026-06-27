@@ -1,12 +1,23 @@
+"use client";
+
+import { useState } from "react";
+import { Check, Copy } from "lucide-react";
 import type { OwnerPortalBookingResponse } from "@/lib/types/owner-portal.types";
-import { formatCurrency } from "@/lib/utils/format";
+import { formatCurrency, referenceCode } from "@/lib/utils/format";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 
 interface OwnerBookingDetailProps {
   booking: OwnerPortalBookingResponse;
+  /** Resolved from the owner's units list; falls back to a reference if absent. */
+  unitName?: string;
 }
 
-export function OwnerBookingDetail({ booking }: OwnerBookingDetailProps) {
+export function OwnerBookingDetail({
+  booking,
+  unitName,
+}: OwnerBookingDetailProps) {
+  const [copied, setCopied] = useState(false);
+  const reference = referenceCode("BKG", booking.bookingId);
   const checkInDate = new Date(booking.checkInDate);
   const checkOutDate = new Date(booking.checkOutDate);
   const createdAt = new Date(booking.createdAt);
@@ -46,6 +57,12 @@ export function OwnerBookingDetail({ booking }: OwnerBookingDetailProps) {
       <div className="rounded-lg border border-neutral-200 bg-white p-6">
         <h2 className="text-lg font-semibold text-neutral-900">Stay Details</h2>
         <dl className="mt-4 space-y-3">
+          <div className="flex justify-between gap-4 text-sm">
+            <dt className="text-neutral-500">Unit</dt>
+            <dd className="text-right font-medium text-neutral-900">
+              {unitName ?? referenceCode("UNIT", booking.unitId)}
+            </dd>
+          </div>
           <div className="flex justify-between text-sm">
             <dt className="text-neutral-500">Check-in</dt>
             <dd className="font-medium text-neutral-900">
@@ -93,30 +110,41 @@ export function OwnerBookingDetail({ booking }: OwnerBookingDetailProps) {
           Booking Information
         </h2>
         <dl className="mt-4 space-y-3">
-          <div className="flex justify-between text-sm">
-            <dt className="text-neutral-500">Booking ID</dt>
-            <dd className="font-mono text-xs text-neutral-600">
-              {booking.bookingId}
+          <div className="flex items-center justify-between gap-4 text-sm">
+            <dt className="text-neutral-500">Reference</dt>
+            <dd className="flex items-center gap-1.5">
+              <span className="font-mono text-xs font-medium text-neutral-700">
+                {reference}
+              </span>
+              <button
+                type="button"
+                aria-label="Copy reference"
+                title="Copy reference"
+                className="inline-flex h-6 w-6 items-center justify-center rounded text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-700"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(reference);
+                  setCopied(true);
+                  window.setTimeout(() => setCopied(false), 1500);
+                }}
+              >
+                {copied ? (
+                  <Check className="h-3.5 w-3.5 text-green-600" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" />
+                )}
+              </button>
             </dd>
           </div>
-          <div className="flex justify-between text-sm">
-            <dt className="text-neutral-500">Unit ID</dt>
-            <dd className="font-mono text-xs text-neutral-600">
-              {booking.unitId}
+          <div className="flex justify-between gap-4 text-sm">
+            <dt className="text-neutral-500">Unit</dt>
+            <dd className="text-right font-medium text-neutral-900">
+              {unitName ?? referenceCode("UNIT", booking.unitId)}
             </dd>
           </div>
           <div className="flex justify-between text-sm">
             <dt className="text-neutral-500">Source</dt>
             <dd className="font-medium text-neutral-900">{booking.source}</dd>
           </div>
-          {booking.assignedAdminUserId && (
-            <div className="flex justify-between text-sm">
-              <dt className="text-neutral-500">Assigned Admin</dt>
-              <dd className="font-mono text-xs text-neutral-600">
-                {booking.assignedAdminUserId}
-              </dd>
-            </div>
-          )}
         </dl>
       </div>
 
