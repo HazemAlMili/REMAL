@@ -15,6 +15,9 @@ export function useDateBlockApprovals({
     queryFn: dateBlockApprovalsService.getPending,
     enabled,
     staleTime: 0,
+    // Admins watch this queue for owner requests raised in other sessions —
+    // poll so new requests surface without a manual refresh.
+    refetchInterval: 1000 * 15,
   });
 }
 

@@ -29,7 +29,11 @@ export default function QueryProvider({ children }: Props) {
               }
               return failureCount < 1
             },
-            refetchOnWindowFocus: false,
+            // Refetch stale queries when the user returns to the tab. TanStack
+            // only refetches queries already past their staleTime, so reference
+            // data (2–10 min) is left alone while operational views feel live
+            // across tab/window switches — the cheapest cross-view freshness win.
+            refetchOnWindowFocus: true,
             refetchOnReconnect: true,
           },
           mutations: {

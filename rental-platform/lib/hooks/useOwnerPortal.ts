@@ -69,6 +69,9 @@ export function useOwnerUnitAvailability(unitId: string, month: Date) {
       ownerPortalService.checkUnitAvailability(unitId, { startDate, endDate }),
     enabled: !!unitId,
     staleTime: 0, // Always fresh per requirements
+    // An admin approving a block or confirming a booking changes availability
+    // while the owner is watching this calendar — poll so it stays current.
+    refetchInterval: 1000 * 30,
   });
 }
 

@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
   keepPreviousData,
+  type QueryClient,
 } from "@tanstack/react-query";
 import { bookingsService } from "@/lib/api/services/bookings.service";
 import { ApiError } from "@/lib/api/api-error";
@@ -23,6 +24,21 @@ import type {
   CancelPaymentRequest,
 } from "@/lib/types/booking.types";
 import { toastSuccess, toastError } from "@/lib/utils/toast";
+
+// Operational availability (admin calendar, owner calendar, and the public
+// storefront) is derived from holding bookings, so any booking status change
+// that enters or leaves a holding status must refresh the per-unit availability
+// caches. The prefix keys below match both query-key namespaces used in the app.
+function invalidateUnitAvailability(
+  queryClient: QueryClient,
+  unitId: string | null | undefined
+) {
+  if (!unitId) return;
+  queryClient.invalidateQueries({ queryKey: ["units", unitId, "availability"] });
+  queryClient.invalidateQueries({
+    queryKey: ["ownerPortal", "unitAvailability", unitId],
+  });
+}
 
 export function useBookingsList(filters: BookingListFilters) {
   return useQuery({
@@ -45,9 +61,10 @@ export function useCreateQuickBooking() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: CreateBookingRequest) => bookingsService.quickCreate(data),
-    onSuccess: () => {
+    onSuccess: (_created, variables) => {
       toastSuccess("Quick booking created");
       queryClient.invalidateQueries({ queryKey: queryKeys.bookings.all });
+      invalidateUnitAvailability(queryClient, variables.unitId);
     },
     onError: handleMutationError,
   });
@@ -88,6 +105,7 @@ export function useConfirmBooking(bookingId: string) {
       bookingsService.confirm(bookingId, data),
     onSuccess: (updatedBooking) => {
       toastSuccess("Booking confirmed - invoice generated");
+      invalidateUnitAvailability(queryClient, updatedBooking.unitId);
       queryClient.setQueryData(
         queryKeys.bookings.detail(bookingId),
         updatedBooking
@@ -112,6 +130,7 @@ export function useBookedBooking(bookingId: string) {
       bookingsService.booked(bookingId, data),
     onSuccess: (updatedBooking) => {
       toastSuccess("Booking marked as booked");
+      invalidateUnitAvailability(queryClient, updatedBooking.unitId);
       queryClient.setQueryData(
         queryKeys.bookings.detail(bookingId),
         updatedBooking
@@ -132,6 +151,7 @@ export function useRelevantBooking(bookingId: string) {
       bookingsService.relevant(bookingId, data),
     onSuccess: (updatedBooking) => {
       toastSuccess("Booking marked as relevant");
+      invalidateUnitAvailability(queryClient, updatedBooking.unitId);
       queryClient.setQueryData(
         queryKeys.bookings.detail(bookingId),
         updatedBooking
@@ -152,6 +172,7 @@ export function useNoAnswerBooking(bookingId: string) {
       bookingsService.noAnswer(bookingId, data),
     onSuccess: (updatedBooking) => {
       toastSuccess("Booking marked as no answer");
+      invalidateUnitAvailability(queryClient, updatedBooking.unitId);
       queryClient.setQueryData(
         queryKeys.bookings.detail(bookingId),
         updatedBooking
@@ -172,6 +193,7 @@ export function useNotRelevantBooking(bookingId: string) {
       bookingsService.notRelevant(bookingId, data),
     onSuccess: (updatedBooking) => {
       toastSuccess("Booking marked as not relevant");
+      invalidateUnitAvailability(queryClient, updatedBooking.unitId);
       queryClient.setQueryData(
         queryKeys.bookings.detail(bookingId),
         updatedBooking
@@ -192,6 +214,7 @@ export function useCancelBooking(bookingId: string) {
       bookingsService.cancel(bookingId, data),
     onSuccess: (updatedBooking) => {
       toastSuccess("Booking cancelled");
+      invalidateUnitAvailability(queryClient, updatedBooking.unitId);
       queryClient.setQueryData(
         queryKeys.bookings.detail(bookingId),
         updatedBooking
@@ -215,6 +238,7 @@ export function useCompleteBooking(bookingId: string) {
       bookingsService.complete(bookingId, data),
     onSuccess: (updatedBooking) => {
       toastSuccess("Booking completed");
+      invalidateUnitAvailability(queryClient, updatedBooking.unitId);
       queryClient.setQueryData(
         queryKeys.bookings.detail(bookingId),
         updatedBooking
@@ -238,6 +262,7 @@ export function useCheckInBooking(bookingId: string) {
       bookingsService.checkIn(bookingId, data),
     onSuccess: (updatedBooking) => {
       toastSuccess("Client checked in");
+      invalidateUnitAvailability(queryClient, updatedBooking.unitId);
       queryClient.setQueryData(
         queryKeys.bookings.detail(bookingId),
         updatedBooking
@@ -261,6 +286,7 @@ export function useLeftEarlyBooking(bookingId: string) {
       bookingsService.leftEarly(bookingId, data),
     onSuccess: (updatedBooking) => {
       toastSuccess("Early departure recorded");
+      invalidateUnitAvailability(queryClient, updatedBooking.unitId);
       queryClient.setQueryData(
         queryKeys.bookings.detail(bookingId),
         updatedBooking

@@ -302,6 +302,15 @@ export function useCreateDateBlock() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.units.internalDetail(variables.unitId),
       });
+      // Date blocks feed operational availability — refresh the unit's
+      // availability calendars (admin + owner) so the change shows without a
+      // manual page refresh. Prefix keys match both query-key namespaces.
+      queryClient.invalidateQueries({
+        queryKey: ["units", variables.unitId, "availability"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["ownerPortal", "unitAvailability", variables.unitId],
+      });
     },
   });
 }
@@ -324,6 +333,12 @@ export function useUpdateDateBlock() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.units.internalDetail(variables.unitId),
       });
+      queryClient.invalidateQueries({
+        queryKey: ["units", variables.unitId, "availability"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["ownerPortal", "unitAvailability", variables.unitId],
+      });
     },
   });
 }
@@ -339,6 +354,12 @@ export function useDeleteDateBlock() {
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.units.internalDetail(variables.unitId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["units", variables.unitId, "availability"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["ownerPortal", "unitAvailability", variables.unitId],
       });
     },
   });
