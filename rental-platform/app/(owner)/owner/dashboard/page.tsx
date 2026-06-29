@@ -170,7 +170,7 @@ export default function OwnerDashboardPage() {
       <section className="flex flex-wrap gap-3">
         <Link
           href={ROUTES.owner.bookings}
-          className="rounded-lg bg-primary-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-600"
+          className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-700"
         >
           View all bookings
         </Link>

@@ -110,6 +110,25 @@
   --portal-control-height: 40px;
   --portal-row-height: 44px;
   --portal-gutter: 24px;
+
+  /* ── Brand ↔ portal semantic bridge ──────────────────────────────
+     One source of truth: these names resolve to the canonical
+     primary / neutral / surface primitives, so they cascade into the
+     Tailwind utilities (bg-brand-primary, border-portal-border,
+     text-portal-primary, …). Inside the operational portals (.portal-*)
+     the primary primitive is the storefront's coastal navy, so these
+     render the SAME brand as the public storefront (demo, :3000). The
+     rental-platform public storefront keeps its own warm terracotta. */
+  --brand-primary: var(--color-primary-500);
+  --brand-primary-strong: var(--color-primary-600);
+  --brand-accent: #c9a162; /* storefront sand/gold — reserved secondary accent */
+  --portal-canvas: var(--surface-canvas);
+  --portal-surface: var(--surface-panel);
+  --portal-surface-muted: var(--surface-panel-muted);
+  --portal-border: var(--border-subtle);
+  --portal-text-primary: var(--text-strong);
+  --portal-text-body: var(--text-body);
+  --portal-text-muted: var(--text-muted);
 }
 
 /* Reduced motion accessibility */
@@ -185,6 +204,24 @@
   --color-neutral-800: #22262c;
   --color-neutral-900: #14171a;
 
+  /* Primary — storefront coastal navy (sea-glass → deep navy).
+     Replaces the warm terracotta inside the portals so the brand matches
+     the public storefront 1:1 (demo brand-50…900). Spotlight discipline
+     unchanged: navy marks the primary action, active nav, and focus only.
+     White text on a solid fill uses primary-600 #466785 = 5.9:1 (AA);
+     brand marks/icons may sit on primary-500 #5a82a2 = 4.08:1 (AA for
+     large/bold/graphical). */
+  --color-primary-50: #f2f5f8;
+  --color-primary-100: #e1e8f0;
+  --color-primary-200: #c8d7e4;
+  --color-primary-300: #a3bed1;
+  --color-primary-400: #789ebb;
+  --color-primary-500: #5a82a2;
+  --color-primary-600: #466785;
+  --color-primary-700: #39536d;
+  --color-primary-800: #32465b;
+  --color-primary-900: #1b2a3a;
+
   /* Status — AA on white. Also re-tints charts, badges, the radial gauge. */
   --color-success: #15803d;
   --color-warning: #b45309;
@@ -217,6 +254,23 @@
   --text-body: var(--color-neutral-700);
   --text-muted: var(--color-neutral-500);
   --border-subtle: var(--color-neutral-200);
+
+  /* Re-bind the brand/portal bridge to the portal-scoped primitives. CSS
+     custom properties inherit their already-substituted value, so the :root
+     bridge alone would freeze to the warm/terracotta :root values inside the
+     portals. Re-declaring here re-substitutes against the navy primary +
+     cool surfaces, so bg-brand-primary / bg-portal-canvas / text-portal-*
+     resolve correctly in the operational workspaces. */
+  --brand-primary: var(--color-primary-500);
+  --brand-primary-strong: var(--color-primary-600);
+  --portal-canvas: var(--surface-canvas);
+  --portal-surface: var(--surface-panel);
+  --portal-surface-muted: var(--surface-panel-muted);
+  --portal-border: var(--border-subtle);
+  --portal-text-primary: var(--text-strong);
+  --portal-text-body: var(--text-body);
+  --portal-text-muted: var(--text-muted);
+
   --portal-radius-card: 8px;
   --portal-radius-control: 6px;
   --portal-control-height: 40px;
@@ -381,11 +435,11 @@
   0%,
   100% {
     transform: scale(1);
-    box-shadow: 0 2px 6px rgba(232, 118, 81, 0.18);
+    box-shadow: 0 2px 6px rgba(70, 103, 133, 0.18);
   }
   50% {
     transform: scale(1.045);
-    box-shadow: 0 8px 22px rgba(232, 118, 81, 0.3);
+    box-shadow: 0 8px 22px rgba(70, 103, 133, 0.3);
   }
 }
 @keyframes portal-splash-bar {
@@ -416,7 +470,7 @@
   }
   .portal-splash-mark {
     transform: none !important;
-    box-shadow: 0 2px 6px rgba(232, 118, 81, 0.18) !important;
+    box-shadow: 0 2px 6px rgba(70, 103, 133, 0.18) !important;
   }
   .portal-splash-bar {
     transform: none !important;
@@ -430,7 +484,8 @@
    One calendar language across the operational portals: the owner
    availability calendar, and every DateRangePicker (admin date
    blocks, seasonal pricing, CRM leads, quick booking, filters,
-   analytics). Neutral-pro surface; terracotta is the only accent
+   analytics). Neutral-pro surface; the brand accent (coastal navy in
+   the portals, terracotta on the public storefront) is the only accent
    and marks solely the active selection. Occupied nights wear the
    system's soft status fills (modifier classes set per-calendar,
    used today by the owner availability view). Logical props → RTL.
@@ -527,9 +582,9 @@
 .cal-skin .rdp-root .rdp-range_start .rdp-day_button,
 .cal-skin .rdp-root .rdp-range_end .rdp-day_button,
 .cal-skin .rdp-root .rdp-selected .rdp-day_button {
-  background: var(--color-primary-500);
+  background: var(--color-primary-600);
   color: #fff;
-  border-color: var(--color-primary-500);
+  border-color: var(--color-primary-600);
   font-weight: 650;
 }
 .cal-skin .rdp-root .rdp-range_middle .rdp-day_button {

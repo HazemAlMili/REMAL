@@ -71,7 +71,7 @@ export function PortalSplash({
       <div className="portal-splash flex flex-col items-center gap-5">
         {/* Brand lockup — continuity from the sign-in screen */}
         <div className="flex items-center gap-2.5" aria-hidden="true">
-          <div className="portal-splash-mark grid h-11 w-11 place-items-center rounded-xl bg-primary-500 text-xl font-bold tracking-tight text-white">
+          <div className="portal-splash-mark grid h-11 w-11 place-items-center rounded-xl bg-primary-600 text-xl font-bold tracking-tight text-white">
             K
           </div>
           <span className="text-lg font-semibold tracking-tight text-neutral-900">

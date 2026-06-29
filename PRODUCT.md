@@ -37,7 +37,7 @@ Kaza Booking turns a previously informal brokerage into an organized operating s
 ## Design Principles
 
 1. **Data legibility over decoration.** Every screen is mostly numbers, statuses, and lists. Optimize for scannability and remove anything that doesn't aid comprehension or action.
-2. **Terracotta is a spotlight, not a wash.** A calm neutral system carries the UI; the brand accent (terracotta) marks only the primary action, the current selection/active nav, and key focus. Status meaning never comes from the brand accent.
+2. **The brand navy is a spotlight, not a wash.** A calm neutral system carries the UI; the brand accent (coastal navy, shared 1:1 with the public storefront) marks only the primary action, the current selection/active nav, and key focus. Status meaning never comes from the brand accent. The sand/gold secondary accent is rarer still — never status, never a panel wash.
 3. **Status is always unambiguous.** The booking pipeline and finance states drive the whole app; encode them with color + icon + label together (never color alone), consistently everywhere they appear. Reuse the existing semantic layer in `lib/utils/status.ts`.
 4. **Fit the portal to its user.** One unified system, three tempos: Admin earns density and speed; Owner and Client earn space, plain-language summaries, and reassurance.
 5. **Earned familiarity.** These are tools, not showpieces. Use standard affordances (top bar + side nav, tables, tabs, breadcrumbs), consistent component vocabulary screen to screen, and reserve delight for moments. The tool should disappear into the task.

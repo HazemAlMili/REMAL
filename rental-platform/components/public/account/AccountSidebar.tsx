@@ -40,7 +40,7 @@ export function AccountSidebar() {
       <div className="flex flex-1 flex-col p-6">
         {/* Client Info */}
         <div className="flex items-center gap-2.5">
-          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary-500 text-sm font-bold text-white">
+          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary-600 text-sm font-bold text-white">
             R
           </div>
           <div className="min-w-0">
@@ -86,7 +86,7 @@ export function AccountSidebar() {
                 />
                 <span className="flex-1">{item.label}</span>
                 {item.href === "/account/notifications" && unreadCount > 0 && (
-                  <span className="rounded-full bg-primary-500 px-2 py-0.5 text-xs font-medium tabular-nums text-white">
+                  <span className="rounded-full bg-primary-600 px-2 py-0.5 text-xs font-medium tabular-nums text-white">
                     {unreadCount}
                   </span>
                 )}

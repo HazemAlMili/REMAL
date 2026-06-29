@@ -58,7 +58,7 @@ export function RevenueLineChart({ data, isLoading }: RevenueLineChartProps) {
               backgroundColor: "var(--color-neutral-800)",
               border: "none",
               borderRadius: "4px",
-              color: "#fff",
+              color: "var(--color-neutral-50)",
               fontSize: "13px",
             }}
           />

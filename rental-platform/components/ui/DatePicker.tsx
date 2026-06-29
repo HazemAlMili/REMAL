@@ -208,7 +208,7 @@ export function DatePicker({
                     !disabled &&
                       !isSelected &&
                       "text-neutral-700 hover:bg-neutral-100",
-                    isSelected && "bg-primary-500 font-medium text-white",
+                    isSelected && "bg-primary-600 font-medium text-white",
                     isToday && !isSelected && "font-semibold text-primary-600"
                   )}
                 >

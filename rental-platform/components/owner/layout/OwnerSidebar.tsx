@@ -21,7 +21,7 @@ export function OwnerSidebar() {
           collapsed ? "justify-center" : "",
         ].join(" ")}
       >
-        <div className="grid h-8 w-8 flex-none place-items-center rounded-lg bg-primary-500 text-sm font-bold tracking-tight text-white">
+        <div className="grid h-8 w-8 flex-none place-items-center rounded-lg bg-primary-600 text-sm font-bold tracking-tight text-white">
           R
         </div>
         {!collapsed && (

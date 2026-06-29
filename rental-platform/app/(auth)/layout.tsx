@@ -5,7 +5,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {/* Brand panel */}
         <aside className="flex flex-col bg-neutral-900 p-8 text-neutral-50 max-md:flex-row max-md:items-center max-md:gap-3 max-md:p-5">
           <div className="flex items-center gap-2.5">
-            <div className="grid h-9 w-9 flex-none place-items-center rounded-lg bg-primary-500 text-lg font-bold tracking-tight text-white">
+            <div className="grid h-9 w-9 flex-none place-items-center rounded-lg bg-primary-600 text-lg font-bold tracking-tight text-white">
               K
             </div>
             <span className="text-xl font-semibold tracking-tight">Kaza Booking</span>

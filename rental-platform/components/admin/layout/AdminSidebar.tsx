@@ -22,7 +22,7 @@ export function AdminSidebar() {
       >
         <span
           aria-hidden
-          className="grid h-8 w-8 shrink-0 place-items-center rounded-[5px] bg-primary-500 text-sm font-bold text-white"
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-[5px] bg-primary-600 text-sm font-bold text-white"
         >
           K
         </span>

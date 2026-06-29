@@ -157,7 +157,7 @@ export function RoleAccessSection() {
                   onClick={() => setSelectedRoleId(role.id)}
                   className={`w-full px-3 py-3 text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500 ${
                     selectedRoleId === role.id
-                      ? "bg-white text-neutral-900 shadow-[inset_3px_0_0_#E87651]"
+                      ? "bg-white text-neutral-900 shadow-[inset_3px_0_0_var(--color-primary-500)]"
                       : "text-neutral-600 hover:bg-white"
                   }`}
                 >

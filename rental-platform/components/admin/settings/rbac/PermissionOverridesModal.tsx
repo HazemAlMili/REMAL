@@ -143,7 +143,7 @@ export function PermissionOverridesModal({
                                 mode === option && option === "inherit" &&
                                   "bg-neutral-200 text-neutral-900",
                                 mode === option && option === "grant" &&
-                                  "bg-primary-500 text-white",
+                                  "bg-primary-600 text-white",
                                 mode === option && option === "deny" &&
                                   "bg-error text-white",
                                 mode !== option && "bg-white text-neutral-600 hover:bg-neutral-50"

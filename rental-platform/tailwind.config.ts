@@ -41,6 +41,37 @@ const config: Config = {
           green: "var(--color-accent-green)",
           amber: "var(--color-accent-amber)",
         },
+        // Brand semantic bridge — resolves to the navy primary inside the
+        // portals (matches the storefront), terracotta on the public site.
+        brand: {
+          primary: "var(--brand-primary)",
+          "primary-strong": "var(--brand-primary-strong)",
+          accent: "var(--brand-accent)",
+          // Storefront sand/gold scale — reserved secondary brand accent.
+          sand: {
+            50: "#fcfaf6",
+            100: "#f8f4eb",
+            200: "#f0e5d1",
+            300: "#e4d1ae",
+            400: "#d5b785",
+            500: "#c9a162",
+            600: "#bd8b4a",
+            700: "#9d6d39",
+            800: "#805934",
+            900: "#67482d",
+            950: "#382515",
+          },
+        },
+        // Portal surface/text semantics for the operational workspaces.
+        portal: {
+          canvas: "var(--portal-canvas)",
+          surface: "var(--portal-surface)",
+          "surface-muted": "var(--portal-surface-muted)",
+          border: "var(--portal-border)",
+          "text-primary": "var(--portal-text-primary)",
+          "text-body": "var(--portal-text-body)",
+          "text-muted": "var(--portal-text-muted)",
+        },
         background: "var(--surface-canvas)",
         foreground: "var(--text-body)",
         card: {
